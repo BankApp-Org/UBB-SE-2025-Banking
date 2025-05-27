@@ -10,7 +10,8 @@
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

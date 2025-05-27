@@ -1,7 +1,10 @@
 namespace StockApp.Views.Pages
 {
+    using Common.Models;
+    using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Media.Imaging;
     using StockApp.ViewModels;
     using System;
     using System.Threading.Tasks;
@@ -9,24 +12,75 @@ namespace StockApp.Views.Pages
     public sealed partial class UpdateProfilePage : Page
     {
         private readonly UpdateProfilePageViewModel viewModelUpdate;
+        private readonly IUserService userService;
+        private readonly IAuthenticationService authService;
+        private User? currentUser;
 
         public Page? PreviousPage { get; set; }
 
-        public UpdateProfilePage(UpdateProfilePageViewModel viewModelUpdate)
+        public UpdateProfilePage(UpdateProfilePageViewModel viewModelUpdate, IUserService userService, IAuthenticationService authService)
         {
             this.InitializeComponent();
             this.viewModelUpdate = viewModelUpdate ?? throw new ArgumentNullException(nameof(viewModelUpdate));
+            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            this.DataContext = this.viewModelUpdate;
+
+            this.Loaded += OnPageLoaded;
+        }
+
+        private async void OnPageLoaded(object sender, RoutedEventArgs e)
+        {
+            await LoadCurrentUserDataAsync();
+        }
+
+        private async Task LoadCurrentUserDataAsync()
+        {
+            try
+            {
+                viewModelUpdate.IsLoading = true;
+                var session = authService.GetCurrentUserSession();
+                if (session?.UserId != null)
+                {
+                    currentUser = await userService.GetUserByIdAsync(session.UserId.Value);
+                    if (currentUser != null)
+                    {
+                        viewModelUpdate.Username = currentUser.UserName ?? string.Empty;
+                        viewModelUpdate.Image = currentUser.Image ?? string.Empty;
+                        viewModelUpdate.Description = currentUser.Description ?? string.Empty;
+                        viewModelUpdate.IsHidden = currentUser.IsHidden;
+                        viewModelUpdate.IsAdmin = currentUser.Role == UserRole.Admin;
+
+                        // Load image if available
+                        if (!string.IsNullOrEmpty(currentUser.Image))
+                        {
+                            try
+                            {
+                                viewModelUpdate.ImageSource = new BitmapImage(new Uri(currentUser.Image));
+                            }
+                            catch
+                            {
+                                // Ignore image loading errors
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                viewModelUpdate.ErrorMessage = $"Error loading profile data: {ex.Message}";
+                await ShowErrorDialog(viewModelUpdate.ErrorMessage);
+            }
+            finally
+            {
+                viewModelUpdate.IsLoading = false;
+            }
         }
 
         public async void NavigateBack(object sender, RoutedEventArgs e)
         {
             if (this.PreviousPage != null)
             {
-                if (this.PreviousPage is ProfilePage profile)
-                {
-                    await profile.ViewModel.LoadProfileData();
-                }
-
                 App.MainAppWindow!.MainAppFrame.Content = this.PreviousPage;
             }
         }
@@ -35,69 +89,111 @@ namespace StockApp.Views.Pages
         {
             string userTryPass = this.PasswordTry.Text;
 
-            // TODO: holy shit this code is unholy do actual auth checking
-            bool isAdmin = false;
-            await this.viewModelUpdate.UpdateAdminModeAsync(isAdmin);
+            try
+            {
+                // Simple admin password check - this should use proper authentication
+                bool isAdmin = userTryPass == "admin123"; // This is just a placeholder
+                viewModelUpdate.IsAdmin = isAdmin;
 
-            string message = isAdmin ? "You are now ADMIN!" : "Incorrect Password!";
-            string title = isAdmin ? "Success" : "Error";
-            ContentDialog dialog = this.CreateDialog(title, message);
-            await dialog.ShowAsync();
+                string message = isAdmin ? "You are now ADMIN!" : "Incorrect Password!";
+                string title = isAdmin ? "Success" : "Error";
+                ContentDialog dialog = this.CreateDialog(title, message);
+                await dialog.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorDialog($"Error checking admin password: {ex.Message}");
+            }
         }
 
         private async void UpdateUserProfile(object sender, RoutedEventArgs e)
         {
-            if (this.viewModelUpdate == null)
+            if (currentUser == null)
             {
-                throw new InvalidOperationException("ViewModel is not initialized");
-            }
-
-            bool descriptionEmpty = this.MyDescriptionCheckBox?.IsChecked == true;
-            bool newHidden = this.MyCheckBox?.IsChecked == true;
-            string newUsername = this.UsernameInput?.Text ?? string.Empty;
-            string newImage = this.ImageInput?.Text ?? string.Empty;
-            string newDescription = this.DescriptionInput?.Text ?? string.Empty;
-
-            if (string.IsNullOrEmpty(newUsername) && string.IsNullOrEmpty(newImage) && string.IsNullOrEmpty(newDescription)
-                && (this.MyCheckBox?.IsChecked == false && await this.viewModelUpdate.IsHidden() == false) && this.MyDescriptionCheckBox?.IsChecked == false)
-            {
-                await this.ShowErrorDialog("Please fill up at least one of the information fields");
+                await ShowErrorDialog("No user profile loaded");
                 return;
             }
 
-            if ((newUsername.Length < 8 || newUsername.Length > 24) && newUsername.Length != 0)
+            try
             {
-                await this.ShowErrorDialog("UserName must be 8-24 characters long.");
-                return;
-            }
+                viewModelUpdate.IsLoading = true;
+                viewModelUpdate.ErrorMessage = string.Empty;
 
-            if (newDescription.Length > 100)
-            {
-                await this.ShowErrorDialog("The description should be max 100 characters long.");
-                return;
-            }
+                bool descriptionEmpty = this.MyDescriptionCheckBox?.IsChecked == true;
+                bool newHidden = this.MyCheckBox?.IsChecked == true;
+                string newUsername = this.UsernameInput?.Text ?? string.Empty;
+                string newImage = this.ImageInput?.Text ?? string.Empty;
+                string newDescription = this.DescriptionInput?.Text ?? string.Empty;
 
-            if (string.IsNullOrEmpty(newUsername))
-            {
-                newUsername = await this.viewModelUpdate.GetUsername() ?? throw new InvalidOperationException("UserName cannot be null");
-            }
+                // Validation
+                if (string.IsNullOrEmpty(newUsername) && string.IsNullOrEmpty(newImage) && string.IsNullOrEmpty(newDescription)
+                    && (newHidden == currentUser.IsHidden) && !descriptionEmpty)
+                {
+                    await this.ShowErrorDialog("Please fill up at least one of the information fields");
+                    return;
+                }
 
-            if (descriptionEmpty)
-            {
-                newDescription = string.Empty;
-            }
-            else if (string.IsNullOrWhiteSpace(newDescription))
-            {
-                newDescription = await this.viewModelUpdate.GetDescription() ?? string.Empty;
-            }
+                if (!string.IsNullOrEmpty(newUsername) && (newUsername.Length < 8 || newUsername.Length > 24))
+                {
+                    await this.ShowErrorDialog("UserName must be 8-24 characters long.");
+                    return;
+                }
 
-            if (string.IsNullOrEmpty(newImage))
-            {
-                newImage = await this.viewModelUpdate.GetImage() ?? throw new InvalidOperationException("Image cannot be null");
-            }
+                if (!string.IsNullOrEmpty(newDescription) && newDescription.Length > 100)
+                {
+                    await this.ShowErrorDialog("The description should be max 100 characters long.");
+                    return;
+                }
 
-            await this.viewModelUpdate.UpdateAllAsync(newUsername, newImage, newDescription, newHidden);
-            await this.ShowSuccessDialog("Profile updated successfully!");
+                // Create updated user object
+                var updatedUser = new User
+                {
+                    Id = currentUser.Id,
+                    UserName = string.IsNullOrEmpty(newUsername) ? currentUser.UserName : newUsername,
+                    Image = string.IsNullOrEmpty(newImage) ? currentUser.Image : newImage,
+                    Description = descriptionEmpty ? string.Empty : (string.IsNullOrEmpty(newDescription) ? currentUser.Description : newDescription),
+                    IsHidden = newHidden,
+                    // Copy other existing properties
+                    Email = currentUser.Email,
+                    FirstName = currentUser.FirstName,
+                    LastName = currentUser.LastName,
+                    PhoneNumber = currentUser.PhoneNumber,
+                    Birthday = currentUser.Birthday,
+                    CNP = currentUser.CNP,
+                    ZodiacSign = currentUser.ZodiacSign,
+                    ZodiacAttribute = currentUser.ZodiacAttribute,
+                    Balance = currentUser.Balance,
+                    GemBalance = currentUser.GemBalance,
+                    NumberOfOffenses = currentUser.NumberOfOffenses,
+                    PasswordHash = currentUser.PasswordHash,
+                    Role = currentUser.Role
+                };
+
+                var result = await userService.UpdateUserAsync(updatedUser);
+                if (result != null)
+                {
+                    await this.ShowSuccessDialog("Profile updated successfully!");
+                    currentUser = result;
+
+                    // Update ViewModel with new data
+                    viewModelUpdate.Username = result.UserName ?? string.Empty;
+                    viewModelUpdate.Image = result.Image ?? string.Empty;
+                    viewModelUpdate.Description = result.Description ?? string.Empty;
+                    viewModelUpdate.IsHidden = result.IsHidden;
+                }
+                else
+                {
+                    await ShowErrorDialog("Failed to update profile. Please try again.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorDialog($"Error updating profile: {ex.Message}");
+            }
+            finally
+            {
+                viewModelUpdate.IsLoading = false;
+            }
         }
 
         private async Task ShowErrorDialog(string message)

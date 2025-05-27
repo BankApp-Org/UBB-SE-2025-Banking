@@ -1,149 +1,121 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
-    using StockApp.Commands;
-    using System;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
 
     /// <summary>
-    /// ViewModel for the homepage, managing stock display, filtering, sorting, and navigation.
+    /// ViewModel for the homepage, containing only data for stock display.
     /// </summary>
-    public class HomepageViewModel : INotifyPropertyChanged
+    public class HomepageViewModel : ViewModelBase
     {
-        private readonly IStockService stockService;
-        private readonly IAuthenticationService authenticationService;
-
         private ObservableCollection<HomepageStock> filteredStocks = [];
         private ObservableCollection<HomepageStock> filteredFavoriteStocks = [];
         private string searchQuery = string.Empty;
         private string selectedSortOption = string.Empty;
         private bool isGuestUser;
+        private bool isLoading;
+        private string errorMessage = string.Empty;
 
-        public HomepageViewModel(IStockService stockService, IAuthenticationService authenticationService)
-        {
-            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-            this.stockService = stockService ?? throw new ArgumentNullException(nameof(stockService));
-            this.IsGuestUser = !this.authenticationService.IsUserLoggedIn();
-            if (!this.isGuestUser)
-            {
-                _ = this.LoadStocksAsync();
-            }
-
-            this.FavoriteCommand = new RelayCommand(async obj => await this.ToggleFavoriteAsync(obj as HomepageStock));
-            this.SearchCommand = new RelayCommand(async _ => await this.ApplyFilterAndSortAsync());
-        }
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ICommand FavoriteCommand { get; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomepageViewModel"/> class.
+        /// </summary>
+        public HomepageViewModel()
+        {
+        }
 
-        public bool CanModifyFavorites => this.authenticationService.IsUserLoggedIn() == false;
-
-        public ICommand SearchCommand { get; }
-
+        /// <summary>
+        /// Gets or sets the collection of filtered stocks.
+        /// </summary>
         public ObservableCollection<HomepageStock> FilteredStocks
         {
             get => this.filteredStocks;
-            private set
-            {
-                this.filteredStocks = value;
-                this.OnPropertyChanged();
-            }
+            set => this.SetProperty(ref this.filteredStocks, value);
         }
 
+        /// <summary>
+        /// Gets or sets the collection of filtered favorite stocks.
+        /// </summary>
         public ObservableCollection<HomepageStock> FilteredFavoriteStocks
         {
             get => this.filteredFavoriteStocks;
-            private set
-            {
-                this.filteredFavoriteStocks = value;
-                this.OnPropertyChanged();
-            }
+            set => this.SetProperty(ref this.filteredFavoriteStocks, value);
         }
 
+        /// <summary>
+        /// Gets or sets the search query for filtering stocks.
+        /// </summary>
         public string SearchQuery
         {
             get => this.searchQuery;
-            set
-            {
-                this.searchQuery = value;
-                this.OnPropertyChanged();
-            }
+            set => this.SetProperty(ref this.searchQuery, value);
         }
 
+        /// <summary>
+        /// Gets or sets the selected sort option.
+        /// </summary>
         public string SelectedSortOption
         {
             get => this.selectedSortOption;
-            set
-            {
-                this.selectedSortOption = value;
-                this.OnPropertyChanged();
-            }
+            set => this.SetProperty(ref this.selectedSortOption, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the current user is a guest.
+        /// </summary>
         public bool IsGuestUser
         {
             get => this.isGuestUser;
-            private set
-            {
-                this.isGuestUser = value;
-                this.OnPropertyChanged();
-            }
+            set => this.SetProperty(ref this.isGuestUser, value);
         }
 
-        public async Task LoadStocksAsync()
+        /// <summary>
+        /// Gets or sets a value indicating whether data is currently being loaded.
+        /// </summary>
+        public bool IsLoading
         {
-            var stocks = await this.stockService.GetFilteredAndSortedStocksAsync(this.SearchQuery, this.SelectedSortOption, false);
-            this.filteredStocks.Clear();
-            stocks.ForEach(this.filteredStocks.Add);
-
-            var favoriteStocks = await this.stockService.GetFilteredAndSortedStocksAsync(this.SearchQuery, this.SelectedSortOption, true);
-            this.filteredFavoriteStocks.Clear();
-            favoriteStocks.ForEach(this.filteredFavoriteStocks.Add);
+            get => this.isLoading;
+            set => this.SetProperty(ref this.isLoading, value);
         }
 
-        private async Task ApplyFilterAndSortAsync()
+        /// <summary>
+        /// Gets or sets the error message to display to the user.
+        /// </summary>
+        public string ErrorMessage
         {
-            var stocks = await this.stockService.GetFilteredAndSortedStocksAsync(this.SearchQuery, this.SelectedSortOption, false);
-            this.FilteredStocks.Clear();
-            foreach (var stock in stocks)
-            {
-                this.FilteredStocks.Add(stock);
-            }
-
-            var favoriteStocks = await this.stockService.GetFilteredAndSortedStocksAsync(this.SearchQuery, this.SelectedSortOption, true);
-            this.FilteredFavoriteStocks.Clear();
-            foreach (var stock in favoriteStocks)
-            {
-                this.FilteredFavoriteStocks.Add(stock);
-            }
+            get => this.errorMessage;
+            set => this.SetProperty(ref this.errorMessage, value);
         }
 
-        private async Task ToggleFavoriteAsync(HomepageStock? stock)
+        /// <summary>
+        /// Sets the property value and raises the PropertyChanged event if the value has changed.
+        /// </summary>
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="storage">Reference to the backing field.</param>
+        /// <param name="value">The new value to set.</param>
+        /// <param name="propertyName">The name of the property (automatically provided by the compiler).</param>
+        /// <returns>True if the property value was changed; otherwise, false.</returns>
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
         {
-            if (stock == null)
+            if (Equals(storage, value))
             {
-                return;
+                return false;
             }
 
-            if (stock.IsFavorite)
-            {
-                await this.stockService.RemoveFromFavoritesAsync(stock);
-            }
-            else
-            {
-                await this.stockService.AddToFavoritesAsync(stock);
-            }
-
-            await this.ApplyFilterAndSortAsync();
+            storage = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        /// <summary>
+        /// Raises the PropertyChanged event for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

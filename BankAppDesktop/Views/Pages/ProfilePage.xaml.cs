@@ -1,12 +1,11 @@
 namespace StockApp.Views.Pages
 {
+    using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.Commands;
     using StockApp.ViewModels;
     using System;
-    using System.Windows.Input;
     using Windows.UI.Popups;
 
     /// <summary>
@@ -15,24 +14,21 @@ namespace StockApp.Views.Pages
     public sealed partial class ProfilePage : Page
     {
         private readonly ProfilePageViewModel viewModel;
+        private readonly IAuthenticationService authenticationService;
 
         public ProfilePageViewModel ViewModel => this.viewModel;
-
-        /// <summary>
-        /// Gets the command for updating the profile.
-        /// </summary>
-        private ICommand UpdateProfileButton { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfilePage"/> class.
         /// </summary>
         /// <param name="viewModel">The view model for the profile page.</param>
-        public ProfilePage(ProfilePageViewModel viewModel)
+        /// <param name="authenticationService">The authentication service.</param>
+        public ProfilePage(ProfilePageViewModel viewModel, IAuthenticationService authenticationService)
         {
             this.viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             this.DataContext = this.viewModel;
             this.InitializeComponent();
-            this.UpdateProfileButton = new StockNewsRelayCommand(() => this.GoToUpdatePage());
             this.Loaded += this.OnLoaded;
         }
 
@@ -61,6 +57,16 @@ namespace StockApp.Views.Pages
             dialog.DefaultCommandIndex = 0;
             dialog.CancelCommandIndex = 0;
             _ = dialog.ShowAsync();
+        }
+
+        /// <summary>
+        /// Handles the update profile button click event.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void UpdateProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            GoToUpdatePage();
         }
 
         /// <summary>
@@ -97,6 +103,27 @@ namespace StockApp.Views.Pages
             stockPage.PreviousPage = this;
             stockPage.ViewModel.SelectedStock = this.viewModel.SelectedStock;
             App.MainAppWindow!.MainAppFrame.Content = stockPage;
+        }
+
+        /// <summary>
+        /// Handles the logout button click event.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private async void LogOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await this.authenticationService.LogoutAsync();
+
+                // Navigate to login page
+                var loginPage = App.Host.Services.GetService<LoginPage>() ?? throw new InvalidOperationException("LoginPage is not available");
+                App.MainAppWindow!.MainAppFrame.Content = loginPage;
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"Error during logout: {ex.Message}");
+            }
         }
     }
 }

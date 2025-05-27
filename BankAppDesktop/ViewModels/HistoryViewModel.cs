@@ -1,95 +1,106 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
 
-    public partial class HistoryViewModel(IHistoryService historyService) : INotifyPropertyChanged
+    /// <summary>
+    /// ViewModel for credit score history display, containing only data properties.
+    /// </summary>
+    public partial class HistoryViewModel : INotifyPropertyChanged
     {
-        private readonly IHistoryService _historyService = historyService ?? throw new ArgumentNullException(nameof(historyService));
-        private List<CreditScoreHistory> _weeklyHistory = [];
-        private List<CreditScoreHistory> _monthlyHistory = [];
-        private List<CreditScoreHistory> _yearlyHistory = [];
-        private string _userCnp = string.Empty;
+        private List<CreditScoreHistory> weeklyHistory = [];
+        private List<CreditScoreHistory> monthlyHistory = [];
+        private List<CreditScoreHistory> yearlyHistory = [];
+        private string userCnp = string.Empty;
+        private bool isLoading;
+        private string errorMessage = string.Empty;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        /// <summary>
+        /// Gets or sets the user's CNP identifier.
+        /// </summary>
         public string UserCnp
         {
-            get => this._userCnp;
-            set
-            {
-                if (this._userCnp != value)
-                {
-                    this._userCnp = value;
-                    this.LoadHistory();
-                    this.OnPropertyChanged();
-                }
-            }
+            get => this.userCnp;
+            set => this.SetProperty(ref this.userCnp, value);
         }
 
+        /// <summary>
+        /// Gets or sets the weekly credit score history.
+        /// </summary>
         public List<CreditScoreHistory> WeeklyHistory
         {
-            get => this._weeklyHistory;
-            private set
-            {
-                if (this._weeklyHistory != value)
-                {
-                    this._weeklyHistory = value;
-                    this.OnPropertyChanged();
-                }
-            }
+            get => this.weeklyHistory;
+            set => this.SetProperty(ref this.weeklyHistory, value);
         }
 
+        /// <summary>
+        /// Gets or sets the monthly credit score history.
+        /// </summary>
         public List<CreditScoreHistory> MonthlyHistory
         {
-            get => this._monthlyHistory;
-            private set
-            {
-                if (this._monthlyHistory != value)
-                {
-                    this._monthlyHistory = value;
-                    this.OnPropertyChanged();
-                }
-            }
+            get => this.monthlyHistory;
+            set => this.SetProperty(ref this.monthlyHistory, value);
         }
 
+        /// <summary>
+        /// Gets or sets the yearly credit score history.
+        /// </summary>
         public List<CreditScoreHistory> YearlyHistory
         {
-            get => this._yearlyHistory;
-            private set
-            {
-                if (this._yearlyHistory != value)
-                {
-                    this._yearlyHistory = value;
-                    this.OnPropertyChanged();
-                }
-            }
+            get => this.yearlyHistory;
+            set => this.SetProperty(ref this.yearlyHistory, value);
         }
 
-        private async void LoadHistory()
+        /// <summary>
+        /// Gets or sets a value indicating whether data is being loaded.
+        /// </summary>
+        public bool IsLoading
         {
-            if (string.IsNullOrWhiteSpace(this._userCnp))
-            {
-                return;
-            }
-
-            try
-            {
-                this.WeeklyHistory = await this._historyService.GetHistoryWeeklyAsync(this._userCnp);
-                this.MonthlyHistory = await this._historyService.GetHistoryMonthlyAsync(this._userCnp);
-                this.YearlyHistory = await this._historyService.GetHistoryYearlyAsync(this._userCnp);
-            }
-            catch (Exception ex)
-            {
-                // Handle error appropriately
-                System.Diagnostics.Debug.WriteLine($"Error loading history: {ex.Message}");
-            }
+            get => this.isLoading;
+            set => this.SetProperty(ref this.isLoading, value);
         }
 
+        /// <summary>
+        /// Gets or sets the current error message.
+        /// </summary>
+        public string ErrorMessage
+        {
+            get => this.errorMessage;
+            set => this.SetProperty(ref this.errorMessage, value);
+        }
+
+        public HistoryViewModel()
+        {
+        }
+
+        /// <summary>
+        /// Sets the property value and raises the PropertyChanged event if the value has changed.
+        /// </summary>
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="storage">Reference to the backing field.</param>
+        /// <param name="value">The new value to set.</param>
+        /// <param name="propertyName">The name of the property (automatically provided by the compiler).</param>
+        /// <returns>True if the property value was changed; otherwise, false.</returns>
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (Equals(storage, value))
+            {
+                return false;
+            }
+
+            storage = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        /// <summary>
+        /// Raises the PropertyChanged event for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

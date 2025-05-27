@@ -22,14 +22,14 @@
              <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right">
                  <Button
                      Content="Request a New Loan"
-                     Command="{Binding ShowCreateLoanDialogCommand}"
+                     Click="RequestNewLoanButton_Click"
                      HorizontalAlignment="Right"
                      VerticalAlignment="Top"
                      Background="#539BF5"
                      Margin="0,0,10,0"/>
                  <Button
                      Content="Refresh"
-                     Command="{Binding LoadLoansCommand}"
+                     Click="RefreshButton_Click"
                      HorizontalAlignment="Right"
                      VerticalAlignment="Top"/>
              </StackPanel>

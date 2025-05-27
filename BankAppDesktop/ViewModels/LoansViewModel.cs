@@ -1,61 +1,61 @@
 ﻿namespace StockApp.ViewModels
 {
-    using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
-    using StockApp.Commands;
     using Common.Models;
-    using Common.Services;
 
-    public class LoansViewModel
+    /// <summary>
+    /// ViewModel for loans, containing only data properties.
+    /// </summary>
+    public class LoansViewModel : ViewModelBase
     {
-        private readonly ILoanService loansService;
+        private ObservableCollection<Loan> loans = [];
+        private bool isLoading = false;
 
-        public event EventHandler? LoansUpdated;
-        public event EventHandler? ShowCreateLoanDialog;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ObservableCollection<Loan> Loans { get; set; } = [];
-
-        public ICommand LoadLoansCommand { get; private set; }
-        public ICommand OnLoansUpdatedCommand { get; private set; }
-        public ICommand ShowCreateLoanDialogCommand { get; private set; }
-
-        public bool IsLoading { get; private set; } = false;
-
-        public LoansViewModel(ILoanService loansService)
+        public ObservableCollection<Loan> Loans
         {
-            this.loansService = loansService;
-            this.LoadLoansCommand = new RelayCommand(async sender => await this.LoadLoans(), sender => !this.IsLoading);
-            this.OnLoansUpdatedCommand = new RelayCommand(async sender => await this.LoadLoans(), sender => !this.IsLoading);
-            this.ShowCreateLoanDialogCommand = new RelayCommand(sender => this.OnShowCreateLoanDialog());
+            get => this.loans;
+            set => this.SetProperty(ref this.loans, value);
         }
 
-        private void OnShowCreateLoanDialog()
+        public bool IsLoading
         {
-            this.ShowCreateLoanDialog?.Invoke(this, EventArgs.Empty);
+            get => this.isLoading;
+            set => this.SetProperty(ref this.isLoading, value);
         }
 
-        private async Task LoadLoans()
+        public LoansViewModel()
         {
-            this.IsLoading = true;
-            this.Loans.Clear();
-            try
+        }
+
+        /// <summary>
+        /// Sets the property value and raises the PropertyChanged event if the value has changed.
+        /// </summary>
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="storage">Reference to the backing field.</param>
+        /// <param name="value">The new value to set.</param>
+        /// <param name="propertyName">The name of the property (automatically provided by the compiler).</param>
+        /// <returns>True if the property value was changed; otherwise, false.</returns>
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (Equals(storage, value))
             {
-                List<Loan> loans = await this.loansService.GetLoansAsync();
-                loans.ForEach(this.Loans.Add);
-                this.LoansUpdated?.Invoke(this, EventArgs.Empty);
+                return false;
             }
-            catch (Exception exception)
-            {
-                Console.WriteLine($"Error - LoadLoans: {exception.Message}");
-                throw;
-            }
-            finally
-            {
-                this.IsLoading = false;
-            }
+
+            storage = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
+        /// <summary>
+        /// Raises the PropertyChanged event for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,60 +1,55 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
-    using System;
     using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
 
-    public class LoanRequestViewModel(ILoanRequestService loanService)
+    /// <summary>
+    /// ViewModel for loan requests display, containing only data properties.
+    /// </summary>
+    public class LoanRequestViewModel : ViewModelBase
     {
-        private readonly ILoanRequestService _loanRequestService = loanService;
+        private ObservableCollection<LoanRequest> loanRequests = [];
+        private bool isLoading;
+        private string errorMessage = string.Empty;
+        private string suggestion = string.Empty;
 
-        public ObservableCollection<LoanRequest> LoanRequests { get; set; } = [];
-
-        public bool IsLoading { get; private set; }
-
-        public string ErrorMessage { get; private set; } = string.Empty;
-
-        public async Task LoadLoanRequestsAsync()
+        /// <summary>
+        /// Gets or sets the collection of loan requests.
+        /// </summary>
+        public ObservableCollection<LoanRequest> LoanRequests
         {
-            this.IsLoading = true;
-            this.ErrorMessage = string.Empty;
-            this.LoanRequests.Clear();
-
-            try
-            {
-                var requests = await this._loanRequestService.GetLoanRequests();
-                foreach (var request in requests)
-                {
-                    this.LoanRequests.Add(request);
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ErrorMessage = $"Failed to load loan requests: {ex.Message}";
-            }
-            finally
-            {
-                this.IsLoading = false;
-            }
+            get => loanRequests;
+            set => SetProperty(ref loanRequests, value);
         }
 
-        public async Task<string> GetSuggestionAsync(LoanRequest loanRequest)
+        /// <summary>
+        /// Gets or sets a value indicating whether data is being loaded.
+        /// </summary>
+        public bool IsLoading
         {
-            if (loanRequest == null)
-            {
-                return "Invalid loan request.";
-            }
+            get => isLoading;
+            set => SetProperty(ref isLoading, value);
+        }
 
-            try
-            {
-                return await this._loanRequestService.GiveSuggestion(loanRequest);
-            }
-            catch (Exception ex)
-            {
-                return $"Failed to get suggestion: {ex.Message}";
-            }
+        /// <summary>
+        /// Gets or sets the current error message.
+        /// </summary>
+        public string ErrorMessage
+        {
+            get => errorMessage;
+            set => SetProperty(ref errorMessage, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the suggestion text for loan requests.
+        /// </summary>
+        public string Suggestion
+        {
+            get => suggestion;
+            set => SetProperty(ref suggestion, value);
+        }
+        public LoanRequestViewModel()
+        {
         }
     }
 }

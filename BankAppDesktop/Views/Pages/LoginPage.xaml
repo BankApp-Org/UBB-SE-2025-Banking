@@ -24,12 +24,12 @@
                        Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
             
             <Button Content="Login" HorizontalAlignment="Stretch" Margin="0,0,0,15"
-                    Command="{Binding LoginCommand}"
-                    IsEnabled="{Binding LoginCommand.CanExecute}"/>
+                    Click="LoginButton_Click"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource BoolToInverseBoolConverter}}"/>
             
             <Button Content="Create profile" HorizontalAlignment="Stretch" Margin="0,0,0,15"
-                    Command="{Binding CreateProfileCommand}"
-                    IsEnabled="{Binding CreateProfileCommand.CanExecute}"/>
+                    Click="CreateProfileButton_Click"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource BoolToInverseBoolConverter}}"/>
             
             <ProgressRing IsActive="{Binding IsLoading}" Width="20" Height="20" Margin="0,10,0,0"/>
         </StackPanel>

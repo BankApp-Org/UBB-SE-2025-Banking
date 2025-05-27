@@ -1,33 +1,29 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
-    using System;
     using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// ViewModel for managing user activities, providing data binding and command handling for activity-related operations.
+    /// ViewModel for managing user activities, containing only data properties.
     /// </summary>
-    /// <remarks>
-    /// Initializes a new instance of the <see cref="ActivityViewModel"/> class.
-    /// </remarks>
-    /// <param name="activityService">The stockService for managing activities.</param>
-    public partial class ActivityViewModel(IActivityService activityService) : ViewModelBase
+    public partial class ActivityViewModel : INotifyPropertyChanged
     {
-        private readonly IActivityService _activityService = activityService ?? throw new ArgumentNullException(nameof(activityService));
-        private ObservableCollection<ActivityLog> _activities = [];
-        private string _userCnp = string.Empty;
-        private bool _isLoading;
-        private string _errorMessage = string.Empty;
+        private ObservableCollection<ActivityLog> activities = [];
+        private string userCnp = string.Empty;
+        private bool isLoading;
+        private string errorMessage = string.Empty;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Gets or sets the collection of activities.
         /// </summary>
         public ObservableCollection<ActivityLog> Activities
         {
-            get => _activities;
-            set => SetProperty(ref _activities, value);
+            get => activities;
+            set => SetProperty(ref activities, value);
         }
 
         /// <summary>
@@ -35,14 +31,8 @@
         /// </summary>
         public string UserCnp
         {
-            get => _userCnp;
-            set
-            {
-                if (SetProperty(ref _userCnp, value))
-                {
-                    _ = LoadActivitiesAsync();
-                }
-            }
+            get => userCnp;
+            set => SetProperty(ref userCnp, value);
         }
 
         /// <summary>
@@ -50,8 +40,8 @@
         /// </summary>
         public bool IsLoading
         {
-            get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
+            get => isLoading;
+            set => SetProperty(ref isLoading, value);
         }
 
         /// <summary>
@@ -59,72 +49,41 @@
         /// </summary>
         public string ErrorMessage
         {
-            get => _errorMessage;
-            set => SetProperty(ref _errorMessage, value);
+            get => errorMessage;
+            set => SetProperty(ref errorMessage, value);
+        }
+
+        public ActivityViewModel()
+        {
         }
 
         /// <summary>
-        /// Loads activities for the current user asynchronously.
+        /// Sets the property value and raises the PropertyChanged event if the value has changed.
         /// </summary>
-        public async Task LoadActivitiesAsync()
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="storage">Reference to the backing field.</param>
+        /// <param name="value">The new value to set.</param>
+        /// <param name="propertyName">The name of the property (automatically provided by the compiler).</param>
+        /// <returns>True if the property value was changed; otherwise, false.</returns>
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
         {
-            if (string.IsNullOrWhiteSpace(_userCnp))
+            if (Equals(storage, value))
             {
-                return;
+                return false;
             }
 
-            try
-            {
-                IsLoading = true;
-                ErrorMessage = string.Empty;
-
-                var activities = await _activityService.GetActivityForUser(_userCnp);
-                Activities.Clear();
-                foreach (var activity in activities)
-                {
-                    Activities.Add(activity);
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = $"Error loading activities: {ex.Message}";
-            }
-            finally
-            {
-                IsLoading = false;
-            }
+            storage = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
         }
 
         /// <summary>
-        /// Adds a new activity asynchronously.
+        /// Raises the PropertyChanged event for the specified property.
         /// </summary>
-        /// <param name="activityName">The name of the activity.</param>
-        /// <param name="amount">The amount associated with the activity.</param>
-        /// <param name="details">Additional details about the activity.</param>
-        public async Task AddActivityAsync(string activityName, int amount, string details)
+        /// <param name="propertyName">The name of the property that changed.</param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            if (string.IsNullOrWhiteSpace(_userCnp))
-            {
-                ErrorMessage = "User CNP is not set";
-                return;
-            }
-
-            try
-            {
-                IsLoading = true;
-                ErrorMessage = string.Empty;
-
-                var activity = await _activityService.AddActivity(_userCnp, activityName, amount, details);
-                Activities.Insert(0, activity); // Add to the beginning of the collection
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = $"Error adding activity: {ex.Message}";
-            }
-            finally
-            {
-                IsLoading = false;
-            }
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,40 +1,23 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
-    using System;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
 
-    public partial class UserViewModel(IUserService userServices) : INotifyPropertyChanged
+    /// <summary>
+    /// ViewModel for users, containing only data properties.
+    /// </summary>
+    public class UserViewModel : ViewModelBase
     {
-        private readonly IUserService userService = userServices ?? throw new ArgumentNullException(nameof(userServices));
+        private ObservableCollection<User> users = [];
 
-        public ObservableCollection<User> Users { get; set; } = [];
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        public ObservableCollection<User> Users
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get => this.users;
+            set => this.SetProperty(ref this.users, value);
         }
 
-        public async Task LoadUsers()
+        public UserViewModel()
         {
-            try
-            {
-                var users = await this.userService.GetUsers();
-                foreach (var user in users)
-                {
-                    this.Users.Add(user);
-                }
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine($"Error: {exception.Message}");
-            }
         }
     }
 }

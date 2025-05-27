@@ -62,7 +62,7 @@
             <!-- Corrected IsAdmin binding -->
 
             <Button Content="Create Stock"
-                Command="{Binding CreateStockCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                Click="CreateStockButton_Click"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Padding="12,6"
@@ -70,8 +70,8 @@
                 Foreground="Black"
                 FontSize="16"
                 CornerRadius="5"
+                IsEnabled="{Binding IsAdmin}"
                     />
-            <!-- Corrected IsAdmin binding -->
 
             <TextBlock Text="{Binding Message}" 
                 Foreground="Green" 

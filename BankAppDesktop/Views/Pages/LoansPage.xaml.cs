@@ -7,6 +7,7 @@ namespace StockApp.Views.Pages
     using StockApp.ViewModels;
     using StockApp.Views.Components;
     using System;
+    using System.Threading.Tasks;
 
     public sealed partial class LoansPage : Page
     {
@@ -28,52 +29,104 @@ namespace StockApp.Views.Pages
             // Find the NoLoansMessage TextBlock
             this.noLoansMessage = this.FindName("NoLoansMessage") as TextBlock;
 
-            // Subscribe to ViewModel events
-            this.viewModel.ShowCreateLoanDialog += ViewModel_ShowCreateLoanDialog;
-            this.viewModel.LoansUpdated += ViewModel_LoansUpdated;
-
-            this.Loaded += (s, e) =>
-            {
-                if (viewModel.LoadLoansCommand.CanExecute(null))
-                {
-                    viewModel.LoadLoansCommand.Execute(null);
-                }
-            };
+            this.Loaded += LoansPage_Loaded;
         }
 
-        private void ViewModel_LoansUpdated(object? sender, EventArgs e)
+        private async void LoansPage_Loaded(object sender, RoutedEventArgs e)
         {
-            // Show or hide the no loans message based on the count
-            if (this.noLoansMessage != null)
+            await LoadLoansAsync();
+        }
+
+        private async Task LoadLoansAsync()
+        {
+            try
             {
-                this.noLoansMessage.Visibility = viewModel.Loans.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+                this.viewModel.IsLoading = true;
+
+                var loans = await this.loanService.GetUserLoansAsync(string.Empty); // Current user's loans
+                this.viewModel.Loans.Clear();
+
+                foreach (var loan in loans)
+                {
+                    this.viewModel.Loans.Add(loan);
+                }
+
+                // Update the no loans message visibility
+                if (this.noLoansMessage != null)
+                {
+                    this.noLoansMessage.Visibility = this.viewModel.Loans.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle error - could show dialog or update ViewModel with error message
+                System.Diagnostics.Debug.WriteLine($"Error loading loans: {ex.Message}");
+
+                // Show error dialog to user
+                var dialog = new ContentDialog
+                {
+                    XamlRoot = App.MainAppWindow!.MainAppFrame.XamlRoot,
+                    Title = "Error",
+                    Content = $"Failed to load loans: {ex.Message}",
+                    CloseButtonText = "OK"
+                };
+                await dialog.ShowAsync();
+            }
+            finally
+            {
+                this.viewModel.IsLoading = false;
             }
         }
 
-        private async void ViewModel_ShowCreateLoanDialog(object? sender, EventArgs e)
+        private async void RequestNewLoanButton_Click(object sender, RoutedEventArgs e)
         {
-            // Create a new dialog instance each time to ensure clean state
-            // Create the dialog content
-            createLoanComponent = App.Host.Services.GetRequiredService<CreateLoanDialog>();
-            createLoanComponent.LoanRequestSubmitted += CreateLoanComponent_LoanRequestSubmitted;
-            createLoanComponent.DialogClosed += CreateLoanComponent_DialogClosed;
+            await ShowCreateLoanDialogAsync();
+        }
 
-            // Create the dialog
-            contentDialog = new ContentDialog
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadLoansAsync();
+        }
+
+        private async Task ShowCreateLoanDialogAsync()
+        {
+            try
             {
-                XamlRoot = App.MainAppWindow!.MainAppFrame.XamlRoot,
-                Title = "Create Loan Request",
-                Content = createLoanComponent,
-                CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary,
-                PrimaryButtonText = "Submit Request",
-                IsPrimaryButtonEnabled = true
-            };
+                // Create a new dialog instance each time to ensure clean state
+                // Create the dialog content
+                createLoanComponent = App.Host.Services.GetRequiredService<CreateLoanDialog>();
+                createLoanComponent.LoanRequestSubmitted += CreateLoanComponent_LoanRequestSubmitted;
+                createLoanComponent.DialogClosed += CreateLoanComponent_DialogClosed;
 
-            contentDialog.PrimaryButtonClick += ContentDialog_PrimaryButtonClick;
+                // Create the dialog
+                contentDialog = new ContentDialog
+                {
+                    XamlRoot = App.MainAppWindow!.MainAppFrame.XamlRoot,
+                    Title = "Create Loan Request",
+                    Content = createLoanComponent,
+                    CloseButtonText = "Cancel",
+                    DefaultButton = ContentDialogButton.Primary,
+                    PrimaryButtonText = "Submit Request",
+                    IsPrimaryButtonEnabled = true
+                };
 
-            // Show the dialog
-            await contentDialog.ShowAsync();
+                contentDialog.PrimaryButtonClick += ContentDialog_PrimaryButtonClick;
+
+                // Show the dialog
+                await contentDialog.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle error
+                var errorDialog = new ContentDialog
+                {
+                    XamlRoot = App.MainAppWindow!.MainAppFrame.XamlRoot,
+                    Title = "Error",
+                    Content = $"Failed to open loan request dialog: {ex.Message}",
+                    CloseButtonText = "OK"
+                };
+                await errorDialog.ShowAsync();
+            }
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -120,12 +173,12 @@ namespace StockApp.Views.Pages
         private void CreateLoanComponent_LoanRequestSubmitted(object? sender, Common.Models.LoanRequest e)
         {
             // Refresh the loans list
-            this.viewModel.OnLoansUpdatedCommand.Execute(null);
+            _ = LoadLoansAsync();
         }
 
         private void LoanComponent_LoanUpdated(object sender, System.EventArgs e)
         {
-            this.viewModel.OnLoansUpdatedCommand.Execute(null);
+            _ = LoadLoansAsync();
         }
     }
 }

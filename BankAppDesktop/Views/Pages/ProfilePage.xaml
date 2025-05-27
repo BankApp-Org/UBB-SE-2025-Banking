@@ -16,9 +16,9 @@
                     <Run Text="{Binding UserName}" FontWeight="Bold" />
                 </TextBlock>
                 
-                <Button Command="{x:Bind UpdateProfileButton}"
+                <Button Click="UpdateProfileButton_Click"
                         Content="Update Profile" Background="#FF69B4" CornerRadius="10" Foreground="#FFF5EE" Padding="10" />
-                <Button Command="{Binding LogOutCommand}"
+                <Button Click="LogOutButton_Click"
                         Content="Log out" Background="#FF69B4" CornerRadius="10" Foreground="#FFF5EE" Padding="10" />
             </StackPanel>
 

@@ -1,73 +1,45 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
-    using System;
     using System.Collections.ObjectModel;
-    using System.Threading.Tasks;
 
-    public class InvestmentsViewModel(IInvestmentsService investmentsService)
+    /// <summary>
+    /// ViewModel for investments display, containing only data properties.
+    /// </summary>
+    public class InvestmentsViewModel : ViewModelBase
     {
-        private readonly IInvestmentsService _investmentsService = investmentsService ?? throw new ArgumentNullException(nameof(investmentsService));
+        private ObservableCollection<InvestmentPortfolio> usersPortfolio = [];
+        private bool isLoading;
+        private string errorMessage = string.Empty;
 
-        public ObservableCollection<InvestmentPortfolio> UsersPortofolio { get; set; } = [];
-
-        public async Task CalculateAndUpdateRiskScoreAsync()
+        /// <summary>
+        /// Gets or sets the collection of user portfolios.
+        /// </summary>
+        public ObservableCollection<InvestmentPortfolio> UsersPortofolio
         {
-            try
-            {
-                await _investmentsService.CalculateAndUpdateRiskScoreAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error calculating risk score: {ex.Message}");
-                throw;
-            }
+            get => usersPortfolio;
+            set => SetProperty(ref usersPortfolio, value);
         }
 
-        public async Task CalculateAndUpdateROIAsync()
+        /// <summary>
+        /// Gets or sets a value indicating whether data is being loaded.
+        /// </summary>
+        public bool IsLoading
         {
-            try
-            {
-                await _investmentsService.CalculateAndUpdateROIAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error calculating ROI: {ex.Message}");
-                throw;
-            }
+            get => isLoading;
+            set => SetProperty(ref isLoading, value);
         }
 
-        public async Task CreditScoreUpdateInvestmentsBasedAsync()
+        /// <summary>
+        /// Gets or sets the current error message.
+        /// </summary>
+        public string ErrorMessage
         {
-            try
-            {
-                await _investmentsService.CreditScoreUpdateInvestmentsBasedAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error updating credit score: {ex.Message}");
-                throw;
-            }
+            get => errorMessage;
+            set => SetProperty(ref errorMessage, value);
         }
-
-        public async Task LoadPortfolioSummaryAsync()
+        public InvestmentsViewModel()
         {
-            try
-            {
-                UsersPortofolio.Clear();
-                var portfoliosSummary = await _investmentsService.GetPortfolioSummaryAsync();
-
-                foreach (var userPortfolio in portfoliosSummary)
-                {
-                    UsersPortofolio.Add(userPortfolio);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading portfolio summary: {ex.Message}");
-                throw;
-            }
         }
     }
 }

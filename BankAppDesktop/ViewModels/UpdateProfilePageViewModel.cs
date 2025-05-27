@@ -1,123 +1,148 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
+    using Microsoft.UI.Xaml.Media.Imaging;
     using System;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// ViewModel for updating user profile details including username, image, description, and visibility.
+    /// Contains only data properties and UI state management - business logic handled in code-behind.
     /// </summary>
-    /// <remarks>
-    /// Initializes a new instance of the <see cref="UpdateProfilePageViewModel"/> class with a specified stockService.
-    /// </remarks>
-    /// <param name="service">Service used to retrieve and update profile information.</param>
-    public class UpdateProfilePageViewModel(IStockService stockService, IUserService userService, IAuthenticationService authenticationService)
+    public class UpdateProfilePageViewModel : INotifyPropertyChanged
     {
-        private readonly IStockService stockService = stockService ?? throw new ArgumentNullException(nameof(stockService));
-        private readonly IUserService userService = userService ?? throw new ArgumentNullException(nameof(userService));
-        private readonly IAuthenticationService authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+        private string username = string.Empty;
+        private string image = string.Empty;
+        private string description = string.Empty;
+        private bool isHidden = false;
+        private bool isAdmin = false;
+        private List<Stock> userStocks = [];
+        private BitmapImage? imageSource;
+        private bool isLoading = false;
+        private string errorMessage = string.Empty;
 
         /// <summary>
-        /// Gets the URL of the user's profile image.
+        /// Occurs when a property value changes.
         /// </summary>
-        /// <returns>The image URL as a string.</returns>
-        public async Task<string> GetImage()
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UpdateProfilePageViewModel"/> class.
+        /// </summary>
+        public UpdateProfilePageViewModel()
         {
-            // Inline: delegate image retrieval to service
-            return (await this.userService.GetCurrentUserAsync()).Image;
         }
 
         /// <summary>
-        /// Gets the username of the current user.
+        /// Gets or sets the username.
         /// </summary>
-        /// <returns>The username as a string.</returns>
-        public async Task<string> GetUsername()
+        public string Username
         {
-            // Inline: delegate username retrieval to service
-            return (await this.userService.GetCurrentUserAsync()).UserName ?? throw new ArgumentNullException("UserName", "Username cannot be null.");
+            get => this.username;
+            set => this.SetProperty(ref this.username, value);
         }
 
         /// <summary>
-        /// Gets the description text for the current user.
+        /// Gets or sets the profile image URL.
         /// </summary>
-        /// <returns>The description as a string.</returns>
-        public async Task<string> GetDescription()
+        public string Image
         {
-            // Inline: delegate description retrieval to service
-            return (await this.userService.GetCurrentUserAsync()).Description;
+            get => this.image;
+            set => this.SetProperty(ref this.image, value);
         }
 
         /// <summary>
-        /// Determines whether the user's profile is hidden.
+        /// Gets or sets the profile image source for UI binding.
         /// </summary>
-        /// <returns><c>true</c> if hidden; otherwise, <c>false</c>.</returns>
-        public async Task<bool> IsHidden()
+        public BitmapImage? ImageSource
         {
-            // Inline: delegate visibility check to service
-            return (await this.userService.GetCurrentUserAsync()).IsHidden;
+            get => this.imageSource;
+            set => this.SetProperty(ref this.imageSource, value);
         }
 
         /// <summary>
-        /// Determines whether the current user has administrative privileges.
+        /// Gets or sets the user description.
         /// </summary>
-        /// <returns><c>true</c> if admin; otherwise, <c>false</c>.</returns>
-        public bool IsAdmin()
+        public string Description
         {
-            return this.authenticationService.IsUserAdmin();
+            get => this.description;
+            set => this.SetProperty(ref this.description, value);
         }
 
         /// <summary>
-        /// Gets the list of stocks associated with the user.
+        /// Gets or sets a value indicating whether the profile is hidden.
         /// </summary>
-        /// <returns>A list of <see cref="Stock"/> objects.</returns>
-        public async Task<List<Stock>> GetUserStocks()
+        public bool IsHidden
         {
-            return await this.stockService.UserStocksAsync(this.authenticationService.GetUserCNP());
+            get => this.isHidden;
+            set => this.SetProperty(ref this.isHidden, value);
         }
 
         /// <summary>
-        /// Updates all user profile fields at once.
+        /// Gets or sets a value indicating whether the user has admin privileges.
         /// </summary>
-        /// <param name="newUsername">The new username.</param>
-        /// <param name="newImage">The new profile image URL.</param>
-        /// <param name="newDescription">The new description text.</param>
-        /// <param name="newHidden">New hidden status for the profile.</param>
-        public async Task UpdateAllAsync(string newUsername, string newImage, string newDescription, bool newHidden)
+        public bool IsAdmin
         {
-            // TODO: Validate inputs (e.g., non-null, length constraints)
-            // FIXME: Consider handling exceptions from service to provide user feedback
+            get => this.isAdmin;
+            set => this.SetProperty(ref this.isAdmin, value);
+        }
 
-            // Get current user to maintain other properties
-            var currentUser = await this.userService.GetCurrentUserAsync();
+        /// <summary>
+        /// Gets or sets the user's stock portfolio.
+        /// </summary>
+        public List<Stock> UserStocks
+        {
+            get => this.userStocks;
+            set => this.SetProperty(ref this.userStocks, value);
+        }
 
-            // Create an updated user object with the new values
-            var updatedUser = new User
+        /// <summary>
+        /// Gets or sets a value indicating whether the view model is currently loading data.
+        /// </summary>
+        public bool IsLoading
+        {
+            get => this.isLoading;
+            set => this.SetProperty(ref this.isLoading, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the current error message to display to the user.
+        /// </summary>
+        public string ErrorMessage
+        {
+            get => this.errorMessage;
+            set => this.SetProperty(ref this.errorMessage, value);
+        }
+
+        /// <summary>
+        /// Sets the property and raises the PropertyChanged event if the value has changed.
+        /// </summary>
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="field">The field to set.</param>
+        /// <param name="value">The new value.</param>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <returns>True if the property was set; otherwise, false.</returns>
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (Equals(field, value))
             {
-                UserName = newUsername,
-                Image = newImage,
-                Description = newDescription,
-                IsHidden = newHidden,
-                // Maintain other properties from current user
-                Email = currentUser.Email,
-                PhoneNumber = currentUser.PhoneNumber,
-                FirstName = currentUser.FirstName,
-                LastName = currentUser.LastName,
-                Birthday = currentUser.Birthday
-            };
+                return false;
+            }
 
-            await this.userService.UpdateUserAsync(updatedUser);
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
         }
 
         /// <summary>
-        /// Updates only the administrative mode of the user.
+        /// Raises the <see cref="PropertyChanged"/> event for the specified property.
         /// </summary>
-        /// <param name="newIsAdmin"><c>true</c> to grant admin; otherwise, <c>false</c>.</param>
-        public async Task UpdateAdminModeAsync(bool newIsAdmin)
+        /// <param name="propertyName">Name of the property changed.</param>
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            // Inline: delegate admin mode toggle to service
-            await this.userService.UpdateIsAdminAsync(newIsAdmin);
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

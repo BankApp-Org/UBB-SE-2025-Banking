@@ -1,36 +1,37 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
     using Microsoft.UI.Xaml.Media.Imaging;
-    using StockApp.Commands;
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Threading.Tasks;
-    using System.Windows.Input;
 
     /// <summary>
-    /// View model for the profile page, managing the user's profile image and information.
+    /// ViewModel for the profile page, managing user profile UI state and data properties.
+    /// Contains only data properties and UI state management - business logic handled in code-behind.
     /// </summary>
-    /// <remarks>
-    /// Initializes a new instance of the <see cref="ProfilePageViewModel"/> class with the specified profile service.
-    /// </remarks>
-    /// <param name="profileService">Service used to retrieve profile data.</param>
-    public partial class ProfilePageViewModel : INotifyPropertyChanged
+    public class ProfilePageViewModel : ViewModelBase
     {
-        private readonly IUserService userService;
-        private readonly IAuthenticationService authenticationService;
-        private readonly IStockService stockService;
-        private BitmapImage imageSource = null!;
+        private BitmapImage? imageSource;
         private string username = string.Empty;
         private string description = string.Empty;
         private List<Stock> userStocks = [];
         private Stock? selectedStock;
         private bool isAdmin = false;
         private bool isHidden = false;
+        private bool isLoading = false;
+        private string errorMessage = string.Empty;
 
-        public bool IsGuest => this.authenticationService.IsUserLoggedIn();
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProfilePageViewModel"/> class.
+        /// </summary>
+        public ProfilePageViewModel()
+        {
+        }
 
         /// <summary>
         /// Gets or sets the profile image source.
@@ -38,15 +39,7 @@
         public BitmapImage? ImageSource
         {
             get => this.imageSource;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value), "Image source cannot be null.");
-                }
-                this.imageSource = value;
-                this.OnPropertyChanged(nameof(this.ImageSource));
-            }
+            set => this.SetProperty(ref this.imageSource, value);
         }
 
         /// <summary>
@@ -55,60 +48,43 @@
         public string UserName
         {
             get => this.username;
-            private set
-            {
-                this.username = value;
-                this.OnPropertyChanged(nameof(this.UserName));
-            }
+            set => this.SetProperty(ref this.username, value);
         }
 
         /// <summary>
-        /// Gets or sets the description.
+        /// Gets or sets the user description.
         /// </summary>
         public string Description
         {
             get => this.description;
-            private set
-            {
-                this.description = value;
-                this.OnPropertyChanged(nameof(this.Description));
-            }
+            set => this.SetProperty(ref this.description, value);
         }
 
         /// <summary>
-        /// Gets or sets the user stocks.
+        /// Gets or sets the user's stock portfolio.
         /// </summary>
         public List<Stock> UserStocks
         {
             get => this.userStocks;
-            private set
-            {
-                this.userStocks = value;
-                this.OnPropertyChanged(nameof(this.UserStocks));
-            }
-        }
-
-        public Stock? SelectedStock
-        {
-            get => this.selectedStock;
-            set
-            {
-                this.selectedStock = value;
-                this.OnPropertyChanged(nameof(this.SelectedStock));
-            }
+            set => this.SetProperty(ref this.userStocks, value);
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the profile is hidden.
+        /// Gets or sets the currently selected stock.
+        /// </summary>
+        public Stock? SelectedStock
+        {
+            get => this.selectedStock;
+            set => this.SetProperty(ref this.selectedStock, value);
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the user has admin privileges.
         /// </summary>
         public bool IsAdmin
         {
             get => this.isAdmin;
-            set
-            {
-                this.isAdmin = value;
-                this.OnPropertyChanged(nameof(this.isAdmin));
-            }
+            set => this.SetProperty(ref this.isAdmin, value);
         }
 
         /// <summary>
@@ -117,85 +93,54 @@
         public bool IsHidden
         {
             get => this.isHidden;
-            set
-            {
-                this.isHidden = value;
-                this.OnPropertyChanged(nameof(this.IsHidden));
-            }
+            set => this.SetProperty(ref this.isHidden, value);
         }
 
-        public ICommand LogOutCommand { get; } = null!;
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProfilePageViewModel"/> class with the default profile service and loads the profile image.
+        /// Gets or sets a value indicating whether the view model is currently loading data.
         /// </summary>
-        public ProfilePageViewModel(IStockService stockService, IUserService userService, IAuthenticationService authenticationService)
+        public bool IsLoading
         {
-            this.stockService = stockService ?? throw new ArgumentNullException(nameof(stockService));
-            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-            try
-            {
-                if (this.authenticationService.IsUserLoggedIn())
-                {
-                    _ = this.LoadProfileData();
-                    LogOutCommand = new RelayCommand(async o => await this.authenticationService.LogoutAsync());
-                }
-                else
-                {
-                    this.LogOutCommand = new RelayCommand(async o => { await Task.CompletedTask; });
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error initializing ProfilePageViewModel: {ex.Message}");
-                throw;
-            }
+            get => this.isLoading;
+            set => this.SetProperty(ref this.isLoading, value);
         }
 
-        public async Task LoadProfileData()
+        /// <summary>
+        /// Gets or sets the current error message to display to the user.
+        /// </summary>
+        public string ErrorMessage
         {
-            try
-            {
-                User currentUser = await this.userService.GetCurrentUserAsync();
-
-                this.UserName = currentUser.UserName ?? throw new ArgumentNullException(nameof(currentUser.UserName));
-                this.Description = currentUser.Description;
-                this.IsAdmin = this.authenticationService.IsUserAdmin();
-                this.IsHidden = currentUser.IsHidden;
-                this.UserStocks = await this.stockService.UserStocksAsync();
-
-                if (!string.IsNullOrEmpty(currentUser.Image) && Uri.IsWellFormedUriString(currentUser.Image, UriKind.Absolute))
-                {
-                    this.ImageSource = new BitmapImage(new Uri(currentUser.Image));
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error loading profile data: {ex.Message}");
-                throw;
-            }
+            get => this.errorMessage;
+            set => this.SetProperty(ref this.errorMessage, value);
         }
 
         /// <summary>
-        /// Updates the administrative mode of the user.
+        /// Sets the property and raises the PropertyChanged event if the value has changed.
         /// </summary>
-        /// <param name="newIsAdmin">If set to <c>true</c>, grants admin mode; otherwise, revokes it.</param>
-        public async Task UpdateAdminModeAsync(bool newIsAdmin)
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="field">The field to set.</param>
+        /// <param name="value">The new value.</param>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <returns>True if the property was set; otherwise, false.</returns>
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
-            await this.userService.UpdateIsAdminAsync(newIsAdmin);
+            if (Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
         }
 
         /// <summary>
-        /// Occurs when a property value changes.
+        /// Raises the <see cref="PropertyChanged"/> event for the specified property.
         /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        /// <param name="propertyName">Name of the property that changed.</param>
-        protected void OnPropertyChanged(string propertyName) =>
+        /// <param name="propertyName">Name of the property changed.</param>
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

@@ -30,7 +30,7 @@
                        FontSize="20" FontWeight="Bold"/>
 
             <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right">
-                <Button Content="Export" Width="80" Margin="0,0,10,0" Command="{Binding ExportCommand}"/>
+                <Button Content="Export" Width="80" Margin="0,0,10,0" Click="ExportButton_Click"/>
                 <ComboBox Width="100" SelectedItem="{Binding SelectedExportFormat, Mode=TwoWay}">
                     <ComboBoxItem Content="CSV" IsSelected="True"/>
                     <ComboBoxItem Content="JSON"/>
@@ -52,7 +52,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0" Width="250" PlaceholderText="Stock name..." Margin="0,0,15,0" Text="{Binding StockNameFilter, Mode=TwoWay}"/>
-            <Button Grid.Column="1" Content="Search" Width="80" Margin="0,0,15,0" Command="{Binding SearchCommand}"/>
+            <Button Grid.Column="1" Content="Search" Width="80" Margin="0,0,15,0" Click="SearchButton_Click"/>
             <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,0,15,0">Sort by:</TextBlock>
             <ComboBox Grid.Column="3" Width="150" SelectedItem="{Binding SelectedSortBy, Mode=TwoWay}">
                 <ComboBoxItem Content="Date" IsSelected="True"/>

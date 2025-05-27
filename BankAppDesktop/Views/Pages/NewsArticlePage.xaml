@@ -124,20 +124,20 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-                <Button Command="{x:Bind ViewModel.DeleteCommand}">
+                <Button Click="OnDeleteClicked">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xE74D;"/>
                         <TextBlock Text="Delete"/>
                     </StackPanel>
                 </Button>
-                <Button Command="{x:Bind ViewModel.RejectCommand}"
+                <Button Click="OnRejectClicked"
                         Visibility="{x:Bind ViewModel.CanReject, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xE711;"/>
                         <TextBlock Text="Reject"/>
                     </StackPanel>
                 </Button>
-                <Button Command="{x:Bind ViewModel.ApproveCommand}" 
+                <Button Click="OnApproveClicked" 
                         Style="{StaticResource AccentButtonStyle}"
                         Visibility="{x:Bind ViewModel.CanApprove, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal" Spacing="8">

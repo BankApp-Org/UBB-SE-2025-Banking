@@ -1,36 +1,40 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using Common.Services;
-    using Microsoft.UI.Xaml.Controls;
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
-    using System.Linq;
-    using System.Windows.Input;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
-    /// ViewModel for displaying and exporting the transaction log with filtering and sorting capabilities.
+    /// ViewModel for displaying and managing the transaction log UI state with filtering and sorting options.
+    /// Contains only data properties and UI state management - business logic handled in code-behind.
     /// </summary>
     public partial class TransactionLogViewModel : INotifyPropertyChanged
     {
-        private readonly ITransactionLogService service;
-
-        private string stockNameFilter;
+        private string stockNameFilter = string.Empty;
         private string selectedTransactionType = "ALL";
         private string selectedSortBy = "Date";
         private string selectedSortOrder = "ASC";
         private string selectedExportFormat = "CSV";
-        private string minTotalValue;
-        private string maxTotalValue;
+        private string minTotalValue = string.Empty;
+        private string maxTotalValue = string.Empty;
         private DateTime startDate = DateTime.UnixEpoch;
         private DateTime endDate = DateTime.Now;
+        private bool isLoading = false;
+        private string errorMessage = string.Empty;
 
         /// <summary>
         /// Event raised when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TransactionLogViewModel"/> class.
+        /// </summary>
+        public TransactionLogViewModel()
+        {
+        }
 
         /// <summary>
         /// Gets the collection of transactions displayed in the log.
@@ -43,66 +47,43 @@
         public string StockNameFilter
         {
             get => this.stockNameFilter;
-            set
-            {
-                this.stockNameFilter = value;
-                this.OnPropertyChanged(nameof(this.StockNameFilter));
-            }
+            set => this.SetProperty(ref this.stockNameFilter, value);
         }
 
         /// <summary>
         /// Gets or sets the selected transaction type for filtering.
         /// </summary>
-        public ComboBoxItem SelectedTransactionType
+        public string SelectedTransactionType
         {
-            get => new() { Content = this.selectedTransactionType };
-            set
-            {
-                this.selectedTransactionType = value.Content.ToString() ?? string.Empty;
-                this.OnPropertyChanged(nameof(this.SelectedTransactionType));
-                this.LoadTransactions(); // Reload transactions when the selected type changes
-            }
+            get => this.selectedTransactionType;
+            set => this.SetProperty(ref this.selectedTransactionType, value);
         }
 
         /// <summary>
         /// Gets or sets the criteria by which to sort the transactions.
         /// </summary>
-        public ComboBoxItem SelectedSortBy
+        public string SelectedSortBy
         {
-            get => new() { Content = this.selectedSortBy };
-            set
-            {
-                this.selectedSortBy = value.Content.ToString() ?? string.Empty;
-                this.OnPropertyChanged(nameof(this.SelectedSortBy));
-                this.LoadTransactions(); // Reload transactions when the sorting criteria change
-            }
+            get => this.selectedSortBy;
+            set => this.SetProperty(ref this.selectedSortBy, value);
         }
 
         /// <summary>
         /// Gets or sets the sort order (ascending/descending).
         /// </summary>
-        public ComboBoxItem SelectedSortOrder
+        public string SelectedSortOrder
         {
-            get => new() { Content = this.selectedSortOrder };
-            set
-            {
-                this.selectedSortOrder = value.Content.ToString() ?? string.Empty;
-                this.OnPropertyChanged(nameof(this.SelectedSortOrder));
-                this.LoadTransactions(); // Reload transactions when the sort order changes
-            }
+            get => this.selectedSortOrder;
+            set => this.SetProperty(ref this.selectedSortOrder, value);
         }
 
         /// <summary>
         /// Gets or sets the export format (e.g., CSV, JSON).
         /// </summary>
-        public ComboBoxItem SelectedExportFormat
+        public string SelectedExportFormat
         {
-            get => new() { Content = this.selectedExportFormat };
-            set
-            {
-                this.selectedExportFormat = value.Content.ToString() ?? string.Empty;
-                this.OnPropertyChanged(nameof(this.SelectedExportFormat));
-            }
+            get => this.selectedExportFormat;
+            set => this.SetProperty(ref this.selectedExportFormat, value);
         }
 
         /// <summary>
@@ -111,19 +92,7 @@
         public string MinTotalValue
         {
             get => this.minTotalValue;
-            set
-            {
-                if (value == string.Empty || ValidateNumericValue(value))
-                {
-                    this.minTotalValue = value;
-                    this.OnPropertyChanged(nameof(this.MinTotalValue));
-                    this.LoadTransactions();
-                }
-                else
-                {
-                    ShowMessageBox("Invalid Input", "Min Total Value must be a valid integer.");
-                }
-            }
+            set => this.SetProperty(ref this.minTotalValue, value);
         }
 
         /// <summary>
@@ -132,19 +101,7 @@
         public string MaxTotalValue
         {
             get => this.maxTotalValue;
-            set
-            {
-                if (value == string.Empty || ValidateNumericValue(value))
-                {
-                    this.maxTotalValue = value;
-                    this.OnPropertyChanged(nameof(this.MaxTotalValue));
-                    this.LoadTransactions();
-                }
-                else
-                {
-                    ShowMessageBox("Invalid Input", "Max Total Value must be a valid integer.");
-                }
-            }
+            set => this.SetProperty(ref this.maxTotalValue, value);
         }
 
         /// <summary>
@@ -153,12 +110,7 @@
         public DateTime StartDate
         {
             get => this.startDate;
-            set
-            {
-                this.startDate = value;
-                this.OnPropertyChanged(nameof(this.StartDate));
-                this.LoadTransactions();
-            }
+            set => this.SetProperty(ref this.startDate, value);
         }
 
         /// <summary>
@@ -167,11 +119,7 @@
         public DateTimeOffset StartDateOffset
         {
             get => new(this.startDate);
-            set
-            {
-                this.startDate = value.DateTime;
-                this.OnPropertyChanged(nameof(this.StartDateOffset));
-            }
+            set => this.SetProperty(ref this.startDate, value.DateTime);
         }
 
         /// <summary>
@@ -180,12 +128,7 @@
         public DateTime EndDate
         {
             get => this.endDate;
-            set
-            {
-                this.endDate = value;
-                this.OnPropertyChanged(nameof(this.EndDate));
-                this.LoadTransactions();
-            }
+            set => this.SetProperty(ref this.endDate, value);
         }
 
         /// <summary>
@@ -194,231 +137,52 @@
         public DateTimeOffset EndDateOffset
         {
             get => new(this.endDate);
-            set
-            {
-                this.endDate = value.DateTime;
-                this.OnPropertyChanged(nameof(this.EndDateOffset));
-            }
+            set => this.SetProperty(ref this.endDate, value.DateTime);
         }
 
         /// <summary>
-        /// Gets the command to perform a search with current filters.
+        /// Gets or sets a value indicating whether the view model is currently loading data.
         /// </summary>
-        public ICommand SearchCommand { get; }
-
-        /// <summary>
-        /// Gets the command to export the current transaction list.
-        /// </summary>
-        public ICommand ExportCommand { get; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TransactionLogViewModel"/> class with the specified stockService.
-        /// </summary>
-        /// <param name="service">Service to retrieve and export transaction data.</param>
-        public TransactionLogViewModel(ITransactionLogService service)
+        public bool IsLoading
         {
-            this.service = service ?? throw new ArgumentNullException(nameof(service));
-            this.minTotalValue = string.Empty;
-            this.maxTotalValue = string.Empty;
-            this.stockNameFilter = string.Empty;
-
-            // Initialize ComboBoxItems for options if they are null
-            this.selectedTransactionType = "ALL";
-            this.selectedSortBy = "Date";
-            this.selectedSortOrder = "ASC";
-            this.selectedExportFormat = "CSV";
-
-            // Set up commands
-            this.SearchCommand = new Commands.Command(this.Search);
-            this.ExportCommand = new Commands.Command(() => this.Export());
-
-            this.LoadTransactions();
+            get => this.isLoading;
+            set => this.SetProperty(ref this.isLoading, value);
         }
 
         /// <summary>
-        /// Reloads the transaction list based on current filters and sorting.
+        /// Gets or sets the current error message to display to the user.
         /// </summary>
-        private void Search()
+        public string ErrorMessage
         {
-            this.LoadTransactions();
+            get => this.errorMessage;
+            set => this.SetProperty(ref this.errorMessage, value);
         }
 
         /// <summary>
-        /// Exports the transactions to a file in the selected format.
+        /// Sets the property and raises the PropertyChanged event if the value has changed.
         /// </summary>
-        private async void Export()
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="field">The field to set.</param>
+        /// <param name="value">The new value.</param>
+        /// <param name="propertyName">The name of the property.</param>
+        /// <returns>True if the property was set; otherwise, false.</returns>
+        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
-            string format = this.selectedExportFormat.ToString();
-            string fileName = "transactions";
-
-            string fileExtension = format switch
+            if (Equals(field, value))
             {
-                "CSV" => ".csv",
-                "JSON" => ".json",
-                "HTML" => ".html",
-                _ => throw new InvalidOperationException($"Unsupported export format: {format}"),
-            };
-
-            Windows.Storage.Pickers.FileSavePicker saveFileDialog = new()
-            {
-                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary,
-                FileTypeChoices =
-                {
-                    { format, new List<string> { fileExtension } },
-                },
-                SuggestedFileName = fileName,
-            };
-
-            // We create another window when launching the app because bad coding practices so we get this beauty :D
-            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainAppWindow);
-            WinRT.Interop.InitializeWithWindow.Initialize(saveFileDialog, hwnd);
-
-            // Show the save file dialog
-            Windows.Storage.StorageFile file = await saveFileDialog.PickSaveFileAsync();
-
-            if (file == null)
-            {
-                // User cancelled the dialog
-                return;
+                return false;
             }
 
-            // Export the transactions
-            this.service.ExportTransactions([.. this.Transactions], file.Path, format);
-
-            // Notify user of successful export
-            ShowMessageBox("Export Successful", $"File saved: {file.Path}");
-        }
-
-        /// <summary>
-        /// Raises a request to show a message box with the specified title and content.
-        /// </summary>
-        /// <param name="title">Title of the message box.</param>
-        /// <param name="content">Content text of the message box.</param>
-        public static void ShowMessageBox(string title, string content)
-        {
-            ContentDialog dialog = new()
-            {
-                Title = title,
-                Content = content,
-                CloseButtonText = "OK",
-                XamlRoot = App.MainAppWindow!.MainAppFrame.XamlRoot,
-            };
-            _ = dialog.ShowAsync();
-        }
-
-        /// <summary>
-        /// Validates that the provided string represents a valid integer value.
-        /// </summary>
-        /// <param name="value">Input string to validate.</param>
-        /// <returns><c>true</c> if valid; otherwise, <c>false</c>.</returns>
-        private static bool ValidateNumericValue(string value)
-        {
-            // FIXME: consider allowing decimal values for filters
-            return int.TryParse(value, out _);
-        }
-
-        /// <summary>
-        /// Validates that the minimum value is less than the maximum value.
-        /// </summary>
-        /// <param name="minTotalValue">Minimum total value.</param>
-        /// <param name="maxTotalValue">Maximum total value.</param>
-        /// <returns><c>true</c> if valid or not applicable; otherwise, <c>false</c>.</returns>
-        private static bool ValidateTotalValues(string minTotalValue, string maxTotalValue)
-        {
-            return !int.TryParse(minTotalValue, out int min) || !int.TryParse(maxTotalValue, out int max) || min < max;
-        }
-
-        /// <summary>
-        /// Validates that the start date is before the end date.
-        /// </summary>
-        /// <param name="startDate">Start date value.</param>
-        /// <param name="endDate">End date value.</param>
-        /// <returns><c>true</c> if valid or not applicable; otherwise, <c>false</c>.</returns>
-        private static bool ValidateDateRange(DateTime? startDate, DateTime? endDate)
-        {
-            return !startDate.HasValue || !endDate.HasValue || startDate.Value < endDate.Value;
-        }
-
-        /// <summary>
-        /// Loads and filters transactions from the stockService and applies sorting.
-        /// </summary>
-        public async void LoadTransactions()
-        {
-            if (this.service == null)
-            {
-                throw new InvalidOperationException("Transaction stockService is not initialized");
-            }
-
-            // Add null checks here for all ComboBoxItem properties to prevent null reference
-            string transactionType = this.selectedTransactionType ?? "ALL";
-            string sortBy = this.selectedSortBy ?? "Date";
-            string sortOrder = this.selectedSortOrder ?? "ASC";
-
-            // Validate MinTotalValue < MaxTotalValue
-            if (!ValidateTotalValues(this.minTotalValue, this.maxTotalValue))
-            {
-                ShowMessageBox("Invalid Total Values", "Min Total Value must be less than Max Total Value.");
-                return;
-            }
-
-            // Validate StartDate < EndDate
-            if (!ValidateDateRange(this.startDate, this.endDate))
-            {
-                ShowMessageBox("Invalid Date Range", "Start Date must be earlier than End Date.");
-                return;
-            }
-
-            DateTime startDate = this.startDate;
-            DateTime endDate = this.endDate;
-
-            this.Transactions.Clear();
-
-            var filterCriteria = new TransactionFilterCriteria
-            {
-                StockName = this.stockNameFilter,
-                Type = transactionType == "ALL" ? null : transactionType,
-                MinTotalValue = string.IsNullOrEmpty(this.minTotalValue) ? null : Convert.ToInt32(this.minTotalValue),
-                MaxTotalValue = string.IsNullOrEmpty(this.maxTotalValue) ? null : Convert.ToInt32(this.maxTotalValue),
-                StartDate = startDate,
-                EndDate = endDate,
-            };
-
-            filterCriteria.Validate(); // Inline: ensure criteria consistency
-
-            // Await the asynchronous call to get the transactions
-            var transactions = await this.service.GetFilteredTransactions(filterCriteria)
-                ?? throw new InvalidOperationException("Transaction service returned null");
-
-            // Apply sorting
-            var transactionsSorted = sortBy switch
-            {
-                "Date" => sortOrder == "DESC"
-                    ? transactions.OrderByDescending(t => t.Date)
-                    : transactions.OrderBy(t => t.Date),
-
-                "Stock Name" => sortOrder == "DESC"
-                    ? transactions.OrderByDescending(t => t.StockName)
-                    : transactions.OrderBy(t => t.StockName),
-
-                "Total Value" => sortOrder == "DESC"
-                    ? transactions.OrderByDescending(t => t.TotalValue)
-                    : transactions.OrderBy(t => t.TotalValue),
-
-                _ => throw new InvalidOperationException($"Invalid sort type: {sortBy}"),
-            };
-
-            // Add sorted transactions to the ObservableCollection
-            foreach (var transaction in transactionsSorted)
-            {
-                this.Transactions.Add(transaction);
-            }
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
         }
 
         /// <summary>
         /// Raises the <see cref="PropertyChanged"/> event for the specified property.
         /// </summary>
         /// <param name="propertyName">Name of the property changed.</param>
-        protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

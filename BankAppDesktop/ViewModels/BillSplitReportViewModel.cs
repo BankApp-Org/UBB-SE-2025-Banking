@@ -1,116 +1,96 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Common.Models;
-using Common.Services;
 
 namespace StockApp.ViewModels
 {
-    public class BillSplitReportViewModel(
-        IBillSplitReportService billSplitReportService,
-        IUserService userService)
+    /// <summary>
+    /// ViewModel for bill split reports display, containing only data properties.
+    /// Business logic for report management is handled in code-behind.
+    /// </summary>
+    public class BillSplitReportViewModel : INotifyPropertyChanged
     {
-        private readonly IBillSplitReportService _billSplitReportService = billSplitReportService
-                                      ?? throw new ArgumentNullException(nameof(billSplitReportService));
-        private readonly IUserService _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+        private bool isLoading;
+        private string errorMessage = string.Empty;
 
-        public ObservableCollection<BillSplitReport> BillSplitReports { get; private set; } = [];
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler? PropertyChanged;
 
+        /// <summary>
+        /// Event raised when a report is updated.
+        /// </summary>
         public event EventHandler? ReportUpdated;
 
-        /* ───────────────  Public API  ─────────────── */
-
-        public async Task LoadBillSplitReportsAsync()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BillSplitReportViewModel"/> class.
+        /// </summary>
+        public BillSplitReportViewModel()
         {
-            try
-            {
-                this.BillSplitReports.Clear();
-
-                var reports = await this._billSplitReportService
-                                    .GetBillSplitReportsAsync();
-
-                foreach (var r in reports)
-                {
-                    this.BillSplitReports.Add(r);
-                }
-
-                this.OnReportUpdated();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error loading reports: {ex.Message}");
-                throw;
-            }
+            BillSplitReports = [];
         }
 
-        public async Task DeleteReportAsync(BillSplitReport report)
-        {
-            try
-            {
-                await this._billSplitReportService
-                      .DeleteBillSplitReportAsync(report)
-                      .ConfigureAwait(false);
+        /// <summary>
+        /// Gets or sets the collection of bill split reports.
+        /// </summary>
+        public ObservableCollection<BillSplitReport> BillSplitReports { get; private set; }
 
-                await this.LoadBillSplitReportsAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error deleting report: {ex.Message}");
-                throw;
-            }
+        /// <summary>
+        /// Gets or sets a value indicating whether reports are currently being loaded.
+        /// </summary>
+        public bool IsLoading
+        {
+            get => this.isLoading;
+            set => this.SetProperty(ref this.isLoading, value);
         }
 
-        public async Task<BillSplitReport> AddReportAsync(BillSplitReport report)
+        /// <summary>
+        /// Gets or sets the error message to display to the user.
+        /// </summary>
+        public string ErrorMessage
         {
-            try
-            {
-                var added = await this._billSplitReportService
-                             .CreateBillSplitReportAsync(report)
-                             .ConfigureAwait(false);
-
-                await this.LoadBillSplitReportsAsync().ConfigureAwait(false);
-                return added;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error adding report: {ex.Message}");
-                throw;
-            }
+            get => this.errorMessage;
+            set => this.SetProperty(ref this.errorMessage, value);
         }
 
-        public async Task<BillSplitReport> UpdateReportAsync(BillSplitReport report)
+        /// <summary>
+        /// Raises the ReportUpdated event.
+        /// </summary>
+        public void OnReportUpdated()
         {
-            try
-            {
-                var updated = await this._billSplitReportService
-                               .UpdateBillSplitReportAsync(report)
-                               .ConfigureAwait(false);
-
-                await this.LoadBillSplitReportsAsync().ConfigureAwait(false);
-                return updated;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error updating report: {ex.Message}");
-                throw;
-            }
+            this.ReportUpdated?.Invoke(this, EventArgs.Empty);
         }
 
-        public async Task<User> GetUserByCnpAsync(string cnp)
+        /// <summary>
+        /// Sets the property value and raises the PropertyChanged event if the value has changed.
+        /// </summary>
+        /// <typeparam name="T">The type of the property.</typeparam>
+        /// <param name="storage">Reference to the backing field.</param>
+        /// <param name="value">The new value to set.</param>
+        /// <param name="propertyName">The name of the property (automatically provided by the compiler).</param>
+        /// <returns>True if the property value was changed; otherwise, false.</returns>
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
         {
-            try
+            if (Equals(storage, value))
             {
-                return await _userService.GetUserByCnpAsync(cnp);
+                return false;
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error fetching user by CNP: {ex.Message}");
-                throw;
-            }
+
+            storage = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
         }
 
-        /* ───────────────  Helpers  ─────────────── */
-
-        private void OnReportUpdated() => this.ReportUpdated?.Invoke(this, EventArgs.Empty);
+        /// <summary>
+        /// Raises the PropertyChanged event for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

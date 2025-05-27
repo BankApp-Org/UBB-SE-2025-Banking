@@ -37,7 +37,7 @@
                         PlaceholderText="Max"  
                         Text="{Binding NewAlertUpperBound, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button Content="Add New"
-                    Command="{Binding CreateAlertCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    Click="CreateAlertButton_Click" 
                     Width="100"
                     Margin="5"/>
             </StackPanel>
@@ -70,14 +70,13 @@
         <!-- Buttons -->
         <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" Margin="5">
             <Button Content="Remove"
-                    Command="{Binding DeleteAlertCommand}" 
-                    CommandParameter="{Binding SelectedItem, ElementName=AlertsListView}" 
+                    Click="DeleteAlertButton_Click" 
                     Width="100" Margin="5"/>
             <Button Content="Save All"
-                    Command="{Binding SaveAlertsCommand}" 
+                    Click="SaveAlertsButton_Click" 
                     Width="100" Margin="5"/>
             <Button Content="Back"
-                    Command="{Binding BackCommand}" 
+                    Click="BackButton_Click" 
                     Width="100" Margin="5"/>
         </StackPanel>
     </Grid>
