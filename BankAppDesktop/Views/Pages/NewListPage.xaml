@@ -1,0 +1,220 @@
+<Page
+    x:Class="StockApp.Pages.NewsListPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StockApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:converters="using:StockApp.Views.Converters" xmlns:models="using:Common.Models"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:ReadStatusToFontWeightConverter x:Key="ReadStatusToFontWeightConverter"/>
+        <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
+    </Page.Resources>
+
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Title - Moved to middle column -->
+            <TextBlock Grid.Column="1" 
+                       Text="Stock News" 
+                       Style="{StaticResource TitleTextBlockStyle}" 
+                       FontSize="28" 
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"/>
+
+            <!-- Action Buttons -->
+            <StackPanel Grid.Column="2" 
+                        Orientation="Horizontal" 
+                        Spacing="8"
+                        HorizontalAlignment="Right">
+                <!-- Admin Panel Button -->
+                <Button Command="{x:Bind ViewModel.AdminPanelCommand}" 
+                        Visibility="{x:Bind ViewModel.IsAdmin, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE7EF;"/>
+                        <TextBlock Text="Admin Panel"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Create Article Button -->
+                <Button Command="{x:Bind ViewModel.CreateArticleCommand}" 
+                        Style="{StaticResource AccentButtonStyle}"
+                        Visibility="{x:Bind ViewModel.IsLoggedIn, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE710;"/>
+                        <TextBlock Text="Create Article"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Search and Filter -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Search Box -->
+            <AutoSuggestBox Grid.Column="0" 
+                            PlaceholderText="Search articles..." 
+                            Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}"
+                            QueryIcon="Find">
+                <AutoSuggestBox.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Escape" Invoked="EscapeKeyInvoked"/>
+                </AutoSuggestBox.KeyboardAccelerators>
+            </AutoSuggestBox>
+
+            <!-- Category Filter -->
+            <ComboBox Grid.Column="1" 
+                      Header="Category" 
+                      ItemsSource="{x:Bind ViewModel.Categories}" 
+                      SelectedItem="{x:Bind ViewModel.SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      MinWidth="150"
+                      Margin="16,0,0,0"
+                      SelectionChanged="CategoryFilterSelectionChanged"/>
+        </Grid>
+
+        <!-- Content Area -->
+        <Grid Grid.Row="2">
+            <!-- Loading State -->
+            <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" 
+                          Width="50" Height="50" 
+                          HorizontalAlignment="Center" 
+                          VerticalAlignment="Center"
+                          Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+            <!-- Empty State -->
+            <StackPanel HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" 
+                        Spacing="16"
+                        Visibility="{x:Bind ViewModel.IsEmptyState, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <FontIcon Glyph="&#xE9CE;" 
+                          FontSize="48" 
+                          HorizontalAlignment="Center"/>
+                <TextBlock Text="No articles found" 
+                           Style="{StaticResource SubtitleTextBlockStyle}" 
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Try adjusting your search or filters" 
+                           Style="{StaticResource BodyTextBlockStyle}" 
+                           HorizontalAlignment="Center" 
+                           Opacity="0.7"/>
+                <Button Command="{x:Bind ViewModel.RefreshCommand}" 
+                        HorizontalAlignment="Center" 
+                        Margin="0,8,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE72C;"/>
+                        <TextBlock Text="Refresh"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!-- Article List -->
+            <RefreshContainer Grid.Row="2" 
+                              Visibility="{x:Bind ViewModel.IsEmptyState, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"
+                              RefreshRequested="RefreshContainerRefreshRequested">
+
+                <ListView ItemsSource="{x:Bind ViewModel.Articles, Mode=OneWay}" 
+                          SelectedItem="{x:Bind ViewModel.SelectedArticle, Mode=TwoWay}"
+                          SelectionMode="Single"
+                          IsItemClickEnabled="True"
+                          ItemContainerStyle="{StaticResource DefaultListViewItemStyle}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:NewsArticle">
+                           <Grid Padding="16" 
+                                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" 
+                                 BorderThickness="1" 
+                                 CornerRadius="8"
+                                 >
+                               <Grid.RowDefinitions>
+                                   <RowDefinition Height="Auto"/>
+                                   <RowDefinition Height="Auto"/>
+                                   <RowDefinition Height="Auto"/>
+                               </Grid.RowDefinitions>
+
+                               <!-- Title -->
+                               <TextBlock Grid.Row="0" 
+                                          Text="{x:Bind Title}" 
+                                          Style="{StaticResource SubtitleTextBlockStyle}" 
+                                          FontWeight="{x:Bind IsRead, Converter={StaticResource ReadStatusToFontWeightConverter}}"
+                                          TextWrapping="Wrap"/>
+
+                               <!-- Summary -->
+                               <TextBlock Grid.Row="1" 
+                                          Text="{x:Bind Summary}" 
+                                          Style="{StaticResource BodyTextBlockStyle}" 
+                                          TextWrapping="Wrap" 
+                                          Margin="0,8,0,0" 
+                                          Opacity="0.8"/>
+
+                               <!-- Metadata -->
+                               <Grid Grid.Row="2" Margin="0,12,0,0">
+                                   <Grid.ColumnDefinitions>
+                                       <ColumnDefinition Width="*"/>
+                                       <ColumnDefinition Width="Auto"/>
+                                   </Grid.ColumnDefinitions>
+
+                                   <!-- Source and Date -->
+                                   <StackPanel Grid.Column="0" 
+                                               Orientation="Horizontal" 
+                                               Spacing="8">
+                                       <TextBlock Text="{x:Bind Source}" 
+                                                  Style="{StaticResource CaptionTextBlockStyle}" 
+                                                  Opacity="0.7"/>
+                                       <TextBlock Text="•" 
+                                                  Style="{StaticResource CaptionTextBlockStyle}" 
+                                                  Opacity="0.7"/>
+                                       <TextBlock Text="{x:Bind PublishedDate}" 
+                                                  Style="{StaticResource CaptionTextBlockStyle}" 
+                                                  Opacity="0.7"/>
+                                       <TextBlock Text="•" 
+                                                  Style="{StaticResource CaptionTextBlockStyle}" 
+                                                  Opacity="0.7"/>
+                                       <TextBlock Text="{x:Bind Category}" 
+                                                  Style="{StaticResource CaptionTextBlockStyle}" 
+                                                  Opacity="0.7"/>
+                                   </StackPanel>
+
+                                   <!-- Watchlist Indicator -->
+                                   <Border Grid.Column="1" 
+                                           Background="{ThemeResource AccentFillColorDefaultBrush}" 
+                                           Padding="6,2" 
+                                           CornerRadius="4"
+                                           Visibility="{x:Bind IsWatchlistRelated, Converter={StaticResource BoolToVisibilityConverter}}">
+                                       <TextBlock Text="Watchlist" 
+                                                  Foreground="White" 
+                                                  FontSize="12"/>
+                                   </Border>
+                               </Grid>
+                           </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <AddDeleteThemeTransition/>
+                            <ContentThemeTransition/>
+                            <ReorderThemeTransition/>
+                        </TransitionCollection>
+                    </ListView.ItemContainerTransitions>
+                </ListView>
+            </RefreshContainer>
+        </Grid>
+    </Grid>
+</Page>

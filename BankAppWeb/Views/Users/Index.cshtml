@@ -1,0 +1,70 @@
+@model StockAppWeb.Views.Users.IndexModel
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1 class="text-center">Users</h1>
+
+@if (Model.UsersList != null && Model.UsersList.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>CNP</th>
+                    <th>Description</th>
+                    <th>Is Hidden</th>
+                    <th>Gem Balance</th>
+                    <th>Number of Offenses</th>
+                    <th>Risk Score</th>
+                    <th>ROI</th>
+                    <th>Credit Score</th>
+                    <th>Birthday</th>
+                    <th>Zodiac Sign</th>
+                    <th>Zodiac Attribute</th>
+                    <th>Number of Bill Shares Paid</th>
+                    <th>Income</th>
+                    <th>Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.UsersList)
+                {
+                    <tr>
+                        <td>@user.UserName</td>
+                        <td>@user.Email</td>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.CNP</td>
+                        <td>@user.Description</td>
+                        <td>@user.IsHidden</td>
+                        <td>@user.GemBalance</td>
+                        <td>@user.NumberOfOffenses</td>
+                        <td>@user.RiskScore</td>
+                        <td>@user.ROI</td>
+                        <td>@user.CreditScore</td>
+                        <td>@user.Birthday.ToShortDateString()</td>
+                        <td>@user.ZodiacSign</td>
+                        <td>@user.ZodiacAttribute</td>
+                        <td>@user.NumberOfBillSharesPaid</td>
+                        <td>@user.Income</td>
+                        <td>@user.Balance</td>
+                        <td>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Analysis">Analysis</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Messages">Messages</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="text-center">There are no users to display.</p>
+}

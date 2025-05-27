@@ -1,0 +1,65 @@
+﻿@model StockAppWeb.Views.Loans.IndexModel
+@{
+    ViewData["Title"] = "Loans";
+}
+
+<h2>Your Loans</h2>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+else
+{
+<a class="btn btn-secondary" asp-area="" asp-controller="Loans" asp-action="Create">Request a New Loan</a>
+}
+
+@if (Model.Loans.Count == 0)
+{
+    <p>No loans found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Interest</th>
+                <th>Repayment Date</th>
+                <th>Status</th>
+                <th>Application Date</th>
+                <th>Number of Months</th>
+                <th>Monthly Payment</th>
+                <th>Payments Completed</th>
+                <th>Repaid Amount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var loan in Model.Loans)
+            {
+                <tr>
+                    <td>@loan.LoanAmount</td>
+                    <td>@loan.InterestRate %</td>
+                    <td>@loan.RepaymentDate.ToShortDateString()</td>
+                    <td>@loan.Status</td>
+                    <td>@loan.ApplicationDate.ToShortDateString()</td>
+                    <td>@loan.NumberOfMonths</td>
+                    <td>@loan.MonthlyPaymentAmount</td>
+                    <td>@loan.MonthlyPaymentsCompleted</td>
+                    <td>@loan.RepaidAmount</td>
+                    <td>
+                        @if(loan.CanPay)
+                        {
+                        <form method="post">
+                            <input type="hidden" name="loanId" value="@loan.Id" />
+                            <input type="hidden" name="penalty" value="@loan.Penalty" />
+                            <button type="submit" class="btn btn-primary">Make Payment</button>
+                        </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

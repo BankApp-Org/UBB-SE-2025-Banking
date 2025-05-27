@@ -1,0 +1,36 @@
+﻿@model StockAppWeb.Views.Loans.CreateModel
+@{
+    ViewData["Title"] = "Create Loan Request";
+}
+
+<h2>Submit a Loan Request</h2>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success">@Model.SuccessMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Input.Amount" class="control-label"></label>
+        <input asp-for="Input.Amount" class="form-control" />
+        <span asp-validation-for="Input.Amount" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Input.RepaymentDate" class="control-label"></label>
+        <input asp-for="Input.RepaymentDate" type="date" class="form-control" />
+        <span asp-validation-for="Input.RepaymentDate" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Submit Request</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

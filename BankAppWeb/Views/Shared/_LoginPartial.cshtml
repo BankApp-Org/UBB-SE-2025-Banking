@@ -1,0 +1,32 @@
+﻿@using Common.Services
+@using Common.Models
+@inject IAuthenticationService AuthenticationService
+
+<ul class="navbar-nav">
+    @if (AuthenticationService.IsUserLoggedIn())
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Hello @User.Identity?.Name!
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" asp-controller="Account" asp-action="Manage">Manage Account</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="dropdown-item">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item me-2">
+        <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Login">Login</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-primary text-white" asp-controller="Account" asp-action="Register">Register</a>
+    </li>
+}
+</ul>

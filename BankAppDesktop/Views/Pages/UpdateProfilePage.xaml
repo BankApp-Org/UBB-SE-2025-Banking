@@ -1,0 +1,54 @@
+<Page
+    x:Class="StockApp.Views.Pages.UpdateProfilePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Padding="50" Spacing="30" Background="#FFF5EE" BorderBrush="#FF69B4" BorderThickness="10">
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="150" Background="#FFF5EE" Padding="20" >
+            <TextBlock Text="Update Profile" FontSize="24" FontWeight="Bold" Foreground="#FF69B4"/>
+        </StackPanel>
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="4" BorderBrush="#770737" Spacing="20" Padding="20" Background="#FFB6C1" CornerRadius="10">
+
+           <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="15">
+               <TextBlock Text="Image:" FontSize="16" Foreground="#770737"/>
+               <TextBox x:Name="ImageInput" Width="200" PlaceholderText="New image..."/>
+           </StackPanel>
+
+           <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="15">
+               <TextBlock Text="Username:" FontSize="16" Foreground="#770737"/>
+               <TextBox x:Name="UsernameInput" Width="200" PlaceholderText="New username..."/>
+           </StackPanel>
+
+           <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="15">
+               <TextBlock Text="Description:" FontSize="16" Foreground="#770737"/>
+               <TextBox x:Name="DescriptionInput" Width="200" PlaceholderText="New description..."/>
+           </StackPanel>
+
+           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15">
+               <CheckBox x:Name="MyDescriptionCheckBox" Content="Clear Description" FontSize="16" Foreground="#770737"/>
+           </StackPanel>
+
+           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15">
+               <CheckBox x:Name="MyCheckBox" Content="Hidden profile" FontSize="16" Foreground="#770737"/>
+           </StackPanel>
+
+           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+               <Button Content="Update" CornerRadius="10" Name="UpdateButton" Click="UpdateUserProfile" Background="#FF69B4" Foreground="#FFF5EE"/>
+           </StackPanel>
+
+           <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15">
+               <Button Content="Back" CornerRadius="10" Name="BackButton" Click="NavigateBack" Background="#FF69B4" Foreground="#FFF5EE"/>
+           </StackPanel>
+
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15">
+            <TextBox x:Name="PasswordTry" Width="200" PlaceholderText="Enter password..."/>
+            <Button Content="Become ADMIN" Click="GetAdminPassword" Background="#FF69B4" Foreground="White" CornerRadius="10"/>
+        </StackPanel>
+
+    </StackPanel>
+
+</Page>

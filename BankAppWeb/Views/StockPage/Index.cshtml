@@ -1,0 +1,255 @@
+@model StockAppWeb.Views.StockPage.IndexModel
+@{
+    ViewData["Title"] = $"Stock Details - {Model.SelectedStock?.Symbol}";
+}
+
+<div class="container-fluid" style="background-color: #161616; min-height: 100vh; color: white;">
+    <!-- Header Section -->
+    <div class="row" style="background-color: #2D2D2D; padding: 15px 0;">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <a class="btn btn-secondary me-3" asp-controller="Homepage" asp-action="Index">
+                        <i class="fas fa-arrow-left"></i> Return
+                    </a>
+                    <h4 class="mb-0 me-3">
+                        <span class="badge bg-primary me-2">@Model.SelectedStock?.Symbol</span>
+                        @Model.SelectedStock?.Name
+                    </h4>
+                </div>
+                
+                @if (Model.IsAuthenticated)
+                {
+                    <div class="d-flex align-items-center">
+                        <!-- Favorite Button -->
+                        <form asp-controller="StockPage" asp-action="ToggleFavorite" method="post" class="me-2">
+                            <input type="hidden" name="stockName" value="@Model.SelectedStock?.Name" />
+                            <button type="submit" class="btn @(Model.IsFavorite ? "btn-warning" : "btn-outline-warning")" title="Toggle Favorite">
+                                <i class="fas fa-star"></i>
+                            </button>
+                        </form>
+
+                        <!-- Alerts Button -->
+                        <a asp-controller="StockPage" asp-action="GoToAlerts" asp-route-stockName="@Model.SelectedStock?.Name" 
+                           class="btn btn-info me-3" title="Manage Alerts">
+                            <i class="fas fa-bell"></i> Alerts
+                        </a>
+
+                        <!-- Gems Display -->
+                        <span class="badge bg-success fs-6">
+                            <i class="fas fa-gem"></i> Gems: @Model.UserGems
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+    {
+        <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+    {
+        <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger mt-3">@Model.ErrorMessage</div>
+    }
+
+    <!-- Main Content -->
+    <div class="row mt-4">
+        <!-- Chart Section -->
+        <div class="col-md-8">
+            <div class="card bg-dark text-white">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-line"></i> Price History</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.StockHistory.Count > 0)
+                    {
+                        <canvas id="stockChart" style="height: 400px;"></canvas>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-chart-line fa-3x text-muted"></i>
+                            <p class="mt-3">No historical data available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Info and Trading Section -->
+        <div class="col-md-4">
+            <!-- Price Information -->
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-dollar-sign"></i> Price Information</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="text-success mb-3">
+                        $@Model.SelectedStock?.Price
+                    </h2>
+                    @if (Model.PriceChangePercentage != 0)
+                    {
+                        <div class="mb-3">
+                            <span class="badge @(Model.PriceChangePercentage > 0 ? "bg-success" : "bg-danger") fs-6">
+                                @(Model.PriceChangePercentage > 0 ? "+" : "")@Model.PriceChangePercentage.ToString("F2")%
+                            </span>
+                        </div>
+                    }
+
+                    @if (Model.IsAuthenticated && Model.OwnedStocks != null)
+                    {
+                        <div class="mt-3">
+                            <h5>Owned Shares: <span class="text-info">@Model.OwnedStocks.Quantity</span></h5>
+                            <p class="text-muted">Total Value: $@((Model.OwnedStocks.Quantity * Model.SelectedStock.Price).ToString("F2"))</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Trading Section -->
+            @if (Model.IsAuthenticated)
+            {
+                <div class="card bg-dark text-white">
+                    <div class="card-header">
+                        <h5><i class="fas fa-exchange-alt"></i> Trading</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Buy Section -->
+                        <div class="mb-4">
+                            <h6 class="text-success">Buy Shares</h6>
+                            <form asp-controller="StockPage" asp-action="BuyStock" method="post">
+                                <input type="hidden" name="stockName" value="@Model.SelectedStock?.Name" />
+                                <div class="input-group mb-2">
+                                    <input type="number" name="Quantity" class="form-control" 
+                                           min="1" max="500" value="1" required />
+                                    <button type="submit" class="btn btn-success" 
+                                            @(Model.CanBuy ? "" : "disabled")>
+                                        <i class="fas fa-shopping-cart"></i> BUY
+                                    </button>
+                                </div>
+                                @if (!Model.CanBuy)
+                                {
+                                    <small class="text-muted">
+                                        @if (Model.UserGems <= 0)
+                                        {
+                                            <span>Insufficient gems</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Cannot buy at this time</span>
+                                        }
+                                    </small>
+                                }
+                            </form>
+                        </div>
+
+                        <!-- Sell Section -->
+                        <div>
+                            <h6 class="text-danger">Sell Shares</h6>
+                            <form asp-controller="StockPage" asp-action="SellStock" method="post">
+                                <input type="hidden" name="stockName" value="@Model.SelectedStock?.Name" />
+                                <div class="input-group mb-2">
+                                    <input type="number" name="Quantity" class="form-control" 
+                                           min="1" max="@(Model.OwnedStocks?.Quantity ?? 0)" value="1" required />
+                                    <button type="submit" class="btn btn-danger" 
+                                            @(Model.CanSell ? "" : "disabled")>
+                                        <i class="fas fa-hand-holding-usd"></i> SELL
+                                    </button>
+                                </div>
+                                @if (!Model.CanSell)
+                                {
+                                    <small class="text-muted">
+                                        @if (Model.OwnedStocks?.Quantity <= 0)
+                                        {
+                                            <span>No shares to sell</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Cannot sell at this time</span>
+                                        }
+                                    </small>
+                                }
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card bg-dark text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-lock fa-3x text-muted mb-3"></i>
+                        <h5>Login Required</h5>
+                        <p class="text-muted">Please log in to buy/sell stocks and manage favorites.</p>
+                        <a href="/Account/Login" class="btn btn-primary">Login</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (Model.StockHistory.Count > 0)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            const stockData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StockHistory.TakeLast(30)));
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: stockData.map((_, index) => index + 1),
+                    datasets: [{
+                        label: 'Price',
+                        data: stockData,
+                        borderColor: '#4169E1',
+                        backgroundColor: 'rgba(65, 105, 225, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'white'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: 'white'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+    }
+} 

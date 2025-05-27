@@ -1,0 +1,181 @@
+@page
+@model StockAppWeb.Pages.GemStore.IndexModel
+@{
+    ViewData["Title"] = "Gem Store";
+}
+
+<div style="margin: 20px; background-color: #081708; padding: 20px; border-radius: 10px; color: white;">
+    <!-- Top Section -->
+    <div style="background: #0a1a0a; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+        <h2 style="margin: 0; color: white;">Gem Store</h2>
+        <div style="font-size: 25px; font-weight: bold; color: white;">
+            Gems: @Model.UserGems
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    @if (Model.IsLoading)
+    {
+        <div id="loadingOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; display: flex; justify-content: center; align-items: center;">
+            <div style="background-color: #1a4919; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+                <div style="color: white; font-size: 18px; text-align: center;">Processing...</div>
+                <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #5f815f; border-radius: 50%; margin: 10px auto; animation: spin 1s linear infinite;"></div>
+            </div>
+        </div>
+        <style>
+            @@keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    }
+
+    <div style="display: flex; flex-direction: row; gap: 20px;">
+        <!-- Buying Gems Section -->
+        <div style="flex: 3; background: #1a4919; padding: 15px; border-radius: 10px; overflow-y: auto; max-height: 70vh;">
+            <h3 style="margin-top: 0; color: white;">Available Deals</h3>
+            
+            <!-- Header Row -->
+            <div style="display: grid; grid-template-columns: 200px 100px 100px 100px 170px; font-weight: bold; color: white; font-size: 18px; padding: 10px 0;">
+                <span>Title</span>
+                <span>Gems</span>
+                <span>Price</span>
+                <span>Expires At</span>
+                <span></span>
+            </div>
+            
+            <!-- Deal List -->
+            @foreach (var deal in Model.AvailableDeals)
+            {
+                <div style="background: #276b26; padding: 15px; border-radius: 10px; margin-bottom: 15px; display: grid; grid-template-columns: 200px 100px 100px 100px 170px; align-items: center; box-shadow: inset 0 0 0.5em 0.5em rgba(0,0,0,0.12)">
+                    <span style="color: white; font-size: 18px;">@deal.Title</span>
+                    <span style="color: white; font-size: 18px;">@deal.GemAmount</span>
+                    <span style="color: white; font-size: 18px;">@deal.FormattedPrice</span>
+                    <span style="color: white; font-size: 18px;" class="expiration-countdown" 
+                          data-expiration-time="@deal.ExpirationTimeFormatted" 
+                          data-is-special="@deal.IsSpecial.ToString()" 
+                          data-expiration-timestamp="@deal.ExpirationTime">
+                        @(deal.IsSpecial ? "Special Deal!" : "")
+                    </span>
+                    
+                    <form method="post" asp-page-handler="Buy" style="margin: 0; display: flex; gap: 5px;">
+                        <input type="hidden" name="dealTitle" value="@deal.Title" />
+                        <select name="SelectedBankAccount" class="form-control" style="flex: 1; padding: 5px; background: #5f815f; color: white; border: none; border-radius: 5px;">
+                            <option value="">Select Account</option>
+                            @foreach (var acc in Model.UserBankAccounts)
+                            {
+                                if (acc == Model.SelectedBankAccount)
+                                {
+                                    <option value="@acc" selected>@acc</option>
+                                }
+                                else
+                                {
+                                    <option value="@acc">@acc</option>
+                                }
+                            }
+                        </select>
+                        <button type="submit" class="btn" style="background: #5f815f; color: white; width: 60px; padding: 5px; border: none; border-radius: 5px; font-weight: bold;">BUY</button>
+                    </form>
+                </div>
+            }
+        </div>
+
+        <!-- Selling Gems Section -->
+        <div style="flex: 1; background: #5f815f; padding: 20px; border-radius: 10px; display: flex; flex-direction: column; box-shadow: inset 0 0 0.5em 0.5em rgba(0,0,0,0.12)">
+            <h3 style="margin-top: 0; color: white; text-align: center;">Sell Gems</h3>
+            <div style="color: white; text-align: center; margin-bottom: 15px;">100 Gems = 1€</div>
+            
+            <form method="post" asp-page-handler="Sell" style="display: flex; flex-direction: column; gap: 10px;">
+                <input class="form-control" type="number" name="GemsToSell" min="1" max="@Model.UserGems" 
+                       placeholder="Enter amount" 
+                       style="padding: 10px; background: #1a4919; color: white; border: none; border-radius: 5px;" 
+                       value="@Model.GemsToSell" />
+                
+                <select name="SelectedBankAccount" class="form-control" 
+                        style="padding: 10px; background: #1a4919; color: white; border: none; border-radius: 5px;">
+                    <option value="">Select Account</option>
+                    @foreach (var acc in Model.UserBankAccounts)
+                    {
+                        if (acc == Model.SelectedBankAccount)
+                        {
+                            <option value="@acc" selected>@acc</option>
+                        }
+                        else
+                        {
+                            <option value="@acc">@acc</option>
+                        }
+                    }
+                </select>
+                
+                <button type="submit" class="btn" 
+                        style="background: #1a4919; color: white; padding: 10px; border: none; border-radius: 5px; font-weight: bold; margin-top: 10px;">
+                    SELL
+                </button>
+            </form>
+            
+            @if (Model.GemsToSell > 0)
+            {
+                <div style="margin-top: 15px; color: white; text-align: center;">
+                    You will receive @(Model.GemsToSell / 100.0)€ for @Model.GemsToSell gems
+                </div>
+            }
+        </div>
+    </div>
+    
+    <!-- Messages Section -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div style="background-color: #276b26; color: white; padding: 15px; border-radius: 8px; margin-top: 20px;">
+            <strong>Success:</strong> @Model.SuccessMessage
+        </div>
+    }
+    
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div style="background-color: #8B0000; color: white; padding: 15px; border-radius: 8px; margin-top: 20px;">
+            <strong>Error:</strong> @Model.ErrorMessage
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Find all countdown elements
+            const countdownElements = document.querySelectorAll('.expiration-countdown[data-is-special="True"]');
+            
+            // Update function that runs every second
+            function updateCountdowns() {
+                const now = new Date().getTime();
+
+                countdownElements.forEach(element => {
+                    // Get timestamp from data attribute
+                    const expirationTime = Date.parse(element.getAttribute('data-expiration-timestamp'));
+                    
+                    // Calculate remaining time
+                    const timeLeft = expirationTime - now;
+                    
+                    if (timeLeft <= 0) {
+                        element.textContent = "Expired";
+                        element.style.color = "red";
+                    } else {
+                        // Calculate hours, minutes, seconds
+                        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                        // Format the time string
+                        element.textContent = `Special: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        element.style.color = hours < 1 ? "#FFD700" : "white"; // Gold color for last hour
+                    }
+                });
+            }
+
+            // Initial update
+            updateCountdowns();
+
+            // Set interval to update countdowns every second
+            setInterval(updateCountdowns, 1000);
+        });
+    </script>
+}

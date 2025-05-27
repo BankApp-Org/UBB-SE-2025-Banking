@@ -1,0 +1,120 @@
+@page "{id?}"
+@model StockAppWeb.Pages.News.ArticleModel
+@{
+    ViewData["Title"] = Model.IsAdminPreview ? "Article Preview" : "Article";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="fs-2 fw-semibold">@(Model.IsAdminPreview ? "Article Preview" : "Article")</h1>
+            
+            @if (Model.IsAdminPreview)
+            {
+                <div class="d-inline-flex align-items-center gap-2 mb-2">
+                    <span class="text-muted">Status:</span>
+                    <span class="badge bg-primary">@Model.ArticleStatus</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            @if (Model.IsLoading)
+            {
+                <div class="text-center my-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            }
+            else if (Model.Article != null)
+            {
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title fs-3 fw-bold mb-3">@Model.Article.Title</h2>
+                        
+                        <div class="d-flex gap-2 text-muted mb-3 flex-wrap">
+                            <span>@Model.Article.Source</span>
+                            <span>•</span>
+                            <span>@Model.Article.PublishedDate.ToString("MMM d, yyyy")</span>
+                            <span>•</span>
+                            <span>@Model.Article.Category</span>
+                        </div>
+                        
+                        <p class="lead mb-4">@Model.Article.Summary</p>
+                        
+                        @if (Model.HasRelatedStocks)
+                        {
+                            <div class="mb-4">
+                                <h6 class="fw-semibold">Related Stocks:</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach (var stock in Model.Article.RelatedStocks)
+                                    {
+                                        <a href="/Stocks/Details/@stock.Name" class="btn btn-sm btn-primary">@stock.Name</a>
+                                    }
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                        }
+                        
+                        <div class="article-content mt-4">
+                            @Model.Article.Content
+                        </div>
+                    </div>
+                </div>
+                
+                @if (Model.ShowAdminActions)
+                {
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <form method="post" asp-page-handler="Delete" asp-route-articleId="@Model.Id">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                        
+                        @if (Model.CanReject)
+                        {
+                            <form method="post" asp-page-handler="Reject" asp-route-articleId="@Model.Id">
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle"></i> Reject
+                                </button>
+                            </form>
+                        }
+                        
+                        @if (Model.CanApprove)
+                        {
+                            <form method="post" asp-page-handler="Approve" asp-route-articleId="@Model.Id">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Approve
+                                </button>
+                            </form>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    The requested article could not be found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Convert plain text URLs in article content to clickable links
+        document.addEventListener('DOMContentLoaded', function () {
+            const articleContent = document.querySelector('.article-content');
+            if (articleContent) {
+                articleContent.innerHTML = articleContent.innerHTML.replace(
+                    /(https?:\/\/[^\s]+)/g,
+                    '<a href="$1" target="_blank">$1</a>'
+                );
+            }
+        });
+    </script>
+}

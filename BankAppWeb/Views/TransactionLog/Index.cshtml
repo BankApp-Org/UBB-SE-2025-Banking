@@ -1,0 +1,130 @@
+@model StockAppWeb.Views.TransactionLog.IndexModel
+@{
+    ViewData["Title"] = "Transaction Log";
+}
+
+<div class="container">
+    <h2>Transaction Log</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+
+    <form method="post" class="mb-4">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Input.StockNameFilter">Stock Name</label>
+                    <input asp-for="Input.StockNameFilter" class="form-control" placeholder="Filter by stock name..." />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Input.SelectedTransactionType">Transaction Type</label>
+                    <select asp-for="Input.SelectedTransactionType" class="form-control">
+                        <option value="ALL">ALL</option>
+                        <option value="BUY">BUY</option>
+                        <option value="SELL">SELL</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Input.SelectedSortBy">Sort By</label>
+                    <select asp-for="Input.SelectedSortBy" class="form-control">
+                        <option value="Date">Date</option>
+                        <option value="Stock Name">Stock Name</option>
+                        <option value="Total Value">Total Value</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Input.SelectedSortOrder">Sort Order</label>
+                    <select asp-for="Input.SelectedSortOrder" class="form-control">
+                        <option value="ASC">Ascending</option>
+                        <option value="DESC">Descending</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Input.MinTotalValue">Min Total Value</label>
+                    <input asp-for="Input.MinTotalValue" class="form-control" type="number" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Input.MaxTotalValue">Max Total Value</label>
+                    <input asp-for="Input.MaxTotalValue" class="form-control" type="number" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Input.StartDate">Start Date</label>
+                    <input asp-for="Input.StartDate" class="form-control" type="date" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Input.EndDate">End Date</label>
+                    <input asp-for="Input.EndDate" class="form-control" type="date" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.Transactions.Count == 0)
+    {
+        <p>No transactions found.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Stock Name</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Total Value</th>
+                        <th>Date</th>
+                        <th>Author</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var transaction in Model.Transactions)
+                    {
+                        <tr>
+                            <td>@transaction.StockName</td>
+                            <td>@transaction.Type</td>
+                            <td>@transaction.Amount</td>
+                            <td>@transaction.TotalValue</td>
+                            <td>@transaction.Date.ToShortDateString()</td>
+                            <td>@transaction.Author</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

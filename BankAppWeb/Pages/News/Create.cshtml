@@ -1,0 +1,93 @@
+@page
+@model StockAppWeb.Pages.News.CreateModel
+@{
+    ViewData["Title"] = "Create Article";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">Create News Article</h1>
+            <p class="text-muted">Write and submit your own news article for review</p>
+        </div>
+    </div>
+
+    @if (Model.HasError)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.IsLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <form method="post">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Title <span class="text-danger">*</span></label>
+                        <input asp-for="Title" class="form-control" required maxlength="200" placeholder="Enter a descriptive title">
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Summary" class="form-label">Summary</label>
+                        <textarea asp-for="Summary" class="form-control" rows="3" maxlength="500" placeholder="Provide a brief summary of your article"></textarea>
+                        <span asp-validation-for="Summary" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SelectedTopic" class="form-label">Topic <span class="text-danger">*</span></label>
+                        <select asp-for="SelectedTopic" asp-items="Model.TopicOptions" class="form-select">
+                            <option value="">Select a topic</option>
+                        </select>
+                        <span asp-validation-for="SelectedTopic" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RelatedStocksText" class="form-label">Related Stocks</label>
+                        <input asp-for="RelatedStocksText" class="form-control" placeholder="Enter stock symbols separated by commas (e.g., AAPL, MSFT, GOOG)">
+                        <div class="form-text">Optional: Enter stock symbols related to your article</div>
+                        <span asp-validation-for="RelatedStocksText" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Content" class="form-label">Content <span class="text-danger">*</span></label>
+                        <textarea asp-for="Content" class="form-control" rows="12" required placeholder="Write your article content here"></textarea>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent d-flex justify-content-end gap-2">
+                    <button type="submit" asp-page-handler="Preview" class="btn btn-outline-primary">Preview</button>
+                    <button type="submit" class="btn btn-primary">Submit Article</button>
+                </div>
+            </div>
+        </form>
+    }
+
+    <div class="mt-4">
+        <a href="/News/Index" class="btn btn-link text-decoration-none">
+            <i class="bi bi-arrow-left"></i> Back to News Articles
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Add custom validation or enhancement for the article editor if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // You could add rich text editor initialization here
+            // For example: new RichTextEditor('#Content');
+        });
+    </script>
+}

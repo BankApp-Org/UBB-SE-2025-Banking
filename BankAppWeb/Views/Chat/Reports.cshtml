@@ -1,0 +1,69 @@
+﻿@model List<Common.Models.ChatReport>
+@{
+    ViewData["Title"] = "Chat Reports";
+}
+
+<h1>Chat Reports</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Reported User</th>
+                <th>Message</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>@Model[i].Id</td>
+                    <td>@Model[i].ReportedUserCnp</td>
+                    <td>@Model[i].ReportedMessage</td>
+                    <td>
+                        <!--TODO: add a field for message content-->
+                        <form method="post" action="/Chat/ProcessAction" style="display: inline;">
+                            <input type="hidden" name="id" value="@Model[i].Id" />
+                            <input type="hidden" name="action" value="Ban" />
+                            <input type="hidden" name="messageContent" value="You have been banned" />
+                            <button type="submit" class="btn btn-danger">Punish</button>
+                        </form>
+                        <form method="post" action="/Chat/ProcessAction" style="display: inline;">
+                            <input type="hidden" name="id" value="@Model[i].Id" />
+                            <input type="hidden" name="action" value="Warn" />
+                            <input type="hidden" name="messageContent" value="You have been warned" />
+                            <button type="submit" class="btn btn-warning">Warn</button>
+                        </form>
+                        <form method="post" action="/Chat/ProcessAction" style="display: inline;">
+                            <input type="hidden" name="id" value="@Model[i].Id" />
+                            <input type="hidden" name="action" value="Delete" />
+                            <input type="hidden" name="messageContent" value="" />
+                            <button type="submit" class="btn btn-secondary">Dismiss</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>There are no chat reports that need solving.</p>
+}

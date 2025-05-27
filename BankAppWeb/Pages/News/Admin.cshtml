@@ -1,0 +1,125 @@
+@page
+@using Common.Models
+@model StockAppWeb.Pages.News.AdminModel
+@{
+    ViewData["Title"] = "Manage News Articles";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-6">Manage News Articles</h1>
+            <p class="text-muted">Review and manage user-submitted news articles</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null || !string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @(TempData["ErrorMessage"] ?? Model.ErrorMessage)
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Filter Articles</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="SelectedStatus" class="form-label">Status</label>
+                            <select asp-for="SelectedStatus" asp-items="Model.StatusOptions" class="form-select"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="SelectedTopic" class="form-label">Topic</label>
+                            <select asp-for="SelectedTopic" asp-items="Model.TopicOptions" class="form-select"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="SelectedUserCNP" class="form-label">User</label>
+                            <select asp-for="SelectedUserCNP" asp-items="Model.UserOptions" class="form-select"></select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Articles.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Topic</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var article in Model.Articles)
+                    {
+                        <tr>
+                            <td>@article.Title</td>
+                            <td>@(article.Author?.FirstName) @(article.Author?.LastName)</td>
+                            <td>@article.Topic</td>
+                            <td>@article.PublishedDate.ToString("yyyy-MM-dd")</td>
+                            <td>@article.Status</td>
+                            <td>
+                                <div class="d-flex gap-3">
+                                    @if(article.Status == Status.Pending)
+                                    {
+                                        <form method="post" asp-page-handler="Approve" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="articleId" value="@article.ArticleId" />
+                                            <input type="hidden" name="authorCNP" value="@article.AuthorCNP" />
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form method="post" asp-page-handler="Reject" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="articleId" value="@article.ArticleId" />
+                                            <input type="hidden" name="authorCNP" value="@article.AuthorCNP" />
+                                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                        </form>
+                                    }
+                                    <form method="post" asp-page-handler="Delete" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="articleId" value="@article.ArticleId" />
+                                        <input type="hidden" name="authorCNP" value="@article.AuthorCNP" />
+                                        <button type="submit" class="btn btn-warning btn-sm">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">No articles found.</div>
+    }
+
+    <div class="row mt-4">
+        <div class="col text-end">
+            <a asp-page-handler="Create" class="btn btn-primary">Create New Article</a>
+        </div>
+    </div>
+</div>

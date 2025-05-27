@@ -1,0 +1,146 @@
+﻿@model StockAppWeb.Models.HomepageViewModel
+
+@{
+    ViewData["Title"] = "Homepage";
+}
+
+@if(Model.IsGuestUser)
+{
+    <div class="alert alert-warning mt-4" role="alert">
+          <strong>Welcome, Guest!</strong> Please log in to access your favorite stocks.
+     </div>
+}
+else
+{
+<div class="container mt-4">
+    <!-- Search and Sort -->
+    <form method="get" asp-action="Index">
+        <div class="row mb-3">
+            <div class="col">
+                <input type="text" name="SearchQuery" value="@Model.SearchQuery" class="form-control" placeholder="Search stocks..." />
+            </div>
+            <div class="col-auto">
+                <select name="SelectedSortOption" class="form-select">
+                    <option value="">-- Sort By --</option>
+                    <option value="Name" selected="@(Model.SelectedSortOption == "Name")">Sort by Name</option>
+                    <option value="Price" selected="@(Model.SelectedSortOption == "Price")">Sort by Price</option>
+                    <option value="Change" selected="@(Model.SelectedSortOption == "Change")">Sort by Change</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Favorite Stocks -->
+    <h3>Favorite Stocks</h3>
+    @if (Model.FilteredFavoriteStocks.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Change</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stock in Model.FilteredFavoriteStocks)
+                {
+                    <tr>
+                        <td>
+                            <a asp-controller="StockPage" asp-action="Index" asp-route-stockName="@stock.StockDetails.Name" 
+                               class="text-decoration-none fw-bold">@stock.StockDetails.Symbol</a>
+                        </td>
+                        <td>
+                            <a asp-controller="StockPage" asp-action="Index" asp-route-stockName="@stock.StockDetails.Name" 
+                               class="text-decoration-none">@stock.StockDetails.Name</a>
+                        </td>
+                        <td>$@stock.StockDetails.Price</td>
+                        <td style="color:@(stock.Change > 0 ? "green" : stock.Change < 0 ? "red" : "black")">
+                            @stock.Change
+                        </td>
+                        <td>
+                            <div role="group">
+                                <a asp-controller="StockPage" style="margin-right: 10px;" asp-action="Index" asp-route-stockName="@stock.StockDetails.Name"
+                                       class="btn btn-sm btn-outline-primary" title="View Details">
+                                    <i class="fas fa-chart-line"></i> Details
+                                </a>
+                                <form method="post" asp-action="ToggleFavorite" style="display: inline;">
+                                    <input type="hidden" name="symbol" value="@stock.StockDetails.Symbol" />
+                                    <button class="btn btn-sm btn-warning" title="Remove from favorites">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No favorite stocks found.</p>
+    }
+
+    <!-- All Stocks -->
+    <h3>All Stocks</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Change</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var stock in Model.FilteredStocks)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="StockPage" asp-action="Index" asp-route-stockName="@stock.StockDetails.Name" 
+                           class="text-decoration-none fw-bold">@stock.StockDetails.Symbol</a>
+                    </td>
+                    <td>
+                        <a asp-controller="StockPage" asp-action="Index" asp-route-stockName="@stock.StockDetails.Name" 
+                           class="text-decoration-none">@stock.StockDetails.Name</a>
+                    </td>
+                    <td>$@stock.StockDetails.Price</td>
+                    <td style="color:@(stock.Change > 0 ? "green" : stock.Change < 0 ? "red" : "black")">
+                        @stock.Change
+                    </td>
+                    <td>
+                        <div role="group">
+                            <a asp-controller="StockPage" style="margin-right: 10px;" asp-action="Index" asp-route-stockName="@stock.StockDetails.Name"
+                                   class="btn btn-sm btn-outline-primary" title="View Details">
+                                <i class="fas fa-chart-line"></i> Details
+                            </a>
+                            <form method="post" asp-action="ToggleFavorite" style="display: inline;">
+                                <input type="hidden" name="symbol" value="@stock.StockDetails.Symbol" />
+                                @if (!stock.IsFavorite)
+                                {
+                                    <button class="btn btn-sm btn-outline-warning" title="Add to favorites">
+                                        <i class="far fa-star"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-warning" title="Remove from favorites">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                }
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+        }

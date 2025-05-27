@@ -1,0 +1,152 @@
+
+    <Page
+    x:Class="StockApp.Views.Pages.NewsArticlePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StockApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:converters="using:StockApp.Views.Converters"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    </Page.Resources>
+
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header with Back Button -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="{x:Bind ViewModel.IsAdminPreview, Mode=OneWay, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Article Preview|Article'}" 
+                           Style="{StaticResource TitleTextBlockStyle}" 
+                           FontSize="28" 
+                           FontWeight="SemiBold"/>
+
+                <!-- Show status if in admin preview mode -->
+                <StackPanel Orientation="Horizontal" 
+                            Spacing="8" 
+                            Visibility="{x:Bind ViewModel.IsAdminPreview, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Status:" Style="{StaticResource BodyTextBlockStyle}" Opacity="0.7"/>
+                    <Border Background="{ThemeResource AccentFillColorDefaultBrush}" 
+                            Padding="6,2" 
+                            CornerRadius="4">
+                        <TextBlock Text="{x:Bind ViewModel.ArticleStatus, Mode=OneWay}" 
+                                   Foreground="White" 
+                                   FontSize="12"/>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Article Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16">
+                <!-- Loading State -->
+                <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" 
+                              Width="50" Height="50" 
+                              HorizontalAlignment="Center" 
+                              Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+
+                <!-- Article Content -->
+                <StackPanel Spacing="16" Visibility="{x:Bind ViewModel.Article.Content, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}">
+                    <TextBlock Text="{x:Bind ViewModel.Article.Title, Mode=OneWay}" 
+                               Style="{StaticResource TitleTextBlockStyle}" 
+                               FontSize="28" 
+                               TextWrapping="Wrap"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{x:Bind ViewModel.Article.Source, Mode=OneWay}" Opacity="0.7"/>
+                        <TextBlock Text="�" Opacity="0.7"/>
+                        <TextBlock Text="{x:Bind ViewModel.Article.PublishedDate, Mode=OneWay}" Opacity="0.7"/>
+                        <TextBlock Text="�" Opacity="0.7"/>
+                        <TextBlock Text="{x:Bind ViewModel.Article.Category, Mode=OneWay}" Opacity="0.7"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{x:Bind ViewModel.Article.Summary, Mode=OneWay}" 
+                               Style="{StaticResource SubtitleTextBlockStyle}" 
+                               TextWrapping="Wrap"
+                               Opacity="0.9"/>
+
+                    <!-- Related Stocks -->
+                    <StackPanel Visibility="{x:Bind ViewModel.HasRelatedStocks, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" 
+                                Spacing="8">
+                        <TextBlock Text="Related Stocks:" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.Article.RelatedStocks, Mode=OneWay}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Horizontal" Spacing="8"/>
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Button Content="{x:Bind}" 
+                                            Click="RelatedStockClick"
+                                            Margin="0,0,8,8" 
+                                            Padding="8,4"
+                                            Background="{ThemeResource AccentButtonBackground}"
+                                            Foreground="{ThemeResource AccentButtonForeground}"
+                                            CornerRadius="4" />
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </StackPanel>
+
+                    <Rectangle Height="1" Fill="{ThemeResource DividerStrokeColorDefaultBrush}" Margin="0,8,0,8"/>
+
+                    <TextBlock Text="{x:Bind ViewModel.Article.Content, Mode=OneWay}" 
+                               TextWrapping="Wrap" 
+                               Margin="0,16,0,0" 
+                               FontSize="16" 
+                               LineHeight="24"
+                               TextTrimming="None"
+                               TextAlignment="Left"
+                               IsTextSelectionEnabled="True"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Admin Actions (only visible in preview mode) -->
+        <Grid Grid.Row="2" 
+              Margin="0,20,0,0" 
+              Visibility="{x:Bind ViewModel.IsAdminPreview, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                <Button Command="{x:Bind ViewModel.DeleteCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE74D;"/>
+                        <TextBlock Text="Delete"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{x:Bind ViewModel.RejectCommand}"
+                        Visibility="{x:Bind ViewModel.CanReject, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE711;"/>
+                        <TextBlock Text="Reject"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{x:Bind ViewModel.ApproveCommand}" 
+                        Style="{StaticResource AccentButtonStyle}"
+                        Visibility="{x:Bind ViewModel.CanApprove, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE73E;"/>
+                        <TextBlock Text="Approve"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
+

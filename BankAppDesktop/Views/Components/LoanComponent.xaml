@@ -1,0 +1,83 @@
+<Page x:Class="StockApp.Views.Components.LoanComponent"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:local="using:StockApp.Views.Components"
+ xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:data="using:System.Windows.Data" xmlns:models="using:Common.Models" d:DataContext="{d:DesignInstance Type=models:Loan}"
+      mc:Ignorable="d"
+ Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <TextBlock>
+             <Run Text="Loan ID: "/>
+             <Run Text="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="User CNP: "/>
+             <Run Text="{Binding UserCnp, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Amount: "/>
+             <Run Text="{Binding LoanAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Applied: "/>
+             <Run Text="{Binding ApplicationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DateFormatConverter}, ConverterParameter='yyyy-MM-dd'}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Repay By: "/>
+             <Run Text="{Binding RepaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DateFormatConverter}, ConverterParameter='yyyy-MM-dd'}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Interest: "/>
+             <Run Text="{Binding InterestRate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Duration: "/>
+             <Run Text="{Binding NumberOfMonths, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+             <Run Text=" months"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Monthly Payment: "/>
+             <Run Text="{Binding MonthlyPaymentAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="State: "/>
+             <Run Text="{Binding Status, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Payments Done: "/>
+             <Run Text="{Binding MonthlyPaymentsCompleted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Repaid: "/>
+             <Run Text="{Binding RepaidAmount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+            <TextBlock>
+             <Run Text="Penalty: "/>
+             <Run Text="{Binding Penalty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </TextBlock>
+        </StackPanel>
+
+        <!-- Simulate Loan Payment Button -->
+        <Button Content="Simulate One Monthly Payment" Click="OnSolveClick"
+             Padding="0, 0"
+             FontSize="16"
+             Height="50"
+             Width="350"
+             Background="#539BF5"
+             FontWeight="Bold"
+             BorderBrush="Transparent"
+             Grid.Row="1"
+             HorizontalAlignment="Right"
+             IsEnabled="{Binding CanPay, UpdateSourceTrigger=PropertyChanged}"
+             VerticalAlignment="Bottom">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+            </Button.Style>
+        </Button>
+    </Grid>
+</Page>

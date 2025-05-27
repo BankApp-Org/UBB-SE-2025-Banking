@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="StockApp.Views.Components.CreateLoanDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StockApp.Views.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:StockApp.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:CreateLoanDialogViewModel}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20">
+        <TextBlock Text="Submit a Loan Request" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <TextBlock Text="{Binding ErrorMessage}"
+                   Foreground="Red" 
+                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" 
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,10"/>
+
+        <TextBlock Text="{Binding SuccessMessage}"
+                   Foreground="Green" 
+                   Visibility="{Binding SuccessMessage, Converter={StaticResource StringToVisibilityConverter}}"
+                   TextWrapping="Wrap" 
+                   Margin="0,0,0,10"/>
+
+        <TextBlock Text="Amount (between 100 and 100,000)" Margin="0,0,0,5"/>
+        <NumberBox x:Name="AmountInput" 
+                   Value="{Binding Amount, Mode=TwoWay}"
+                   PlaceholderText="Enter amount" 
+                   Minimum="100"
+                   Maximum="100000"
+                   SpinButtonPlacementMode="Inline"
+                   SmallChange="100"
+                   LargeChange="1000"
+                   Margin="0,0,0,15"/>
+
+        <TextBlock Text="Repayment Date" Margin="0,0,0,5"/>
+        <CalendarDatePicker x:Name="RepaymentDatePicker" 
+                           Date="{Binding RepaymentDate, Mode=TwoWay}"
+                           MinDate="{Binding MinDate}"
+                           PlaceholderText="Select a date"
+                           Margin="0,0,0,20"/>
+    </StackPanel>
+    </Grid>
+</Page>

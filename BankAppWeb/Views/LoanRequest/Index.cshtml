@@ -1,0 +1,52 @@
+﻿@model StockAppWeb.Views.LoanRequest.IndexModel
+@{
+    ViewData["Title"] = "Loan Requests";
+}
+
+<h2>Pending Loan Requests</h2>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+@if (Model.Requests.Count == 0)
+{
+    <p>There are no loan requests that need solving.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User CNP</th>
+                <th>Amount</th>
+                <th>Application Date</th>
+                <th>Repayment Date</th>
+                <th>Status</th>
+                <th>Suggestion</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model.Requests)
+            {
+                <tr>
+                    <td>@request.UserCnp</td>
+                    <td>@(request.Loan?.LoanAmount ?? 0)</td>
+                    <td>@(request.Loan?.ApplicationDate.ToShortDateString() ?? "N/A")</td>
+                    <td>@(request.Loan?.RepaymentDate.ToShortDateString() ?? "N/A")</td>
+                    <td>@request.Status</td>
+                    <td>@Model.Suggestions[request.Id]</td>
+                    <td>
+                        <form method="post">
+                            <input type="hidden" name="id" value="@request.Id" />
+                            <button type="submit" asp-action="Solve" class="btn btn-success">Solve</button>
+                            <button type="submit" asp-action="Delete" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

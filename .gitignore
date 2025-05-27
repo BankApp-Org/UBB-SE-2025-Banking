@@ -1,0 +1,63 @@
+Database/StockApp_DB.db
+
+# Ignore build directories
+bin/
+obj/
+
+# User-specific Visual Studio files
+.vs/
+.vscode/
+
+# User-specific project files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Temporary files
+*.log
+*.vspscc
+*.vssscc
+
+# .NET build directories and files
+project.lock.json
+project.fragment.lock.json
+packages/
+
+# Rider files
+.idea/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Test results and coverage
+TestResults/
+*.coverage
+*.codeclimate.yml
+
+# Ignore Visual Studio for Mac specific files
+.vscode/
+
+# Debug and Release directories
+Debug/
+Release/
+
+# NuGet package restore folder
+.nuget/
+
+# Exclude Xamarin Studio/Visual Studio for Mac temporary files
+.idea/
+
+# Ignore global NuGet packages if you use a global package cache
+# If you're using the global package folder, you do not need this.
+# Uncomment the line below to ignore local package folders.
+# packages/
+
+# Exclude generated files (e.g., AppPackages, AppX, etc.)
+AppPackages/
+
+# Exclude .NET Core and ASP.NET Core development server files
+appsettings.Development.json

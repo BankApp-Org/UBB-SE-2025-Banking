@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page  
+   x:Class="StockApp.Views.Pages.CreateProfilePage"  
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
+   xmlns:local="using:StockApp.Views.Pages"  
+   xmlns:vm="using:StockApp.ViewModels"  
+   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"  
+   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+   xmlns:local1="using:StockApp.ViewModels"
+   xmlns:converters="using:StockApp.Converters"
+   mc:Ignorable="d"  
+   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+        <converters:DateTimeOffsetToDateTimeConverter x:Key="DateTimeOffsetToDateTimeConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <StackPanel Padding="50" Spacing="30" Background="#FFF5EE" BorderBrush="#FF69B4" BorderThickness="10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="150" Background="#FFF5EE" Padding="20">
+                <Button Content="Back" Command="{Binding GoToProfilePageCommand}" Background="#A39FE1" CornerRadius="10" Foreground="#FFF5EE" Padding="10"/>
+                <TextBlock Text="Create Profile" FontSize="24" FontWeight="Bold" Foreground="#FF69B4"/>
+            </StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="550">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="4" BorderBrush="#770737" Background="#FFB6C1" CornerRadius="10" Padding="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Image:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="0" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding Image, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="New image..." Grid.Row="0" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="First Name:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="1" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding FirstName, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="Enter first name..." Grid.Row="1" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Last Name:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="2" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding LastName, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="Enter last name..." Grid.Row="2" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Username:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="3" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding Username, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="New username..." Grid.Row="3" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Email:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="4" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding Email, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="Enter email address..." Grid.Row="4" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Phone Number:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="5" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding PhoneNumber, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="Enter phone number..." Grid.Row="5" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Birthday:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="6" Grid.Column="0" Margin="0,5"/>
+                    <DatePicker Date="{Binding Birthday, Mode=TwoWay, Converter={StaticResource DateTimeOffsetToDateTimeConverter}}" Width="200"  Foreground="#770737" Grid.Row="6" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="CNP:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="7" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding CNP, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="Enter CNP..." Grid.Row="7" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Zodiac Sign:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="8" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding ZodiacSign, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="Enter zodiac sign..." Grid.Row="8" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Zodiac Attribute:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="9" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding ZodiacAttribute, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="Enter zodiac attribute..." Grid.Row="9" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Description:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="10" Grid.Column="0" Margin="0,5"/>
+                    <TextBox Text="{Binding Description, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderForeground="#990747" PlaceholderText="New description..." Grid.Row="10" Grid.Column="1" Margin="0,5"/>
+
+                    <TextBlock Text="Password:" FontSize="16" Foreground="#770737" Width="120" Grid.Row="11" Grid.Column="0" Margin="0,5"/>
+                    <PasswordBox PasswordChar="•" Password="{Binding Password, Mode=TwoWay}" Width="200"  Foreground="#770737" PlaceholderText="New password..." Grid.Row="11" Grid.Column="1" Margin="0,5"/>
+                </Grid>
+            </ScrollViewer>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button Content="Create profile" CornerRadius="10" Command="{Binding CreateProfileCommand}" Background="#FF69B4" Foreground="#FFF5EE" Padding="15,8"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

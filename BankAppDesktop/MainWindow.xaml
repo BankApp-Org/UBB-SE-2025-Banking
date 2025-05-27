@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="StockApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StockApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="StockApp">
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.0*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.05*"/>
+                <RowDefinition Height="0.95*"/>
+            </Grid.RowDefinitions>
+            <!-- Navigation bar -->
+            <NavigationView PaneDisplayMode="Top" SelectionChanged="NavigationView_SelectionChanged" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" Grid.Column="0" Grid.Row="0">
+               <NavigationView.MenuItems>
+                    <NavigationViewItem Content="Home" Tag="HomePage"/>
+                    <NavigationViewItem Content="Users" Tag="UsersList" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="Chat reports" Tag="ChatReports" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="Loan requests" Tag="LoanRequest" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="Loans" Tag="Loans" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <!--<NavigationViewItem Content="BillSplit reports" Tag="BillSplitReports" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>-->
+                    <!--<NavigationViewItem Content="Investments" Tag="Investments" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>-->
+                    <NavigationViewItem Content="News" Tag="NewsListPage"/>
+                    <NavigationViewItem Content="Create Stock" Tag="CreateStockPage" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="History" Tag="TransactionLogPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="Store" Tag="GemStoreWindow" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="Log in" Tag="LoginPage" Visibility="{Binding IsUnauthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="Profile" Tag="ProfilePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                </NavigationView.MenuItems>
+            </NavigationView>
+
+
+
+            <!-- Frame for navigation -->
+            <Frame Name="MainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1"/>
+        </Grid>
+    </ScrollViewer>
+</Window>

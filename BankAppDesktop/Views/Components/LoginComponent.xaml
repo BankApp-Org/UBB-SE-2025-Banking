@@ -1,0 +1,27 @@
+<UserControl
+    x:Class="StockApp.Views.Components.LoginComponent"
+    xmlns:local="using:StockApp.Views.Components"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid Padding="20">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+            <TextBlock Text="Login" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+            
+            <TextBlock Text="Username" Margin="0,0,0,5"/>
+            <TextBox x:Name="UsernameTextBox" PlaceholderText="Enter your username" Margin="0,0,0,15"/>
+            
+            <TextBlock Text="Password" Margin="0,0,0,5"/>
+            <PasswordBox x:Name="PasswordBox" PlaceholderText="Enter your password" Margin="0,0,0,20"/>
+            
+            <TextBlock x:Name="ErrorTextBlock" Foreground="Red" TextWrapping="Wrap" Margin="0,0,0,15"/>
+            
+            <Button x:Name="LoginButton" Content="Login" HorizontalAlignment="Stretch" Click="LoginButton_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

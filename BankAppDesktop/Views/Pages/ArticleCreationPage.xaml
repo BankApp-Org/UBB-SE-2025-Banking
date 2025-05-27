@@ -1,0 +1,77 @@
+<Page
+    x:Class="StockApp.Views.ArticleCreationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StockApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Width="600">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Form -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16">
+                <!-- Title -->
+                <TextBox Header="Title" 
+                         PlaceholderText="Enter article title" 
+                         Text="{Binding Title, Mode=TwoWay}"
+                         MaxLength="100"/>
+
+                <!-- Summary -->
+                <TextBox Header="Summary" 
+                         PlaceholderText="Enter a brief summary of the article" 
+                         Text="{Binding Summary, Mode=TwoWay}"
+                         TextWrapping="Wrap"
+                         MaxLength="200"
+                         Height="80"/>
+
+                <!-- Content -->
+                <TextBox Header="Content" 
+                         PlaceholderText="Enter the full article content" 
+                         Text="{Binding Content, Mode=TwoWay}"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         MinHeight="200"/>
+
+                <!-- Topic -->
+                <ComboBox Header="Topic" 
+                          PlaceholderText="Select a topic" 
+                          ItemsSource="{Binding Topics}" 
+                          SelectedItem="{Binding SelectedTopic, Mode=TwoWay}"
+                          HorizontalAlignment="Stretch"/>
+
+                <!-- Related Stocks -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Related Stocks" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <TextBlock Text="Enter stock symbols separated by commas (e.g., AAPL, MSFT, GOOG)" 
+                               Style="{StaticResource CaptionTextBlockStyle}" 
+                               Opacity="0.7"/>
+                    <TextBox PlaceholderText="Enter related stock symbols" 
+                             Text="{Binding RelatedStocksText, Mode=TwoWay}"/>
+                </StackPanel>
+
+                <!-- Error Message -->
+                <InfoBar Title="Error" 
+                         IsOpen="{Binding HasError, Mode=OneWay}" 
+                         Message="{Binding ErrorMessage, Mode=OneWay}" 
+                         Severity="Error"/>
+            </StackPanel>
+        </ScrollViewer>
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="3" 
+              Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" 
+              Opacity="0.7"
+              Visibility="{Binding IsLoading, Mode=OneWay}">
+            <ProgressRing IsActive="{Binding IsLoading, Mode=OneWay}" 
+                          Width="50" 
+                          Height="50"/>
+        </Grid>
+    </Grid>
+</Page>
+

@@ -1,0 +1,188 @@
+@page
+@model StockAppWeb.Pages.Analysis.IndexModel
+@{
+    ViewData["Title"] = "Analysis";
+}
+
+<div class="container">
+    <h2 class="mb-4">Analysis</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    <div class="row">
+        <!-- User Information -->
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">User Information</h5>
+                    <p class="mb-1"><strong>ID:</strong> @Model.CurrentUser.Id</p>
+                    <p class="mb-1"><strong>First Name:</strong> @Model.CurrentUser.FirstName</p>
+                    <p class="mb-1"><strong>Last Name:</strong> @Model.CurrentUser.LastName</p>
+                    <p class="mb-1"><strong>CNP:</strong> @Model.CurrentUser.CNP</p>
+                    <p class="mb-1"><strong>Email:</strong> @Model.CurrentUser.Email</p>
+                    <p class="mb-1"><strong>Phone Number:</strong> @Model.CurrentUser.PhoneNumber</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Period Buttons and Admin User Selector -->
+        <div class="col-md-6">
+            @if (Model.IsAdmin)
+            {
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Select User</h5>
+                        <form method="post">
+                            <div class="d-flex gap-2">
+                                <select name="selectedUserCnp" class="form-select" id="userSelect">
+                                    @foreach (var user in Model.UserList)
+                                    {
+                                        if (user.Selected)
+                                        {
+                                            <option value="@user.Value" selected>@user.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@user.Value">@user.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <button type="submit" asp-page-handler="ChangeUser" class="btn btn-primary">Go</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Time Period</h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="button" onclick="loadHistory('weekly')">Weekly</button>
+                        <button class="btn btn-primary" type="button" onclick="loadHistory('monthly')">Monthly</button>
+                        <button class="btn btn-primary" type="button" onclick="loadHistory('yearly')">Yearly</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credit Score Chart -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Credit Score History</h5>
+            <canvas id="creditScoreChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Activity List -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Activity History</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Activity Name</th>
+                            <th>Details</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var activity in Model.Activities)
+                        {
+                            <tr>
+                                <td>@activity.ActivityName</td>
+                                <td>@activity.ActivityDetails</td>
+                                <td class="@(activity.LastModifiedAmount >= 0 ? "text-success" : "text-danger")">
+                                    @activity.LastModifiedAmount
+                                </td>
+                                <td>@activity.CreatedAt.ToShortDateString()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let creditScoreChart;
+        const selectedUserCnp = "@Model.SelectedUserCnp";
+
+        function loadHistory(period) {
+            let url = '';
+            
+            // If admin is viewing another user, use that user's CNP in the API call
+            if (selectedUserCnp !== "@Model.CurrentUser.CNP") {
+                url = `@(Model.ApiBase)/api/history/user/${selectedUserCnp}/${period}`;
+            } else {
+                url = `@(Model.ApiBase)/api/history/user/${period}`;
+            }
+            
+            fetch(url, {
+                credentials: 'include',
+            })  
+                .then(response => response.json())
+                .then(data => {
+                    updateChart(data["$values"]);
+                })
+                .catch(error => {
+                    console.error('Error loading history:', error);
+                });
+        }
+
+        function updateChart(history) {
+            const ctx = document.getElementById('creditScoreChart').getContext('2d');
+            
+            if (creditScoreChart) {
+                creditScoreChart.destroy();
+            }
+
+            const labels = history.map(h => new Date(h.date).toLocaleDateString());
+            const scores = history.map(h => h.score);
+            const colors = history.map((h, i) => {
+                if (i === 0) return 'rgb(0, 255, 0)';
+                const prevScore = history[i - 1].score;
+                if (h.score > prevScore) return 'rgb(0, 255, 0)';
+                if (h.score === prevScore) return 'rgb(255, 255, 0)';
+                return 'rgb(255, 0, 0)';
+            });
+
+            creditScoreChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Credit Score',
+                        data: scores,
+                        backgroundColor: colors,
+                        borderColor: colors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 800
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load initial data
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistory('monthly');
+        });
+    </script>
+}

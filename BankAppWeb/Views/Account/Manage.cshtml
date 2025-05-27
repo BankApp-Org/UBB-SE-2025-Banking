@@ -1,0 +1,178 @@
+@model StockAppWeb.Models.ManageAccountViewModel
+@{
+    ViewData["Title"] = "Manage Account";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card border-pink">
+                <div class="card-header bg-pink text-white d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">Profile: @Model.UserName</h2>
+                    <div>
+                        @if (Model.IsAuthenticated) // Should always be true here
+                        {
+                            <a class="btn btn-light me-2" asp-action="EditProfile" asp-controller="Account">Edit Profile</a>
+                            <a class="btn btn-outline-light me-2" asp-action="ChangePassword" asp-controller="Account">Change Password</a>
+                            <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Log out</a>
+                        }
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                    {
+                        <div class="alert alert-success mb-3">@Model.SuccessMessage</div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger mb-3">@Model.ErrorMessage</div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Profile Picture</h4>
+                                </div>
+                                <div class="card-body text-center">
+                                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                    {
+                                        <img src="@Model.ImageUrl" alt="@Model.UserName's profile" class="img-fluid rounded-circle profile-image mb-3" style="max-width: 150px; max-height: 150px;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="profile-image-placeholder rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px; background-color: #f8d7da; margin: auto;">
+                                            <span class="display-4">@Model.ProfileInitial</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Account Status</h4>
+                                </div>
+                                <div class="card-body">
+                                    <h3>@Model.UserName</h3>
+                                    @if (Model.IsAdmin)
+                                    {
+                                        <span class="badge bg-danger">Admin</span>
+                                    }
+                                    @if (Model.IsHidden)
+                                    {
+                                        <span class="badge bg-secondary">Hidden Profile</span>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>About Me</h4>
+                                </div>
+                                <div class="card-body">
+                                     <p>@(string.IsNullOrEmpty(Model.Description) ? "No description available." : Model.Description)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Personal Information</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4"><strong>Username:</strong></div>
+                                        <div class="col-md-8">@Model.UserName</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4"><strong>Email:</strong></div>
+                                        <div class="col-md-8">@Model.Email</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4"><strong>Full Name:</strong></div>
+                                        <div class="col-md-8">@Model.FullName</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4"><strong>Phone Number:</strong></div>
+                                        <div class="col-md-8">@Model.PhoneNumber</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4"><strong>Birth Date:</strong></div>
+                                        <div class="col-md-8">@Model.Birthday.ToShortDateString()</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>My Stocks</h4>
+                                </div>
+                                <div class="card-body">
+                                    @if (Model.UserStocks == null || !Model.UserStocks.Any())
+                                    {
+                                        <p>You don't own any stocks yet.</p>
+                                    }
+                                    else
+                                    {
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Symbol</th>
+                                                        <th>Quantity</th>
+                                                        <th>Price</th>
+                                                        <th>Total Value</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var stock in Model.UserStocks)
+                                                    {
+                                                        <tr>
+                                                            <td>@stock.Name</td>
+                                                            <td>@stock.Symbol</td>
+                                                            <td>@stock.Quantity</td>
+                                                            <td>@stock.Price.ToString("C")</td>
+                                                            <td>@stock.TotalValue.ToString("C")</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .border-pink {
+            border-color: #FF69B4 !important;
+        }
+        
+        .bg-pink {
+            background-color: #FF69B4 !important;
+        }
+
+        .profile-image {
+            border: 3px solid #FF69B4; /* Pink border for profile image */
+        }
+
+        .profile-image-placeholder {
+             border: 3px solid #FF69B4; /* Pink border for placeholder */
+        }
+
+        .card-header {
+            font-weight: bold;
+        }
+        /* Additional styles can be added or refined here */
+    </style>
+}

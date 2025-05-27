@@ -1,0 +1,84 @@
+<Page
+    x:Class="StockApp.Views.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:StockApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="using:StockApp.ViewModels"
+    xmlns:model="using:Common.Models" xmlns:converters="using:StockApp.Views.Converters"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <converters:ChangeToColorConverter x:Key="ChangeToColorConverter" />
+    </Page.Resources>
+    <!-- Main layout -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="15">
+
+            <!-- Search & Sorting -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox PlaceholderText="Search stocks..."
+                         Text="{Binding SearchQuery, Mode=TwoWay}"
+                         Grid.Column="0"
+                         HorizontalAlignment="Stretch"
+                         Margin="0,0,10,0" />
+                <ComboBox SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}"
+                          Grid.Column="1"
+                          HorizontalAlignment="Left">
+                    <ComboBoxItem Content="Sort by Name" />
+                    <ComboBoxItem Content="Sort by Price" />
+                    <ComboBoxItem Content="Sort by Change" />
+                </ComboBox>
+            </Grid>
+
+            <!-- Favorite Stocks Section -->
+            <TextBlock Text="Favorite Stocks" FontSize="20" FontWeight="Bold" Margin="15,10,0,10" />
+            <ListView x:Name="FavoritesList"
+                      ItemsSource="{Binding FilteredFavoriteStocks}"
+                      IsItemClickEnabled="True"
+                      ItemClick="GoToStock">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="model:HomepageStock">
+                        <StackPanel Orientation="Horizontal" Spacing="20">
+                            <TextBlock Text="{x:Bind StockDetails.Symbol}" FontSize="16" FontWeight="Bold" Width="100" />
+                            <TextBlock Text="{x:Bind StockDetails.Name}" Width="450" />
+                            <TextBlock Text="{x:Bind StockDetails.Price}" Width="200" />
+                            <TextBlock Text="{x:Bind Change}"  
+           Foreground="{Binding Change, Converter={StaticResource ChangeToColorConverter}}"  
+           Width="200" />
+                            <TextBlock Text="{x:Bind Change}" Foreground="{x:Bind Change, Converter={StaticResource ChangeToColorConverter}}" Width="200" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <!-- All Stocks Section -->
+            <TextBlock Text="All Stocks" FontSize="20" FontWeight="Bold" Margin="15,10,0,10" />
+            <ListView x:Name="StocksList"
+                      ItemsSource="{Binding FilteredStocks}"
+                      IsItemClickEnabled="True"
+                      ItemClick="GoToStock">
+                <ListView.ItemTemplate>  
+                   <DataTemplate x:DataType="model:HomepageStock">  
+                       <StackPanel Orientation="Horizontal" Spacing="20">
+                            <TextBlock Text="{x:Bind StockDetails.Symbol}" FontSize="16" FontWeight="Bold" Width="100" />
+                            <TextBlock Text="{x:Bind StockDetails.Name}" Width="450" />
+                            <TextBlock Text="{x:Bind StockDetails.Price}" Width="200" />  
+                           <TextBlock Text="{x:Bind Change}"  
+                                      Foreground="{x:Bind Change, Converter={StaticResource ChangeToColorConverter}}"  
+                                      Width="200" />
+
+                            
+                       </StackPanel>  
+                   </DataTemplate>  
+                </ListView.ItemTemplate>
+            </ListView>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>

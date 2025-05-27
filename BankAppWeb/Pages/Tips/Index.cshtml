@@ -1,0 +1,75 @@
+@page
+@model StockAppWeb.Pages.Tips.IndexModel
+@{
+    ViewData["Title"] = "Tips History";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Tips History</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTipModal">
+            Add New Tip
+        </button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @Model.SuccessMessage
+        </div>
+    }
+
+    <div class="list-group">
+        @foreach (var message in Model.Messages)
+        {
+            <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@message.Type</h5>
+                    <small>ID: @message.Id</small>
+                </div>
+                <p class="mb-1">@message.MessageText</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Add Tip Modal -->
+<div class="modal fade" id="addTipModal" tabindex="-1" aria-labelledby="addTipModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTipModalLabel">Add New Tip</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <input type="text" class="form-control" id="type" name="Input.Type" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="messageText" class="form-label">Message</label>
+                        <textarea class="form-control" id="messageText" name="Input.MessageText" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Tip</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add any necessary JavaScript here
+    </script>
+} 
