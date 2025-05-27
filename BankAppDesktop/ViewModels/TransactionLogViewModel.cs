@@ -7,10 +7,21 @@
     using System.Runtime.CompilerServices;
 
     /// <summary>
+    /// Interface defining the contract for transaction log view models with filtering capability
+    /// </summary>
+    public interface ITransactionLogFilterable
+    {
+        /// <summary>
+        /// Event that is raised when the filter criteria have changed
+        /// </summary>
+        event EventHandler FilterCriteriaChanged;
+    }
+
+    /// <summary>
     /// ViewModel for displaying and managing the transaction log UI state with filtering and sorting options.
     /// Contains only data properties and UI state management - business logic handled in code-behind.
     /// </summary>
-    public partial class TransactionLogViewModel : INotifyPropertyChanged
+    public partial class TransactionLogViewModel : INotifyPropertyChanged, ITransactionLogFilterable
     {
         private string stockNameFilter = string.Empty;
         private string selectedTransactionType = "ALL";
@@ -30,6 +41,11 @@
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
+        /// Event raised when filter criteria have changed.
+        /// </summary>
+        public event EventHandler? FilterCriteriaChanged;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TransactionLogViewModel"/> class.
         /// </summary>
         public TransactionLogViewModel()
@@ -47,7 +63,13 @@
         public string StockNameFilter
         {
             get => this.stockNameFilter;
-            set => this.SetProperty(ref this.stockNameFilter, value);
+            set
+            {
+                if (this.SetProperty(ref this.stockNameFilter, value))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -56,7 +78,13 @@
         public string SelectedTransactionType
         {
             get => this.selectedTransactionType;
-            set => this.SetProperty(ref this.selectedTransactionType, value);
+            set
+            {
+                if (this.SetProperty(ref this.selectedTransactionType, value))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -65,7 +93,13 @@
         public string SelectedSortBy
         {
             get => this.selectedSortBy;
-            set => this.SetProperty(ref this.selectedSortBy, value);
+            set
+            {
+                if (this.SetProperty(ref this.selectedSortBy, value))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -74,7 +108,13 @@
         public string SelectedSortOrder
         {
             get => this.selectedSortOrder;
-            set => this.SetProperty(ref this.selectedSortOrder, value);
+            set
+            {
+                if (this.SetProperty(ref this.selectedSortOrder, value))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -92,7 +132,13 @@
         public string MinTotalValue
         {
             get => this.minTotalValue;
-            set => this.SetProperty(ref this.minTotalValue, value);
+            set
+            {
+                if (this.SetProperty(ref this.minTotalValue, value))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -101,7 +147,13 @@
         public string MaxTotalValue
         {
             get => this.maxTotalValue;
-            set => this.SetProperty(ref this.maxTotalValue, value);
+            set
+            {
+                if (this.SetProperty(ref this.maxTotalValue, value))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -110,7 +162,13 @@
         public DateTime StartDate
         {
             get => this.startDate;
-            set => this.SetProperty(ref this.startDate, value);
+            set
+            {
+                if (this.SetProperty(ref this.startDate, value))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -119,7 +177,13 @@
         public DateTimeOffset StartDateOffset
         {
             get => new(this.startDate);
-            set => this.SetProperty(ref this.startDate, value.DateTime);
+            set
+            {
+                if (this.SetProperty(ref this.startDate, value.DateTime))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -128,7 +192,13 @@
         public DateTime EndDate
         {
             get => this.endDate;
-            set => this.SetProperty(ref this.endDate, value);
+            set
+            {
+                if (this.SetProperty(ref this.endDate, value))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -137,7 +207,13 @@
         public DateTimeOffset EndDateOffset
         {
             get => new(this.endDate);
-            set => this.SetProperty(ref this.endDate, value.DateTime);
+            set
+            {
+                if (this.SetProperty(ref this.endDate, value.DateTime))
+                {
+                    this.OnFilterCriteriaChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -157,6 +233,26 @@
             get => this.errorMessage;
             set => this.SetProperty(ref this.errorMessage, value);
         }
+
+        /// <summary>
+        /// Gets the options for sorting by criteria.
+        /// </summary>
+        public ObservableCollection<string> SortByOptions { get; } = new(["Date", "Stock Name", "Total Value"]);
+
+        /// <summary>
+        /// Gets the options for sorting order.
+        /// </summary>
+        public ObservableCollection<string> SortOrderOptions { get; } = new(["ASC", "DESC"]);
+
+        /// <summary>
+        /// Gets the options for transaction types.
+        /// </summary>
+        public ObservableCollection<string> TransactionTypeOptions { get; } = new(["ALL", "BUY", "SELL"]);
+
+        /// <summary>
+        /// Gets the options for export formats.
+        /// </summary>
+        public ObservableCollection<string> ExportFormatOptions { get; } = new(["CSV", "JSON", "HTML"]);
 
         /// <summary>
         /// Sets the property and raises the PropertyChanged event if the value has changed.
@@ -185,6 +281,14 @@
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Raises the <see cref="FilterCriteriaChanged"/> event.
+        /// </summary>
+        protected virtual void OnFilterCriteriaChanged()
+        {
+            this.FilterCriteriaChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

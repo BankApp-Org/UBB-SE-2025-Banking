@@ -7,7 +7,6 @@
     using StockApp.ViewModels;
     using System;
     using System.Linq;
-    using Windows.Storage;
     using Windows.Storage.Pickers;
 
     /// <summary>
@@ -73,6 +72,14 @@
         private async void OnPageLoaded(object sender, RoutedEventArgs e)
         {
             await this.LoadTransactionsAsync();
+            this.viewModel.FilterCriteriaChanged += (object? o, EventArgs ea) =>
+            {
+                if (this.viewModel.IsLoading)
+                {
+                    return;
+                }
+                _ = this.LoadTransactionsAsync();
+            };
         }
 
         /// <summary>

@@ -1,11 +1,10 @@
+using Common.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Common.Services;
 using StockApp.ViewModels;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using StockApp.Views.Pages;
 
 namespace StockApp.Views.Pages
 {
@@ -41,7 +40,10 @@ namespace StockApp.Views.Pages
 
         private async Task LoginAsync()
         {
-            if (!CanLogin()) return;
+            if (!CanLogin())
+            {
+                return;
+            }
 
             _viewModel.ErrorMessage = string.Empty;
             _viewModel.IsLoading = true;

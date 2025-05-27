@@ -13,12 +13,11 @@
     </Page.Resources>
     <!-- Main layout -->
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Spacing="15">
-
-            <!-- Search & Sorting -->
+        <StackPanel Spacing="15">            <!-- Search & Sorting -->
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
@@ -28,12 +27,18 @@
                          HorizontalAlignment="Stretch"
                          Margin="0,0,10,0" />
                 <ComboBox SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}"
+                          SelectionChanged="SortOption_SelectionChanged"
                           Grid.Column="1"
-                          HorizontalAlignment="Left">
+                          HorizontalAlignment="Left"
+                          Margin="0,0,10,0">
                     <ComboBoxItem Content="Sort by Name" />
                     <ComboBoxItem Content="Sort by Price" />
                     <ComboBoxItem Content="Sort by Change" />
                 </ComboBox>
+                <Button Content="Search" 
+                        Click="SearchButton_Click"
+                        Grid.Column="2"
+                        HorizontalAlignment="Left" />
             </Grid>
 
             <!-- Favorite Stocks Section -->
@@ -41,17 +46,21 @@
             <ListView x:Name="FavoritesList"
                       ItemsSource="{Binding FilteredFavoriteStocks}"
                       IsItemClickEnabled="True"
-                      ItemClick="GoToStock">
-                <ListView.ItemTemplate>
+                      ItemClick="GoToStock">                <ListView.ItemTemplate>
                     <DataTemplate x:DataType="model:HomepageStock">
                         <StackPanel Orientation="Horizontal" Spacing="20">
                             <TextBlock Text="{x:Bind StockDetails.Symbol}" FontSize="16" FontWeight="Bold" Width="100" />
                             <TextBlock Text="{x:Bind StockDetails.Name}" Width="450" />
                             <TextBlock Text="{x:Bind StockDetails.Price}" Width="200" />
-                            <TextBlock Text="{x:Bind Change}"  
-           Foreground="{Binding Change, Converter={StaticResource ChangeToColorConverter}}"  
-           Width="200" />
-                            <TextBlock Text="{x:Bind Change}" Foreground="{x:Bind Change, Converter={StaticResource ChangeToColorConverter}}" Width="200" />
+                            <TextBlock Text="{x:Bind Change}"
+                                       Foreground="{x:Bind Change, Converter={StaticResource ChangeToColorConverter}}"
+                                       Width="200" />
+                            <Button Content="♡" 
+                                    Click="FavoriteButton_Click"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Width="40"
+                                    Height="30" />
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -62,8 +71,7 @@
             <ListView x:Name="StocksList"
                       ItemsSource="{Binding FilteredStocks}"
                       IsItemClickEnabled="True"
-                      ItemClick="GoToStock">
-                <ListView.ItemTemplate>  
+                      ItemClick="GoToStock">                <ListView.ItemTemplate>  
                    <DataTemplate x:DataType="model:HomepageStock">  
                        <StackPanel Orientation="Horizontal" Spacing="20">
                             <TextBlock Text="{x:Bind StockDetails.Symbol}" FontSize="16" FontWeight="Bold" Width="100" />
@@ -72,8 +80,12 @@
                            <TextBlock Text="{x:Bind Change}"  
                                       Foreground="{x:Bind Change, Converter={StaticResource ChangeToColorConverter}}"  
                                       Width="200" />
-
-                            
+                            <Button Content="♡" 
+                                    Click="FavoriteButton_Click"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Width="40"
+                                    Height="30" />
                        </StackPanel>  
                    </DataTemplate>  
                 </ListView.ItemTemplate>

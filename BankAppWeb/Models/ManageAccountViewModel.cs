@@ -39,7 +39,7 @@ namespace StockAppWeb.Models
         public bool IsAdmin { get; set; }
         public bool IsHidden { get; set; } // Hidden Profile
 
-        public List<UserStockViewModel> UserStocks { get; set; } = new List<UserStockViewModel>();
+        public List<UserStockViewModel> UserStocks { get; set; } = [];
 
         public bool IsAuthenticated { get; set; } // Should generally be true if user can access this page
         public string ErrorMessage { get; set; }

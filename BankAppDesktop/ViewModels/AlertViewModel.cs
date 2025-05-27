@@ -1,16 +1,15 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using System.Collections.ObjectModel;
-
-    /// <summary>
-    /// ViewModel responsible for holding alert data for the UI.
-    /// </summary>
+    using System.Collections.ObjectModel;    /// <summary>
+                                             /// ViewModel responsible for holding alert data for the UI.
+                                             /// </summary>
     public class AlertViewModel : ViewModelBase
     {
         private string newAlertName = string.Empty;
         private string newAlertUpperBound = "0";
         private string newAlertLowerBound = "0";
+        private bool alertValid = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AlertViewModel"/> class.
@@ -33,7 +32,13 @@
         public string NewAlertName
         {
             get => this.newAlertName;
-            set => this.SetProperty(ref this.newAlertName, value);
+            set
+            {
+                if (this.SetProperty(ref this.newAlertName, value))
+                {
+                    this.AlertValid = this.IsAlertValid();
+                }
+            }
         }
 
         /// <summary>
@@ -42,7 +47,13 @@
         public string NewAlertUpperBound
         {
             get => this.newAlertUpperBound;
-            set => this.SetProperty(ref this.newAlertUpperBound, value);
+            set
+            {
+                if (this.SetProperty(ref this.newAlertUpperBound, value))
+                {
+                    this.AlertValid = this.IsAlertValid();
+                }
+            }
         }
 
         /// <summary>
@@ -51,7 +62,34 @@
         public string NewAlertLowerBound
         {
             get => this.newAlertLowerBound;
-            set => this.SetProperty(ref this.newAlertLowerBound, value);
+            set
+            {
+                if (this.SetProperty(ref this.newAlertLowerBound, value))
+                {
+                    this.AlertValid = this.IsAlertValid();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the alert to be inserted is valid.
+        /// </summary>
+        public bool AlertValid
+        {
+            get => this.alertValid;
+            set => this.SetProperty(ref this.alertValid, value);
+        }
+
+        /// <summary>
+        /// Validates whether the current alert input is valid.
+        /// </summary>
+        /// <returns>True if the alert is valid; otherwise, false.</returns>
+        public bool IsAlertValid()
+        {
+            return !string.IsNullOrWhiteSpace(this.NewAlertName) &&
+                   decimal.TryParse(this.NewAlertUpperBound, out var upperBound) &&
+                   decimal.TryParse(this.NewAlertLowerBound, out var lowerBound) &&
+                   upperBound > lowerBound;
         }
     }
 }

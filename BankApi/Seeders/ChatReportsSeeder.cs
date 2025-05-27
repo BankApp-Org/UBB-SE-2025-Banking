@@ -25,18 +25,18 @@ namespace BankApi.Seeders
 
             var rawData = new[]
             {
-                new { ReportedUserCnp = "1234567890123", ReportedMessage = "This user sent inappropriate content." },
-                new { ReportedUserCnp = "9876543210987", ReportedMessage = "Reported for spamming multiple messages." },
-                new { ReportedUserCnp = "2345678901234", ReportedMessage = "This user violated chat guidelines." },
-                new { ReportedUserCnp = "3456789012345", ReportedMessage = "Reported for offensive language." },
-                new { ReportedUserCnp = "4567890123456", ReportedMessage = "User harassed another member." }
+                new { ReportedUserCnp = "1234567890123", SubmitterCnp = "3456789012345", ReportedMessage = "This user sent inappropriate content." },
+                new { ReportedUserCnp = "9876543210987", SubmitterCnp = "1234567890123", ReportedMessage = "Reported for spamming multiple messages." },
+                new { ReportedUserCnp = "2345678901234", SubmitterCnp = "1234567890123", ReportedMessage = "This user violated chat guidelines." },
+                new { ReportedUserCnp = "3456789012345", SubmitterCnp = "9876543210987", ReportedMessage = "Reported for offensive language." },
+                new { ReportedUserCnp = "4567890123456", SubmitterCnp = "4567890123456", ReportedMessage = "User harassed another member." }
             };
 
             foreach (var data in rawData)
             {
                 if (existingUsersCnps.Contains(data.ReportedUserCnp))
                 {
-                    chatReportsToSeed.Add(new ChatReport { ReportedUserCnp = data.ReportedUserCnp, ReportedMessage = data.ReportedMessage });
+                    chatReportsToSeed.Add(new ChatReport { ReportedUserCnp = data.ReportedUserCnp, ReportedMessage = data.ReportedMessage, SubmitterCnp = data.SubmitterCnp });
                 }
                 else
                 {

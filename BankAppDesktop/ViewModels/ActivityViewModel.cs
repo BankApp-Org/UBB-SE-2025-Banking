@@ -1,6 +1,7 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -14,6 +15,10 @@
         private string userCnp = string.Empty;
         private bool isLoading;
         private string errorMessage = string.Empty;
+        private bool isAdmin;
+        private ObservableCollection<SelectListItem> userList = [];
+        private string selectedUserCnp = string.Empty;
+        private User? currentUser;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -53,6 +58,52 @@
             set => SetProperty(ref errorMessage, value);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the current user is an admin.
+        /// </summary>
+        public bool IsAdmin
+        {
+            get => isAdmin;
+            set => SetProperty(ref isAdmin, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the list of users for selection.
+        /// </summary>
+        public ObservableCollection<SelectListItem> UserList
+        {
+            get => userList;
+            set => SetProperty(ref userList, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the currently selected user's CNP.
+        /// </summary>
+        public string SelectedUserCnp
+        {
+            get => selectedUserCnp;
+            set => SetProperty(ref selectedUserCnp, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the current user.
+        /// </summary>
+        public User? CurrentUser
+        {
+            get => currentUser;
+            set => SetProperty(ref currentUser, value);
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether there is an error.
+        /// </summary>
+        public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
+
+        /// <summary>
+        /// Gets a value indicating whether the activities list is empty.
+        /// </summary>
+        public bool IsEmptyState => !IsLoading && Activities.Count == 0;
+
         public ActivityViewModel()
         {
         }
@@ -74,6 +125,17 @@
 
             storage = value;
             this.OnPropertyChanged(propertyName);
+
+            // Trigger notifications for computed properties
+            if (propertyName == nameof(ErrorMessage))
+            {
+                this.OnPropertyChanged(nameof(HasError));
+            }
+            if (propertyName == nameof(Activities) || propertyName == nameof(IsLoading))
+            {
+                this.OnPropertyChanged(nameof(IsEmptyState));
+            }
+
             return true;
         }
 

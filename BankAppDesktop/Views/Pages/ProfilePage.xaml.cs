@@ -1,11 +1,14 @@
 namespace StockApp.Views.Pages
 {
+    using Common.Models;
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Media.Imaging;
     using StockApp.ViewModels;
     using System;
+    using System.Threading.Tasks;
     using Windows.UI.Popups;
 
     /// <summary>
@@ -13,8 +16,10 @@ namespace StockApp.Views.Pages
     /// </summary>
     public sealed partial class ProfilePage : Page
     {
-        private readonly ProfilePageViewModel viewModel;
+        private ProfilePageViewModel viewModel = new();
         private readonly IAuthenticationService authenticationService;
+        private readonly IUserService userService;
+        private readonly IStockService stockService;
 
         public ProfilePageViewModel ViewModel => this.viewModel;
 
@@ -23,21 +28,57 @@ namespace StockApp.Views.Pages
         /// </summary>
         /// <param name="viewModel">The view model for the profile page.</param>
         /// <param name="authenticationService">The authentication service.</param>
-        public ProfilePage(ProfilePageViewModel viewModel, IAuthenticationService authenticationService)
+        public ProfilePage(IAuthenticationService authenticationService, IUserService userService, IStockService stockService)
+            : base()
         {
-            this.viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
             this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
-            this.DataContext = this.viewModel;
+            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.stockService = stockService ?? throw new ArgumentNullException(nameof(stockService));
             this.InitializeComponent();
+            this.DataContext = viewModel;
             this.Loaded += this.OnLoaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs ea)
         {
-            if (this.viewModel.IsGuest)
+            if (this.authenticationService.IsUserLoggedIn())
             {
                 ShowNoUserMessage();
+                _ = this.LoadProfileData();
                 return;
+            }
+        }
+
+        public async Task LoadProfileData()
+        {
+            try
+            {
+                User currentUser = await this.userService.GetCurrentUserAsync();
+                ProfilePageViewModel viewModel = new()
+                {
+                    UserName = currentUser.UserName ?? throw new ArgumentNullException(nameof(currentUser.UserName)),
+                    Description = currentUser.Description,
+                    IsAdmin = this.authenticationService.IsUserAdmin(),
+                    IsHidden = currentUser.IsHidden,
+                    UserStocks = await this.stockService.UserStocksAsync(),
+                };
+
+                if (!string.IsNullOrEmpty(currentUser.Image) && Uri.IsWellFormedUriString(currentUser.Image, UriKind.Absolute))
+                {
+                    viewModel.ImageSource = new BitmapImage(new Uri(currentUser.Image));
+                }
+                else
+                {
+                    viewModel.ImageSource = new BitmapImage(new Uri("ms-appx:///Assets/Images/default_profile.png"));
+                }
+
+                this.viewModel = viewModel;
+                this.DataContext = this.viewModel;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading profile data: {ex.Message}");
+                throw;
             }
         }
 

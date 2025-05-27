@@ -21,7 +21,7 @@ namespace StockApp.Views.Controls
             this.newsService = newsService ?? throw new ArgumentNullException(nameof(newsService));
             this.DataContext = this.ViewModel;
             this.InitializeComponent();
-            this.ViewModel.ControlRef = this;
+            this.ViewModel.ControlRef = this; // This line might indicate a tighter coupling than ideal, consider alternatives if refactoring further.
             this.Loaded += this.OnLoaded;
         }
 
@@ -37,7 +37,6 @@ namespace StockApp.Views.Controls
         /// <param name="e"></param>
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            await this.ViewModel.Initialize();
             await this.RefreshArticles();
         }
 
@@ -56,25 +55,32 @@ namespace StockApp.Views.Controls
         {
             if (this.ViewModel.SelectedArticle == null)
             {
-                // Show error message - no article selected
+                // TODO: Show error message to user - no article selected
+                Debug.WriteLine("ApproveCommand_Click: No article selected.");
                 return;
             }
 
             try
             {
                 this.ViewModel.IsLoading = true;
-                bool success = await this.newsService.ApproveUserArticleAsync(this.ViewModel.SelectedArticle.Id);
+                bool success = await this.newsService.ApproveUserArticleAsync(this.ViewModel.SelectedArticle.ArticleId);
 
                 if (success)
                 {
-                    // Show success message and refresh
+                    // TODO: Show success message to user
+                    Debug.WriteLine($"Article {this.ViewModel.SelectedArticle.ArticleId} approved successfully.");
                     await this.RefreshArticles();
+                }
+                else
+                {
+                    // TODO: Show failure message to user
+                    Debug.WriteLine($"Failed to approve article {this.ViewModel.SelectedArticle.ArticleId}.");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error approving article: {ex.Message}");
-                // Show error message to user
+                Debug.WriteLine($"Error approving article {this.ViewModel.SelectedArticle.ArticleId}: {ex.Message}");
+                // TODO: Show error message to user
             }
             finally
             {
@@ -89,25 +95,32 @@ namespace StockApp.Views.Controls
         {
             if (this.ViewModel.SelectedArticle == null)
             {
-                // Show error message - no article selected
+                // TODO: Show error message to user - no article selected
+                Debug.WriteLine("RejectCommand_Click: No article selected.");
                 return;
             }
 
             try
             {
                 this.ViewModel.IsLoading = true;
-                bool success = await this.newsService.RejectUserArticleAsync(this.ViewModel.SelectedArticle.Id);
+                bool success = await this.newsService.RejectUserArticleAsync(this.ViewModel.SelectedArticle.ArticleId);
 
                 if (success)
                 {
-                    // Show success message and refresh
+                    // TODO: Show success message to user
+                    Debug.WriteLine($"Article {this.ViewModel.SelectedArticle.ArticleId} rejected successfully.");
                     await this.RefreshArticles();
+                }
+                else
+                {
+                    // TODO: Show failure message to user
+                    Debug.WriteLine($"Failed to reject article {this.ViewModel.SelectedArticle.ArticleId}.");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error rejecting article: {ex.Message}");
-                // Show error message to user
+                Debug.WriteLine($"Error rejecting article {this.ViewModel.SelectedArticle.ArticleId}: {ex.Message}");
+                // TODO: Show error message to user
             }
             finally
             {
@@ -122,25 +135,32 @@ namespace StockApp.Views.Controls
         {
             if (this.ViewModel.SelectedArticle == null)
             {
-                // Show error message - no article selected
+                // TODO: Show error message to user - no article selected
+                Debug.WriteLine("DeleteCommand_Click: No article selected.");
                 return;
             }
 
             try
             {
                 this.ViewModel.IsLoading = true;
-                bool success = await this.newsService.DeleteArticleAsync(this.ViewModel.SelectedArticle.Id);
+                bool success = await this.newsService.DeleteArticleAsync(this.ViewModel.SelectedArticle.ArticleId);
 
                 if (success)
                 {
-                    // Show success message and refresh
+                    // TODO: Show success message to user
+                    Debug.WriteLine($"Article {this.ViewModel.SelectedArticle.ArticleId} deleted successfully.");
                     await this.RefreshArticles();
+                }
+                else
+                {
+                    // TODO: Show failure message to user
+                    Debug.WriteLine($"Failed to delete article {this.ViewModel.SelectedArticle.ArticleId}.");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error deleting article: {ex.Message}");
-                // Show error message to user
+                Debug.WriteLine($"Error deleting article {this.ViewModel.SelectedArticle.ArticleId}: {ex.Message}");
+                // TODO: Show error message to user
             }
             finally
             {
@@ -172,7 +192,9 @@ namespace StockApp.Views.Controls
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error refreshing articles: {ex.Message}");
-                // Show error message to user
+                // TODO: Show error message to user (e.g., via a ContentDialog or a status bar message)
+                this.ViewModel.IsEmptyState = true;
+                this.ViewModel.NewsArticles.Clear();
             }
             finally
             {

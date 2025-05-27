@@ -11,6 +11,7 @@ namespace StockApp.Pages
     using Microsoft.UI.Xaml.Media;
     using StockApp.Commands;
     using StockApp.ViewModels;
+    using StockApp.Views;
     using StockApp.Views.Controls;
     using StockApp.Views.Pages;
     using System;
@@ -20,22 +21,14 @@ namespace StockApp.Pages
     public sealed partial class NewsListPage : Page
     {
         private readonly INewsService newsService;
-        private readonly IUserService userService;
         private readonly IAuthenticationService authenticationService;
 
-        /// <summary>
-        /// The view model for the NewsListPage.
-        /// </summary>
         public NewsListViewModel ViewModel { get; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NewsListPage"/> class.
-        /// </summary>
-        public NewsListPage(NewsListViewModel newsListViewModel, INewsService newsService, IUserService userService, IAuthenticationService authenticationService)
+        public NewsListPage(NewsListViewModel newsListViewModel, INewsService newsService, IAuthenticationService authenticationService)
         {
             this.ViewModel = newsListViewModel;
             this.newsService = newsService ?? throw new ArgumentNullException(nameof(newsService));
-            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             this.InitializeComponent();
             this.DataContext = this.ViewModel;
@@ -49,7 +42,8 @@ namespace StockApp.Pages
 
         private async Task InitAsync()
         {
-            this.ViewModel.CurrentUser = await this.userService.GetCurrentUserAsync();
+            this.ViewModel.IsAdmin = this.authenticationService.IsUserAdmin();
+            this.ViewModel.IsLoggedIn = this.authenticationService.IsUserLoggedIn();
             await this.RefreshArticlesAsync();
         }
 
@@ -82,42 +76,37 @@ namespace StockApp.Pages
         {
             if (this.ViewModel.Articles == null)
             {
-                this.ViewModel.IsEmptyState = true;
-                return;
+                this.ViewModel.Articles = [];
             }
 
-            // get all articles from the original source
             var allArticles = await this.newsService.GetNewsArticlesAsync();
-            if (allArticles == null || allArticles.Count == 0)
+            if (allArticles == null || !allArticles.Any())
             {
                 this.ViewModel.Articles.Clear();
                 this.ViewModel.IsEmptyState = true;
                 return;
             }
 
-            var filteredArticles = allArticles.ToList();
+            var filteredArticles = allArticles.AsEnumerable();
 
-            // filter by category
             if (!string.IsNullOrEmpty(this.ViewModel.SelectedCategory) && this.ViewModel.SelectedCategory != "All")
             {
-                filteredArticles = [.. filteredArticles.Where(a => a.Category == this.ViewModel.SelectedCategory)];
+                filteredArticles = filteredArticles.Where(a => a.Category == this.ViewModel.SelectedCategory);
             }
 
-            // filter by search query
             if (!string.IsNullOrEmpty(this.ViewModel.SearchQuery))
             {
                 var query = this.ViewModel.SearchQuery.ToLower();
-                filteredArticles = [.. filteredArticles.Where(a =>
-                    a.Title.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
-                    a.Summary.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
-                    a.Content.Contains(query, StringComparison.CurrentCultureIgnoreCase) ||
-                    (a.RelatedStocks != null && a.RelatedStocks.Any(s => s.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase))))];
+                filteredArticles = filteredArticles.Where(a =>
+                    (a.Title?.Contains(query, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
+                    (a.Summary?.Contains(query, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
+                    (a.Content?.Contains(query, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
+                    (a.RelatedStocks != null && a.RelatedStocks.Any(s => s.Name?.Contains(query, StringComparison.CurrentCultureIgnoreCase) ?? false)));
             }
 
-            // Sort watchlist items first, then by date (newest first)
-            filteredArticles = [.. filteredArticles
+            filteredArticles = filteredArticles
                 .OrderByDescending(a => a.IsWatchlistRelated)
-                .ThenByDescending(a => a.PublishedDate)];
+                .ThenByDescending(a => a.PublishedDate);
 
             this.ViewModel.Articles.Clear();
             foreach (var article in filteredArticles)
@@ -184,7 +173,7 @@ namespace StockApp.Pages
                                 new TextBlock { Text = "Related Stocks:", FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 5) },
                                 new ItemsControl
                                 {
-                                    ItemsSource = article.RelatedStocks.Select(stock => $"{stock.Name} ({stock.Symbol})"),
+                                    ItemsSource = article.RelatedStocks?.Select(stock => $"{stock.Name} ({stock.Symbol})") ?? Enumerable.Empty<string>(),
                                     Margin = new Thickness(0, 0, 0, 10),
                                 },
                             },
@@ -198,8 +187,11 @@ namespace StockApp.Pages
                 {
                     await this.newsService.MarkArticleAsReadAsync(article.ArticleId);
                     article.IsRead = true;
-                    // Trigger property change notification
-                    this.ViewModel.OnPropertyChanged(nameof(this.ViewModel.Articles));
+                    var articleInVM = ViewModel.Articles.FirstOrDefault(a => a.ArticleId == article.ArticleId);
+                    if (articleInVM != null)
+                    {
+                        articleInVM.IsRead = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -223,13 +215,29 @@ namespace StockApp.Pages
                 Margin = new Thickness(20, 0, 20, 0),
                 Width = 600,
             };
-            var createArticleView = App.Host.Services.GetService<ArticleCreationPage>() ?? throw new InvalidOperationException("ArticleCreationView not found");
+            var createArticleView = App.Host.Services.GetService<ArticleCreationPage>() ?? throw new InvalidOperationException("ArticleCreationPage not found");
             dialog.Content = createArticleView;
             dialog.PrimaryButtonCommand = new StockNewsRelayCommand(async () =>
             {
                 if (dialog.Content is ArticleCreationPage articleCreationPage)
                 {
-                    NewsArticle newsArticlePreview = await articleCreationPage.ViewModel.GetPreviewArticle();
+                    var vm = articleCreationPage.ViewModel;
+                    // Construct NewsArticle for preview
+                    var newsArticlePreview = new NewsArticle
+                    {
+                        Title = vm.Title,
+                        Summary = vm.Summary,
+                        Content = vm.Content,
+                        Topic = vm.SelectedTopic,
+                        Category = vm.SelectedTopic, // or another property if needed
+                        PublishedDate = DateTime.Now,
+                        RelatedStocks = vm.RelatedStocksText.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                            .Select(s => new Stock { Name = s, Symbol = s, Quantity = 0, Price = 0 })
+                            .ToList(),
+                        Source = "User",
+                        Status = Status.Pending,
+                        AuthorCNP = authenticationService.GetUserCNP(),
+                    };
 
                     if (newsArticlePreview != null)
                     {
@@ -243,17 +251,17 @@ namespace StockApp.Pages
                             Margin = new Thickness(20, 0, 20, 0),
                             Width = 600,
                         };
-                        if (this.ViewModel.IsAdmin)
+                        if (this.authenticationService.IsUserAdmin())
                         {
                             previewDialog.PrimaryButtonText = "Create";
                             previewDialog.PrimaryButtonCommand = new StockNewsRelayCommand(async () =>
                             {
-                                await articleCreationPage.ViewModel.CreateArticleAsync();
+                                await newsService.CreateArticleAsync(newsArticlePreview, authenticationService.GetUserCNP());
                                 await this.ShowSuccessDialogAsync("Article created successfully!", "Success");
+                                await RefreshArticlesAsync();
                             });
                         }
-
-                        var previewView = new NewsArticlePage();
+                        var previewView = new NewsArticlePage(this.newsService, this.authenticationService);
                         var detailViewModel = App.Host.Services.GetService<NewsDetailViewModel>() ?? throw new InvalidOperationException("NewsDetailViewModel not found");
                         detailViewModel.Article = newsArticlePreview;
                         previewView.ViewModel = detailViewModel;
@@ -266,8 +274,25 @@ namespace StockApp.Pages
             {
                 if (dialog.Content is ArticleCreationPage articleCreationPage)
                 {
-                    await articleCreationPage.ViewModel.CreateArticleAsync();
+                    var vm = articleCreationPage.ViewModel;
+                    var newsArticle = new NewsArticle
+                    {
+                        Title = vm.Title,
+                        Summary = vm.Summary,
+                        Content = vm.Content,
+                        Topic = vm.SelectedTopic,
+                        Category = vm.SelectedTopic, // or another property if needed
+                        PublishedDate = DateTime.Now,
+                        RelatedStocks = vm.RelatedStocksText.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                            .Select(s => new Stock { Name = s, Symbol = s, Quantity = 0, Price = 0 })
+                            .ToList(),
+                        Source = "User",
+                        Status = Status.Pending,
+                        AuthorCNP = authenticationService.GetUserCNP(),
+                    };
+                    await newsService.CreateArticleAsync(newsArticle, authenticationService.GetUserCNP());
                     await this.ShowSuccessDialogAsync("Article created successfully!", "Success");
+                    await RefreshArticlesAsync();
                 }
             });
             await dialog.ShowAsync();
@@ -280,12 +305,11 @@ namespace StockApp.Pages
                 Title = "Admin Panel",
                 XamlRoot = App.MainAppWindow!.MainAppFrame.XamlRoot,
                 CloseButtonText = "Close",
-                PrimaryButtonText = "Open",
                 FullSizeDesired = true,
                 Margin = new Thickness(20, 0, 20, 0),
                 Width = 600,
             };
-            var adminPanelView = App.Host.Services.GetService<AdminNewsControl>() ?? throw new InvalidOperationException("AdminPanelView not found");
+            var adminPanelView = App.Host.Services.GetService<AdminNewsControl>() ?? throw new InvalidOperationException("AdminNewsControl not found");
             dialog.Content = adminPanelView;
             await dialog.ShowAsync();
             await this.RefreshArticlesAsync();
@@ -298,7 +322,7 @@ namespace StockApp.Pages
                 var dialog = new ContentDialog
                 {
                     Title = "Login",
-                    XamlRoot = App.CurrentWindow.Content.XamlRoot,
+                    XamlRoot = App.MainAppWindow?.Content.XamlRoot ?? this.XamlRoot,
                     CloseButtonText = "Cancel",
                     PrimaryButtonText = "Login",
                 };
@@ -334,14 +358,15 @@ namespace StockApp.Pages
                         await this.ShowErrorDialogAsync("Please enter both username and password.");
                         return;
                     }
-
-                    throw new NotImplementedException("Login logic not implemented");
+                    await authenticationService.LoginAsync(username, password);
+                    await InitAsync();
+                    await ShowSuccessDialogAsync("Login successful!", "Login");
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error showing login dialog: {ex.Message}");
-                await this.ShowErrorDialogAsync("An error occurred while trying to show the login dialog.");
+                await this.ShowErrorDialogAsync($"Login failed: {ex.Message}");
             }
         }
 
@@ -354,7 +379,7 @@ namespace StockApp.Pages
                     Title = "Error",
                     Content = message,
                     CloseButtonText = "OK",
-                    XamlRoot = App.MainAppWindow!.MainAppFrame.XamlRoot,
+                    XamlRoot = App.MainAppWindow?.Content.XamlRoot ?? this.XamlRoot,
                 };
 
                 await dialog.ShowAsync();
@@ -374,7 +399,7 @@ namespace StockApp.Pages
                     Title = title,
                     Content = message,
                     CloseButtonText = "OK",
-                    XamlRoot = App.MainAppWindow!.MainAppFrame.XamlRoot,
+                    XamlRoot = App.MainAppWindow?.Content.XamlRoot ?? this.XamlRoot,
                 };
 
                 await dialog.ShowAsync();
@@ -387,7 +412,12 @@ namespace StockApp.Pages
 
         private void RefreshContainerRefreshRequested(RefreshContainer sender, RefreshRequestedEventArgs args)
         {
-            _ = this.RefreshArticlesAsync();
+            var deferral = args.GetDeferral();
+            Task.Run(async () =>
+            {
+                await this.RefreshArticlesAsync();
+                deferral.Complete();
+            });
         }
 
         private void EscapeKeyInvoked(KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
@@ -404,18 +434,19 @@ namespace StockApp.Pages
             }
         }
 
-        private async void OnSearchQueryChanged(object sender, RoutedEventArgs e)
+        private async void OnSearchQueryChanged(object sender, AutoSuggestBoxTextChangedEventArgs e)
         {
             await this.FilterArticlesAsync();
         }
 
         private async void OnArticleSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (this.ViewModel.SelectedArticle != null)
+            if (e.AddedItems.FirstOrDefault() is NewsArticle selectedArticle)
             {
-                var selectedArticle = this.ViewModel.SelectedArticle;
-                // Clear selection first to prevent UI issues
-                this.ViewModel.SelectedArticle = null;
+                if (sender is ListView listView)
+                {
+                    listView.SelectedItem = null;
+                }
                 await this.ShowArticleInModalAsync(selectedArticle);
             }
         }

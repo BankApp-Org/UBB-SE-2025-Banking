@@ -83,6 +83,7 @@
 
                     // Other Services
                     services.AddScoped<ITransactionLogService, TransactionLogProxyService>();
+                    services.AddScoped<ITransactionService, TransactionProxyService>();
                     services.AddScoped<IChatReportService, ChatReportProxyService>();
                     services.AddScoped<IHistoryService, HistoryProxyService>();
                     services.AddScoped<IBillSplitReportService, BillSplitReportProxyService>();
@@ -165,6 +166,10 @@
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+                    services.AddHttpClient<ITransactionService, TransactionProxyService>(client =>
+                    {
+                        client.BaseAddress = new Uri(apiBaseUrl);
+                    }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
                     // Don't add the handler to the authentication service's HttpClient
                     // to avoid circular dependencies
                     services.AddSingleton<MainWindow>();
@@ -194,6 +199,7 @@
                     services.AddTransient<CreateStockViewModel>();
                     services.AddTransient<CreateProfilePageViewModel>();
                     services.AddTransient<TipHistoryViewModel>();
+                    services.AddTransient<ActivityViewModel>();
                     services.AddTransient<NewsDetailViewModel>();
                     services.AddTransient<NewsListViewModel>();
                     services.AddTransient<NewsListPage>();
@@ -207,11 +213,14 @@
                     services.AddTransient<AuthenticationViewModel>();
                     services.AddTransient<LoansViewModel>();
                     services.AddTransient<CreateLoanDialogViewModel>();
+                    services.AddTransient<LoanRequestViewModel>();
 
                     // Pages
                     services.AddTransient<LoansPage>();
                     services.AddTransient<UsersPage>();
                     services.AddTransient<AlertsPage>();
+                    services.AddTransient<AnalysisPage>();
+                    services.AddTransient<TipsPage>();
                     services.AddTransient<CreateStockPage>();
                     services.AddTransient<TransactionLogPage>();
                     services.AddTransient<ProfilePage>();

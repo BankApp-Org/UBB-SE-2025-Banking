@@ -31,11 +31,9 @@
 
             <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Right">
                 <Button Content="Export" Width="80" Margin="0,0,10,0" Click="ExportButton_Click"/>
-                <ComboBox Width="100" SelectedItem="{Binding SelectedExportFormat, Mode=TwoWay}">
-                    <ComboBoxItem Content="CSV" IsSelected="True"/>
-                    <ComboBoxItem Content="JSON"/>
-                    <ComboBoxItem Content="HTML"/>
-                </ComboBox>
+                <ComboBox Width="100"
+                          ItemsSource="{Binding ExportFormatOptions}"
+                          SelectedItem="{Binding SelectedExportFormat, Mode=TwoWay}"/>
             </StackPanel>
         </Grid>
 
@@ -51,25 +49,20 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0" Width="250" PlaceholderText="Stock name..." Margin="0,0,15,0" Text="{Binding StockNameFilter, Mode=TwoWay}"/>
+            <TextBox Grid.Column="0" Width="250" PlaceholderText="Stock name..." Margin="0,0,15,0" Text="{Binding StockNameFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Grid.Column="1" Content="Search" Width="80" Margin="0,0,15,0" Click="SearchButton_Click"/>
             <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,0,15,0">Sort by:</TextBlock>
-            <ComboBox Grid.Column="3" Width="150" SelectedItem="{Binding SelectedSortBy, Mode=TwoWay}">
-                <ComboBoxItem Content="Date" IsSelected="True"/>
-                <ComboBoxItem Content="Stock Name"/>
-                <ComboBoxItem Content="Total Value"/>
-            </ComboBox>
-            <ComboBox  Grid.Column="4" Width="100" SelectedItem="{Binding SelectedSortOrder, Mode=TwoWay}">
-                <ComboBoxItem Content="ASC" IsSelected="True"/>
-                <ComboBoxItem Content="DESC"/>
-            </ComboBox>
+            <ComboBox Grid.Column="3" Width="150"
+                      ItemsSource="{Binding SortByOptions}"
+                      SelectedItem="{Binding SelectedSortBy, Mode=TwoWay}"/>
+            <ComboBox Grid.Column="4" Width="100"
+                      ItemsSource="{Binding SortOrderOptions}"
+                      SelectedItem="{Binding SelectedSortOrder, Mode=TwoWay}"/>
 
             <!-- Push Transaction Type Dropdown to the Right -->
-            <ComboBox Grid.Column="6" Width="120" SelectedItem="{Binding SelectedTransactionType, Mode=TwoWay}" HorizontalAlignment="Right">
-                <ComboBoxItem Content="ALL" IsSelected="True"/>
-                <ComboBoxItem Content="BUY"/>
-                <ComboBoxItem Content="SELL"/>
-            </ComboBox>
+            <ComboBox Grid.Column="6" Width="120"
+                      ItemsSource="{Binding TransactionTypeOptions}"
+                      SelectedItem="{Binding SelectedTransactionType, Mode=TwoWay}" HorizontalAlignment="Right"/>
         </Grid>
         <Grid Grid.Row="2" Margin="0,20,0,0" MinHeight="50" MaxHeight="50">
             <Grid.ColumnDefinitions>
@@ -88,8 +81,10 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" Width="150" PlaceholderText="Min Total Value" Margin="0,0,15,0" Text="{Binding MinTotalValue, Mode=TwoWay}"/>
-                <TextBox Grid.Column="1" Width="150" PlaceholderText="Max Total Value" Text="{Binding MaxTotalValue, Mode=TwoWay}"/>
+                <TextBox Grid.Column="0" Width="150" PlaceholderText="Min Total Value" Margin="0,0,15,0" 
+                         Text="{Binding MinTotalValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Column="1" Width="150" PlaceholderText="Max Total Value" 
+                         Text="{Binding MaxTotalValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 
             <!-- Start Date & End Date Pickers (Side by Side, Aligned Right) -->
@@ -101,15 +96,14 @@
 
                 <StackPanel Grid.Column="0" Margin="0,0,15,0">
                     <TextBlock Text="Start Date"/>
-                    <DatePicker SelectedDate="{x:Bind viewModel.StartDateOffset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                          MaxYear="{x:Bind viewModel.EndDateOffset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <DatePicker SelectedDate="{Binding StartDateOffset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                          MaxYear="{Binding EndDateOffset, Mode=OneWay}"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1">
                     <TextBlock Text="End Date"/>
-                    <DatePicker SelectedDate="{x:Bind viewModel.EndDateOffset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                           MinYear="{x:Bind viewModel.StartDateOffset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
+                    <DatePicker SelectedDate="{Binding EndDateOffset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                           MinYear="{Binding StartDateOffset, Mode=OneWay}"/>
                 </StackPanel>
             </Grid>
         </Grid>

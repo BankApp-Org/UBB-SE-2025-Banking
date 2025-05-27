@@ -36,15 +36,6 @@
         }
 
         /// <summary>
-        /// Initializes the ViewModel with initial data.
-        /// </summary>
-        public async Task Initialize()
-        {
-            // This method can be extended to load initial data if needed
-            await Task.CompletedTask;
-        }
-
-        /// <summary>
         /// Sets up default filter values.
         /// </summary>
         private void InitializeFilters()
@@ -120,9 +111,11 @@
         {
             get => this.selectedArticle;
             set => this.SetProperty(ref this.selectedArticle, value);
-        }        /// <summary>
-                 /// Gets or sets a value indicating whether the empty state (no articles) is shown.
-                 /// </summary>
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the empty state (no articles) is shown.
+        /// </summary>
         public bool IsEmptyState
         {
             get => this.isEmptyState;

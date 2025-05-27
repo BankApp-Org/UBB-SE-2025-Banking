@@ -5,7 +5,6 @@ namespace StockApp
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using StockApp.Pages;
-    using StockApp.Views;
     using StockApp.Views.Pages;
     using System;
     using System.ComponentModel;
@@ -116,7 +115,6 @@ namespace StockApp
             if (args.SelectedItemContainer != null)
             {
                 string invokedItemTag = args.SelectedItemContainer.Tag.ToString() ?? throw new InvalidOperationException("Tag cannot be null");
-
                 this.MainFrame.Content = invokedItemTag switch
                 {
                     "ChatReports" => this.serviceProvider.GetRequiredService<ChatReportPage>(),
@@ -125,6 +123,9 @@ namespace StockApp
                     "UsersList" => this.serviceProvider.GetRequiredService<UsersPage>(),
                     "BillSplitReports" => this.serviceProvider.GetRequiredService<BillSplitReportPage>(),
                     "Investments" => this.serviceProvider.GetRequiredService<InvestmentsPage>(),
+                    "AlertsPage" => this.serviceProvider.GetRequiredService<AlertsPage>(),
+                    "AnalysisPage" => this.serviceProvider.GetRequiredService<AnalysisPage>(),
+                    "TipsPage" => this.serviceProvider.GetRequiredService<TipsPage>(),
                     "HomePage" => this.serviceProvider.GetRequiredService<HomePage>(),
                     "NewsListPage" => this.serviceProvider.GetRequiredService<NewsListPage>(),
                     "CreateStockPage" => this.serviceProvider.GetRequiredService<CreateStockPage>(),

@@ -1,8 +1,8 @@
 ﻿namespace Common.Services
 {
+    using Common.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Common.Models;
 
     public interface ITransactionLogService
     {

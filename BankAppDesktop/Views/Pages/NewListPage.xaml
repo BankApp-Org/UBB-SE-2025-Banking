@@ -45,7 +45,7 @@
                         HorizontalAlignment="Right">
                 <!-- Admin Panel Button -->
                 <Button Click="OnAdminPanelClicked" 
-                        Visibility="{x:Bind ViewModel.IsAdmin, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        Visibility="{Binding IsAdmin, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xE7EF;"/>
                         <TextBlock Text="Admin Panel"/>
@@ -55,7 +55,7 @@
                 <!-- Create Article Button -->
                 <Button Click="OnCreateArticleClicked" 
                         Style="{StaticResource AccentButtonStyle}"
-                        Visibility="{x:Bind ViewModel.IsLoggedIn, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        Visibility="{Binding IsLoggedIn, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xE710;"/>
                         <TextBlock Text="Create Article"/>
@@ -74,7 +74,7 @@
             <!-- Search Box -->
             <AutoSuggestBox Grid.Column="0" 
                             PlaceholderText="Search articles..." 
-                            Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}"
+                            Text="{Binding SearchQuery, Mode=TwoWay}"
                             QueryIcon="Find"
                             TextChanged="OnSearchQueryChanged">
                 <AutoSuggestBox.KeyboardAccelerators>
@@ -85,8 +85,8 @@
             <!-- Category Filter -->
             <ComboBox Grid.Column="1" 
                       Header="Category" 
-                      ItemsSource="{x:Bind ViewModel.Categories}" 
-                      SelectedItem="{x:Bind ViewModel.SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      ItemsSource="{Binding Categories}" 
+                      SelectedItem="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       MinWidth="150"
                       Margin="16,0,0,0"
                       SelectionChanged="CategoryFilterSelectionChanged"/>
@@ -95,17 +95,17 @@
         <!-- Content Area -->
         <Grid Grid.Row="2">
             <!-- Loading State -->
-            <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" 
+            <ProgressRing IsActive="{Binding IsLoading, Mode=OneWay}" 
                           Width="50" Height="50" 
                           HorizontalAlignment="Center" 
                           VerticalAlignment="Center"
-                          Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                          Visibility="{Binding IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
             <!-- Empty State -->
             <StackPanel HorizontalAlignment="Center" 
                         VerticalAlignment="Center" 
                         Spacing="16"
-                        Visibility="{x:Bind ViewModel.IsEmptyState, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        Visibility="{Binding IsEmptyState, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                 <FontIcon Glyph="&#xE9CE;" 
                           FontSize="48" 
                           HorizontalAlignment="Center"/>
@@ -128,11 +128,11 @@
 
             <!-- Article List -->
             <RefreshContainer Grid.Row="2" 
-                              Visibility="{x:Bind ViewModel.IsEmptyState, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"
+                              Visibility="{Binding IsEmptyState, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"
                               RefreshRequested="RefreshContainerRefreshRequested">
 
-                <ListView ItemsSource="{x:Bind ViewModel.Articles, Mode=OneWay}" 
-                          SelectedItem="{x:Bind ViewModel.SelectedArticle, Mode=TwoWay}"
+                <ListView ItemsSource="{Binding Articles, Mode=OneWay}" 
+                          SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
                           SelectionMode="Single"
                           IsItemClickEnabled="True"
                           SelectionChanged="OnArticleSelected"

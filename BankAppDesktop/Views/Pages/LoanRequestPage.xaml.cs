@@ -3,6 +3,7 @@ namespace StockApp.Views.Pages
     using Common.Models;
     using Common.Services;
     using Microsoft.UI.Xaml.Controls;
+    using StockApp.ViewModels;
     using StockApp.Views.Components;
     using System;
     using System.Collections.Generic;
@@ -13,13 +14,22 @@ namespace StockApp.Views.Pages
         private readonly ILoanRequestService service;
         private readonly Func<LoanRequestComponent> componentFactory;
 
-        public LoanRequestPage(ILoanRequestService loanRequestService, Func<LoanRequestComponent> componentFactory)
+        public LoanRequestPage(LoanRequestViewModel viewModel, ILoanRequestService loanRequestService, Func<LoanRequestComponent> componentFactory)
         {
+            this.ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            this.service = loanRequestService ?? throw new ArgumentNullException(nameof(loanRequestService));
+            this.componentFactory = componentFactory ?? throw new ArgumentNullException(nameof(componentFactory));
+
             this.InitializeComponent();
-            this.service = loanRequestService;
-            this.componentFactory = componentFactory;
+            this.DataContext = this.ViewModel;
+
             this.LoadLoanRequests().ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Gets the ViewModel for this page.
+        /// </summary>
+        public LoanRequestViewModel ViewModel { get; }
 
         private async Task LoadLoanRequests()
         {

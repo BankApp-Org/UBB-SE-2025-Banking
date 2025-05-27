@@ -1,9 +1,9 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// ViewModel for the store page, managing gem deals and user gem balance UI state.
@@ -16,11 +16,6 @@
         private List<GemDeal> possibleDeals = [];
         private bool isLoading = false;
         private string errorMessage = string.Empty;
-
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StoreViewModel"/> class.
@@ -97,15 +92,6 @@
             field = value;
             this.OnPropertyChanged(propertyName);
             return true;
-        }
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event for the specified property.
-        /// </summary>
-        /// <param name="propertyName">Name of the property changed.</param>
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

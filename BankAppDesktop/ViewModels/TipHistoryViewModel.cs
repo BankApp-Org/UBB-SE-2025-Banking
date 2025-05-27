@@ -1,5 +1,6 @@
 ﻿using Common.Models;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace StockApp.ViewModels
 {
@@ -70,15 +71,6 @@ namespace StockApp.ViewModels
             storage = value;
             this.OnPropertyChanged(propertyName);
             return true;
-        }
-
-        /// <summary>
-        /// Raises the PropertyChanged event for the specified property.
-        /// </summary>
-        /// <param name="propertyName">The name of the property that changed.</param>
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,28 +1,99 @@
 namespace StockApp.Views.Pages
 {
     using Common.Models;
+    using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using StockApp.ViewModels;
     using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public sealed partial class GemStorePage : Page
     {
         private readonly StoreViewModel _viewModel;
+        private readonly IStoreService _storeService;
+        private readonly IUserService _userService;
+        private readonly IAuthenticationService _authService;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GemStorePage"/> class.
-        /// </summary>
-        public GemStorePage(StoreViewModel storeViewModel)
+        public GemStorePage(StoreViewModel storeViewModel, IStoreService storeService, IUserService userService, IAuthenticationService authService)
         {
             _viewModel = storeViewModel ?? throw new ArgumentNullException(nameof(storeViewModel));
+            _storeService = storeService ?? throw new ArgumentNullException(nameof(storeService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             this.DataContext = _viewModel;
             this.InitializeComponent();
+            this.Loaded += OnPageLoaded;
+        }
+
+        private async void OnPageLoaded(object sender, RoutedEventArgs e)
+        {
+            await LoadInitialDataAsync();
+        }
+
+        private async Task LoadInitialDataAsync()
+        {
+            _viewModel.IsLoading = true;
+            try
+            {
+                // Populate the deals with predefined values
+                _viewModel.AvailableDeals = new ObservableCollection<GemDeal>(
+                [
+                    new GemDeal("LEGENDARY DEAL!!!!", 4999, 100.0),
+                    new GemDeal("MYTHIC DEAL!!!!", 3999, 90.0),
+                    new GemDeal("INSANE DEAL!!!!", 3499, 85.0),
+                    new GemDeal("GIGA DEAL!!!!", 3249, 82.0),
+                    new GemDeal("WOW DEAL!!!!", 3000, 80.0),
+                    new GemDeal("YAY DEAL!!!!", 2500, 50.0),
+                    new GemDeal("YUPY DEAL!!!!", 2000, 49.0),
+                    new GemDeal("HELL NAH DEAL!!!", 1999, 48.0),
+                    new GemDeal("BAD DEAL!!!!", 1000, 45.0),
+                    new GemDeal("MEGA BAD DEAL!!!!", 500, 40.0),
+                    new GemDeal("BAD DEAL!!!!", 1, 35.0),
+                    new GemDeal("🔥 SPECIAL DEAL", 2, 2.0, true, 1),
+                ]);
+
+                string? userCnp = GetCurrentUserCnp();
+                if (userCnp != null)
+                {
+                    _viewModel.UserGems = await _storeService.GetUserGemBalanceAsync(userCnp);
+                }
+                else
+                {
+                    _viewModel.UserGems = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorDialog($"Error loading store data: {ex.Message}");
+            }
+            finally
+            {
+                _viewModel.IsLoading = false;
+            }
+        }
+
+        private string? GetCurrentUserCnp()
+        {
+            return _authService.IsUserLoggedIn() ? _authService.GetUserCNP() : null;
+        }
+
+        private List<string> GetUserBankAccountsAsync()
+        {
+            if (!_authService.IsUserLoggedIn())
+            {
+                return ["Account 1", "Account 2", "Account 3"];
+            }
+
+            return StoreViewModel.UserBankAccounts;
         }
 
         private async void OnBuyClicked(object sender, RoutedEventArgs e)
         {
-            if (_viewModel.IsGuest)
+            if (!_authService.IsUserLoggedIn())
             {
                 this.ShowErrorDialog("Guests are not allowed to buy gems.");
                 return;
@@ -30,9 +101,16 @@ namespace StockApp.Views.Pages
 
             if (sender is Button button && button.CommandParameter is GemDeal selectedDeal)
             {
+                var bankAccounts = GetUserBankAccountsAsync();
+                if (!bankAccounts.Any())
+                {
+                    this.ShowErrorDialog("No bank accounts available for purchase.");
+                    return;
+                }
+
                 ComboBox bankAccountDropdown = new()
                 {
-                    ItemsSource = StoreViewModel.GetUserBankAccounts(),
+                    ItemsSource = bankAccounts,
                     SelectedIndex = 0,
                 };
 
@@ -57,9 +135,27 @@ namespace StockApp.Views.Pages
                         this.ShowErrorDialog("No bank account selected.");
                         return;
                     }
-
-                    string purchaseResult = await _viewModel.BuyGemsAsync(selectedDeal, selectedAccount);
-                    this.ShowSuccessDialog(purchaseResult);
+                    _viewModel.IsLoading = true;
+                    try
+                    {
+                        string? userCnp = GetCurrentUserCnp();
+                        if (userCnp == null)
+                        {
+                            ShowErrorDialog("User session error.");
+                            return;
+                        }
+                        string purchaseResult = await _storeService.BuyGems(selectedDeal, selectedAccount, userCnp);
+                        this.ShowSuccessDialog(purchaseResult);
+                        _viewModel.UserGems = await _storeService.GetUserGemBalanceAsync(userCnp);
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowErrorDialog($"Purchase failed: {ex.Message}");
+                    }
+                    finally
+                    {
+                        _viewModel.IsLoading = false;
+                    }
                 }
             }
             else
@@ -94,7 +190,7 @@ namespace StockApp.Views.Pages
 
         private async void OnSellClicked(object sender, RoutedEventArgs e)
         {
-            if (_viewModel.IsGuest)
+            if (!_authService.IsUserLoggedIn())
             {
                 this.ShowErrorDialog("Guests are not allowed to sell gems.");
                 return;
@@ -106,20 +202,35 @@ namespace StockApp.Views.Pages
                 return;
             }
 
-            if (gemsToSell > _viewModel.UserGems)
+            string? currentUserCnp = GetCurrentUserCnp();
+            if (currentUserCnp == null)
+            {
+                ShowErrorDialog("User session error.");
+                return;
+            }
+
+            int currentUserGems = await _storeService.GetUserGemBalanceAsync(currentUserCnp);
+            if (gemsToSell > currentUserGems)
             {
                 this.ShowErrorDialog("Not enough Gems to sell.");
                 return;
             }
 
+            var bankAccounts = GetUserBankAccountsAsync();
+            if (!bankAccounts.Any())
+            {
+                this.ShowErrorDialog("No bank accounts available for selling.");
+                return;
+            }
+
             ComboBox bankAccountDropdown = new()
             {
-                ItemsSource = StoreViewModel.GetUserBankAccounts(),
+                ItemsSource = bankAccounts,
                 SelectedIndex = 0,
             };
 
             StackPanel dialogContent = new();
-            dialogContent.Children.Add(new TextBlock { Text = $"You are about to sell {gemsToSell} Gems for {gemsToSell / 100.0}€.\n\nSelect a Bank Account from below:\n" });
+            dialogContent.Children.Add(new TextBlock { Text = $"You are about to sell {gemsToSell} Gems for {gemsToSell / 100.0:F2}€.\n\nSelect a Bank Account from below:\n" });
             dialogContent.Children.Add(bankAccountDropdown);
 
             ContentDialog sellDialog = new()
@@ -139,9 +250,21 @@ namespace StockApp.Views.Pages
                     this.ShowErrorDialog("No bank account selected.");
                     return;
                 }
-
-                string sellResult = await _viewModel.SellGemsAsync(gemsToSell, selectedAccount);
-                this.ShowSuccessDialog(sellResult);
+                _viewModel.IsLoading = true;
+                try
+                {
+                    string sellResult = await _storeService.SellGems(gemsToSell, selectedAccount, currentUserCnp);
+                    this.ShowSuccessDialog(sellResult);
+                    _viewModel.UserGems = await _storeService.GetUserGemBalanceAsync(currentUserCnp);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorDialog($"Sale failed: {ex.Message}");
+                }
+                finally
+                {
+                    _viewModel.IsLoading = false;
+                }
             }
         }
     }

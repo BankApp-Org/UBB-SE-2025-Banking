@@ -2,8 +2,9 @@
 {
     using Common.Models;
     using Microsoft.UI.Xaml.Media.Imaging;
-    using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// ViewModel for the profile page, managing user profile UI state and data properties.

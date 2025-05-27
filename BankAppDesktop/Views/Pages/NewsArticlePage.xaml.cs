@@ -1,10 +1,10 @@
 namespace StockApp.Views.Pages
 {
+    using Common.Models;
+    using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using StockApp.ViewModels;
-    using StockApp.Services;
-    using Common.Models;
     using System;
     using System.Threading.Tasks;
 
@@ -12,8 +12,13 @@ namespace StockApp.Views.Pages
     {
         private NewsDetailViewModel? viewModel;
         private readonly INewsService newsService;
+        private readonly IAuthenticationService authenticationService;
         private bool isPreviewMode;
         private string? previewId;
+
+        public bool IsAdmin => authenticationService.IsUserAdmin();
+
+        public bool IsLoggedIn => authenticationService.IsUserLoggedIn();
 
         /// <summary>
         /// Gets a new instance of the <see cref="NewsArticlePage"/> class.
@@ -32,9 +37,10 @@ namespace StockApp.Views.Pages
         /// Initializes a new instance of the <see cref="NewsArticlePage"/> class.
         /// </summary>
         /// <param name="newsService">Service for retrieving and modifying news articles.</param>
-        public NewsArticlePage(INewsService newsService)
+        public NewsArticlePage(INewsService newsService, IAuthenticationService authenticationService)
         {
             this.newsService = newsService ?? throw new ArgumentNullException(nameof(newsService));
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             this.InitializeComponent();
             this.ViewModel = new NewsDetailViewModel();
         }
@@ -73,7 +79,10 @@ namespace StockApp.Views.Pages
                 throw new ArgumentNullException(nameof(articleId));
             }
 
-            if (this.ViewModel == null) return;
+            if (this.ViewModel == null)
+            {
+                return;
+            }
 
             this.ViewModel.IsLoading = true;
 

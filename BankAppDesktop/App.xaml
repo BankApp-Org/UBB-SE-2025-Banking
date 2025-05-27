@@ -55,6 +55,7 @@
             <converters:StatusToVisibilityConverter x:Key="StatusToRejectVisibilityConverter" />
             <converters:DateFormatConverter x:Key="DateFormatConverter" />
             <converters:BoolToFavoriteColorConverter x:Key="BoolToFavoriteColorConverter" />
+            <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

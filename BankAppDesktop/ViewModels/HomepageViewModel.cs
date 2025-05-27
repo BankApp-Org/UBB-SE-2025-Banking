@@ -2,6 +2,8 @@
 {
     using Common.Models;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// ViewModel for the homepage, containing only data for stock display.

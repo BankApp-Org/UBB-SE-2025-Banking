@@ -1,4 +1,5 @@
 using Common.Models;
+using Common.Services; // Added for IBillSplitReportService and IUserService
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using StockApp.ViewModels;
@@ -10,6 +11,8 @@ namespace StockApp.Views.Components
     public sealed partial class BillSplitReportComponent : Page
     {
         private readonly BillSplitReportViewModel viewModel;
+        private readonly IBillSplitReportService _billSplitReportService; // Added
+        private readonly IUserService _userService; // Added
 
         public event EventHandler? ReportSolved;
 
@@ -31,10 +34,12 @@ namespace StockApp.Views.Components
 
         private decimal BillShare { get; set; }
 
-        public BillSplitReportComponent(BillSplitReportViewModel viewModel)
+        public BillSplitReportComponent(BillSplitReportViewModel viewModel, IBillSplitReportService billSplitReportService, IUserService userService) // Modified constructor
         {
             this.InitializeComponent();
             this.viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+            _billSplitReportService = billSplitReportService ?? throw new ArgumentNullException(nameof(billSplitReportService)); // Added
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService)); // Added
             this.viewModel.ReportUpdated += (s, e) => this.ReportSolved?.Invoke(this, EventArgs.Empty);
         }
 
@@ -68,9 +73,10 @@ namespace StockApp.Views.Components
                         ReportedUserCnp = reportedUserCnpTextBox.Text,
                         BillShare = decimal.Parse(billShareTextBox.Text),
                         DateOfTransaction = datePicker.Date.DateTime,
-                        ReportingUserCnp = string.Empty
+                        ReportingUserCnp = string.Empty // Assuming current user or to be filled later
                     };
-                    await viewModel.AddReportAsync(newReport);
+                    await _billSplitReportService.CreateBillSplitReportAsync(newReport); // Changed from viewModel
+                    viewModel.OnReportUpdated(); // Manually trigger UI update if needed
                 }
                 catch (Exception ex)
                 {
@@ -99,7 +105,8 @@ namespace StockApp.Views.Components
 
             try
             {
-                await viewModel.DeleteReportAsync(billSplitReport); // Solve = delete
+                // Assuming "Solve" means to delete the report as per original logic
+                await _billSplitReportService.DeleteBillSplitReportAsync(billSplitReport); // Changed from viewModel
                 this.ReportSolved?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
@@ -128,7 +135,7 @@ namespace StockApp.Views.Components
 
             try
             {
-                await viewModel.DeleteReportAsync(billSplitReport);
+                await _billSplitReportService.DeleteBillSplitReportAsync(billSplitReport); // Changed from viewModel
                 this.ReportSolved?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
@@ -149,8 +156,8 @@ namespace StockApp.Views.Components
         {
             try
             {
-                User reportedUser = await viewModel.GetUserByCnpAsync(billSplitReport.ReportedUserCnp);
-                User reporterUser = await viewModel.GetUserByCnpAsync(billSplitReport.ReportingUserCnp);
+                User reportedUser = await _userService.GetUserByCnpAsync(billSplitReport.ReportedUserCnp); // Changed from viewModel
+                User reporterUser = await _userService.GetUserByCnpAsync(billSplitReport.ReportingUserCnp); // Changed from viewModel
 
                 this.Id = billSplitReport.Id;
                 this.ReportedUserCNP = billSplitReport.ReportedUserCnp;

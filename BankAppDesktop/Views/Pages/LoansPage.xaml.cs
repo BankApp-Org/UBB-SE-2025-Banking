@@ -129,7 +129,7 @@ namespace StockApp.Views.Pages
             }
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Prevent dialog from closing immediately for validation
             args.Cancel = true;
@@ -145,8 +145,8 @@ namespace StockApp.Views.Pages
                     contentDialog.CloseButtonText = string.Empty; // Hide close button during submission
                 }
 
-                // Submit the request
-                createLoanComponent.SubmitLoanRequest();
+                // Submit the request using the async method
+                await createLoanComponent.SubmitLoanRequestAsync();
             }
         }
 

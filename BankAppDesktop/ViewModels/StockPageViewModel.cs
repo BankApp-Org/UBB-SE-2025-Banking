@@ -2,7 +2,6 @@
 {
     using Common.Models;
     using LiveChartsCore;
-    using LiveChartsCore.SkiaSharpView;
     using System.Collections.ObjectModel;
 
     /// <summary>
@@ -93,9 +92,11 @@
         {
             get => this.userGems;
             set => this.SetProperty(ref this.userGems, value);
-        }        /// <summary>
-                 /// Gets or sets a value indicating whether data is currently being loaded.
-                 /// </summary>
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether data is currently being loaded.
+        /// </summary>
         public bool IsLoading
         {
             get => this.isLoading;

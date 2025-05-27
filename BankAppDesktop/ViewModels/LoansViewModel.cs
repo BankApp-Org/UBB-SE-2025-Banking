@@ -1,7 +1,9 @@
 ﻿namespace StockApp.ViewModels
 {
-    using System.Collections.ObjectModel;
     using Common.Models;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// ViewModel for loans, containing only data properties.

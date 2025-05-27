@@ -40,16 +40,16 @@ namespace StockApp.Views.Pages
             {
                 viewModelUpdate.IsLoading = true;
                 var session = authService.GetCurrentUserSession();
-                if (session?.UserId != null)
+                if (session != null)
                 {
-                    currentUser = await userService.GetUserByIdAsync(session.UserId.Value);
+                    currentUser = await userService.GetCurrentUserAsync();
                     if (currentUser != null)
                     {
                         viewModelUpdate.Username = currentUser.UserName ?? string.Empty;
                         viewModelUpdate.Image = currentUser.Image ?? string.Empty;
                         viewModelUpdate.Description = currentUser.Description ?? string.Empty;
                         viewModelUpdate.IsHidden = currentUser.IsHidden;
-                        viewModelUpdate.IsAdmin = currentUser.Role == UserRole.Admin;
+                        viewModelUpdate.IsAdmin = session.IsAdmin;
 
                         // Load image if available
                         if (!string.IsNullOrEmpty(currentUser.Image))
@@ -165,21 +165,20 @@ namespace StockApp.Views.Pages
                     Balance = currentUser.Balance,
                     GemBalance = currentUser.GemBalance,
                     NumberOfOffenses = currentUser.NumberOfOffenses,
-                    PasswordHash = currentUser.PasswordHash,
-                    Role = currentUser.Role
+                    PasswordHash = currentUser.PasswordHash
                 };
 
-                var result = await userService.UpdateUserAsync(updatedUser);
-                if (result != null)
+                await userService.UpdateUserAsync(updatedUser);
+                // Refresh user data after update
+                currentUser = await userService.GetCurrentUserAsync();
+                if (currentUser != null)
                 {
                     await this.ShowSuccessDialog("Profile updated successfully!");
-                    currentUser = result;
-
                     // Update ViewModel with new data
-                    viewModelUpdate.Username = result.UserName ?? string.Empty;
-                    viewModelUpdate.Image = result.Image ?? string.Empty;
-                    viewModelUpdate.Description = result.Description ?? string.Empty;
-                    viewModelUpdate.IsHidden = result.IsHidden;
+                    viewModelUpdate.Username = currentUser.UserName ?? string.Empty;
+                    viewModelUpdate.Image = currentUser.Image ?? string.Empty;
+                    viewModelUpdate.Description = currentUser.Description ?? string.Empty;
+                    viewModelUpdate.IsHidden = currentUser.IsHidden;
                 }
                 else
                 {

@@ -52,7 +52,6 @@ namespace BankApi.Seeders
             {
                 transactionsToSeed.Add(new TransactionLogTransaction
                 {
-                    Id = 1, // Assign a unique Id
                     AuthorCNP = user1.CNP,
                     Author = user1,
                     StockSymbol = stockApple.Symbol,
@@ -68,7 +67,6 @@ namespace BankApi.Seeders
             {
                 transactionsToSeed.Add(new TransactionLogTransaction
                 {
-                    Id = 2, // Assign a unique Id
                     AuthorCNP = user2.CNP,
                     Author = user2,
                     StockSymbol = stockGoogle.Symbol,
@@ -84,7 +82,6 @@ namespace BankApi.Seeders
             {
                 transactionsToSeed.Add(new TransactionLogTransaction
                 {
-                    Id = 3, // Assign a unique Id
                     AuthorCNP = user3.CNP,
                     Author = user3,
                     StockSymbol = stockTesla.Symbol,
@@ -100,7 +97,6 @@ namespace BankApi.Seeders
             {
                 transactionsToSeed.Add(new TransactionLogTransaction
                 {
-                    Id = 4, // Assign a unique Id
                     AuthorCNP = user4.CNP,
                     Author = user4,
                     StockSymbol = stockAmazon.Symbol,
@@ -116,7 +112,6 @@ namespace BankApi.Seeders
             {
                 transactionsToSeed.Add(new TransactionLogTransaction
                 {
-                    Id = 5, // Assign a unique Id
                     AuthorCNP = user5.CNP,
                     Author = user5,
                     StockSymbol = stockMicrosoft.Symbol,

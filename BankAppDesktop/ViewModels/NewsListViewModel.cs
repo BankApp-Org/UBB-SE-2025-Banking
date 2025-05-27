@@ -1,9 +1,8 @@
 ﻿namespace StockApp.ViewModels
 {
     using Common.Models;
+    using StockApp.Views.Pages;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// ViewModel for the news list page, containing only data properties.
@@ -19,9 +18,10 @@
         private ObservableCollection<string> categories = [];
         private string selectedCategory = "All";
         private NewsArticle? selectedArticle;
-        private User currentUser = null!;
         private NewsArticlePage? detailsPage;
         private string errorMessage = string.Empty;
+        private bool isAdmin = false;
+        private bool isLoggedIn = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NewsListViewModel"/> class.
@@ -107,22 +107,6 @@
         }
 
         /// <summary>
-        /// Gets or sets the current authenticated user.
-        /// </summary>
-        public User CurrentUser
-        {
-            get => this.currentUser;
-            set
-            {
-                if (this.SetProperty(ref this.currentUser, value))
-                {
-                    this.OnPropertyChanged(nameof(this.IsAdmin));
-                    this.OnPropertyChanged(nameof(this.IsLoggedIn));
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the details page for navigation.
         /// </summary>
         public NewsArticlePage? DetailsPage
@@ -140,14 +124,15 @@
             set => this.SetProperty(ref this.errorMessage, value);
         }
 
-        /// <summary>
-        /// Gets a value indicating whether the current user has moderator privileges.
-        /// </summary>
-        public bool IsAdmin => this.CurrentUser?.Role == UserRole.Admin;
-
-        /// <summary>
-        /// Gets a value indicating whether there is a user currently logged in.
-        /// </summary>
-        public bool IsLoggedIn => this.CurrentUser != null;
+        public bool IsAdmin
+        {
+            get => this.isAdmin;
+            set => this.SetProperty(ref this.isAdmin, value);
+        }
+        public bool IsLoggedIn
+        {
+            get => this.isLoggedIn;
+            set => this.SetProperty(ref this.isLoggedIn, value);
+        }
     }
 }

@@ -51,22 +51,16 @@ namespace StockApp.Views.Pages
 
             try
             {
-                var createdUser = await userService.CreateUserAsync(user);
-                if (createdUser != null)
-                {
-                    viewModel.SuccessMessage = "Profile created successfully!";
-                    viewModel.ResetForm();
+                await userService.CreateUser(user); // Changed from CreateUserAsync and removed assignment
+                // Assuming success if no exception is thrown
+                viewModel.SuccessMessage = "Profile created successfully!";
+                viewModel.ResetForm();
 
-                    // Show success dialog
-                    await ShowSuccessDialog("Profile created successfully! You can now log in with your credentials.");
+                // Show success dialog
+                await ShowSuccessDialog("Profile created successfully! You can now log in with your credentials.");
 
-                    // Navigate back to login
-                    NavigateToLoginPage();
-                }
-                else
-                {
-                    viewModel.ErrorMessage = "Failed to create profile. Please try again.";
-                }
+                // Navigate back to login
+                NavigateToLoginPage();
             }
             catch (Exception ex)
             {
@@ -116,7 +110,12 @@ namespace StockApp.Views.Pages
         {
             if (!viewModel.ValidateInputs())
             {
-                viewModel.ErrorMessage = "Please fill in all required fields.";
+                // ErrorMessage should be set by ValidateInputs in ViewModel if it returns false
+                // However, providing a generic message here if ValidateInputs doesn't set one.
+                if (string.IsNullOrEmpty(viewModel.ErrorMessage))
+                {
+                    viewModel.ErrorMessage = "Please fill in all required fields and correct any errors.";
+                }
                 await ShowErrorDialog(viewModel.ErrorMessage);
                 return;
             }
