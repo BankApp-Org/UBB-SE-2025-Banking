@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-StockAppWeb-a4a299ad-2a2c-4da6-97d7-3c516906f1cb</UserSecretsId>
+    <UserSecretsId>aspnet-BankAppWeb-a4a299ad-2a2c-4da6-97d7-3c516906f1cb</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

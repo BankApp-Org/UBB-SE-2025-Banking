@@ -1,4 +1,4 @@
-using Common.Models;
+using Common.Models.Social;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
@@ -113,9 +113,9 @@ namespace Common.Services.Proxy
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<bool> IsMessageOffensive(string messageToBeChecked)
+        public async Task<bool> IsMessageOffensive(Message messageToBeChecked)
         {
-            if (string.IsNullOrEmpty(messageToBeChecked))
+            if (string.IsNullOrEmpty(messageToBeChecked.MessageContent))
             {
                 return false;
             }

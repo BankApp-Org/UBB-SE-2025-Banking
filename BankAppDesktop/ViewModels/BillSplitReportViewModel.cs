@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Common.Models;
 
-namespace StockApp.ViewModels
+namespace BankAppDesktop.ViewModels
 {
     /// <summary>
     /// ViewModel for bill split reports display, containing only data properties.

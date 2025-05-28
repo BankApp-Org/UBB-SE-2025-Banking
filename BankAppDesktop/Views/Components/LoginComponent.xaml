@@ -1,6 +1,6 @@
 <UserControl
-    x:Class="StockApp.Views.Components.LoginComponent"
-    xmlns:local="using:StockApp.Views.Components"
+    x:Class="BankAppDesktop.Views.Components.LoginComponent"
+    xmlns:local="using:BankAppDesktop.Views.Components"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"

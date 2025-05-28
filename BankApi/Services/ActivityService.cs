@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using BankApi.Repositories;
-    using Common.Models;
+    using BankApi.Repositories.Bank;
+    using Common.Models.Bank;
     using Common.Services;
 
     /// <summary>

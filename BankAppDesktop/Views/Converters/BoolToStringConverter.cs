@@ -1,4 +1,4 @@
-﻿namespace StockApp.Views.Converters
+﻿namespace BankAppDesktop.Views.Converters
 {
     using System;
 

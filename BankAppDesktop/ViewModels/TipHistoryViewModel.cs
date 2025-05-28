@@ -1,8 +1,9 @@
 ﻿using Common.Models;
+using Common.Models.Social;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 
-namespace StockApp.ViewModels
+namespace BankAppDesktop.ViewModels
 {
     /// <summary>
     /// ViewModel for tip history display, containing only data properties.

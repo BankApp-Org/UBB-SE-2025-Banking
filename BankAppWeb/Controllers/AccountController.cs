@@ -1,12 +1,12 @@
+using BankAppWeb.Models;
 using Common.Models;
 using Common.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Models;
 using IAppAuthService = Common.Services.IAuthenticationService;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     public class AccountController : Controller
     {

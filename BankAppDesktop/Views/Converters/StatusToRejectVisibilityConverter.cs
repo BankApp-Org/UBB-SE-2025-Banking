@@ -1,4 +1,4 @@
-namespace StockApp.Views.Converters
+namespace BankAppDesktop.Views.Converters
 {
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Data;

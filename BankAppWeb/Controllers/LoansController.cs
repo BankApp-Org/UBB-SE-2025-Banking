@@ -1,10 +1,10 @@
-using Common.Models;
+using BankAppWeb.Views.Loans;
+using Common.Models.Bank;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization; // Required for Authorize attribute
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Views.Loans;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     [Authorize] // Ensure the controller requires authentication
     public class LoansController : Controller
@@ -60,13 +60,14 @@ namespace StockAppWeb.Controllers
                     LoanAmount = input.Amount,
                     ApplicationDate = DateTime.UtcNow, // Use UtcNow for consistency
                     RepaymentDate = input.RepaymentDate,
+                    Currency = input.Currency,
                     Status = "Pending",
                     InterestRate = 0m, // Placeholder - should be calculated by backend service
                     NumberOfMonths = 0, // Placeholder - should be calculated by backend service
                     MonthlyPaymentAmount = 0m, // Placeholder - should be calculated by backend service
                     MonthlyPaymentsCompleted = 0,
                     RepaidAmount = 0m,
-                    Penalty = 0m
+                    Penalty = 0m,
                 };
 
                 var request = new LoanRequest

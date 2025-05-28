@@ -1,8 +1,8 @@
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
+    using Common.Models.Social;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using Common.Models;
 
     public sealed partial class MessageHistoryComponent : Page
     {
@@ -26,7 +26,7 @@ namespace StockApp.Views.Components
             if (d is MessageHistoryComponent component && e.NewValue is Message newMessage)
             {
                 component.MessageTypeTextBlock.Text = $"Type: {newMessage.Type}";
-                component.MessageTextBlock.Text = newMessage.MessageText; // Update UI when Message changes
+                component.MessageTextBlock.Text = newMessage.MessageContent; // Update UI when Message changes
             }
         }
     }

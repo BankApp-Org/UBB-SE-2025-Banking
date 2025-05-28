@@ -2,6 +2,7 @@
 {
     using BankApi.Data;
     using Common.Models;
+    using Common.Models.Trading;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;

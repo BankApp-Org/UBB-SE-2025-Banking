@@ -1,7 +1,7 @@
 ﻿using Common.Models;
 using Common.Services;
 
-namespace StockAppWeb.Models
+namespace BankAppWeb.Models
 {
     /// <summary>
     /// ViewModel for the homepage, tailored for ASP.NET Core MVC.
@@ -27,8 +27,8 @@ namespace StockAppWeb.Models
 
         public async Task LoadStocksAsync()
         {
-            this.IsGuestUser = !authenticationService.IsUserLoggedIn();
-            if (this.IsGuestUser)
+            IsGuestUser = !authenticationService.IsUserLoggedIn();
+            if (IsGuestUser)
             {
                 return;
             }

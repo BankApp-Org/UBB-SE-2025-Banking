@@ -1,10 +1,10 @@
+using BankAppWeb.Views.TransactionLog;
 using Common.Models;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Views.TransactionLog;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     [Authorize]
     public class TransactionLogController : Controller

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Models
 {
@@ -19,8 +20,8 @@ namespace Common.Models
 
         [Required]
         required public DateTime DateOfTransaction { get; set; }
-
         [Required]
+        [Column(TypeName = "decimal(18,2)")]
         required public decimal BillShare { get; set; }
     }
 }

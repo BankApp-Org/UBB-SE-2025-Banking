@@ -2,7 +2,7 @@
 {
     using BankApi.Repositories;
     using Common.Exceptions;
-    using Common.Models;
+    using Common.Models.Trading;
     using Common.Services;
     using System;
     using System.Threading.Tasks;

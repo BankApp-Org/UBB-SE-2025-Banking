@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Service.Tests
+namespace BankApp.Service.Tests
 {
     [TestClass]
     [SupportedOSPlatform("windows10.0.26100.0")]

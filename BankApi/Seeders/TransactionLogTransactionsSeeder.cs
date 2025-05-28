@@ -1,5 +1,5 @@
 ﻿using BankApi.Data;
-using Common.Models; // Assuming TransactionLogTransaction model is in Common.Models
+using Common.Models.Trading;
 using Microsoft.EntityFrameworkCore; // Required for AnyAsync and other EF Core methods
 
 namespace BankApi.Seeders
@@ -20,7 +20,7 @@ namespace BankApi.Seeders
             // Sample CNPs of users that should already exist from UsersSeeder
             var userCnps = new[] { "1234567890123", "9876543210987", "2345678901234", "3456789012345", "4567890123456" };
 
-            var transactionsToSeed = new List<TransactionLogTransaction>();
+            var transactionsToSeed = new List<StockTransaction>();
             var users = await context.Users.Where(u => userCnps.Contains(u.CNP)).ToListAsync();
 
             if (users.Count < userCnps.Length)
@@ -50,7 +50,7 @@ namespace BankApi.Seeders
             var stockMicrosoft = stocks.FirstOrDefault(s => s.Name == "Microsoft Corp.");
             if (user1 != null && stockApple != null)
             {
-                transactionsToSeed.Add(new TransactionLogTransaction
+                transactionsToSeed.Add(new StockTransaction
                 {
                     AuthorCNP = user1.CNP,
                     Author = user1,
@@ -65,7 +65,7 @@ namespace BankApi.Seeders
 
             if (user2 != null && stockGoogle != null)
             {
-                transactionsToSeed.Add(new TransactionLogTransaction
+                transactionsToSeed.Add(new StockTransaction
                 {
                     AuthorCNP = user2.CNP,
                     Author = user2,
@@ -80,7 +80,7 @@ namespace BankApi.Seeders
 
             if (user3 != null && stockTesla != null)
             {
-                transactionsToSeed.Add(new TransactionLogTransaction
+                transactionsToSeed.Add(new StockTransaction
                 {
                     AuthorCNP = user3.CNP,
                     Author = user3,
@@ -95,7 +95,7 @@ namespace BankApi.Seeders
 
             if (user4 != null && stockAmazon != null)
             {
-                transactionsToSeed.Add(new TransactionLogTransaction
+                transactionsToSeed.Add(new StockTransaction
                 {
                     AuthorCNP = user4.CNP,
                     Author = user4,
@@ -110,7 +110,7 @@ namespace BankApi.Seeders
 
             if (user5 != null && stockMicrosoft != null)
             {
-                transactionsToSeed.Add(new TransactionLogTransaction
+                transactionsToSeed.Add(new StockTransaction
                 {
                     AuthorCNP = user5.CNP,
                     Author = user5,

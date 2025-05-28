@@ -1,14 +1,14 @@
 ﻿namespace BankApi.Services
 {
+    using BankApi.Repositories;
+    using BankApi.Repositories.Exporters;
+    using Common.Exceptions;
+    using Common.Models.Trading;
+    using Common.Services;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using BankApi.Repositories;
-    using BankApi.Repositories.Exporters;
-    using Common.Exceptions;
-    using Common.Models;
-    using Common.Services;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TransactionLogService"/> class.
@@ -24,7 +24,7 @@
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        public async Task<List<TransactionLogTransaction>> GetFilteredTransactions(TransactionFilterCriteria criteria)
+        public async Task<List<StockTransaction>> GetFilteredTransactions(StockTransactionFilterCriteria criteria)
         {
             criteria.Validate();
             return await transactionRepository.GetByFilterCriteriaAsync(criteria);
@@ -38,7 +38,7 @@
         /// <param name="ascending"></param>
         /// <returns></returns>
         /// <exception cref="InvalidSortTypeException"></exception>
-        public List<TransactionLogTransaction> SortTransactions(List<TransactionLogTransaction> transactions, string sortType = "Date", bool ascending = true)
+        public List<StockTransaction> SortTransactions(List<StockTransaction> transactions, string sortType = "Date", bool ascending = true)
         {
             return sortType switch
             {
@@ -67,7 +67,7 @@
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ExportFormatNotSupportedException"></exception>
-        public void ExportTransactions(List<TransactionLogTransaction> transactions, string filePath, string format)
+        public void ExportTransactions(List<StockTransaction> transactions, string filePath, string format)
         {
             ArgumentNullException.ThrowIfNull(transactions);
 

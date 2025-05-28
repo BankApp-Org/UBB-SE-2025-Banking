@@ -1,7 +1,10 @@
 using BankApi.Data;
 using BankApi.Repositories;
 using BankApi.Repositories.Impl;
+using BankApi.Repositories.Impl.Social;
 using Common.Models;
+using Common.Models.Bank;
+using Common.Models.Social;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -11,7 +14,7 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace StockApp.Repository.Tests
+namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
     public class ChatReportRepositoryTests

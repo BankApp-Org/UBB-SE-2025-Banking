@@ -1,5 +1,6 @@
 ﻿namespace Common.Models
 {
+    using Common.Models.Trading;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,8 +8,8 @@
     {
         [Key]
         public int Id { get; set; }
-
         [Required]
+        [MaxLength(10)]
         public string Symbol { get; set; } = string.Empty;
 
         [Required]
@@ -21,11 +22,10 @@
             Favorites = [],
             Price = 0,
             Quantity = 0
-        };
-
-        [NotMapped]
+        }; [NotMapped]
         public bool IsFavorite { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Change { get; set; }
     }
 }

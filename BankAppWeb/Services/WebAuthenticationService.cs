@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
 
-namespace StockAppWeb.Services
+namespace BankAppWeb.Services
 {
     public class WebAuthenticationService : IAuthenticationService
     {

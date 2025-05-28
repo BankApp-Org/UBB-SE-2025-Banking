@@ -1,13 +1,13 @@
 ﻿namespace BankApi.Repositories.Exporters
 {
+    using Common.Models.Trading;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
-    using Common.Models;
 
     public class CSVTransactionExporter : ITransactionExporter
     {
-        public void Export(List<TransactionLogTransaction> transactions, string filePath)
+        public void Export(List<StockTransaction> transactions, string filePath)
         {
             using StreamWriter writer = new(filePath);
             writer.WriteLine("StockSymbol,StockName,TransactionType,Amount,PricePerStock,TotalValue,Date,Author");

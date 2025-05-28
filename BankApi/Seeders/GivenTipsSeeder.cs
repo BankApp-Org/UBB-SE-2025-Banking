@@ -1,12 +1,6 @@
 ﻿using BankApi.Data;
 using Common.Models; // Assuming GivenTip model is in Common.Models
 using Microsoft.EntityFrameworkCore; // Required for AnyAsync and other EF Core methods
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BankApi.Seeders
 {

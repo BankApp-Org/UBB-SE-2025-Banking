@@ -1,10 +1,9 @@
-using Common.Models;
+using Common.Models.Trading;
 using Common.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.ComponentModel.DataAnnotations;
 
-namespace StockAppWeb.Views.TransactionLog
+namespace BankAppWeb.Views.TransactionLog
 {
     public class IndexModel : PageModel
     {
@@ -17,9 +16,6 @@ namespace StockAppWeb.Views.TransactionLog
             _transactionLogService = transactionLogService;
         }
 
-        public List<TransactionLogTransaction> Transactions { get; private set; } = [];
-        public string? ErrorMessage { get; private set; }
-        public string? SuccessMessage { get; private set; }
 
         [BindProperty]
         public InputModel Input { get; set; } = new();
@@ -37,11 +33,17 @@ namespace StockAppWeb.Views.TransactionLog
             public DateTime EndDate { get; set; } = DateTime.Now;
         }
 
+        public List<StockTransaction> Transactions { get; private set; } = [];
+
+        public string? ErrorMessage { get; set; }
+
+        public string? SuccessMessage { get; set; }
+
         public async Task OnGetAsync()
         {
             try
             {
-                var criteria = new TransactionFilterCriteria
+                var criteria = new StockTransactionFilterCriteria
                 {
                     StockName = Input.StockNameFilter,
                     Type = Input.SelectedTransactionType == "ALL" ? null : Input.SelectedTransactionType,
@@ -69,4 +71,5 @@ namespace StockAppWeb.Views.TransactionLog
             await OnGetAsync();
         }
     }
+
 }

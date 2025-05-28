@@ -1,14 +1,14 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
     using Common.Models;
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.ViewModels;
+    using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks;
 

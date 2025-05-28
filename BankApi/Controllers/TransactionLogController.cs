@@ -1,10 +1,10 @@
-using System.Security.Claims;
 using BankApi.Repositories;
 using Common.Exceptions;
-using Common.Models;
+using Common.Models.Trading;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BankApi.Controllers
 {
@@ -28,7 +28,7 @@ namespace BankApi.Controllers
         }
 
         [HttpPost("filter")]
-        public async Task<ActionResult<List<TransactionLogTransaction>>> GetFilteredTransactions([FromBody] TransactionFilterCriteria criteria)
+        public async Task<ActionResult<List<StockTransaction>>> GetFilteredTransactions([FromBody] StockTransactionFilterCriteria criteria)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace BankApi.Controllers
         }
 
         [HttpPost("sort")] // Assuming transactions are passed in the body for sorting
-        public ActionResult<List<TransactionLogTransaction>> SortTransactions([FromBody] SortTransactionsRequestDto request)
+        public ActionResult<List<StockTransaction>> SortTransactions([FromBody] SortTransactionsRequestDto request)
         {
             try
             {
@@ -157,14 +157,14 @@ namespace BankApi.Controllers
 
     public class SortTransactionsRequestDto
     {
-        public List<TransactionLogTransaction> Transactions { get; set; }
+        public List<StockTransaction> Transactions { get; set; }
         public string SortType { get; set; } = "Date";
         public bool Ascending { get; set; } = true;
     }
 
     public class ExportTransactionsRequestDto
     {
-        public TransactionFilterCriteria Criteria { get; set; }
+        public StockTransactionFilterCriteria Criteria { get; set; }
         public string Format { get; set; }
     }
 }

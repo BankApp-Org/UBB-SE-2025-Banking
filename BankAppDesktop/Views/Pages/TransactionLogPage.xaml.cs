@@ -1,10 +1,10 @@
-﻿namespace StockApp.Views.Pages
+﻿namespace BankAppDesktop.Views.Pages
 {
-    using Common.Models;
+    using BankAppDesktop.ViewModels;
+    using Common.Models.Trading;
     using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.ViewModels;
     using System;
     using System.Linq;
     using Windows.Storage.Pickers;
@@ -92,7 +92,7 @@
                 this.viewModel.IsLoading = true;
                 this.viewModel.ErrorMessage = string.Empty;
 
-                var criteria = new TransactionFilterCriteria
+                var criteria = new StockTransactionFilterCriteria
                 {
                     StockName = !string.IsNullOrWhiteSpace(this.viewModel.StockNameFilter) ? this.viewModel.StockNameFilter : null,
                     Type = this.viewModel.SelectedTransactionType == "ALL" ? null : this.viewModel.SelectedTransactionType,

@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace StockApp.ViewModels
+namespace BankAppDesktop.ViewModels
 {
     public class AuthenticationViewModel : ViewModelBase
     {

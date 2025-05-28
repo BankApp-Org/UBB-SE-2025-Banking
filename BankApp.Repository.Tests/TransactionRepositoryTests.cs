@@ -1,6 +1,8 @@
 ﻿using BankApi.Data;
 using BankApi.Repositories.Impl;
+using BankApi.Repositories.Impl.Stocks;
 using Common.Models;
+using Common.Models.Trading;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +11,7 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace StockApp.Repository.Tests
+namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
     public class TransactionRepositoryTests
@@ -31,7 +33,7 @@ namespace StockApp.Repository.Tests
             using var context = CreateContext();
 
             var user = new User { Id = 1, CNP = "111" };
-            var txn = new TransactionLogTransaction
+            var txn = new StockTransaction
             {
                 Id = 1,
                 StockName = "Apple",
@@ -48,7 +50,7 @@ namespace StockApp.Repository.Tests
             await context.TransactionLogTransactions.AddAsync(txn);
             await context.SaveChangesAsync();
 
-            var repo = new TransactionRepository(context);
+            var repo = new StockTransactionRepository(context);
             var result = await repo.getAllTransactions();
 
             result.Should().ContainSingle();
@@ -61,7 +63,7 @@ namespace StockApp.Repository.Tests
         {
             using var context = CreateContext();
             await context.TransactionLogTransactions.AddRangeAsync(
-                new TransactionLogTransaction
+                new StockTransaction
                 {
                     Id = 1,
                     StockName = "TESLA",
@@ -74,7 +76,7 @@ namespace StockApp.Repository.Tests
                     Author = new User() { CNP = "123" }
                 },
 
-                new TransactionLogTransaction
+                new StockTransaction
                 {
                     Id = 2,
                     StockName = "APPLE",
@@ -89,8 +91,8 @@ namespace StockApp.Repository.Tests
             );
             await context.SaveChangesAsync();
 
-            var repo = new TransactionRepository(context);
-            var result = await repo.GetByFilterCriteriaAsync(new TransactionFilterCriteria { StockName = "APPLE" });
+            var repo = new StockTransactionRepository(context);
+            var result = await repo.GetByFilterCriteriaAsync(new StockTransactionFilterCriteria { StockName = "APPLE" });
 
             result.Should().ContainSingle(t => t.StockName == "APPLE");
         }
@@ -99,7 +101,7 @@ namespace StockApp.Repository.Tests
         public async Task GetByFilterCriteriaAsync_Should_Throw_On_Null()
         {
             using var context = CreateContext();
-            var repo = new TransactionRepository(context);
+            var repo = new StockTransactionRepository(context);
 
             await Assert.ThrowsAsync<ArgumentNullException>(() => repo.GetByFilterCriteriaAsync(null!));
         }
@@ -112,7 +114,7 @@ namespace StockApp.Repository.Tests
             var now = DateTime.UtcNow;
 
             await context.TransactionLogTransactions.AddRangeAsync(
-                new TransactionLogTransaction
+                new StockTransaction
                 {
                     StockName = "GOOGLE",
                     StockSymbol = "GOOG",
@@ -123,7 +125,7 @@ namespace StockApp.Repository.Tests
                     Date = now,
                     Author = new User() { CNP = "123" }
                 },
-                new TransactionLogTransaction
+                new StockTransaction
                 {
                     StockName = "GOOGLE",
                     StockSymbol = "GOOG",
@@ -137,8 +139,8 @@ namespace StockApp.Repository.Tests
             );
             await context.SaveChangesAsync();
 
-            var repo = new TransactionRepository(context);
-            var criteria = new TransactionFilterCriteria
+            var repo = new StockTransactionRepository(context);
+            var criteria = new StockTransactionFilterCriteria
             {
                 Type = "SELL",
                 MinTotalValue = 300,
@@ -162,7 +164,7 @@ namespace StockApp.Repository.Tests
             await context.BaseStocks.AddAsync(stock);
             await context.SaveChangesAsync();
 
-            var transaction = new TransactionLogTransaction
+            var transaction = new StockTransaction
             {
                 StockName = "Microsoft",
                 StockSymbol = "MSFT",
@@ -174,7 +176,7 @@ namespace StockApp.Repository.Tests
                 AuthorCNP = user.CNP,
             };
 
-            var repo = new TransactionRepository(context);
+            var repo = new StockTransactionRepository(context);
             await repo.AddTransactionAsync(transaction);
 
             context.TransactionLogTransactions.Count().Should().Be(1);
@@ -185,7 +187,7 @@ namespace StockApp.Repository.Tests
         public async Task AddTransactionAsync_Should_Throw_When_Transaction_Null()
         {
             using var context = CreateContext();
-            var repo = new TransactionRepository(context);
+            var repo = new StockTransactionRepository(context);
 
             await Assert.ThrowsAsync<ArgumentNullException>(() => repo.AddTransactionAsync(null!));
         }
@@ -199,7 +201,7 @@ namespace StockApp.Repository.Tests
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
 
-            var txn = new TransactionLogTransaction
+            var txn = new StockTransaction
             {
                 StockName = "NONEXISTENT",
                 StockSymbol = "NAN",
@@ -211,7 +213,7 @@ namespace StockApp.Repository.Tests
                 AuthorCNP = user.CNP,
             };
 
-            var repo = new TransactionRepository(context);
+            var repo = new StockTransactionRepository(context);
             Func<Task> act = () => repo.AddTransactionAsync(txn);
 
             await act.Should().ThrowAsync<InvalidOperationException>()
@@ -227,7 +229,7 @@ namespace StockApp.Repository.Tests
             await context.BaseStocks.AddAsync(stock);
             await context.SaveChangesAsync();
 
-            var txn = new TransactionLogTransaction
+            var txn = new StockTransaction
             {
                 Id = 999,
                 StockName = "AMD",
@@ -240,7 +242,7 @@ namespace StockApp.Repository.Tests
                 AuthorCNP = "123",
             };
 
-            var repo = new TransactionRepository(context);
+            var repo = new StockTransactionRepository(context);
             await repo.AddTransactionAsync(txn);
 
             var savedTxn = await context.TransactionLogTransactions.FirstAsync();

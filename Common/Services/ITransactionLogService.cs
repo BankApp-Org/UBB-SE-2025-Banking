@@ -1,22 +1,22 @@
 ﻿namespace Common.Services
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
     public interface ITransactionLogService
     {
-        Task<List<TransactionLogTransaction>>
-            GetFilteredTransactions(TransactionFilterCriteria criteria);
+        Task<List<StockTransaction>>
+            GetFilteredTransactions(StockTransactionFilterCriteria criteria);
 
-        List<TransactionLogTransaction>
+        List<StockTransaction>
             SortTransactions(
-                List<TransactionLogTransaction> transactions,
+                List<StockTransaction> transactions,
                 string sortType = "Date",
                 bool ascending = true);
 
         void ExportTransactions(
-            List<TransactionLogTransaction> transactions,
+            List<StockTransaction> transactions,
             string filePath,
             string format);
     }

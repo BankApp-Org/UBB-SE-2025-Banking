@@ -3,7 +3,7 @@ using Common.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace StockAppWeb.Pages.News
+namespace BankAppWeb.Pages.News
 {
     public class IndexModel : PageModel
     {

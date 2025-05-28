@@ -1,11 +1,11 @@
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
     using Common.Models;
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.Views.Pages;
+    using BankAppDesktop.Views.Pages;
     using System;
 
     public sealed partial class UserInfoComponent : Page

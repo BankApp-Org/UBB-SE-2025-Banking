@@ -2,11 +2,11 @@ using Common.Models;
 using Common.Services; // Added for IBillSplitReportService and IUserService
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using StockApp.ViewModels;
+using BankAppDesktop.ViewModels;
 using System;
 using System.Threading.Tasks;
 
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
     public sealed partial class BillSplitReportComponent : Page
     {

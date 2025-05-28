@@ -1,7 +1,7 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
     using Common.Models;
-    using StockApp.Views.Pages;
+    using BankAppDesktop.Views.Pages;
     using System.Collections.ObjectModel;
 
     /// <summary>

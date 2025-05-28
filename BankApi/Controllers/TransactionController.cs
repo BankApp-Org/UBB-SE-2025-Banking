@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using Common.Services;
-using Common.Models;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using BankApi.Repositories; // Required for IUserRepository
-using System.Threading.Tasks; // Required for Task
-using System.Collections.Generic; // Required for List
+using Common.Models.Trading; // Required for List
+using Common.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BankApi.Controllers
 {
@@ -29,7 +27,7 @@ namespace BankApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTransaction([FromBody] TransactionLogTransaction transaction)
+        public async Task<IActionResult> AddTransaction([FromBody] StockTransaction transaction)
         {
             // Assuming TransactionLogTransaction has a UserCnp field or similar
             // If not, the service or this controller might need to set it.
@@ -42,13 +40,13 @@ namespace BankApi.Controllers
 
         [HttpGet("all")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<List<TransactionLogTransaction>>> GetAllTransactions()
+        public async Task<ActionResult<List<StockTransaction>>> GetAllTransactions()
         {
             return await _transactionService.GetAllTransactionsAsync();
         }
 
         [HttpPost("filter")]
-        public async Task<ActionResult<List<TransactionLogTransaction>>> GetTransactionsByFilter([FromBody] TransactionFilterCriteria criteria)
+        public async Task<ActionResult<List<StockTransaction>>> GetTransactionsByFilter([FromBody] StockTransactionFilterCriteria criteria)
         {
             // If criteria should be restricted to the current user, ensure UserCnp is set.
             // For example: criteria.UserCnp = await GetCurrentUserCnp();

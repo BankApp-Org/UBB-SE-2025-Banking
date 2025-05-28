@@ -1,7 +1,7 @@
 using BankApi.Data;
-using BankApi.Repositories;
-using BankApi.Repositories.Impl;
-using Common.Models;
+using BankApi.Repositories.Bank;
+using BankApi.Repositories.Impl.Bank;
+using Common.Models.Bank;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Repository.Tests
+namespace BankApp.Repository.Tests
 {
     [TestClass]
     [SupportedOSPlatform("windows10.0.26100.0")]

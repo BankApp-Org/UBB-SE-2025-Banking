@@ -1,11 +1,11 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
     using System;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.ViewModels;
+    using BankAppDesktop.ViewModels;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

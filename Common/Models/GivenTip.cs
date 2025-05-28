@@ -19,25 +19,25 @@ namespace Common.Models
 
         [Required]
         public int TipId { get; set; }
-
         [Required]
-
-        public string UserCNP { get; set; }
+        [MaxLength(13)]
+        public string UserCNP { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the CNP (personal identification number) of the user who received the tip.
         /// </summary>
         [Required]
-        public User User { get; set; }
-
-        /// <summary>
-        /// Gets or sets the date when the tip was given.
-        /// </summary>
+        [ForeignKey("UserCNP")]
+        public User User { get; set; } = null!;        /// <summary>
+                                                       /// Gets or sets the date when the tip was given.
+                                                       /// </summary>
+        [Required]
         public DateTime Date { get; set; } = DateTime.Now;
 
         /// <summary>
         /// Navigation property to the related Tip.
         /// </summary>
-        public virtual Tip Tip { get; set; }
+        [ForeignKey("TipId")]
+        public virtual Tip Tip { get; set; } = null!;
     }
 }

@@ -1,11 +1,11 @@
-using Common.Models;
+using BankAppDesktop.ViewModels;
+using Common.Models.Bank;
 using Common.Services;
 using Microsoft.UI.Xaml.Controls;
-using StockApp.ViewModels;
 using System;
 using System.Threading.Tasks;
 
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
     public sealed partial class CreateLoanDialog : Page
     {
@@ -47,6 +47,7 @@ namespace StockApp.Views.Components
                 {
                     LoanAmount = (decimal)ViewModel.Amount,
                     RepaymentDate = ViewModel.RepaymentDate.DateTime,
+                    Currency = ViewModel.SelectedCurrency,
                     ApplicationDate = DateTime.Now, // Set application date to now
                     InterestRate = 0, // Placeholder or calculate based on rules
                     Status = "Pending", // Initial status for the loan itself

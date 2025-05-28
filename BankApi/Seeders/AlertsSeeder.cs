@@ -1,5 +1,5 @@
 ﻿using BankApi.Data;
-using Common.Models; // Assuming Alert model is in Common.Models
+using Common.Models.Trading; // Assuming Alert model is in Common.Models
 
 namespace BankApi.Seeders
 {

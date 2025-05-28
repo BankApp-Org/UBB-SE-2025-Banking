@@ -1,11 +1,12 @@
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
+    using Common.Models.Bank;
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.ViewModels;
-    using StockApp.Views.Components;
+    using BankAppDesktop.ViewModels;
+    using BankAppDesktop.Views.Components;
     using System;
     using System.Threading.Tasks;
 
@@ -170,7 +171,7 @@ namespace StockApp.Views.Pages
             }
         }
 
-        private void CreateLoanComponent_LoanRequestSubmitted(object? sender, Common.Models.LoanRequest e)
+        private void CreateLoanComponent_LoanRequestSubmitted(object? sender, LoanRequest e)
         {
             // Refresh the loans list
             _ = LoadLoansAsync();

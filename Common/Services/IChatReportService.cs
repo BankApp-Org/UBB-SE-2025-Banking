@@ -1,6 +1,6 @@
 ﻿namespace Common.Services
 {
-    using Common.Models;
+    using Common.Models.Social;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -25,6 +25,6 @@
 
         Task DoNotPunishUser(ChatReport chatReportToBeSolved);
 
-        Task<bool> IsMessageOffensive(string messageToBeChecked);
+        Task<bool> IsMessageOffensive(Message messageToBeChecked);
     }
 }

@@ -1,4 +1,5 @@
-﻿@model List<Common.Models.ChatReport>
+﻿@using Common.Models.Social
+@model List<ChatReport>
 @{
     ViewData["Title"] = "Chat Reports";
 }
@@ -35,8 +36,8 @@
             {
                 <tr>
                     <td>@Model[i].Id</td>
-                    <td>@Model[i].ReportedUserCnp</td>
-                    <td>@Model[i].ReportedMessage</td>
+                    <td>@Model[i].ReportedUser.UserName</td>
+                    <td>@Model[i].Message.MessageContent</td>
                     <td>
                         <!--TODO: add a field for message content-->
                         <form method="post" action="/Chat/ProcessAction" style="display: inline;">

@@ -1,7 +1,7 @@
-﻿using Common.Models;
+﻿using Common.Models.Trading;
 using Microsoft.UI.Xaml.Controls;
 
-namespace StockApp.DTO
+namespace BankAppDesktop.DTO
 {
     public class StockDetailsDTO(Stock stockDetails, Page previousPage)
     {

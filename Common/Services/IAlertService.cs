@@ -1,8 +1,9 @@
 ﻿namespace Common.Services
 {
+    using Common.Models;
+    using Common.Models.Trading;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Common.Models;
 
     public interface IAlertService
     {

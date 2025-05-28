@@ -1,6 +1,10 @@
 using BankApi.Data;
 using BankApi.Repositories;
+using BankApi.Repositories.Bank;
 using BankApi.Repositories.Impl;
+using BankApi.Repositories.Impl.Bank;
+using BankApi.Repositories.Impl.Social;
+using BankApi.Repositories.Impl.Stocks;
 using BankApi.Seeders;
 using BankApi.Services;
 using Common.Models; // Required for User
@@ -103,10 +107,10 @@ builder.Services.AddScoped<IHomepageStockRepository, HomepageStockRepository>();
 builder.Services.AddScoped<IGemStoreRepository, GemStoreRepository>();
 builder.Services.AddScoped<IInvestmentsRepository, InvestmentsRepository>();
 builder.Services.AddScoped<IBillSplitReportRepository, BillSplitReportRepository>();
-builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
+builder.Services.AddScoped<IStockHistoryRepository, StockHistoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILoanRequestRepository, LoanRequestRepository>();
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ITransactionRepository, StockTransactionRepository>();
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 builder.Services.AddScoped<ITipsRepository, TipsRepository>();

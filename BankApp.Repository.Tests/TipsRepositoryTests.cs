@@ -8,7 +8,7 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace StockApp.Repository.Tests
+namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
 

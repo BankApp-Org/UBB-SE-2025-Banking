@@ -1,4 +1,4 @@
-using Common.Models;
+using Common.Models.Trading;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
@@ -27,10 +27,9 @@ namespace Common.Services.Proxy
         {
             return await _httpClient.GetFromJsonAsync<int>($"api/StockPage/owned-stocks/{stockName}", _jsonOptions);
         }
-
-        public async Task<List<int>> GetStockHistoryAsync(string stockName)
+        public async Task<List<decimal>> GetStockHistoryAsync(string stockName)
         {
-            return await _httpClient.GetFromJsonAsync<List<int>>($"api/StockPage/history/{stockName}", _jsonOptions) ??
+            return await _httpClient.GetFromJsonAsync<List<decimal>>($"api/StockPage/history/{stockName}", _jsonOptions) ??
                 throw new InvalidOperationException("Failed to deserialize stock history response.");
         }
 

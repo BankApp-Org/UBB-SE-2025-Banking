@@ -1,9 +1,9 @@
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
-    using Common.Models;
+    using BankAppDesktop.Views.Components;
+    using Common.Models.Social;
     using Common.Services;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.Views.Components;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -33,7 +33,7 @@ namespace StockApp.Views.Pages
                 foreach (var report in chatReports)
                 {
                     ChatReportComponent reportComponent = this.componentFactory();
-                    reportComponent.SetReportData(report.Id, report.ReportedUserCnp, report.ReportedMessage);
+                    reportComponent.SetReportData(report.Id, report.ReportedUserCnp, report.Message);
 
                     reportComponent.ReportSolved += this.OnReportSolved;
 

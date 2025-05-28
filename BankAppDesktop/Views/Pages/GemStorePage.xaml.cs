@@ -1,10 +1,10 @@
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.ViewModels;
+    using BankAppDesktop.ViewModels;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

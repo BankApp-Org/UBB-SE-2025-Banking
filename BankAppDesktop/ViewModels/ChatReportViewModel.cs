@@ -1,6 +1,6 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
-    using Common.Models;
+    using Common.Models.Social;
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;

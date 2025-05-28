@@ -1,7 +1,9 @@
 ﻿namespace BankApi.Services
 {
     using BankApi.Repositories;
+    using BankApi.Repositories.Bank;
     using Common.Models;
+    using Common.Models.Bank;
     using Common.Services;
     using System;
     using System.Collections.Generic;

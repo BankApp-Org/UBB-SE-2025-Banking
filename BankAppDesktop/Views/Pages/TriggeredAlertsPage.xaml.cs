@@ -1,4 +1,4 @@
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
     using Common.Models;
     using Common.Services;

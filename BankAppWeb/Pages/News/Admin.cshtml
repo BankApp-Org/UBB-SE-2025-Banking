@@ -1,6 +1,7 @@
 @page
+@using BankAppWeb.Pages.News
 @using Common.Models
-@model StockAppWeb.Pages.News.AdminModel
+@model BankAppWeb.Pages.News.AdminModel
 @{
     ViewData["Title"] = "Manage News Articles";
 }
@@ -39,7 +40,8 @@
                     <form method="get" class="row g-3">
                         <div class="col-md-4">
                             <label asp-for="SelectedStatus" class="form-label">Status</label>
-                            <select asp-for="SelectedStatus" asp-items="Model.StatusOptions" class="form-select"></select>
+                            <select asp-for="SelectedStatus" asp-items="Model.StatusOptions"
+                                class="form-select"></select>
                         </div>
                         <div class="col-md-4">
                             <label asp-for="SelectedTopic" class="form-label">Topic</label>
@@ -47,7 +49,8 @@
                         </div>
                         <div class="col-md-4">
                             <label asp-for="SelectedUserCNP" class="form-label">User</label>
-                            <select asp-for="SelectedUserCNP" asp-items="Model.UserOptions" class="form-select"></select>
+                            <select asp-for="SelectedUserCNP" asp-items="Model.UserOptions"
+                                class="form-select"></select>
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary">Apply Filters</button>
@@ -83,7 +86,7 @@
                             <td>@article.Status</td>
                             <td>
                                 <div class="d-flex gap-3">
-                                    @if(article.Status == Status.Pending)
+                                    @if (article.Status == Status.Pending)
                                     {
                                         <form method="post" asp-page-handler="Approve" class="d-inline">
                                             @Html.AntiForgeryToken()

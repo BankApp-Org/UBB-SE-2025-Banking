@@ -1,6 +1,7 @@
 ﻿using BankApi.Repositories;
 using BankApi.Services;
 using Common.Models;
+using Common.Models.Trading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Service.Tests
+namespace BankApp.Service.Tests
 {
     [TestClass]
     [SupportedOSPlatform("windows10.0.26100.0")]
@@ -66,7 +67,7 @@ namespace StockApp.Service.Tests
         {
             // Arrange
             var stockName = "Test Stock";
-            var expectedHistory = new List<int> { 100, 105, 110 };
+            var expectedHistory = new List<decimal> { 100m, 105m, 110m };
             _mockStockRepo.Setup(x => x.GetStockHistoryAsync(stockName)).ReturnsAsync(expectedHistory);
 
             // Act
@@ -142,25 +143,21 @@ namespace StockApp.Service.Tests
             var stockPrice = 100;
             var totalPrice = stockPrice * quantity;
             var user = new User { CNP = userCNP, GemBalance = totalPrice + 100 };
-            var stock = new Stock { Name = stockName, Price = stockPrice, Symbol = "TST", Quantity = 10 };
-
-            _mockStockRepo.Setup(x => x.GetStockAsync(stockName)).ReturnsAsync(stock);
+            var stock = new Stock { Name = stockName, Price = stockPrice, Symbol = "TST", Quantity = 10 }; _mockStockRepo.Setup(x => x.GetStockAsync(stockName)).ReturnsAsync(stock);
             _mockStockRepo.Setup(x => x.GetOwnedStocksAsync(userCNP, stockName)).ReturnsAsync(0);
             _mockUserRepo.Setup(x => x.GetByCnpAsync(userCNP)).ReturnsAsync(user);
-            _mockStockRepo.Setup(x => x.AddStockValueAsync(stockName, It.IsAny<int>())).Returns(Task.CompletedTask);
+            _mockStockRepo.Setup(x => x.AddStockValueAsync(stockName, It.IsAny<decimal>())).Returns(Task.CompletedTask);
             _mockStockRepo.Setup(x => x.AddOrUpdateUserStockAsync(userCNP, stockName, quantity)).Returns(Task.CompletedTask);
-            _mockTransactionRepo.Setup(x => x.AddTransactionAsync(It.IsAny<TransactionLogTransaction>())).Returns(Task.CompletedTask);
+            _mockTransactionRepo.Setup(x => x.AddTransactionAsync(It.IsAny<StockTransaction>())).Returns(Task.CompletedTask);
 
             // Act
-            var result = await _service.BuyStockAsync(stockName, quantity, userCNP);
-
-            // Assert
+            var result = await _service.BuyStockAsync(stockName, quantity, userCNP);            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(totalPrice + 100 - totalPrice, user.GemBalance);
             _mockUserRepo.Verify(x => x.UpdateAsync(user), Times.Once);
-            _mockStockRepo.Verify(x => x.AddStockValueAsync(stockName, It.IsAny<int>()), Times.Once);
+            _mockStockRepo.Verify(x => x.AddStockValueAsync(stockName, It.IsAny<decimal>()), Times.Once);
             _mockStockRepo.Verify(x => x.AddOrUpdateUserStockAsync(userCNP, stockName, quantity), Times.Once);
-            _mockTransactionRepo.Verify(x => x.AddTransactionAsync(It.IsAny<TransactionLogTransaction>()), Times.Once);
+            _mockTransactionRepo.Verify(x => x.AddTransactionAsync(It.IsAny<StockTransaction>()), Times.Once);
         }
 
         [TestMethod]
@@ -201,20 +198,19 @@ namespace StockApp.Service.Tests
             _mockStockRepo.Setup(x => x.GetStockAsync(stockName)).ReturnsAsync(stock);
             _mockStockRepo.Setup(x => x.GetOwnedStocksAsync(userCNP, stockName)).ReturnsAsync(quantity);
             _mockUserRepo.Setup(x => x.GetByCnpAsync(userCNP)).ReturnsAsync(user);
-            _mockStockRepo.Setup(x => x.AddStockValueAsync(stockName, It.IsAny<int>())).Returns(Task.CompletedTask);
+            _mockStockRepo.Setup(x => x.AddStockValueAsync(stockName, It.IsAny<decimal>())).Returns(Task.CompletedTask);
             _mockStockRepo.Setup(x => x.AddOrUpdateUserStockAsync(userCNP, stockName, 0)).Returns(Task.CompletedTask);
-            _mockTransactionRepo.Setup(x => x.AddTransactionAsync(It.IsAny<TransactionLogTransaction>())).Returns(Task.CompletedTask);
+            _mockTransactionRepo.Setup(x => x.AddTransactionAsync(It.IsAny<StockTransaction>())).Returns(Task.CompletedTask);
 
             // Act
             var result = await _service.SellStockAsync(stockName, quantity, userCNP);
 
             // Assert
             Assert.IsTrue(result);
-            Assert.AreEqual(500 + totalPrice, user.GemBalance);
-            _mockUserRepo.Verify(x => x.UpdateAsync(user), Times.Once);
-            _mockStockRepo.Verify(x => x.AddStockValueAsync(stockName, It.IsAny<int>()), Times.Once);
+            Assert.AreEqual(500 + totalPrice, user.GemBalance); _mockUserRepo.Verify(x => x.UpdateAsync(user), Times.Once);
+            _mockStockRepo.Verify(x => x.AddStockValueAsync(stockName, It.IsAny<decimal>()), Times.Once);
             _mockStockRepo.Verify(x => x.AddOrUpdateUserStockAsync(userCNP, stockName, quantity - quantity), Times.Once);
-            _mockTransactionRepo.Verify(x => x.AddTransactionAsync(It.IsAny<TransactionLogTransaction>()), Times.Once);
+            _mockTransactionRepo.Verify(x => x.AddTransactionAsync(It.IsAny<StockTransaction>()), Times.Once);
         }
 
         [TestMethod]

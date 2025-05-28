@@ -1,6 +1,8 @@
 ﻿using BankApi.Data;
 using BankApi.Repositories.Impl;
+using BankApi.Repositories.Impl.Stocks;
 using Common.Models;
+using Common.Models.Trading;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,7 +10,7 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace StockApp.Repository.Tests
+namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
     public class StockPageRepositoryTests
@@ -80,11 +82,11 @@ namespace StockApp.Repository.Tests
             using var context = CreateContext();
             var repo = new StockPageRepository(context);
 
-            await repo.AddStockValueAsync("TSLA", 420);
+            await repo.AddStockValueAsync("TSLA", 420m);
 
             var value = await context.StockValues.FirstOrDefaultAsync();
             value.Should().NotBeNull();
-            value!.Price.Should().Be(420);
+            value!.Price.Should().Be(420m);
         }
 
         [Fact]

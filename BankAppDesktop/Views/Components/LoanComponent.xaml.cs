@@ -1,6 +1,6 @@
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
-    using Common.Models;
+    using Common.Models.Bank;
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;

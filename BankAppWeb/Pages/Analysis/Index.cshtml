@@ -1,5 +1,6 @@
 @page
-@model StockAppWeb.Pages.Analysis.IndexModel
+@using BankAppWeb.Pages.Analysis
+@model BankAppWeb.Pages.Analysis.IndexModel
 @{
     ViewData["Title"] = "Analysis";
 }
@@ -119,17 +120,17 @@
 
         function loadHistory(period) {
             let url = '';
-            
+
             // If admin is viewing another user, use that user's CNP in the API call
             if (selectedUserCnp !== "@Model.CurrentUser.CNP") {
                 url = `@(Model.ApiBase)/api/history/user/${selectedUserCnp}/${period}`;
             } else {
                 url = `@(Model.ApiBase)/api/history/user/${period}`;
             }
-            
+
             fetch(url, {
                 credentials: 'include',
-            })  
+            })
                 .then(response => response.json())
                 .then(data => {
                     updateChart(data["$values"]);
@@ -141,7 +142,7 @@
 
         function updateChart(history) {
             const ctx = document.getElementById('creditScoreChart').getContext('2d');
-            
+
             if (creditScoreChart) {
                 creditScoreChart.destroy();
             }

@@ -8,1134 +8,1461 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace BankApi.Migrations;
-
-[DbContext(typeof(ApiDbContext))]
-partial class ApiDbContextModelSnapshot : ModelSnapshot
+namespace BankApi.Migrations
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    [DbContext(typeof(ApiDbContext))]
+    partial class ApiDbContextModelSnapshot : ModelSnapshot
     {
+        protected override void BuildModel(ModelBuilder modelBuilder)
+        {
 #pragma warning disable 612, 618
-        modelBuilder
-            .HasAnnotation("ProductVersion", "9.0.5")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128);
+            modelBuilder
+                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-        modelBuilder.Entity("Common.Models.ActivityLog", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.Property<int>("ChatsId")
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
 
-                b.Property<string>("ActivityDetails")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.HasKey("ChatsId", "UsersId");
 
-                b.Property<string>("ActivityName")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.HasIndex("UsersId");
 
-                b.Property<DateTime>("CreatedAt")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("datetime2")
-                    .HasDefaultValueSql("GETUTCDATE()");
+                    b.ToTable("ChatUser");
+                });
 
-                b.Property<int>("LastModifiedAmount")
-                    .HasColumnType("int");
+            modelBuilder.Entity("Common.Models.Bank.ActivityLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<string>("UserCnp")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.HasKey("Id");
+                    b.Property<string>("ActivityDetails")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.ToTable("ActivityLogs");
-            });
+                    b.Property<string>("ActivityName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-        modelBuilder.Entity("Common.Models.Alert", b =>
-            {
-                b.Property<int>("AlertId")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AlertId"));
+                    b.Property<int>("LastModifiedAmount")
+                        .HasColumnType("int");
 
-                b.Property<decimal>("LowerBound")
-                    .HasPrecision(18, 4)
-                    .HasColumnType("decimal(18,4)");
+                    b.Property<string>("UserCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.HasKey("Id");
 
-                b.Property<string>("StockName")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.ToTable("ActivityLogs");
+                });
 
-                b.Property<bool>("ToggleOnOff")
-                    .HasColumnType("bit");
+            modelBuilder.Entity("Common.Models.Bank.BankAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<decimal>("UpperBound")
-                    .HasPrecision(18, 4)
-                    .HasColumnType("decimal(18,4)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.HasKey("AlertId");
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
 
-                b.HasIndex("StockName");
+                    b.Property<bool>("Blocked")
+                        .HasColumnType("bit");
 
-                b.ToTable("Alerts");
-            });
+                    b.Property<int>("Currency")
+                        .HasColumnType("int");
 
-        modelBuilder.Entity("Common.Models.BaseStock", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<decimal>("DailyLimit")
+                        .HasColumnType("decimal(18,2)");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Iban")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<string>("AuthorCNP")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<int>("MaximumNrTransactions")
+                        .HasColumnType("int");
 
-                b.Property<string>("Discriminator")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<decimal>("MaximumPerTransaction")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("Symbol")
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .HasColumnType("nvarchar(10)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("Name")
-                    .IsUnique();
+                    b.HasIndex("UserId");
 
-                b.ToTable("BaseStocks");
+                    b.ToTable("BankAccounts");
+                });
 
-                b.HasDiscriminator().HasValue("BaseStock");
+            modelBuilder.Entity("Common.Models.Bank.BankTransaction", b =>
+                {
+                    b.Property<int>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.UseTphMappingStrategy();
-            });
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
-        modelBuilder.Entity("Common.Models.BillSplitReport", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<decimal>("ReceiverAmount")
+                        .HasColumnType("decimal(18,2)");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("ReceiverCurrency")
+                        .HasColumnType("int");
 
-                b.Property<decimal>("BillShare")
-                    .HasPrecision(18, 2)
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<string>("ReceiverIban")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<DateTime>("DateOfTransaction")
-                    .HasColumnType("datetime2");
+                    b.Property<decimal>("SenderAmount")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<string>("ReportedUserCnp")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<int>("SenderCurrency")
+                        .HasColumnType("int");
 
-                b.Property<string>("ReportingUserCnp")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<string>("SenderIban")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasKey("Id");
+                    b.Property<DateTime>("TransactionDatetime")
+                        .HasColumnType("datetime2");
 
-                b.ToTable("BillSplitReports");
-            });
+                    b.Property<string>("TransactionDescription")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-        modelBuilder.Entity("Common.Models.ChatReport", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasKey("TransactionId");
 
-                b.Property<string>("ReportedMessage")
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.HasIndex("ReceiverIban");
 
-                b.Property<string>("ReportedUserCnp")
-                    .IsRequired()
-                    .HasMaxLength(15)
-                    .HasColumnType("nvarchar(15)");
+                    b.HasIndex("SenderIban");
 
-                b.Property<string>("SubmitterCnp")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.ToTable("BankTransactions");
+                });
 
-                b.HasKey("Id");
+            modelBuilder.Entity("Common.Models.Bank.CurrencyExchange", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.ToTable("ChatReports");
-            });
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-        modelBuilder.Entity("Common.Models.CreditScoreHistory", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<decimal>("ExchangeRate")
+                        .HasColumnType("decimal(18,2)");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("FromCurrency")
+                        .HasColumnType("int");
 
-                b.Property<DateTime>("Date")
-                    .HasColumnType("datetime2");
+                    b.Property<int>("ToCurrency")
+                        .HasColumnType("int");
 
-                b.Property<int>("Score")
-                    .HasColumnType("int");
+                    b.HasKey("Id");
 
-                b.Property<string>("UserCnp")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.ToTable("CurrencyExchanges");
+                });
 
-                b.HasKey("Id");
+            modelBuilder.Entity("Common.Models.Bank.Investment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.ToTable("CreditScoreHistories");
-            });
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-        modelBuilder.Entity("Common.Models.FavoriteStock", b =>
-            {
-                b.Property<string>("UserCNP")
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<decimal>("AmountInvested")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<string>("StockName")
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<decimal>("AmountReturned")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<int>("Id")
-                    .HasColumnType("int");
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.HasKey("UserCNP", "StockName");
+                    b.Property<DateTime>("InvestmentDate")
+                        .HasColumnType("datetime2");
 
-                b.HasIndex("StockName");
+                    b.Property<string>("InvestorCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.ToTable("FavoriteStocks");
-            });
+                    b.HasKey("Id");
 
-        modelBuilder.Entity("Common.Models.GivenTip", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.ToTable("Investments");
+                });
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+            modelBuilder.Entity("Common.Models.Bank.Loan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<DateTime>("Date")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("datetime2")
-                    .HasDefaultValueSql("GETUTCDATE()");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("TipId")
-                    .HasColumnType("int");
+                    b.Property<DateTime>("ApplicationDate")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("UserCNP")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<int>("Currency")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.Property<DateTime>("DeadlineDate")
+                        .HasColumnType("datetime2");
 
-                b.HasIndex("TipId");
+                    b.Property<decimal>("InterestRate")
+                        .HasColumnType("decimal(18,2)");
 
-                b.HasIndex("UserCNP");
+                    b.Property<decimal>("LoanAmount")
+                        .HasColumnType("decimal(18,2)");
 
-                b.ToTable("GivenTips");
-            });
+                    b.Property<int>("LoanRequestId")
+                        .HasColumnType("int");
 
-        modelBuilder.Entity("Common.Models.HomepageStock", b =>
-            {
-                b.Property<int>("Id")
-                    .HasColumnType("int");
+                    b.Property<decimal>("MonthlyPaymentAmount")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<decimal>("Change")
-                    .HasPrecision(18, 2)
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<int>("MonthlyPaymentsCompleted")
+                        .HasColumnType("int");
 
-                b.Property<string>("Symbol")
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .HasColumnType("nvarchar(10)");
+                    b.Property<int>("NumberOfMonths")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.Property<decimal>("Penalty")
+                        .HasColumnType("decimal(18,2)");
 
-                b.ToTable("HomepageStocks");
-            });
+                    b.Property<decimal>("RepaidAmount")
+                        .HasColumnType("decimal(18,2)");
 
-        modelBuilder.Entity("Common.Models.Investment", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<DateTime>("RepaymentDate")
+                        .HasColumnType("datetime2");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<decimal>("AmountInvested")
-                    .HasPrecision(18, 2)
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("TaxPercentage")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<decimal>("AmountReturned")
-                    .HasPrecision(18, 2)
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<string>("UserCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<string>("Details")
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.HasKey("Id");
 
-                b.Property<DateTime>("InvestmentDate")
-                    .HasColumnType("datetime2");
+                    b.HasIndex("LoanRequestId")
+                        .IsUnique();
 
-                b.Property<string>("InvestorCnp")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.ToTable("Loans");
+                });
 
-                b.HasKey("Id");
+            modelBuilder.Entity("Common.Models.Bank.LoanRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.ToTable("Investments");
-            });
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-        modelBuilder.Entity("Common.Models.Loan", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("UserCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<DateTime>("ApplicationDate")
-                    .HasColumnType("datetime2");
+                    b.HasKey("Id");
 
-                b.Property<decimal>("InterestRate")
-                    .HasColumnType("decimal(18,2)");
+                    b.ToTable("LoanRequests");
+                });
 
-                b.Property<decimal>("LoanAmount")
-                    .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity("Common.Models.BillSplitReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<int>("LoanRequestId")
-                    .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<decimal>("MonthlyPaymentAmount")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("BillShare")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<int>("MonthlyPaymentsCompleted")
-                    .HasColumnType("int");
+                    b.Property<DateTime>("DateOfTransaction")
+                        .HasColumnType("datetime2");
 
-                b.Property<int>("NumberOfMonths")
-                    .HasColumnType("int");
+                    b.Property<string>("ReportedUserCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<decimal>("Penalty")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<string>("ReportingUserCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<decimal>("RepaidAmount")
-                    .HasColumnType("decimal(18,2)");
+                    b.HasKey("Id");
 
-                b.Property<DateTime>("RepaymentDate")
-                    .HasColumnType("datetime2");
+                    b.ToTable("BillSplitReports");
+                });
 
-                b.Property<string>("Status")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+            modelBuilder.Entity("Common.Models.CreditScoreHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<string>("UserCnp")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.HasKey("Id");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
-                b.HasIndex("LoanRequestId")
-                    .IsUnique();
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
 
-                b.ToTable("Loans");
-            });
+                    b.Property<string>("UserCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-        modelBuilder.Entity("Common.Models.LoanRequest", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.HasKey("Id");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.ToTable("CreditScoreHistories");
+                });
 
-                b.Property<string>("Status")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+            modelBuilder.Entity("Common.Models.GivenTip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<string>("UserCnp")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.HasKey("Id");
+                    b.Property<DateTime>("Date")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
 
-                b.ToTable("LoanRequests");
-            });
+                    b.Property<int>("TipId")
+                        .HasColumnType("int");
 
-        modelBuilder.Entity("Common.Models.NewsArticle", b =>
-            {
-                b.Property<string>("ArticleId")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("UserCNP")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<string>("AuthorCNP")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(13)");
+                    b.HasKey("Id");
 
-                b.Property<string>("Category")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.HasIndex("TipId");
 
-                b.Property<string>("Content")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.HasIndex("UserCNP");
 
-                b.Property<bool>("IsRead")
-                    .HasColumnType("bit");
+                    b.ToTable("GivenTips");
+                });
 
-                b.Property<bool>("IsWatchlistRelated")
-                    .HasColumnType("bit");
+            modelBuilder.Entity("Common.Models.HomepageStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
-                b.Property<DateTime>("PublishedDate")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("datetime2")
-                    .HasDefaultValueSql("GETUTCDATE()");
+                    b.Property<decimal>("Change")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<string>("Source")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
-                b.Property<int>("Status")
-                    .HasColumnType("int");
+                    b.HasKey("Id");
 
-                b.Property<string>("Summary")
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.ToTable("HomepageStocks");
+                });
 
-                b.Property<string>("Title")
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .HasColumnType("nvarchar(200)");
+            modelBuilder.Entity("Common.Models.NewsArticle", b =>
+                {
+                    b.Property<string>("ArticleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("Topic")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AuthorCNP")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.HasKey("ArticleId");
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasIndex("AuthorCNP");
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.ToTable("NewsArticles");
-            });
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Common.Models.StockValue", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<bool>("IsWatchlistRelated")
+                        .HasColumnType("bit");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<DateTime>("PublishedDate")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
 
-                b.Property<DateTime>("DateTime")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("datetime2")
-                    .HasDefaultValueSql("GETUTCDATE()");
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<int>("Price")
-                    .HasPrecision(18, 4)
-                    .HasColumnType("int");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                b.Property<string>("StockName")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.HasKey("Id");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                b.HasIndex("StockName");
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.ToTable("StockValues");
-            });
+                    b.HasKey("ArticleId");
 
-        modelBuilder.Entity("Common.Models.Tip", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.HasIndex("AuthorCNP");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.ToTable("NewsArticles");
+                });
 
-                b.Property<string>("CreditScoreBracket")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+            modelBuilder.Entity("Common.Models.Social.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<string>("TipText")
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("Type")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("ChatName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("Tips");
-            });
+                    b.ToTable("Chats");
+                });
 
-        modelBuilder.Entity("Common.Models.TransactionLogTransaction", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+            modelBuilder.Entity("Common.Models.Social.ChatReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("Amount")
-                    .HasColumnType("int");
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
 
-                b.Property<string>("AuthorCNP")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<string>("ReportedUserCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<DateTime>("Date")
-                    .HasColumnType("datetime2");
+                    b.Property<string>("SubmitterCnp")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<int>("PricePerStock")
-                    .HasColumnType("int");
+                    b.HasKey("Id");
 
-                b.Property<string>("StockName")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.HasIndex("MessageId");
 
-                b.Property<string>("StockSymbol")
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .HasColumnType("nvarchar(10)");
+                    b.HasIndex("ReportedUserCnp");
 
-                b.Property<string>("Type")
-                    .IsRequired()
-                    .HasMaxLength(4)
-                    .HasColumnType("nvarchar(4)");
+                    b.HasIndex("SubmitterCnp");
 
-                b.HasKey("Id");
+                    b.ToTable("ChatReports");
+                });
 
-                b.HasIndex("AuthorCNP");
+            modelBuilder.Entity("Common.Models.Social.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.ToTable("TransactionLogTransactions");
-            });
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-        modelBuilder.Entity("Common.Models.TriggeredAlert", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("Message")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("MessageContent")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<string>("StockName")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
-                b.Property<DateTime>("TriggeredAt")
-                    .HasColumnType("datetime2");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("StockName");
+                    b.HasIndex("ChatId");
 
-                b.ToTable("TriggeredAlerts");
-            });
+                    b.HasIndex("UserId");
 
-        modelBuilder.Entity("Common.Models.User", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.ToTable("Messages");
+                });
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+            modelBuilder.Entity("Common.Models.Social.Notification", b =>
+                {
+                    b.Property<int>("NotificationID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<int>("AccessFailedCount")
-                    .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationID"));
 
-                b.Property<decimal>("Balance")
-                    .ValueGeneratedOnAdd()
-                    .HasPrecision(18, 2)
-                    .HasColumnType("decimal(18,2)")
-                    .HasDefaultValue(0m);
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<DateTime>("Birthday")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("CNP")
-                    .IsRequired()
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.Property<string>("ConcurrencyStamp")
-                    .IsConcurrencyToken()
-                    .HasColumnType("nvarchar(max)");
+                    b.HasKey("NotificationID");
 
-                b.Property<int>("CreditScore")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasDefaultValue(0);
+                    b.HasIndex("UserId");
 
-                b.Property<string>("Description")
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.ToTable("Notifications");
+                });
 
-                b.Property<string>("Email")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+            modelBuilder.Entity("Common.Models.Tip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<bool>("EmailConfirmed")
-                    .HasColumnType("bit");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("FirstName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("CreditScoreBracket")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<int>("GemBalance")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasDefaultValue(0);
+                    b.Property<string>("TipText")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.Property<string>("Image")
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<int>("Income")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasDefaultValue(0);
+                    b.HasKey("Id");
 
-                b.Property<bool>("IsHidden")
-                    .HasColumnType("bit");
+                    b.ToTable("Tips");
+                });
 
-                b.Property<string>("LastName")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+            modelBuilder.Entity("Common.Models.Trading.Alert", b =>
+                {
+                    b.Property<int>("AlertId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<bool>("LockoutEnabled")
-                    .HasColumnType("bit");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AlertId"));
 
-                b.Property<DateTimeOffset?>("LockoutEnd")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<decimal>("LowerBound")
+                        .HasColumnType("decimal(18,4)");
 
-                b.Property<string>("NormalizedEmail")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("NormalizedUserName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("StockName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<int>("NumberOfBillSharesPaid")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasDefaultValue(0);
+                    b.Property<bool>("ToggleOnOff")
+                        .HasColumnType("bit");
 
-                b.Property<int>("NumberOfOffenses")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasDefaultValue(0);
+                    b.Property<decimal>("UpperBound")
+                        .HasColumnType("decimal(18,4)");
 
-                b.Property<string>("PasswordHash")
-                    .HasColumnType("nvarchar(max)");
+                    b.HasKey("AlertId");
 
-                b.Property<string>("PhoneNumber")
-                    .HasColumnType("nvarchar(max)");
+                    b.HasIndex("StockName");
 
-                b.Property<bool>("PhoneNumberConfirmed")
-                    .HasColumnType("bit");
+                    b.ToTable("Alerts");
+                });
 
-                b.Property<decimal>("ROI")
-                    .ValueGeneratedOnAdd()
-                    .HasPrecision(18, 2)
-                    .HasColumnType("decimal(18,2)")
-                    .HasDefaultValue(0m);
+            modelBuilder.Entity("Common.Models.Trading.BaseStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<int>("RiskScore")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasDefaultValue(0);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("SecurityStamp")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AuthorCNP")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<bool>("TwoFactorEnabled")
-                    .HasColumnType("bit");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<string>("UserName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("ZodiacAttribute")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
-                b.Property<string>("ZodiacSign")
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnType("nvarchar(20)");
+                    b.HasKey("Id");
 
-                b.HasKey("Id");
+                    b.HasIndex("Name")
+                        .IsUnique();
 
-                b.HasIndex("CNP")
-                    .IsUnique();
+                    b.ToTable("BaseStocks");
 
-                b.HasIndex("NormalizedEmail")
-                    .HasDatabaseName("EmailIndex");
+                    b.HasDiscriminator().HasValue("BaseStock");
 
-                b.HasIndex("NormalizedUserName")
-                    .IsUnique()
-                    .HasDatabaseName("UserNameIndex")
-                    .HasFilter("[NormalizedUserName] IS NOT NULL");
+                    b.UseTphMappingStrategy();
+                });
 
-                b.ToTable("AspNetUsers", (string)null);
-            });
+            modelBuilder.Entity("Common.Models.Trading.FavoriteStock", b =>
+                {
+                    b.Property<string>("UserCNP")
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-        modelBuilder.Entity("Common.Models.UserStock", b =>
-            {
-                b.Property<string>("UserCnp")
-                    .HasMaxLength(13)
-                    .HasColumnType("nvarchar(13)");
+                    b.Property<string>("StockName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("StockName")
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.HasKey("UserCNP", "StockName");
 
-                b.Property<int>("Quantity")
-                    .HasColumnType("int");
+                    b.HasIndex("StockName");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.ToTable("FavoriteStocks");
+                });
 
-                b.HasKey("UserCnp", "StockName");
+            modelBuilder.Entity("Common.Models.Trading.StockTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.HasIndex("StockName");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.HasIndex("UserId");
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
 
-                b.ToTable("UserStocks");
-            });
+                    b.Property<string>("AuthorCNP")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("PricePerStock")
+                        .HasColumnType("int");
 
-                b.Property<string>("ConcurrencyStamp")
-                    .IsConcurrencyToken()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("StockName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("Name")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("StockSymbol")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
-                b.Property<string>("NormalizedName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("NormalizedName")
-                    .IsUnique()
-                    .HasDatabaseName("RoleNameIndex")
-                    .HasFilter("[NormalizedName] IS NOT NULL");
+                    b.HasIndex("AuthorCNP");
 
-                b.ToTable("AspNetRoles", (string)null);
-            });
+                    b.ToTable("TransactionLogTransactions");
+                });
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+            modelBuilder.Entity("Common.Models.Trading.StockValue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ClaimType")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateTime")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("ClaimValue")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,4)");
 
-                b.Property<int>("RoleId")
-                    .HasColumnType("int");
+                    b.Property<string>("StockName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("RoleId");
+                    b.HasIndex("StockName");
 
-                b.ToTable("AspNetRoleClaims", (string)null);
-            });
+                    b.ToTable("StockValues");
+                });
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+            modelBuilder.Entity("Common.Models.Trading.UserStock", b =>
+                {
+                    b.Property<string>("UserCnp")
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("StockName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("ClaimType")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
-                b.Property<string>("ClaimValue")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.HasKey("UserCnp", "StockName");
 
-                b.HasKey("Id");
+                    b.HasIndex("StockName");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("AspNetUserClaims", (string)null);
-            });
+                    b.ToTable("UserStocks");
+                });
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
-            {
-                b.Property<string>("LoginProvider")
-                    .HasColumnType("nvarchar(450)");
+            modelBuilder.Entity("Common.Models.TriggeredAlert", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.Property<string>("ProviderKey")
-                    .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ProviderDisplayName")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<string>("StockName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.HasKey("LoginProvider", "ProviderKey");
+                    b.Property<DateTime>("TriggeredAt")
+                        .HasColumnType("datetime2");
 
-                b.HasIndex("UserId");
+                    b.HasKey("Id");
 
-                b.ToTable("AspNetUserLogins", (string)null);
-            });
+                    b.HasIndex("StockName");
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
-            {
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.ToTable("TriggeredAlerts");
+                });
 
-                b.Property<int>("RoleId")
-                    .HasColumnType("int");
+            modelBuilder.Entity("Common.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                b.HasKey("UserId", "RoleId");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.HasIndex("RoleId");
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
 
-                b.ToTable("AspNetUserRoles", (string)null);
-            });
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(18,2)");
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
-            {
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("LoginProvider")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("CNP")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
-                b.Property<string>("Name")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("Value")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CreditScore")
+                        .HasColumnType("int");
 
-                b.HasKey("UserId", "LoginProvider", "Name");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.ToTable("AspNetUserTokens", (string)null);
-            });
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-        modelBuilder.Entity("NewsArticleStock", b =>
-            {
-                b.Property<string>("ArticleId")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
-                b.Property<int>("StockId")
-                    .HasColumnType("int");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasKey("ArticleId", "StockId");
+                    b.Property<int>("GemBalance")
+                        .HasColumnType("int");
 
-                b.HasIndex("StockId");
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.ToTable("NewsArticleStock");
-            });
+                    b.Property<int>("Income")
+                        .HasColumnType("int");
 
-        modelBuilder.Entity("Common.Models.Stock", b =>
-            {
-                b.HasBaseType("Common.Models.BaseStock");
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("bit");
 
-                b.Property<int>("Price")
-                    .HasColumnType("int");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<int>("Quantity")
-                    .HasColumnType("int");
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
 
-                b.HasDiscriminator().HasValue("Stock");
-            });
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
-        modelBuilder.Entity("Common.Models.FavoriteStock", b =>
-            {
-                b.HasOne("Common.Models.BaseStock", null)
-                    .WithMany("Favorites")
-                    .HasForeignKey("StockName")
-                    .HasPrincipalKey("Name")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.HasOne("Common.Models.Stock", "Stock")
-                    .WithMany()
-                    .HasForeignKey("StockName")
-                    .HasPrincipalKey("Name")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.HasOne("Common.Models.User", "User")
-                    .WithMany()
-                    .HasForeignKey("UserCNP")
-                    .HasPrincipalKey("CNP")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<int>("NumberOfBillSharesPaid")
+                        .HasColumnType("int");
 
-                b.Navigation("Stock");
+                    b.Property<int>("NumberOfOffenses")
+                        .HasColumnType("int");
 
-                b.Navigation("User");
-            });
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
 
-        modelBuilder.Entity("Common.Models.GivenTip", b =>
-            {
-                b.HasOne("Common.Models.Tip", "Tip")
-                    .WithMany()
-                    .HasForeignKey("TipId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasOne("Common.Models.User", "User")
-                    .WithMany()
-                    .HasForeignKey("UserCNP")
-                    .HasPrincipalKey("CNP")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
-                b.Navigation("Tip");
+                    b.Property<decimal>("ROI")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Navigation("User");
-            });
+                    b.Property<int>("ReportedCount")
+                        .HasColumnType("int");
 
-        modelBuilder.Entity("Common.Models.HomepageStock", b =>
-            {
-                b.HasOne("Common.Models.Stock", "StockDetails")
-                    .WithOne()
-                    .HasForeignKey("Common.Models.HomepageStock", "Id")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<int>("RiskScore")
+                        .HasColumnType("int");
 
-                b.Navigation("StockDetails");
-            });
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
 
-        modelBuilder.Entity("Common.Models.Loan", b =>
-            {
-                b.HasOne("Common.Models.LoanRequest", "LoanRequest")
-                    .WithOne("Loan")
-                    .HasForeignKey("Common.Models.Loan", "LoanRequestId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<DateTime?>("TimeoutEnd")
+                        .HasColumnType("datetime2");
 
-                b.Navigation("LoanRequest");
-            });
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
 
-        modelBuilder.Entity("Common.Models.NewsArticle", b =>
-            {
-                b.HasOne("Common.Models.User", "Author")
-                    .WithMany()
-                    .HasForeignKey("AuthorCNP")
-                    .HasPrincipalKey("CNP")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
-                b.Navigation("Author");
-            });
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-        modelBuilder.Entity("Common.Models.StockValue", b =>
-            {
-                b.HasOne("Common.Models.Stock", "Stock")
-                    .WithMany()
-                    .HasForeignKey("StockName")
-                    .HasPrincipalKey("Name")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<string>("ZodiacAttribute")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Navigation("Stock");
-            });
+                    b.Property<string>("ZodiacSign")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-        modelBuilder.Entity("Common.Models.TransactionLogTransaction", b =>
-            {
-                b.HasOne("Common.Models.User", "Author")
-                    .WithMany()
-                    .HasForeignKey("AuthorCNP")
-                    .HasPrincipalKey("CNP")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasKey("Id");
 
-                b.Navigation("Author");
-            });
+                    b.HasIndex("CNP")
+                        .IsUnique();
 
-        modelBuilder.Entity("Common.Models.UserStock", b =>
-            {
-                b.HasOne("Common.Models.Stock", "Stock")
-                    .WithMany()
-                    .HasForeignKey("StockName")
-                    .HasPrincipalKey("Name")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
 
-                b.HasOne("Common.Models.User", null)
-                    .WithMany("OwnedStocks")
-                    .HasForeignKey("UserCnp")
-                    .HasPrincipalKey("CNP")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                b.HasOne("Common.Models.User", "User")
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasIndex("UserId");
 
-                b.Navigation("Stock");
+                    b.ToTable("AspNetUsers", (string)null);
+                });
 
-                b.Navigation("User");
-            });
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
-            {
-                b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
-                    .WithMany()
-                    .HasForeignKey("RoleId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
-            {
-                b.HasOne("Common.Models.User", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
-            {
-                b.HasOne("Common.Models.User", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
-            {
-                b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
-                    .WithMany()
-                    .HasForeignKey("RoleId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.HasOne("Common.Models.User", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                    b.HasKey("Id");
 
-        modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
-            {
-                b.HasOne("Common.Models.User", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
-        modelBuilder.Entity("NewsArticleStock", b =>
-            {
-                b.HasOne("Common.Models.NewsArticle", null)
-                    .WithMany()
-                    .HasForeignKey("ArticleId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.ToTable("AspNetRoles", (string)null);
+                });
 
-                b.HasOne("Common.Models.Stock", null)
-                    .WithMany()
-                    .HasForeignKey("StockId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
-            });
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-        modelBuilder.Entity("Common.Models.BaseStock", b =>
-            {
-                b.Navigation("Favorites");
-            });
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-        modelBuilder.Entity("Common.Models.LoanRequest", b =>
-            {
-                b.Navigation("Loan")
-                    .IsRequired();
-            });
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-        modelBuilder.Entity("Common.Models.User", b =>
-            {
-                b.Navigation("OwnedStocks");
-            });
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("NewsArticleStock", b =>
+                {
+                    b.Property<string>("NewsArticlesArticleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RelatedStocksId")
+                        .HasColumnType("int");
+
+                    b.HasKey("NewsArticlesArticleId", "RelatedStocksId");
+
+                    b.HasIndex("RelatedStocksId");
+
+                    b.ToTable("NewsArticleStock");
+                });
+
+            modelBuilder.Entity("Common.Models.Trading.Stock", b =>
+                {
+                    b.HasBaseType("Common.Models.Trading.BaseStock");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue("Stock");
+                });
+
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.HasOne("Common.Models.Social.Chat", null)
+                        .WithMany()
+                        .HasForeignKey("ChatsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Common.Models.Bank.BankAccount", b =>
+                {
+                    b.HasOne("Common.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.Models.Bank.BankTransaction", b =>
+                {
+                    b.HasOne("Common.Models.Bank.BankAccount", "ReceiverAccount")
+                        .WithMany()
+                        .HasForeignKey("ReceiverIban")
+                        .HasPrincipalKey("Iban")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.Bank.BankAccount", "SenderAccount")
+                        .WithMany("Transactions")
+                        .HasForeignKey("SenderIban")
+                        .HasPrincipalKey("Iban")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ReceiverAccount");
+
+                    b.Navigation("SenderAccount");
+                });
+
+            modelBuilder.Entity("Common.Models.Bank.Loan", b =>
+                {
+                    b.HasOne("Common.Models.Bank.LoanRequest", "LoanRequest")
+                        .WithOne("Loan")
+                        .HasForeignKey("Common.Models.Bank.Loan", "LoanRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LoanRequest");
+                });
+
+            modelBuilder.Entity("Common.Models.GivenTip", b =>
+                {
+                    b.HasOne("Common.Models.Tip", "Tip")
+                        .WithMany()
+                        .HasForeignKey("TipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserCNP")
+                        .HasPrincipalKey("CNP")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tip");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.Models.HomepageStock", b =>
+                {
+                    b.HasOne("Common.Models.Trading.Stock", "StockDetails")
+                        .WithOne()
+                        .HasForeignKey("Common.Models.HomepageStock", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StockDetails");
+                });
+
+            modelBuilder.Entity("Common.Models.NewsArticle", b =>
+                {
+                    b.HasOne("Common.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorCNP")
+                        .HasPrincipalKey("CNP")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Common.Models.Social.ChatReport", b =>
+                {
+                    b.HasOne("Common.Models.Social.Message", "Message")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", "ReportedUser")
+                        .WithMany()
+                        .HasForeignKey("ReportedUserCnp")
+                        .HasPrincipalKey("CNP")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", "Submitter")
+                        .WithMany()
+                        .HasForeignKey("SubmitterCnp")
+                        .HasPrincipalKey("CNP")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Message");
+
+                    b.Navigation("ReportedUser");
+
+                    b.Navigation("Submitter");
+                });
+
+            modelBuilder.Entity("Common.Models.Social.Message", b =>
+                {
+                    b.HasOne("Common.Models.Social.Chat", "Chat")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Chat");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("Common.Models.Social.Notification", b =>
+                {
+                    b.HasOne("Common.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.Models.Trading.FavoriteStock", b =>
+                {
+                    b.HasOne("Common.Models.Trading.BaseStock", null)
+                        .WithMany("Favorites")
+                        .HasForeignKey("StockName")
+                        .HasPrincipalKey("Name")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.Trading.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockName")
+                        .HasPrincipalKey("Name")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserCNP")
+                        .HasPrincipalKey("CNP")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.Models.Trading.StockTransaction", b =>
+                {
+                    b.HasOne("Common.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorCNP")
+                        .HasPrincipalKey("CNP")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Common.Models.Trading.StockValue", b =>
+                {
+                    b.HasOne("Common.Models.Trading.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockName")
+                        .HasPrincipalKey("Name")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("Common.Models.Trading.UserStock", b =>
+                {
+                    b.HasOne("Common.Models.Trading.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockName")
+                        .HasPrincipalKey("Name")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserCnp")
+                        .HasPrincipalKey("CNP")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", null)
+                        .WithMany("OwnedStocks")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Stock");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Common.Models.User", b =>
+                {
+                    b.HasOne("Common.Models.User", null)
+                        .WithMany("Friends")
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.HasOne("Common.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.HasOne("Common.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.HasOne("Common.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NewsArticleStock", b =>
+                {
+                    b.HasOne("Common.Models.NewsArticle", null)
+                        .WithMany()
+                        .HasForeignKey("NewsArticlesArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Common.Models.Trading.Stock", null)
+                        .WithMany()
+                        .HasForeignKey("RelatedStocksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Common.Models.Bank.BankAccount", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("Common.Models.Bank.LoanRequest", b =>
+                {
+                    b.Navigation("Loan")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Common.Models.Social.Chat", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Common.Models.Trading.BaseStock", b =>
+                {
+                    b.Navigation("Favorites");
+                });
+
+            modelBuilder.Entity("Common.Models.User", b =>
+                {
+                    b.Navigation("Friends");
+
+                    b.Navigation("OwnedStocks");
+                });
 #pragma warning restore 612, 618
+        }
     }
 }

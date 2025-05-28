@@ -1,7 +1,7 @@
 using Common.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace StockAppWeb.Views.Users
+namespace BankAppWeb.Views.Users
 {
     public class IndexModel : PageModel
     {

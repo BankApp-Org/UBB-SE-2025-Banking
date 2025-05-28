@@ -1,13 +1,13 @@
 ﻿namespace BankApi.Repositories.Exporters
 {
+    using Common.Models.Trading;
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
-    using Common.Models;
 
     public class HTMLTransactionExporter : ITransactionExporter
     {
-        public void Export(List<TransactionLogTransaction> transactions, string filePath)
+        public void Export(List<StockTransaction> transactions, string filePath)
         {
             // Build the HTML string
             StringBuilder htmlContent = new();

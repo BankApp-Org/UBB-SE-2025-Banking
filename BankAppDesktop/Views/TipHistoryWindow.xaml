@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Window
-    x:Class="StockApp.Views.TipHistoryWindow"
+    x:Class="BankAppDesktop.Views.TipHistoryWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:StockApp.Views.Pages"
+    xmlns:local="using:BankAppDesktop.Views.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:components="using:StockApp.Views.Components"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:components="using:BankAppDesktop.Views.Components"
     mc:Ignorable="d"
     Title="BlankWindow1">
 

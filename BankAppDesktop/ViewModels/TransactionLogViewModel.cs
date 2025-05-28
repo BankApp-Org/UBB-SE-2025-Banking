@@ -1,6 +1,6 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
@@ -55,7 +55,7 @@
         /// <summary>
         /// Gets the collection of transactions displayed in the log.
         /// </summary>
-        public ObservableCollection<TransactionLogTransaction> Transactions { get; set; } = [];
+        public ObservableCollection<StockTransaction> Transactions { get; set; } = [];
 
         /// <summary>
         /// Gets or sets the filter text for the stock name.

@@ -1,8 +1,8 @@
 ﻿using Common.Services;
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Views.LoanRequest;
+using BankAppWeb.Views.LoanRequest;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     public class LoanRequestController : Controller
     {

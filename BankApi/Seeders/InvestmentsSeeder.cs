@@ -1,5 +1,5 @@
 ﻿using BankApi.Data;
-using Common.Models;
+using Common.Models.Bank;
 
 namespace BankApi.Seeders
 {

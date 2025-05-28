@@ -1,5 +1,6 @@
 using BankApi.Repositories;
 using Common.Models;
+using Common.Models.Social;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -191,22 +192,20 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
         [HttpPost("send-message")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SendMessageToUser([FromBody] SendMessageDto messageDto)
         {
             try
             {
-                // Create a new message for the reported user
-                var message = new Message(
-                    id: 0, // ID will be assigned by the database
-                    type: messageDto.MessageType,
-                    message: messageDto.MessageContent
-                );
+                // Parse string type to MessageType enum, default to Text if parsing fails
+                if (!Enum.TryParse<MessageType>(messageDto.MessageType, true, out var messageType))
+                {
+                    messageType = MessageType.Text;
+                }
 
-                // Add custom logic to send a message to the user
-                await Task.Run(() => _messagesService.GiveMessageToUserAsync(messageDto.UserCnp, "System", messageDto.MessageContent));
+                // Send a message to the user directly through the service
+                await Task.Run(() => _messagesService.GiveMessageToUserAsync(messageDto.UserCnp, messageDto.MessageType, messageDto.MessageContent));
 
                 return Ok(new { Message = "Message sent successfully" });
             }
@@ -215,7 +214,6 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
         [HttpPost("punish-with-message/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PunishUserWithMessage(int id, [FromBody] PunishmentMessageDto punishmentDto)
@@ -229,29 +227,20 @@ namespace BankApi.Controllers
                     return NotFound($"Chat report with ID {id} not found");
                 }
 
-                // Create a punishment report with the chat report data
-                ChatReport chatReport = new()
-                {
-                    Id = report.Id,
-                    ReportedUserCnp = report.ReportedUserCnp,
-                    ReportedMessage = report.ReportedMessage,
-                    SubmitterCnp = report.SubmitterCnp
-                };
-
                 // Send a message to the user about the punishment
                 if (!string.IsNullOrEmpty(punishmentDto.MessageContent))
                 {
                     await Task.Run(() => _messagesService.GiveMessageToUserAsync(report.ReportedUserCnp, "Punishment", punishmentDto.MessageContent));
                 }
 
-                // Apply the punishment
+                // Apply the punishment using the existing report
                 if (punishmentDto.ShouldPunish)
                 {
-                    await _chatReportService.PunishUser(chatReport);
+                    await _chatReportService.PunishUser(report);
                 }
                 else
                 {
-                    await _chatReportService.DoNotPunishUser(chatReport);
+                    await _chatReportService.DoNotPunishUser(report);
                 }
 
                 return Ok(new { Message = punishmentDto.ShouldPunish ? "User punished and message sent" : "Report closed without punishment" });

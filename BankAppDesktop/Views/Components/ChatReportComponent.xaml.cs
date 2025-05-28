@@ -1,6 +1,6 @@
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
-    using Common.Models;
+    using Common.Models.Social;
     using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -10,6 +10,8 @@ namespace StockApp.Views.Components
     public sealed partial class ChatReportComponent : Page
     {
         private readonly IChatReportService chatReportService;
+        private readonly IAuthenticationService authenticationService;
+        private readonly IUserService userService;
         private readonly IProfanityChecker profanityChecker;
         private readonly IMessagesService messagesService;
 
@@ -17,16 +19,18 @@ namespace StockApp.Views.Components
 
         public string ReportedUserCNP { get; set; } = string.Empty;
 
-        public string ReportedMessage { get; set; } = string.Empty;
+        public Message ReportedMessage { get; set; } = new();
 
         public int ReportId { get; set; }
 
-        public ChatReportComponent(IChatReportService chatReportService, IProfanityChecker profanityChecker, IMessagesService messagesService)
+        public ChatReportComponent(IChatReportService chatReportService, IProfanityChecker profanityChecker, IMessagesService messagesService, IUserService userService, IAuthenticationService authenticationService)
         {
             this.InitializeComponent();
-            this.chatReportService = chatReportService;
-            this.profanityChecker = profanityChecker;
-            this.messagesService = messagesService;
+            this.chatReportService = chatReportService ?? throw new ArgumentNullException(nameof(chatReportService));
+            this.profanityChecker = profanityChecker ?? throw new ArgumentNullException(nameof(profanityChecker));
+            this.messagesService = messagesService ?? throw new ArgumentNullException(nameof(messagesService));
+            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
         }
 
         private async void PunishReportedUser(object sender, RoutedEventArgs e)
@@ -35,7 +39,9 @@ namespace StockApp.Views.Components
             {
                 Id = this.ReportId,
                 ReportedUserCnp = this.ReportedUserCNP,
-                ReportedMessage = this.ReportedMessage,
+                Message = this.ReportedMessage,
+                MessageId = this.ReportedMessage.Id,
+                SubmitterCnp = this.authenticationService.GetUserCNP(),
             };
 
             try
@@ -71,7 +77,9 @@ namespace StockApp.Views.Components
             {
                 Id = this.ReportId,
                 ReportedUserCnp = this.ReportedUserCNP,
-                ReportedMessage = this.ReportedMessage,
+                Message = this.ReportedMessage,
+                MessageId = this.ReportedMessage.Id,
+                SubmitterCnp = this.authenticationService.GetUserCNP(),
             };
 
             try
@@ -117,7 +125,7 @@ namespace StockApp.Views.Components
             }
         }
 
-        public async void SetReportData(int id, string reportedUserCnp, string reportedMessage)
+        public async void SetReportData(int id, string reportedUserCnp, Message reportedMessage)
         {
             this.ReportId = id;
             this.ReportedUserCNP = reportedUserCnp;

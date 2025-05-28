@@ -1,12 +1,12 @@
 {
   "profiles": {
-    "StockApp (Package)": {
+    "BankAppDesktop (Package)": {
       "commandName": "MsixPackage"
     },
-    "StockApp (Unpackaged)": {
+    "BankAppDesktop (Unpackaged)": {
       "commandName": "Project"
     },
-    "StockApp": {
+    "BankAppDesktop": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Common.Models;
+    using Common.Models.Bank;
 
     public interface IInvestmentsService
     {

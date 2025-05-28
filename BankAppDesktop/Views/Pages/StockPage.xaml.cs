@@ -1,4 +1,4 @@
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
     using Common.Models;
     using Common.Services;
@@ -8,8 +8,8 @@ namespace StockApp.Views.Pages
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using SkiaSharp;
-    using StockApp.ViewModels;
-    using StockApp.Views.Components;
+    using BankAppDesktop.ViewModels;
+    using BankAppDesktop.Views.Components;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -77,16 +77,14 @@ namespace StockApp.Views.Pages
                 this.ViewModel.OwnedStocks = await this.stockPageService.GetUserStockAsync(this.ViewModel.SelectedStock.Name);
                 this.ViewModel.IsFavorite = await this.stockPageService.GetFavoriteAsync(this.ViewModel.SelectedStock.Name);
             }
-
-            List<int> stockHistory = await this.stockPageService.GetStockHistoryAsync(this.ViewModel.SelectedStock.Name);
+            List<decimal> stockHistory = await this.stockPageService.GetStockHistoryAsync(this.ViewModel.SelectedStock.Name);
             if (stockHistory.Count > 1)
             {
-                int increasePerc = (stockHistory.Last() - stockHistory[^2]) * 100 / stockHistory[^2];
+                decimal increasePerc = (stockHistory.Last() - stockHistory[^2]) * 100 / stockHistory[^2];
                 // Handle percentage display logic here if needed
             }
-
             this.ViewModel.Series.Clear();
-            this.ViewModel.Series.Add(new LineSeries<int>
+            this.ViewModel.Series.Add(new LineSeries<decimal>
             {
                 Values = [.. stockHistory.TakeLast(30)],
                 Fill = null,

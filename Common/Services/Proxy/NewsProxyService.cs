@@ -1,4 +1,5 @@
 using Common.Models;
+using Common.Models.Trading;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;

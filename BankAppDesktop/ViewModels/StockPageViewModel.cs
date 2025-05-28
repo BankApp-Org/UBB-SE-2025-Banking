@@ -1,6 +1,6 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using LiveChartsCore;
     using System.Collections.ObjectModel;
 

@@ -1,5 +1,6 @@
 @page
-@model StockAppWeb.Pages.News.CreateModel
+@using BankAppWeb.Pages.News
+@model BankAppWeb.Pages.News.CreateModel
 @{
     ViewData["Title"] = "Create Article";
 }
@@ -35,13 +36,15 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label">Title <span class="text-danger">*</span></label>
-                        <input asp-for="Title" class="form-control" required maxlength="200" placeholder="Enter a descriptive title">
+                        <input asp-for="Title" class="form-control" required maxlength="200"
+                            placeholder="Enter a descriptive title">
                         <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Summary" class="form-label">Summary</label>
-                        <textarea asp-for="Summary" class="form-control" rows="3" maxlength="500" placeholder="Provide a brief summary of your article"></textarea>
+                        <textarea asp-for="Summary" class="form-control" rows="3" maxlength="500"
+                            placeholder="Provide a brief summary of your article"></textarea>
                         <span asp-validation-for="Summary" class="text-danger"></span>
                     </div>
 
@@ -55,14 +58,16 @@
 
                     <div class="mb-3">
                         <label asp-for="RelatedStocksText" class="form-label">Related Stocks</label>
-                        <input asp-for="RelatedStocksText" class="form-control" placeholder="Enter stock symbols separated by commas (e.g., AAPL, MSFT, GOOG)">
+                        <input asp-for="RelatedStocksText" class="form-control"
+                            placeholder="Enter stock symbols separated by commas (e.g., AAPL, MSFT, GOOG)">
                         <div class="form-text">Optional: Enter stock symbols related to your article</div>
                         <span asp-validation-for="RelatedStocksText" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Content" class="form-label">Content <span class="text-danger">*</span></label>
-                        <textarea asp-for="Content" class="form-control" rows="12" required placeholder="Write your article content here"></textarea>
+                        <textarea asp-for="Content" class="form-control" rows="12" required
+                            placeholder="Write your article content here"></textarea>
                         <span asp-validation-for="Content" class="text-danger"></span>
                     </div>
                 </div>
@@ -85,7 +90,7 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
         // Add custom validation or enhancement for the article editor if needed
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // You could add rich text editor initialization here
             // For example: new RichTextEditor('#Content');
         });

@@ -8,9 +8,9 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public class HistoryService(IHistoryRepository historyRepository) : IHistoryService
+    public class HistoryService(IStockHistoryRepository historyRepository) : IHistoryService
     {
-        private readonly IHistoryRepository _historyRepository = historyRepository ?? throw new ArgumentNullException(nameof(historyRepository));
+        private readonly IStockHistoryRepository _historyRepository = historyRepository ?? throw new ArgumentNullException(nameof(historyRepository));
 
         public async Task<List<CreditScoreHistory>> GetAllHistoryAsync()
         {

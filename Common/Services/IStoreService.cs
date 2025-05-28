@@ -1,6 +1,6 @@
 ﻿namespace Common.Services
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using System.Threading.Tasks;
 
     public interface IStoreService

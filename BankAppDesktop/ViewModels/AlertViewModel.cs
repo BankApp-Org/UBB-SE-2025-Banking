@@ -1,6 +1,6 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using System.Collections.ObjectModel;    /// <summary>
                                              /// ViewModel responsible for holding alert data for the UI.
                                              /// </summary>

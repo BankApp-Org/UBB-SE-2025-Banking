@@ -1,8 +1,8 @@
 using Common.Services;
 
-namespace StockAppWeb.Views.LoanRequest
+namespace BankAppWeb.Views.LoanRequest
 {
-    using Common.Models;
+    using Common.Models.Bank;
 
     public class IndexModel
     {

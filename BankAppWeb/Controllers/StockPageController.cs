@@ -1,9 +1,9 @@
+using BankAppWeb.Views.StockPage;
 using Common.Models;
 using Common.Services;
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Views.StockPage;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     public class StockPageController : Controller
     {

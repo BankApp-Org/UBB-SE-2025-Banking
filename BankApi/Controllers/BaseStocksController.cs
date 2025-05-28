@@ -1,5 +1,5 @@
 using BankApi.Repositories;
-using Common.Models;
+using Common.Models.Trading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

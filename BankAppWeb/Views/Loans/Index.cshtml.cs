@@ -1,8 +1,8 @@
-using Common.Models;
+using Common.Models.Bank;
 using Common.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace StockAppWeb.Views.Loans
+namespace BankAppWeb.Views.Loans
 {
     public class IndexModel : PageModel
     {

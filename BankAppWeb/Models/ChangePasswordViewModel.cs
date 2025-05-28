@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace StockAppWeb.Models
+namespace BankAppWeb.Models
 {
     public class ChangePasswordViewModel
     {

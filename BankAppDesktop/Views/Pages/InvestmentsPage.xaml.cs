@@ -1,9 +1,9 @@
-﻿namespace StockApp.Views.Pages
+﻿namespace BankAppDesktop.Views.Pages
 {
     using Common.Services; // Added for IInvestmentsService
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.ViewModels;
+    using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks; // Added for Task
 

@@ -1,11 +1,11 @@
-﻿using Common.Models;
+﻿using Common.Models.Trading;
 using Common.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace StockAppWeb.Pages.GemStore
+namespace BankAppWeb.Pages.GemStore
 {
     public class IndexModel : PageModel
     {

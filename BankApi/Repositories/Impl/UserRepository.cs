@@ -1,5 +1,6 @@
 ﻿using BankApi.Data;
 using Common.Models;
+using Common.Models.Bank;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,8 +14,8 @@ namespace BankApi.Repositories.Impl
         private readonly RoleManager<IdentityRole<int>> _roleManager;
 
         public UserRepository(
-            ApiDbContext context, 
-            ILogger<UserRepository> logger, 
+            ApiDbContext context,
+            ILogger<UserRepository> logger,
             UserManager<User> userManager,
             RoleManager<IdentityRole<int>> roleManager)
         {
@@ -144,6 +145,25 @@ namespace BankApi.Repositories.Impl
             {
                 _logger.LogError(ex, "Error adding default role to users");
                 throw;
+            }
+        }
+
+        public async Task<List<BankAccount>> GetUserBankAccounts(int id_user)
+        {
+            if (id_user <= 0)
+            {
+                return [];
+            }
+
+            try
+            {
+                return await _context.BankAccounts
+                    .Where(b => b.UserId == id_user)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                return [];
             }
         }
     }

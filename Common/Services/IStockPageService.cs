@@ -1,6 +1,6 @@
 ﻿namespace Common.Services
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using System.Threading.Tasks;
 
     public interface IStockPageService
@@ -18,6 +18,6 @@
 
         Task ToggleFavoriteAsync(string stockName, bool state, string? userCNP = null);
 
-        Task<List<int>> GetStockHistoryAsync(string stockName);
+        Task<List<decimal>> GetStockHistoryAsync(string stockName);
     }
 }

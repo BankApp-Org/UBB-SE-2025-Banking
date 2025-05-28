@@ -1,7 +1,9 @@
-﻿namespace Common.Services
+﻿using Common.Models.Social;
+
+namespace Common.Services
 {
     public interface IProfanityChecker
     {
-        Task<bool> IsMessageOffensive(string messageToBeChecked);
+        Task<bool> IsMessageOffensive(Message messageToBeChecked);
     }
 }

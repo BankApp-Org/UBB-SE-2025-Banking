@@ -1,14 +1,11 @@
-
-using Common.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Common.Models.Trading;
 
 namespace Common.Services
 {
     public interface ITransactionService
     {
-        Task<List<TransactionLogTransaction>> GetAllTransactionsAsync();
-        Task<List<TransactionLogTransaction>> GetByFilterCriteriaAsync(TransactionFilterCriteria criteria);
-        Task AddTransactionAsync(TransactionLogTransaction transaction);
+        Task<List<StockTransaction>> GetAllTransactionsAsync();
+        Task<List<StockTransaction>> GetByFilterCriteriaAsync(StockTransactionFilterCriteria criteria);
+        Task AddTransactionAsync(StockTransaction transaction);
     }
 }

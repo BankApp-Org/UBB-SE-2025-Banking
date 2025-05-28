@@ -1,8 +1,8 @@
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
-    using Common.Models;
+    using Common.Models.Social;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
 
@@ -24,7 +24,7 @@ namespace StockApp.Views.Components
                 SetValue(TipProperty, value);
                 this.MessageId = value.Id.ToString();
                 this.MessageType = $"Type: {value.Type}";
-                this.MessageText = value.MessageText; // Update UI when Tip changes
+                this.MessageText = value.MessageContent; // Update UI when Tip changes
             }
         }
 
@@ -73,7 +73,7 @@ namespace StockApp.Views.Components
             {
                 component.MessageId = newTip.Id.ToString();
                 component.MessageType = $"Type: {newTip.Type}";
-                component.MessageText = newTip.MessageText; // Update UI when Tip changes
+                component.MessageText = newTip.MessageContent; // Update UI when Tip changes
             }
         }
     }

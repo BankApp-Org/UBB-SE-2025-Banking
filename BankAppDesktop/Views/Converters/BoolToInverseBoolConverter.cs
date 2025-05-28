@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StockApp.Views.Converters
+namespace BankAppDesktop.Views.Converters
 {
     internal partial class BoolToInverseBoolConverter : BaseConverter
     {

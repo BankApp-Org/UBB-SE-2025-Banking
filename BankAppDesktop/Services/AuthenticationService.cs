@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace StockApp.Services
+namespace BankAppDesktop.Services
 {
     public class AuthenticationService : IAuthenticationService
     {

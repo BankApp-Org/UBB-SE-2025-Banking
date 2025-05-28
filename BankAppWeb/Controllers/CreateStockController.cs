@@ -1,9 +1,9 @@
+using BankAppWeb.Views.CreateStock;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Views.CreateStock;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     [Authorize]
     public class CreateStockController : Controller

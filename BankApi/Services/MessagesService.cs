@@ -2,6 +2,7 @@
 {
     using BankApi.Repositories;
     using Common.Models;
+    using Common.Models.Social;
     using Common.Services;
     using System;
     using System.Collections.Generic;
@@ -31,15 +32,20 @@
                 Console.WriteLine($"{e.Message},User is not found");
             }
         }
-
         public async Task GiveMessageToUserAsync(string userCNP, string type, string messageText)
         {
             User user = await userRepository.GetByCnpAsync(userCNP) ?? throw new Exception("User not found");
             try
             {
+                // Parse string type to MessageType enum, default to Text if parsing fails
+                if (!Enum.TryParse<MessageType>(type, true, out var messageType))
+                {
+                    messageType = MessageType.Text;
+                }
+
                 var message = new Message
                 {
-                    Type = type,
+                    Type = messageType,
                     MessageContent = messageText
                 };
                 await messagesRepository.AddMessageForUserAsync(userCNP, message);

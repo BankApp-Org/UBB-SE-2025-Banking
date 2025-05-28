@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace StockAppWeb.Pages.News
+namespace BankAppWeb.Pages.News
 {
     [Authorize] // Ensure only authenticated users can create articles
     public class CreateModel : PageModel

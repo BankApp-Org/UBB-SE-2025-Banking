@@ -1,6 +1,6 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using Microsoft.UI.Xaml.Media.Imaging;
     using System;
     using System.Collections.Generic;

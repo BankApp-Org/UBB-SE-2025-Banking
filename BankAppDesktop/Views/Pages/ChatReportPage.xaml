@@ -1,7 +1,7 @@
-<Page x:Class="StockApp.Views.Pages.ChatReportPage"
+<Page x:Class="BankAppDesktop.Views.Pages.ChatReportPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:StockApp">
+      xmlns:local="using:BankAppDesktop">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20">
         <TextBlock Text="Chat Reports" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Left"/>

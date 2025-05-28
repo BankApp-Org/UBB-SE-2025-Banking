@@ -1,7 +1,7 @@
 using System;
 using Microsoft.UI.Xaml.Data;
 
-namespace StockApp.Converters
+namespace BankAppDesktop.Converters
 {
     public class DateTimeOffsetToDateTimeConverter : IValueConverter
     {

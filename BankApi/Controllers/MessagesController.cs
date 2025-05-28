@@ -1,19 +1,35 @@
 using BankApi.Repositories;
-using Common.Models;
+using BankApi.Repositories.Impl.Social;
+using Common.Models.Social;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace BankApi.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class MessagesController(IMessagesService messagesService, IUserRepository userRepository) : ControllerBase
+    public class MessagesController : ControllerBase
     {
-        private readonly IMessagesService _messagesService = messagesService ?? throw new ArgumentNullException(nameof(messagesService));
-        private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        private readonly IMessagesService _messagesService;
+        private readonly IUserRepository _userRepository;
+        private readonly MessagesRepository _messagesRepository;
+
+        public MessagesController(
+            IMessagesService messagesService,
+            IUserRepository userRepository,
+            MessagesRepository messagesRepository)
+        {
+            _messagesService = messagesService ?? throw new ArgumentNullException(nameof(messagesService));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _messagesRepository = messagesRepository ?? throw new ArgumentNullException(nameof(messagesRepository));
+        }
 
         private async Task<string> GetCurrentUserCnp()
         {
@@ -25,6 +41,15 @@ namespace BankApi.Controllers
             var user = await _userRepository.GetByIdAsync(int.Parse(userId));
             return user == null ? throw new Exception("User not found") : user.CNP;
         }
+        private int GetCurrentUserId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId) || !int.TryParse(userId, out int id))
+            {
+                throw new UnauthorizedAccessException("User is not authenticated or has invalid ID.");
+            }
+            return id;
+        }
 
         [HttpPost("user/{userCnp}/give")]
         [Authorize(Roles = "Admin")] // Or any other appropriate authorization
@@ -33,7 +58,7 @@ namespace BankApi.Controllers
             try
             {
                 await _messagesService.GiveMessageToUserAsync(userCnp, request.Type, request.MessageText);
-                return Ok($"Attempted to give a message to user {userCnp}.");
+                return Ok($"Message sent to user {userCnp}.");
             }
             catch (Exception ex)
             {
@@ -75,10 +100,25 @@ namespace BankApi.Controllers
             }
         }
 
-        public class MessageRequest
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<List<Message>>> GetAllMessages()
         {
-            public string Type { get; set; } = string.Empty;
-            public string MessageText { get; set; } = string.Empty;
+            try
+            {
+                var messages = await _messagesRepository.GetAllMessagesAsync();
+                return Ok(messages);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+    }
+
+    public class MessageRequest
+    {
+        public string Type { get; set; } = string.Empty;
+        public string MessageText { get; set; } = string.Empty;
     }
 }

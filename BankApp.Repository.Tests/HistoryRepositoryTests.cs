@@ -1,5 +1,5 @@
 ﻿using BankApi.Data;
-using BankApi.Repositories.Impl;
+using BankApi.Repositories.Impl.Stocks;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,14 +9,14 @@ using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Repository.Tests
+namespace BankApp.Repository.Tests
 {
     [TestClass]
     [SupportedOSPlatform("windows10.0.26100.0")]
     public class HistoryRepositoryTests
     {
         private ApiDbContext _context;
-        private HistoryRepository _repository;
+        private StockHistoryRepository _repository;
 
         [TestInitialize]
         public void Setup()
@@ -34,7 +34,7 @@ namespace StockApp.Repository.Tests
             );
             _context.SaveChanges();
 
-            _repository = new HistoryRepository(_context);
+            _repository = new StockHistoryRepository(_context);
         }
 
         [TestMethod]

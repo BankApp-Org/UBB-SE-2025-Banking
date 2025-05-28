@@ -1,9 +1,9 @@
-using Common.Models;
+using Common.Models.Bank;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace StockApp.ViewModels
+namespace BankAppDesktop.ViewModels
 {
     /// <summary>
     /// ViewModel for the create loan dialog containing only UI state properties.
@@ -17,6 +17,7 @@ namespace StockApp.ViewModels
         private string successMessage = string.Empty;
         private bool isSubmitting = false;
         private bool isLoading = false;
+        private Currency selectedCurrency = Currency.USD;
 
         /// <summary>
         /// Event raised when a property value changes.
@@ -97,6 +98,12 @@ namespace StockApp.ViewModels
         {
             get => this.isLoading;
             set => this.SetProperty(ref this.isLoading, value);
+        }
+
+        public Currency SelectedCurrency
+        {
+            get => this.selectedCurrency;
+            set => this.SetProperty(ref this.selectedCurrency, value);
         }
 
         /// <summary>

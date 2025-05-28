@@ -1,4 +1,4 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
     using Common.Models;
     using System.Collections.ObjectModel;

@@ -1,6 +1,7 @@
 using BankApi.Repositories;
 using BankApi.Services;
 using Common.Models;
+using Common.Models.Social;
 using Common.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -9,7 +10,7 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Service.Tests
+namespace BankApp.Service.Tests
 {
     [TestClass]
     [SupportedOSPlatform("windows10.0.26100.0")]
@@ -41,7 +42,16 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task DoNotPunishUser_HappyCase_DeletesReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
+            var report = new ChatReport
+            {
+                Id = 1,
+                ReportedUserCnp = "123",
+                SubmitterCnp = "456",
+                Submitter = new User { CNP = "456" },
+                ReportedUser = new User { CNP = "123" },
+                MessageId = 1,
+                Message = new Message { Id = 1, MessageContent = "test message" }
+            };
             _mockChatReportRepo.Setup(r => r.DeleteChatReportAsync(report.Id)).Returns(Task.FromResult(true));
             await _service.DoNotPunishUser(report);
             _mockChatReportRepo.Verify(r => r.DeleteChatReportAsync(report.Id), Times.Once);
@@ -56,21 +66,20 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task PunishUser_EmptyReportedUserCnp_ThrowsArgumentException()
         {
-            await Assert.ThrowsExactlyAsync<ArgumentException>(async () => await _service.PunishUser(new ChatReport { ReportedUserCnp = "", ReportedMessage = "test message" }));
+            await Assert.ThrowsExactlyAsync<ArgumentException>(async () => await _service.PunishUser(new ChatReport { ReportedUserCnp = "", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } }));
         }
 
         [TestMethod]
         public async Task PunishUser_UserNotFound_ThrowsException()
         {
-            var report = new ChatReport { ReportedUserCnp = "123", ReportedMessage = "test message" };
+            var report = new ChatReport { ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
             _mockUserRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync((User)null);
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.PunishUser(report));
         }
-
         [TestMethod]
         public async Task PunishUser_HappyCase_PunishesUserAndDeletesReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
             var user = new User { Id = 2, NumberOfOffenses = 2, CreditScore = 500, GemBalance = 100, CNP = "123" };
             _mockUserRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync(user);
             _mockUserRepo.Setup(r => r.UpdateAsync(It.IsAny<User>())).ReturnsAsync(true);
@@ -110,7 +119,7 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetAllChatReportsAsync_HappyCase_ReturnsList()
         {
-            var reports = new List<ChatReport> { new() { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" } };
+            var reports = new List<ChatReport> { new() { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } } };
             _mockChatReportRepo.Setup(r => r.GetAllChatReportsAsync()).ReturnsAsync(reports);
             var result = await _service.GetAllChatReportsAsync();
             Assert.AreEqual(1, result.Count);
@@ -130,20 +139,18 @@ namespace StockApp.Service.Tests
             _mockChatReportRepo.Setup(r => r.GetAllChatReportsAsync()).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.GetAllChatReportsAsync());
         }
-
         [TestMethod]
         public async Task DeleteChatReportAsync_HappyCase_DeletesReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
             _mockChatReportRepo.Setup(r => r.DeleteChatReportAsync(report.Id)).Returns(Task.FromResult(true));
             await _service.DeleteChatReportAsync(report.Id);
             _mockChatReportRepo.Verify(r => r.DeleteChatReportAsync(report.Id), Times.Once);
         }
-
         [TestMethod]
         public async Task DeleteChatReportAsync_RepositoryThrows_ThrowsException()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
             _mockChatReportRepo.Setup(r => r.DeleteChatReportAsync(report.Id)).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.DeleteChatReportAsync(report.Id));
         }
@@ -151,7 +158,6 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task UpdateScoreHistoryForUserAsync_HappyCase_UpdatesScore()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
             _mockChatReportRepo.Setup(r => r.UpdateScoreHistoryForUserAsync("123", It.IsAny<int>())).Returns(Task.FromResult(true));
             await _service.UpdateScoreHistoryForUserAsync(100, "123");
             _mockChatReportRepo.Verify(r => r.UpdateScoreHistoryForUserAsync("123", 100), Times.Once);
@@ -160,32 +166,28 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task UpdateScoreHistoryForUserAsync_RepositoryThrows_ThrowsException()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
             _mockChatReportRepo.Setup(r => r.UpdateScoreHistoryForUserAsync("123", It.IsAny<int>())).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.UpdateScoreHistoryForUserAsync(100, "123"));
         }
-
         [TestMethod]
         public async Task AddChatReportAsync_HappyCase_AddsReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
             _mockChatReportRepo.Setup(r => r.AddChatReportAsync(report)).Returns(Task.FromResult(true));
             await _service.AddChatReportAsync(report);
             _mockChatReportRepo.Verify(r => r.AddChatReportAsync(report), Times.Once);
         }
-
         [TestMethod]
         public async Task AddChatReportAsync_RepositoryThrows_ThrowsException()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
             _mockChatReportRepo.Setup(r => r.AddChatReportAsync(report)).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.AddChatReportAsync(report));
         }
-
         [TestMethod]
         public async Task GetChatReportByIdAsync_HappyCase_ReturnsReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
             _mockChatReportRepo.Setup(r => r.GetChatReportByIdAsync(1)).ReturnsAsync(report);
             var result = await _service.GetChatReportByIdAsync(1);
             Assert.IsNotNull(result);
@@ -195,7 +197,6 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetChatReportByIdAsync_NotFound_ReturnsNull()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
             _mockChatReportRepo.Setup(r => r.GetChatReportByIdAsync(1)).ReturnsAsync((ChatReport)null);
             var result = await _service.GetChatReportByIdAsync(1);
             Assert.IsNull(result);
@@ -204,7 +205,6 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetChatReportByIdAsync_RepositoryThrows_ThrowsException()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
             _mockChatReportRepo.Setup(r => r.GetChatReportByIdAsync(1)).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.GetChatReportByIdAsync(1));
         }
@@ -212,7 +212,6 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetNumberOfGivenTipsForUserAsync_HappyCase_ReturnsNumber()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
             _mockChatReportRepo.Setup(r => r.GetNumberOfGivenTipsForUserAsync("123")).ReturnsAsync(5);
             var result = await _service.GetNumberOfGivenTipsForUserAsync("123");
             Assert.AreEqual(5, result);
@@ -221,7 +220,6 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetNumberOfGivenTipsForUserAsync_RepositoryThrows_ThrowsException()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
             _mockChatReportRepo.Setup(r => r.GetNumberOfGivenTipsForUserAsync("123")).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.GetNumberOfGivenTipsForUserAsync("123"));
         }
@@ -229,7 +227,6 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task UpdateActivityLogAsync_HappyCase_UpdatesLog()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
             _mockChatReportRepo.Setup(r => r.UpdateActivityLogAsync("123", It.IsAny<int>())).Returns(Task.FromResult(true));
             await _service.UpdateActivityLogAsync(10, "123");
             _mockChatReportRepo.Verify(r => r.UpdateActivityLogAsync("123", 10), Times.Once);
@@ -238,7 +235,6 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task UpdateActivityLogAsync_RepositoryThrows_ThrowsException()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", ReportedMessage = "test message" };
             _mockChatReportRepo.Setup(r => r.UpdateActivityLogAsync("123", It.IsAny<int>())).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.UpdateActivityLogAsync(10, "123"));
         }

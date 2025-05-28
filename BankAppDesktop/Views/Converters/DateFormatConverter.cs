@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Microsoft.UI.Xaml.Data;
 
-namespace StockApp.Views.Converters
+namespace BankAppDesktop.Views.Converters
 {
     public class DateFormatConverter : IValueConverter
     {

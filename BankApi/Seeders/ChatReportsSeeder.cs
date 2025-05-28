@@ -1,5 +1,6 @@
 ﻿using BankApi.Data;
-using Common.Models; // Assuming ChatReport model is in Common.Models
+using Common.Models.Social;
+using Common.Models;
 using Microsoft.EntityFrameworkCore; // Required for AnyAsync
 
 namespace BankApi.Seeders
@@ -19,28 +20,74 @@ namespace BankApi.Seeders
             // Ensure that the referenced Users (by CNP) exist.
             // This seeder should run after UsersSeeder.
             var userCnps = new[] { "1234567890123", "9876543210987", "2345678901234", "3456789012345", "4567890123456" };
-            var existingUsersCnps = await context.Users.Where(u => userCnps.Contains(u.CNP)).Select(u => u.CNP).ToListAsync();
+            var existingUsers = await context.Users.Where(u => userCnps.Contains(u.CNP)).ToListAsync();
+
+            if (existingUsers.Count < 2)
+            {
+                Console.WriteLine("Not enough users exist for ChatReports seeding, skipping.");
+                return;
+            }
+
+            // First, ensure we have a default chat for messages
+            var defaultChat = await context.Chats.FirstOrDefaultAsync();
+            if (defaultChat == null)
+            {
+                defaultChat = new Chat
+                {
+                    ChatName = "Default Chat",
+                    Users = existingUsers.Take(2).ToList(),
+                    Messages = new List<Message>()
+                };
+                context.Chats.Add(defaultChat);
+                await context.SaveChangesAsync();
+            }
 
             var chatReportsToSeed = new List<ChatReport>();
 
-            var rawData = new[]
+            var reportData = new[]
             {
-                new { ReportedUserCnp = "1234567890123", SubmitterCnp = "3456789012345", ReportedMessage = "This user sent inappropriate content." },
-                new { ReportedUserCnp = "9876543210987", SubmitterCnp = "1234567890123", ReportedMessage = "Reported for spamming multiple messages." },
-                new { ReportedUserCnp = "2345678901234", SubmitterCnp = "1234567890123", ReportedMessage = "This user violated chat guidelines." },
-                new { ReportedUserCnp = "3456789012345", SubmitterCnp = "9876543210987", ReportedMessage = "Reported for offensive language." },
-                new { ReportedUserCnp = "4567890123456", SubmitterCnp = "4567890123456", ReportedMessage = "User harassed another member." }
+                new { ReportedUserCnp = "1234567890123", SubmitterCnp = "3456789012345", MessageContent = "This user sent inappropriate content." },
+                new { ReportedUserCnp = "9876543210987", SubmitterCnp = "1234567890123", MessageContent = "Reported for spamming multiple messages." },
+                new { ReportedUserCnp = "2345678901234", SubmitterCnp = "1234567890123", MessageContent = "This user violated chat guidelines." },
+                new { ReportedUserCnp = "3456789012345", SubmitterCnp = "9876543210987", MessageContent = "Reported for offensive language." },
+                new { ReportedUserCnp = "4567890123456", SubmitterCnp = "4567890123456", MessageContent = "User harassed another member." }
             };
 
-            foreach (var data in rawData)
+            foreach (var data in reportData)
             {
-                if (existingUsersCnps.Contains(data.ReportedUserCnp))
+                var submitter = existingUsers.FirstOrDefault(u => u.CNP == data.SubmitterCnp);
+                var reportedUser = existingUsers.FirstOrDefault(u => u.CNP == data.ReportedUserCnp);
+
+                if (submitter != null && reportedUser != null)
                 {
-                    chatReportsToSeed.Add(new ChatReport { ReportedUserCnp = data.ReportedUserCnp, ReportedMessage = data.ReportedMessage, SubmitterCnp = data.SubmitterCnp });
+                    // Create a message for this report
+                    var message = new Message
+                    {
+                        MessageContent = data.MessageContent,
+                        Type = MessageType.Text,
+                        UserId = reportedUser.Id,
+                        Sender = reportedUser,
+                        ChatId = defaultChat.Id,
+                        Chat = defaultChat,
+                        CreatedAt = DateTime.UtcNow.AddDays(-new Random().Next(1, 30))
+                    };
+
+                    context.Messages.Add(message);
+                    await context.SaveChangesAsync(); // Save to get the message ID
+
+                    chatReportsToSeed.Add(new ChatReport
+                    {
+                        ReportedUserCnp = data.ReportedUserCnp,
+                        ReportedUser = reportedUser,
+                        SubmitterCnp = data.SubmitterCnp,
+                        Submitter = submitter,
+                        MessageId = message.Id,
+                        Message = message
+                    });
                 }
                 else
                 {
-                    Console.WriteLine($"Skipping ChatReport for UserCnp: {data.ReportedUserCnp} as user does not exist.");
+                    Console.WriteLine($"Skipping ChatReport for UserCnp: {data.ReportedUserCnp} or {data.SubmitterCnp} as user does not exist.");
                 }
             }
 

@@ -1,7 +1,7 @@
-namespace StockApp.Views
+namespace BankAppDesktop.Views
 {
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.ViewModels;
+    using BankAppDesktop.ViewModels;
     using System;
 
     public sealed partial class ArticleCreationPage : Page

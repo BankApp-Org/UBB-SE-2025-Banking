@@ -1,25 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DirectedGraph DataVirtualized="True" Layout="Sugiyama" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
-    <Node Id="(@275 Namespace=WinRT.StockAppVtableClasses)" Category="CodeSchema_Namespace" Bounds="-449.634166666667,368.875053489923,215.733333333334,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="WinRT‎.StockAppVtableClasses" />
-    <Node Id="@276" Category="CodeSchema_Assembly" Bounds="-473.510334943996,-296.848311647401,974.176378690683,710.723465137324" CodeSchemaProperty_StrongName="StockApp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="18" FilePath="$(99404076-145e-46d8-acf7-93fe40eea798.OutputPath)" Group="Expanded" Label="StockApp.dll" LayoutSettings="TopToBottom" UseManualLocation="True" />
+    <Node Id="(@275 Namespace=WinRT.BankAppDesktopVtableClasses)" Category="CodeSchema_Namespace" Bounds="-449.634166666667,368.875053489923,215.733333333334,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="WinRT‎.BankAppDesktopVtableClasses" />
+    <Node Id="@276" Category="CodeSchema_Assembly" Bounds="-473.510334943996,-296.848311647401,974.176378690683,710.723465137324" CodeSchemaProperty_StrongName="BankAppDesktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="18" FilePath="$(99404076-145e-46d8-acf7-93fe40eea798.OutputPath)" Group="Expanded" Label="BankAppDesktop.dll" LayoutSettings="TopToBottom" UseManualLocation="True" />
     <Node Id="@529" Category="CodeSchema_Namespace" Bounds="-49.425334943996,185.828695443409,62.2,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="::" />
     <Node Id="@530" Category="CodeSchema_Namespace" Bounds="-194.759166666668,281.1039344348,424.62,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="Microsoft‎.Windows‎.ApplicationModel‎.WindowsAppRuntime‎.Common" />
     <Node Id="@531" Category="CodeSchema_Namespace" Bounds="-166.549166666668,337.7914344348,368.2,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="Microsoft‎.Windows‎.Foundation‎.UndockedRegFreeWinRTCS" />
-    <Node Id="@532" Category="CodeSchema_Namespace" Bounds="10.8324999999995,-189.12999195228,107.436666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp" />
-    <Node Id="@533" Category="CodeSchema_Namespace" Bounds="26.4374999999997,72.4536954434088,170.226666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.Commands" />
-    <Node Id="@534" Category="CodeSchema_Namespace" Bounds="-362.995833333334,136.327235057958,167.093333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.Converters" />
-    <Node Id="@535" Category="CodeSchema_Namespace" Bounds="-93.0791666666677,-256.848211647401,159.26,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.Database" />
-    <Node Id="@536" Category="CodeSchema_Namespace" Bounds="-246.512001610663,200.500053489923,166.373333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.Exceptions" />
-    <Node Id="@537" Category="CodeSchema_Namespace" Bounds="291.957499999999,222.023483386721,149.186666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.Models" />
-    <Node Id="@539" Category="CodeSchema_Namespace" Bounds="-372.419588089451,-143.673364942042,305.88,250.0005" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Expanded" Label="StockApp‎.Pages" UseManualLocation="True" />
-    <Node Id="@540" Category="CodeSchema_Namespace" Bounds="58.0027104133534,219.438726556742,174.77,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.Repositories" UseManualLocation="True" />
-    <Node Id="@541" Category="CodeSchema_Namespace" Bounds="253.144166666666,164.438626556742,226.813333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.Repositories‎.Exporters" />
-    <Node Id="@543" Category="CodeSchema_Namespace" Bounds="262.772710413353,-60.5618734432577,217.893333333333,195.0004" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Expanded" Label="StockApp‎.Services" UseManualLocation="True" />
-    <Node Id="@544" Category="CodeSchema_Namespace" Bounds="-36.5395880894514,-132.44249195228,237.413333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.StockApp_XamlTypeInfo" />
-    <Node Id="@545" Category="CodeSchema_Namespace" Bounds="57.0663227289308,-20.7548919522804,174.496666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.ViewModels" UseManualLocation="True" />
-    <Node Id="@546" Category="CodeSchema_Namespace" Bounds="296.330833333333,-117.249373443258,140.44,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="StockApp‎.Views" />
-    <Node Id="@547" Category="CodeSchema_Namespace" Bounds="-453.510334943996,257.187553489923,224.37,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="WinRT‎.StockAppGenericHelpers" />
+    <Node Id="@532" Category="CodeSchema_Namespace" Bounds="10.8324999999995,-189.12999195228,107.436666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop" />
+    <Node Id="@533" Category="CodeSchema_Namespace" Bounds="26.4374999999997,72.4536954434088,170.226666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.Commands" />
+    <Node Id="@534" Category="CodeSchema_Namespace" Bounds="-362.995833333334,136.327235057958,167.093333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.Converters" />
+    <Node Id="@535" Category="CodeSchema_Namespace" Bounds="-93.0791666666677,-256.848211647401,159.26,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.Database" />
+    <Node Id="@536" Category="CodeSchema_Namespace" Bounds="-246.512001610663,200.500053489923,166.373333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.Exceptions" />
+    <Node Id="@537" Category="CodeSchema_Namespace" Bounds="291.957499999999,222.023483386721,149.186666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.Models" />
+    <Node Id="@539" Category="CodeSchema_Namespace" Bounds="-372.419588089451,-143.673364942042,305.88,250.0005" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Expanded" Label="BankAppDesktop‎.Pages" UseManualLocation="True" />
+    <Node Id="@540" Category="CodeSchema_Namespace" Bounds="58.0027104133534,219.438726556742,174.77,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.Repositories" UseManualLocation="True" />
+    <Node Id="@541" Category="CodeSchema_Namespace" Bounds="253.144166666666,164.438626556742,226.813333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.Repositories‎.Exporters" />
+    <Node Id="@543" Category="CodeSchema_Namespace" Bounds="262.772710413353,-60.5618734432577,217.893333333333,195.0004" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Expanded" Label="BankAppDesktop‎.Services" UseManualLocation="True" />
+    <Node Id="@544" Category="CodeSchema_Namespace" Bounds="-36.5395880894514,-132.44249195228,237.413333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.BankAppDesktop_XamlTypeInfo" />
+    <Node Id="@545" Category="CodeSchema_Namespace" Bounds="57.0663227289308,-20.7548919522804,174.496666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.ViewModels" UseManualLocation="True" />
+    <Node Id="@546" Category="CodeSchema_Namespace" Bounds="296.330833333333,-117.249373443258,140.44,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BankAppDesktop‎.Views" />
+    <Node Id="@547" Category="CodeSchema_Namespace" Bounds="-453.510334943996,257.187553489923,224.37,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="WinRT‎.BankAppDesktopGenericHelpers" />
     <Node Id="@548" Category="CodeSchema_Class" Bounds="282.772710413353,-20.5617734432577,136.236666666667,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="FrameAdapter" />
     <Node Id="@550" Category="CodeSchema_Class" Bounds="282.772710413353,34.4383265567423,156,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="NavigationService" />
     <Node Id="@551" Category="CodeSchema_Class" Bounds="-352.419588089451,-48.6731649420417,133.496666666667,25" CodeSchemaProperty_IsFinal="True" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="NewsListPage" />
@@ -46,7 +46,7 @@
     <Node Id="@577" Category="CodeSchema_Property" CodeSchemaProperty_IsStatic="True" DelayedChildNodesState="Incomplete" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="Instance" UseManualLocation="True" />
   </Nodes>
   <Links>
-    <Link Source="@276" Target="(@275 Namespace=WinRT.StockAppVtableClasses)" Category="Contains" FetchingParent="@276" />
+    <Link Source="@276" Target="(@275 Namespace=WinRT.BankAppDesktopVtableClasses)" Category="Contains" FetchingParent="@276" />
     <Link Source="@276" Target="@529" Category="Contains" FetchingParent="@276" />
     <Link Source="@276" Target="@530" Category="Contains" FetchingParent="@276" />
     <Link Source="@276" Target="@531" Category="Contains" FetchingParent="@276" />
@@ -250,22 +250,22 @@
     <Alias n="529" Id="(@275 Namespace=::)" />
     <Alias n="530" Id="(@275 Namespace=Microsoft.Windows.ApplicationModel.WindowsAppRuntime.Common)" />
     <Alias n="531" Id="(@275 Namespace=Microsoft.Windows.Foundation.UndockedRegFreeWinRTCS)" />
-    <Alias n="532" Id="(@275 Namespace=StockApp)" />
-    <Alias n="533" Id="(@275 Namespace=StockApp.Commands)" />
-    <Alias n="534" Id="(@275 Namespace=StockApp.Converters)" />
-    <Alias n="535" Id="(@275 Namespace=StockApp.Database)" />
-    <Alias n="536" Id="(@275 Namespace=StockApp.Exceptions)" />
-    <Alias n="537" Id="(@275 Namespace=StockApp.Models)" />
-    <Alias n="538" Id="Namespace=StockApp.Pages" />
+    <Alias n="532" Id="(@275 Namespace=BankAppDesktop)" />
+    <Alias n="533" Id="(@275 Namespace=BankAppDesktop.Commands)" />
+    <Alias n="534" Id="(@275 Namespace=BankAppDesktop.Converters)" />
+    <Alias n="535" Id="(@275 Namespace=BankAppDesktop.Database)" />
+    <Alias n="536" Id="(@275 Namespace=BankAppDesktop.Exceptions)" />
+    <Alias n="537" Id="(@275 Namespace=BankAppDesktop.Models)" />
+    <Alias n="538" Id="Namespace=BankAppDesktop.Pages" />
     <Alias n="539" Id="(@275 @538)" />
-    <Alias n="540" Id="(@275 Namespace=StockApp.Repositories)" />
-    <Alias n="541" Id="(@275 Namespace=StockApp.Repositories.Exporters)" />
-    <Alias n="542" Id="Namespace=StockApp.Services" />
+    <Alias n="540" Id="(@275 Namespace=BankAppDesktop.Repositories)" />
+    <Alias n="541" Id="(@275 Namespace=BankAppDesktop.Repositories.Exporters)" />
+    <Alias n="542" Id="Namespace=BankAppDesktop.Services" />
     <Alias n="543" Id="(@275 @542)" />
-    <Alias n="544" Id="(@275 Namespace=StockApp.StockApp_XamlTypeInfo)" />
-    <Alias n="545" Id="(@275 Namespace=StockApp.ViewModels)" />
-    <Alias n="546" Id="(@275 Namespace=StockApp.Views)" />
-    <Alias n="547" Id="(@275 Namespace=WinRT.StockAppGenericHelpers)" />
+    <Alias n="544" Id="(@275 Namespace=BankAppDesktop.BankAppDesktop_XamlTypeInfo)" />
+    <Alias n="545" Id="(@275 Namespace=BankAppDesktop.ViewModels)" />
+    <Alias n="546" Id="(@275 Namespace=BankAppDesktop.Views)" />
+    <Alias n="547" Id="(@275 Namespace=WinRT.BankAppDesktopGenericHelpers)" />
     <Alias n="548" Id="(@275 @542 Type=FrameAdapter)" />
     <Alias n="549" Id="Type=NavigationService" />
     <Alias n="550" Id="(@275 @542 @549)" />
@@ -280,7 +280,7 @@
     <Alias n="559" Uri="Assembly=file:///C:/Users/womyw/.nuget/packages/microsoft.windowsappsdk/1.7.250401001/lib/net6.0-windows10.0.18362.0/Microsoft.WinUI.dll" />
     <Alias n="560" Id="(@275 @542 Type=FrameAdapter Member=(Name=.ctor OverloadingParameters=[(@559 Namespace=Microsoft.UI.Xaml.Controls Type=Frame)]))" />
     <Alias n="561" Id="(@275 @542 @549 Member=(Name=Initialize OverloadingParameters=[(@275 @542 Type=INavigationFrame)]))" />
-    <Alias n="562" Id="(@275 @542 Type=TransactionLogService Member=(Name=.ctor OverloadingParameters=[(@275 Namespace=StockApp.Repositories Type=ITransactionRepository)]))" />
+    <Alias n="562" Id="(@275 @542 Type=TransactionLogService Member=(Name=.ctor OverloadingParameters=[(@275 Namespace=BankAppDesktop.Repositories Type=ITransactionRepository)]))" />
     <Alias n="563" Uri="Assembly=$(ProgramFilesUri)/dotnet/packs/Microsoft.NETCore.App.Ref/8.0.15/ref/net8.0/System.Runtime.dll" />
     <Alias n="564" Id="(@275 @542 @549 Member=(Name=Navigate OverloadingParameters=[(@563 Namespace=System Type=Type),(@563 Namespace=System Type=Object)]))" />
     <Alias n="565" Id="OverloadingParameters=[(@563 Namespace=System Type=Object),(@559 Namespace=Microsoft.UI.Xaml Type=RoutedEventArgs)]" />
@@ -515,8 +515,8 @@
     </Style>
   </Styles>
   <Paths>
-    <Path Id="99404076-145e-46d8-acf7-93fe40eea798.OutputPath" Value="C:\Users\womyw\source\repos\Pascu-Victor\StockApp\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\StockApp.dll" />
-    <Path Id="99404076-145e-46d8-acf7-93fe40eea798.OutputPathUri" Value="file:///C:/Users/womyw/source/repos/Pascu-Victor/StockApp/bin/x64/Debug/net8.0-windows10.0.19041.0/win-x64/StockApp.dll" />
+    <Path Id="99404076-145e-46d8-acf7-93fe40eea798.OutputPath" Value="C:\Users\womyw\source\repos\Pascu-Victor\BankAppDesktop\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\BankAppDesktop.dll" />
+    <Path Id="99404076-145e-46d8-acf7-93fe40eea798.OutputPathUri" Value="file:///C:/Users/womyw/source/repos/Pascu-Victor/BankAppDesktop/bin/x64/Debug/net8.0-windows10.0.19041.0/win-x64/BankAppDesktop.dll" />
     <Path Id="ProgramFiles" Value="C:\Program Files" />
     <Path Id="ProgramFilesUri" Value="file:///C:/Program Files" />
   </Paths>

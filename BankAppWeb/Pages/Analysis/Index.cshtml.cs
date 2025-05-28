@@ -1,4 +1,5 @@
 using Common.Models;
+using Common.Models.Bank;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 
-namespace StockAppWeb.Pages.Analysis
+namespace BankAppWeb.Pages.Analysis
 {
     [Authorize]
     public class IndexModel : PageModel

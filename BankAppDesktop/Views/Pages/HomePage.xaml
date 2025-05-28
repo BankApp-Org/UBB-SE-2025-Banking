@@ -1,12 +1,12 @@
 <Page
-    x:Class="StockApp.Views.Pages.HomePage"
+    x:Class="BankAppDesktop.Views.Pages.HomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:StockApp.Views"
+    xmlns:local="using:BankAppDesktop.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModel="using:StockApp.ViewModels"
-    xmlns:model="using:Common.Models" xmlns:converters="using:StockApp.Views.Converters"
+    xmlns:viewModel="using:BankAppDesktop.ViewModels"
+    xmlns:model="using:Common.Models" xmlns:converters="using:BankAppDesktop.Views.Converters"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:ChangeToColorConverter x:Key="ChangeToColorConverter" />

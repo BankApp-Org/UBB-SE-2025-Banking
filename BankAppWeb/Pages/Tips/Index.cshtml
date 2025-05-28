@@ -1,5 +1,6 @@
 @page
-@model StockAppWeb.Pages.Tips.IndexModel
+@using BankAppWeb.Pages.Tips
+@model BankAppWeb.Pages.Tips.IndexModel
 @{
     ViewData["Title"] = "Tips History";
 }
@@ -34,7 +35,7 @@
                     <h5 class="mb-1">@message.Type</h5>
                     <small>ID: @message.Id</small>
                 </div>
-                <p class="mb-1">@message.MessageText</p>
+                <p class="mb-1">@message.MessageContent</p>
             </div>
         }
     </div>
@@ -56,7 +57,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="messageText" class="form-label">Message</label>
-                        <textarea class="form-control" id="messageText" name="Input.MessageText" rows="3" required></textarea>
+                        <textarea class="form-control" id="messageText" name="Input.MessageText" rows="3"
+                            required></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -72,4 +74,4 @@
     <script>
         // Add any necessary JavaScript here
     </script>
-} 
+}

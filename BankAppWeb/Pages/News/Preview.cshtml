@@ -1,5 +1,6 @@
 @page
-@model StockAppWeb.Pages.News.PreviewModel
+@using BankAppWeb.Pages.News
+@model BankAppWeb.Pages.News.PreviewModel
 @{
     ViewData["Title"] = "Article Preview";
 }
@@ -20,17 +21,17 @@
                 </div>
                 <div class="card-body">
                     <h2 class="card-title fs-3 fw-bold mb-3">@Model.Title</h2>
-                    
+
                     <div class="d-flex gap-2 text-muted mb-3 flex-wrap">
                         <span>@Model.Source</span>
-                        <span>•</span>
+                        <span>ï¿½</span>
                         <span>@Model.PublishedDate.ToString("MMM d, yyyy")</span>
-                        <span>•</span>
+                        <span>ï¿½</span>
                         <span>@Model.Topic</span>
                     </div>
-                    
+
                     <p class="lead mb-4">@Model.Summary</p>
-                    
+
                     @if (Model.RelatedStocks?.Any() == true)
                     {
                         <div class="mb-4">
@@ -44,7 +45,7 @@
                         </div>
                         <hr class="my-4">
                     }
-                    
+
                     <div class="article-content mt-4">
                         @* Displaying content - in a real app, you might want to sanitize HTML *@
                         @Model.Content
@@ -65,7 +66,8 @@
                                 <input type="hidden" name="Summary" value="@Model.Summary" />
                                 <input type="hidden" name="Content" value="@Model.Content" />
                                 <input type="hidden" name="SelectedTopic" value="@Model.Topic" />
-                                <input type="hidden" name="RelatedStocksText" value="@string.Join(",", Model.RelatedStocks)" />
+                                <input type="hidden" name="RelatedStocksText"
+                                    value="@string.Join(",", Model.RelatedStocks)" />
                                 <button type="submit" class="btn btn-primary">Submit Article</button>
                             </form>
                         </div>
@@ -85,7 +87,7 @@
 @section Scripts {
     <script>
         // Convert plain text URLs in article content to clickable links (preview only)
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const articleContent = document.querySelector('.article-content');
             if (articleContent) {
                 articleContent.innerHTML = articleContent.innerHTML.replace(

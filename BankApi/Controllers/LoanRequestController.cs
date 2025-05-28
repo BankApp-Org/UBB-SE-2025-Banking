@@ -1,4 +1,4 @@
-using Common.Models;
+using Common.Models.Bank;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

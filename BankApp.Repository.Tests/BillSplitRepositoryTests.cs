@@ -1,6 +1,6 @@
 using BankApi.Data;
 using BankApi.Repositories;
-using BankApi.Repositories.Impl;
+using BankApi.Repositories.Impl.Bank;
 using Common.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace StockApp.Repository.Tests
+namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
     public class BillSplitRepositoryTests

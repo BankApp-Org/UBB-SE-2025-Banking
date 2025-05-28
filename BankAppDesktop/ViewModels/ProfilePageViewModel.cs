@@ -1,6 +1,6 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using Microsoft.UI.Xaml.Media.Imaging;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -113,26 +113,6 @@
         {
             get => this.errorMessage;
             set => this.SetProperty(ref this.errorMessage, value);
-        }
-
-        /// <summary>
-        /// Sets the property and raises the PropertyChanged event if the value has changed.
-        /// </summary>
-        /// <typeparam name="T">The type of the property.</typeparam>
-        /// <param name="field">The field to set.</param>
-        /// <param name="value">The new value.</param>
-        /// <param name="propertyName">The name of the property.</param>
-        /// <returns>True if the property was set; otherwise, false.</returns>
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            this.OnPropertyChanged(propertyName);
-            return true;
         }
 
         /// <summary>

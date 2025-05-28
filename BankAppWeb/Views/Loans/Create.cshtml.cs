@@ -1,5 +1,5 @@
 using Common.Attributes;
-using Common.Models; // Added for Loan and LoanRequest
+using Common.Models.Bank;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
-namespace StockAppWeb.Views.Loans
+namespace BankAppWeb.Views.Loans
 {
     [Authorize]
     public class CreateModel : PageModel
@@ -31,6 +31,9 @@ namespace StockAppWeb.Views.Loans
             public decimal Amount { get; set; }
             [FutureDate(ErrorMessage = "Repayment date must be in the future.", MinimumMonthsAdvance = 1)]
             public DateTime RepaymentDate { get; set; } = DateTime.Now;
+
+            [Required]
+            public Currency Currency { get; set; } = Currency.RON;
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -56,6 +59,7 @@ namespace StockAppWeb.Views.Loans
                 LoanAmount = Input.Amount,
                 ApplicationDate = DateTime.UtcNow, // Use UtcNow for consistency
                 RepaymentDate = Input.RepaymentDate,
+                Currency = Input.Currency,
                 Status = "Pending", // Initial status for the loan itself
                 // Initialize other required Loan properties with sensible defaults or calculated values
                 InterestRate = 0m, // Placeholder - should be calculated by backend service
@@ -64,11 +68,10 @@ namespace StockAppWeb.Views.Loans
                 MonthlyPaymentsCompleted = 0,
                 RepaidAmount = 0m,
                 Penalty = 0m
-                // LoanRequest will be set after 'loanRequest' is initialized
             };
 
             // Create the LoanRequest and link it to the Loan
-            var loanRequest = new Common.Models.LoanRequest
+            var loanRequest = new Common.Models.Bank.LoanRequest
             {
                 UserCnp = userCnp,
                 Status = "Pending", // Status for the request
@@ -86,7 +89,7 @@ namespace StockAppWeb.Views.Loans
                 ModelState.Clear(); // Clear model state after successful submission
                 return Page(); // Return to the same page, which will now show the success message
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 ErrorMessage = $"An error occurred while submitting your loan request: {ex.Message}";
                 return Page();

@@ -1,5 +1,5 @@
 ﻿using BankApi.Data;
-using Common.Models; // Assuming UserStock model is in Common.Models
+using Common.Models.Trading;
 using Microsoft.EntityFrameworkCore; // Required for AnyAsync
 
 namespace BankApi.Seeders

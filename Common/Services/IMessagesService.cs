@@ -1,6 +1,6 @@
 ﻿namespace Common.Services
 {
-    using Common.Models; // Added for Message model
+    using Common.Models.Social;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

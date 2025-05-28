@@ -1,6 +1,6 @@
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
-    using Common.Models;
+    using Common.Models.Bank;
     using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -26,6 +26,8 @@ namespace StockApp.Views.Components
         public string State { get; set; } = string.Empty;
 
         public string Suggestion { get; set; } = string.Empty;
+
+        public Currency Currency { get; set; } = Currency.USD;
 
         public LoanRequestComponent(ILoanRequestService loanRequestService, ILoanService loanService)
         {
@@ -60,6 +62,7 @@ namespace StockApp.Views.Components
                 ApplicationDate = this.ApplicationDate,
                 RepaymentDate = this.RepaymentDate,
                 Status = this.State,
+                Currency = this.Currency,
                 // Initialize other required properties with default values
                 InterestRate = 0, // Will be calculated by the service
                 NumberOfMonths = 0, // Will be calculated by the service

@@ -1,9 +1,9 @@
-using Common.Models;
+using BankAppWeb.Views.Alerts;
+using Common.Models.Trading;
 using Common.Services;
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Views.Alerts;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     public class AlertsController : Controller
     {
@@ -30,7 +30,7 @@ namespace StockAppWeb.Controllers
         public async Task<IActionResult> CreateAlert(IndexModel.CreateAlertDto createAlert)
         {
             var model = new IndexModel(_alertService);
-        
+
             if (ModelState.IsValid)
             {
                 try
@@ -56,7 +56,7 @@ namespace StockAppWeb.Controllers
         public async Task<IActionResult> UpdateAlert(Alert alert)
         {
             var model = new IndexModel(_alertService);
-        
+
             try
             {
                 await model.UpdateAlertAsync(alert);
@@ -75,7 +75,7 @@ namespace StockAppWeb.Controllers
         public async Task<IActionResult> DeleteAlert(int alertId)
         {
             var model = new IndexModel(_alertService);
-        
+
             try
             {
                 await model.DeleteAlertAsync(alertId);
@@ -94,7 +94,7 @@ namespace StockAppWeb.Controllers
         public async Task<IActionResult> SaveAllAlerts(List<Alert> alerts)
         {
             var model = new IndexModel(_alertService);
-        
+
             try
             {
                 await model.SaveAllAlertsAsync(alerts);

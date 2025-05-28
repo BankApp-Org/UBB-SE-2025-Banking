@@ -1,6 +1,7 @@
 ﻿using BankApi.Repositories;
 using BankApi.Services;
 using Common.Models;
+using Common.Models.Trading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Service.Tests
+namespace BankApp.Service.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
     [TestClass]

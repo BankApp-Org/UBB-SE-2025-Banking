@@ -1,10 +1,10 @@
 ﻿namespace BankApi.Repositories.Exporters
 {
+    using Common.Models.Trading;
     using System.Collections.Generic;
-    using Common.Models;
 
     public interface ITransactionExporter
     {
-        void Export(List<TransactionLogTransaction> transactions, string filePath);
+        void Export(List<StockTransaction> transactions, string filePath);
     }
 }

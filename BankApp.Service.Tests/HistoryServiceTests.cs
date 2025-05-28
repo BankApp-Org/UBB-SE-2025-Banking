@@ -8,19 +8,19 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Service.Tests
+namespace BankApp.Service.Tests
 {
     [TestClass]
     [SupportedOSPlatform("windows10.0.26100.0")]
     public class HistoryServiceTests
     {
-        private Mock<IHistoryRepository> _mockRepo;
+        private Mock<IStockHistoryRepository> _mockRepo;
         private HistoryService _service;
 
         [TestInitialize]
         public void Init()
         {
-            _mockRepo = new Mock<IHistoryRepository>();
+            _mockRepo = new Mock<IStockHistoryRepository>();
             _service = new HistoryService(_mockRepo.Object);
         }
 

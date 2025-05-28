@@ -2,7 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using System;
 
-namespace StockApp.Converters
+namespace BankAppDesktop.Converters
 {
     public class BooleanToVisibilityConverter : IValueConverter
     {

@@ -2,11 +2,11 @@ using Common.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using StockApp.ViewModels;
+using BankAppDesktop.ViewModels;
 using System;
 using System.Threading.Tasks;
 
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

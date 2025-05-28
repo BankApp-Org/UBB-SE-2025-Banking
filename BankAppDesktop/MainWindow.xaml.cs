@@ -1,11 +1,11 @@
-namespace StockApp
+namespace BankAppDesktop
 {
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.Pages;
-    using StockApp.Views.Pages;
+    using BankAppDesktop.Pages;
+    using BankAppDesktop.Views.Pages;
     using System;
     using System.ComponentModel;
 

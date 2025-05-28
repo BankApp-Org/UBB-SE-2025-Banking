@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace StockApp.ViewModels
+namespace BankAppDesktop.ViewModels
 {
     using Common.Models;
 

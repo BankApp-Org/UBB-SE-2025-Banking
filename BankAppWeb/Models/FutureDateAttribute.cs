@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace StockAppWeb.Models
+namespace BankAppWeb.Models
 {
     /// <summary>
     /// Validates that a date is in the future.

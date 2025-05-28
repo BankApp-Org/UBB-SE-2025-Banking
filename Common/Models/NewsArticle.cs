@@ -1,7 +1,9 @@
 ﻿namespace Common.Models
 {
+    using Common.Models.Trading;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -46,6 +48,15 @@
         public NewsArticle()
         {
             this.RelatedStocks = [];
+            this.ArticleId = string.Empty;
+            this.Title = string.Empty;
+            this.Summary = string.Empty;
+            this.Content = string.Empty;
+            this.Source = string.Empty;
+            this.Category = string.Empty;
+            this.Topic = string.Empty;
+            this.AuthorCNP = string.Empty;
+            this.Author = null!;
         }
 
         /// <summary>
@@ -78,12 +89,11 @@
         /// Gets or sets the source of the article.
         /// </summary>
         [MaxLength(100)]
-        public string Source { get; set; }
-
-        /// <summary>
-        /// Gets or sets the publication date of the article.
-        /// </summary>
+        public string Source { get; set; }        /// <summary>
+                                                  /// Gets or sets the publication date of the article.
+                                                  /// </summary>
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime PublishedDate { get; set; }
 
         /// <summary>
@@ -112,8 +122,9 @@
         /// </summary>
         [Required]
         public Status Status { get; set; }
-
         [Required]
+        [MaxLength(13)]
+        [ForeignKey(nameof(Author))]
         public string AuthorCNP { get; set; } = string.Empty;
 
         [Required]

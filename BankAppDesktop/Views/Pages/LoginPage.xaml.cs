@@ -2,11 +2,11 @@ using Common.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using StockApp.ViewModels;
+using BankAppDesktop.ViewModels;
 using System;
 using System.Threading.Tasks;
 
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
     public sealed partial class LoginPage : Page
     {

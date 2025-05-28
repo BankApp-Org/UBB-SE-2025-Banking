@@ -1,10 +1,10 @@
-namespace StockApp.Views
+namespace BankAppDesktop.Views
 {
     using Common.Models;
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
-    using StockApp.ViewModels;
+    using BankAppDesktop.ViewModels;
     using System;
     using System.Linq;
     using System.Threading.Tasks;

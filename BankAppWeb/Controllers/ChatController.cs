@@ -1,9 +1,9 @@
-using Common.Models;
+using Common.Models.Social;
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ChatController : Controller
@@ -130,9 +130,9 @@ namespace StockAppWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CheckMessage(string message)
+        public async Task<IActionResult> CheckMessage(Message message)
         {
-            if (string.IsNullOrEmpty(message))
+            if (string.IsNullOrEmpty(message.MessageContent))
             {
                 return Json(false);
             }

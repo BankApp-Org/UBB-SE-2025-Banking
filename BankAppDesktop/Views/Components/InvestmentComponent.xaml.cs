@@ -1,6 +1,6 @@
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
-    using Common.Models;
+    using Common.Models.Bank;
     using Microsoft.UI.Xaml.Controls;
 
     public sealed partial class InvestmentComponent : Page

@@ -1,6 +1,12 @@
-namespace StockApp.Pages
+namespace BankAppDesktop.Pages
 {
+    using BankAppDesktop.Commands;
+    using BankAppDesktop.ViewModels;
+    using BankAppDesktop.Views;
+    using BankAppDesktop.Views.Controls;
+    using BankAppDesktop.Views.Pages;
     using Common.Models;
+    using Common.Models.Trading;
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI;
@@ -9,11 +15,6 @@ namespace StockApp.Pages
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Input;
     using Microsoft.UI.Xaml.Media;
-    using StockApp.Commands;
-    using StockApp.ViewModels;
-    using StockApp.Views;
-    using StockApp.Views.Controls;
-    using StockApp.Views.Pages;
     using System;
     using System.Linq;
     using System.Threading.Tasks;

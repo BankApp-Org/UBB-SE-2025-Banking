@@ -1,9 +1,9 @@
-// StockAppWeb/Models/ManageAccountViewModel.cs
+// BankAppWeb/Models/ManageAccountViewModel.cs
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace StockAppWeb.Models
+namespace BankAppWeb.Models
 {
     public class UserStockViewModel
     {

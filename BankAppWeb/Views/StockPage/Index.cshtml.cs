@@ -1,9 +1,9 @@
-using Common.Models;
+using Common.Models.Trading;
 using Common.Services;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 
-namespace StockAppWeb.Views.StockPage
+namespace BankAppWeb.Views.StockPage
 {
     public class IndexModel : PageModel
     {
@@ -12,7 +12,7 @@ namespace StockAppWeb.Views.StockPage
         private readonly IUserService _userService;
         private readonly IAuthenticationService _authenticationService;
 
-        public IndexModel(IStockPageService stockPageService, IStockService stockService, 
+        public IndexModel(IStockPageService stockPageService, IStockService stockService,
                          IUserService userService, IAuthenticationService authenticationService)
         {
             _stockPageService = stockPageService;
@@ -23,7 +23,7 @@ namespace StockAppWeb.Views.StockPage
 
         public Stock? SelectedStock { get; private set; }
         public UserStock? OwnedStocks { get; private set; }
-        public List<int> StockHistory { get; private set; } = [];
+        public List<decimal> StockHistory { get; private set; } = [];
         public bool IsFavorite { get; private set; }
         public int UserGems { get; private set; }
         public string? ErrorMessage { get; private set; }
@@ -66,14 +66,14 @@ namespace StockAppWeb.Views.StockPage
             {
                 // Load stock history
                 StockHistory = await _stockPageService.GetStockHistoryAsync(SelectedStock.Name);
-            
+
                 // Calculate price change percentage
                 if (StockHistory.Count > 1)
                 {
                     var currentPrice = StockHistory.Last();
                     var previousPrice = StockHistory[^2];
-                    PriceChangePercentage = previousPrice != 0 
-                        ? (decimal)(currentPrice - previousPrice) * 100 / previousPrice 
+                    PriceChangePercentage = previousPrice != 0
+                        ? (decimal)(currentPrice - previousPrice) * 100 / previousPrice
                         : 0;
                 }
 

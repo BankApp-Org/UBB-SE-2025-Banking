@@ -1,14 +1,14 @@
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
     using Common.Models;
     using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using StockApp.ViewModels;
+    using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks;
     using Microsoft.Extensions.DependencyInjection;
-    using StockApp.Views.Components;
+    using BankAppDesktop.Views.Components;
 
     /// <summary>
     /// Represents the page for displaying and managing bill split reports.

@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 
-namespace StockApp.Views.Components
+namespace BankAppDesktop.Views.Components
 {
     public sealed partial class LoginComponent : UserControl
     {

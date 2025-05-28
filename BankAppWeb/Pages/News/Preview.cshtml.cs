@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace StockAppWeb.Pages.News
+namespace BankAppWeb.Pages.News
 {
     public class PreviewModel : PageModel
     {

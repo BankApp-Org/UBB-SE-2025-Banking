@@ -1,10 +1,11 @@
 using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Models;
+using Common.Models;
 using System.Diagnostics;
+using BankAppWeb.Models;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     public class HomeController : Controller
     {
@@ -22,12 +23,12 @@ namespace StockAppWeb.Controllers
             // Example of accessing authentication information
             ViewData["IsLoggedIn"] = _authService.IsUserLoggedIn();
             ViewData["IsAdmin"] = _authService.IsUserAdmin();
-        
+
             if (_authService.IsUserLoggedIn())
             {
                 ViewData["Username"] = _authService.GetCurrentUserSession()?.UserName;
             }
-        
+
             return View();
         }
 

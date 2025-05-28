@@ -1,6 +1,6 @@
 ﻿namespace Common.Services
 {
-    using Common.Models;
+    using Common.Models.Bank;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

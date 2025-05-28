@@ -36,4 +36,9 @@
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Stock\" />
+    <Folder Include="Repositories\Social\" />
+  </ItemGroup>
+
 </Project>

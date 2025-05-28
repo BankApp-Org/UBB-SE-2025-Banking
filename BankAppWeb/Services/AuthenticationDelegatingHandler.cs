@@ -1,7 +1,7 @@
 using Common.Services;
 using System.Net.Http.Headers;
 
-namespace StockAppWeb.Services
+namespace BankAppWeb.Services
 {
     // This DelegatingHandler adds the JWT token to outgoing HTTP requests
     public class AuthenticationDelegatingHandler(IAuthenticationService authenticationService) : DelegatingHandler

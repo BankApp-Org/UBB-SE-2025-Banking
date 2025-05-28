@@ -88,10 +88,10 @@
                 this.IsFavorite = await this.stockPageService.GetFavoriteAsync(this.selectedStock.Name);
             }
 
-            List<int> stockHistory = await this.stockPageService.GetStockHistoryAsync(this.selectedStock.Name);
+            List<decimal> stockHistory = await this.stockPageService.GetStockHistoryAsync(this.selectedStock.Name);
             if (stockHistory.Count > 1)
             {
-                int increasePerc = (stockHistory.Last() - stockHistory[^2]) * 100 / stockHistory[^2];
+                decimal increasePerc = (stockHistory.Last() - stockHistory[^2]) * 100 / stockHistory[^2];
                 // this.increaseLabel.Text = increasePerc + "%";
                 if (increasePerc > 0)
                 {
@@ -104,7 +104,7 @@
             }
 
             this.Series.Clear();
-            this.Series.Add(new LineSeries<int>
+            this.Series.Add(new LineSeries<decimal>
             {
                 Values = [.. stockHistory.TakeLast(30)],
                 Fill = null,

@@ -1,5 +1,6 @@
 ﻿using BankApi.Repositories;
 using Common.Models;
+using Common.Models.Social;
 using Common.Services;
 
 namespace BankApi.Services
@@ -116,7 +117,7 @@ namespace BankApi.Services
             }
         }
 
-        public async Task<bool> IsMessageOffensive(string messageToBeChecked)
+        public async Task<bool> IsMessageOffensive(Message messageToBeChecked)
         {
             ArgumentNullException.ThrowIfNull(messageToBeChecked);
             return await _profanityChecker.IsMessageOffensive(messageToBeChecked);

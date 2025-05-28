@@ -1,4 +1,4 @@
-﻿namespace StockApp
+﻿namespace BankAppDesktop
 {
     using Common.Services;
     using Common.Services.Impl;
@@ -9,13 +9,13 @@
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
     using Microsoft.UI.Xaml;
-    using StockApp.Pages;
-    using StockApp.Services;
-    using StockApp.ViewModels;
-    using StockApp.Views;
-    using StockApp.Views.Components;
-    using StockApp.Views.Controls;
-    using StockApp.Views.Pages;
+    using BankAppDesktop.Pages;
+    using BankAppDesktop.Services;
+    using BankAppDesktop.ViewModels;
+    using BankAppDesktop.Views;
+    using BankAppDesktop.Views.Components;
+    using BankAppDesktop.Views.Controls;
+    using BankAppDesktop.Views.Pages;
     using System;
     using System.Net.Http;
 

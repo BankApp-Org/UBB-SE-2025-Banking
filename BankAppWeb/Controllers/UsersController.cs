@@ -1,8 +1,8 @@
-﻿using Common.Services;
+﻿using BankAppWeb.Views.Users;
+using Common.Services;
 using Microsoft.AspNetCore.Mvc;
-using StockAppWeb.Views.Users;
 
-namespace StockAppWeb.Controllers
+namespace BankAppWeb.Controllers
 {
     public class UsersController(IUserService userService) : Controller
     {

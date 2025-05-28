@@ -2,6 +2,7 @@ using BankApi.Repositories;
 using BankApi.Services;
 using Common.Exceptions;
 using Common.Models;
+using Common.Models.Trading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -9,7 +10,7 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Service.Tests
+namespace BankApp.Service.Tests
 {
     [TestClass]
     [SupportedOSPlatform("windows10.0.26100.0")]
@@ -28,8 +29,8 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetFilteredTransactions_HappyCase_ReturnsList()
         {
-            var criteria = new TransactionFilterCriteria();
-            var transactions = new List<TransactionLogTransaction> { new() { Amount = 1, PricePerStock = 1, StockName = "Test", Type = "BUY", Author = new()
+            var criteria = new StockTransactionFilterCriteria();
+            var transactions = new List<StockTransactionTransaction> { new() { Amount = 1, PricePerStock = 1, StockName = "Test", Type = "BUY", Author = new()
             {
                 CNP = "1234567890123",
                 FirstName = "John",
@@ -45,7 +46,7 @@ namespace StockApp.Service.Tests
         public async Task GetFilteredTransactions_CriteriaInvalid_Throws()
         {
             // Use a real criteria instance with invalid values (MinTotalValue > MaxTotalValue)
-            var invalidCriteria = new TransactionFilterCriteria
+            var invalidCriteria = new StockTransactionFilterCriteria
             {
                 MinTotalValue = 10,
                 MaxTotalValue = 5
@@ -56,7 +57,7 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetFilteredTransactions_RepositoryThrows_Throws()
         {
-            var criteria = new TransactionFilterCriteria();
+            var criteria = new StockTransactionFilterCriteria();
             _mockRepo.Setup(r => r.GetByFilterCriteriaAsync(criteria)).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.GetFilteredTransactions(criteria));
         }
@@ -65,7 +66,7 @@ namespace StockApp.Service.Tests
         public void SortTransactions_HappyCase_SortsByDateAscending()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var t1 = new TransactionLogTransaction
+            var t1 = new StockTransactionTransaction
             {
                 Date = DateTime.Now.AddDays(-1),
                 StockSymbol = "TEST1",
@@ -76,7 +77,7 @@ namespace StockApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var t2 = new TransactionLogTransaction
+            var t2 = new StockTransactionTransaction
             {
                 Date = DateTime.Now,
                 StockSymbol = "TEST2",
@@ -87,7 +88,7 @@ namespace StockApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var list = new List<TransactionLogTransaction> { t2, t1 };
+            var list = new List<StockTransactionTransaction> { t2, t1 };
             var sorted = _service.SortTransactions(list, "Date", true);
             Assert.AreEqual(t1, sorted[0]);
         }
@@ -96,7 +97,7 @@ namespace StockApp.Service.Tests
         public void SortTransactions_HappyCase_SortsByStockNameDescending()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var t1 = new TransactionLogTransaction
+            var t1 = new StockTransactionTransaction
             {
                 StockName = "A",
                 StockSymbol = "A",
@@ -107,7 +108,7 @@ namespace StockApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var t2 = new TransactionLogTransaction
+            var t2 = new StockTransactionTransaction
             {
                 StockName = "B",
                 StockSymbol = "B",
@@ -118,7 +119,7 @@ namespace StockApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var list = new List<TransactionLogTransaction> { t1, t2 };
+            var list = new List<StockTransactionTransaction> { t1, t2 };
             var sorted = _service.SortTransactions(list, "Stock Name", false);
             Assert.AreEqual(t2, sorted[0]);
         }
@@ -128,7 +129,7 @@ namespace StockApp.Service.Tests
         {
             // TotalValue is read-only, so set Amount and PricePerStock
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var t1 = new TransactionLogTransaction
+            var t1 = new StockTransactionTransaction
             {
                 Amount = 1,
                 PricePerStock = 1,
@@ -139,7 +140,7 @@ namespace StockApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var t2 = new TransactionLogTransaction
+            var t2 = new StockTransactionTransaction
             {
                 Amount = 1,
                 PricePerStock = 2,
@@ -150,7 +151,7 @@ namespace StockApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var list = new List<TransactionLogTransaction> { t2, t1 };
+            var list = new List<StockTransactionTransaction> { t2, t1 };
             var sorted = _service.SortTransactions(list, "Total Value", true);
             Assert.AreEqual(t1, sorted[0]);
         }
@@ -158,14 +159,14 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public void SortTransactions_InvalidSortType_Throws()
         {
-            var list = new List<TransactionLogTransaction>();
+            var list = new List<StockTransactionTransaction>();
             Assert.ThrowsExactly<InvalidSortTypeException>(() => _service.SortTransactions(list, "InvalidType"));
         }
 
         [TestMethod]
         public void ExportTransactions_UnsupportedFormat_Throws()
         {
-            var transactions = new List<TransactionLogTransaction>();
+            var transactions = new List<StockTransactionTransaction>();
             Assert.ThrowsExactly<ExportFormatNotSupportedException>(() => _service.ExportTransactions(transactions, "file.csv", "xml"));
         }
 
@@ -173,7 +174,7 @@ namespace StockApp.Service.Tests
         public void ExportTransactions_CsvFormat_CallsCsvExporter()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<TransactionLogTransaction> {
+            var transactions = new List<StockTransactionTransaction> {
                 new() {
                     StockSymbol = "TEST",
                     StockName = "Test Stock",
@@ -194,7 +195,7 @@ namespace StockApp.Service.Tests
         public void ExportTransactions_JsonFormat_CallsJsonExporter()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<TransactionLogTransaction> {
+            var transactions = new List<StockTransactionTransaction> {
                 new() {
                     StockSymbol = "TEST",
                     StockName = "Test Stock",
@@ -215,7 +216,7 @@ namespace StockApp.Service.Tests
         public void ExportTransactions_HtmlFormat_CallsHtmlExporter()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<TransactionLogTransaction> {
+            var transactions = new List<StockTransactionTransaction> {
                 new() {
                     StockSymbol = "TEST",
                     StockName = "Test Stock",
@@ -241,14 +242,14 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public void ExportTransactions_EmptyFilePath_Throws()
         {
-            var transactions = new List<TransactionLogTransaction>();
+            var transactions = new List<StockTransactionTransaction>();
             Assert.ThrowsExactly<ArgumentException>(() => _service.ExportTransactions(transactions, "", "csv"));
         }
 
         [TestMethod]
         public void ExportTransactions_EmptyFormat_Throws()
         {
-            var transactions = new List<TransactionLogTransaction>();
+            var transactions = new List<StockTransactionTransaction>();
             Assert.ThrowsExactly<ArgumentException>(() => _service.ExportTransactions(transactions, "file.csv", ""));
         }
     }

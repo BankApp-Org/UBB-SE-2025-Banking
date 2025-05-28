@@ -1,9 +1,9 @@
+using BankAppWeb.Services;
 using Common.Services;
 using Common.Services.Impl;
 using Common.Services.Proxy;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using StockAppWeb.Services;
 using System.Text;
 // Add for logging
 

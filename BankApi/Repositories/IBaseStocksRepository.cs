@@ -1,6 +1,6 @@
 namespace BankApi.Repositories
 {
-    using Common.Models;
+    using Common.Models.Trading;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

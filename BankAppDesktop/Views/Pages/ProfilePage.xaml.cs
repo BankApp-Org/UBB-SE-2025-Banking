@@ -1,4 +1,4 @@
-namespace StockApp.Views.Pages
+namespace BankAppDesktop.Views.Pages
 {
     using Common.Models;
     using Common.Services;
@@ -6,7 +6,7 @@ namespace StockApp.Views.Pages
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Media.Imaging;
-    using StockApp.ViewModels;
+    using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks;
     using Windows.UI.Popups;

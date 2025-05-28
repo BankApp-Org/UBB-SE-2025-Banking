@@ -1,4 +1,4 @@
-﻿namespace StockApp.Commands
+﻿namespace BankAppDesktop.Commands
 {
     using System;
     using System.Windows.Input;

@@ -1,7 +1,7 @@
 <Page
-    x:Class="StockApp.Views.Pages.GemStorePage"
+    x:Class="BankAppDesktop.Views.Pages.GemStorePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:models="using:Common.Models">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:bankModels="using:Common.Models.Bank" xmlns:tradingModels="using:Common.Models.Trading">
 
     <Grid x:Name="rootGrid" Margin="20" Background="#081708">
         <Grid.RowDefinitions>
@@ -46,7 +46,7 @@
                     <!-- Regular Deals -->
                     <ListView x:Name="gemDealsListView" ItemsSource="{x:Bind _viewModel.AvailableDeals, Mode=OneWay}" SelectionMode="Single">
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:GemDeal">
+                            <DataTemplate x:DataType="tradingModels:GemDeal">
                                 <Border Background="#276b26" Padding="10" CornerRadius="10">
                                     <Grid>
                                         <Grid.ColumnDefinitions>

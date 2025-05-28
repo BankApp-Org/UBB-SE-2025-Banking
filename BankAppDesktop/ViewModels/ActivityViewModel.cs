@@ -1,6 +1,7 @@
-﻿namespace StockApp.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
     using Common.Models;
+    using Common.Models.Bank;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using System.Collections.ObjectModel;
     using System.ComponentModel;

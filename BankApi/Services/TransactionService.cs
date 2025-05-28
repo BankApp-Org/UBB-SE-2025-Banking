@@ -1,9 +1,7 @@
 
 using BankApi.Repositories;
-using Common.Models;
+using Common.Models.Trading;
 using Common.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BankApi.Services
 {
@@ -11,17 +9,17 @@ namespace BankApi.Services
     {
         private readonly ITransactionRepository _transactionRepository = transactionRepository;
 
-        public async Task AddTransactionAsync(TransactionLogTransaction transaction)
+        public async Task AddTransactionAsync(StockTransaction transaction)
         {
             await _transactionRepository.AddTransactionAsync(transaction);
         }
 
-        public async Task<List<TransactionLogTransaction>> GetAllTransactionsAsync()
+        public async Task<List<StockTransaction>> GetAllTransactionsAsync()
         {
             return await _transactionRepository.getAllTransactions();
         }
 
-        public async Task<List<TransactionLogTransaction>> GetByFilterCriteriaAsync(TransactionFilterCriteria criteria)
+        public async Task<List<StockTransaction>> GetByFilterCriteriaAsync(StockTransactionFilterCriteria criteria)
         {
             return await _transactionRepository.GetByFilterCriteriaAsync(criteria);
         }

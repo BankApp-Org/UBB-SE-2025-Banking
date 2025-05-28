@@ -1,6 +1,7 @@
 using BankApi.Repositories;
 using BankApi.Services;
 using Common.Models;
+using Common.Models.Trading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
-namespace StockApp.Service.Tests
+namespace BankApp.Service.Tests
 {
     [TestClass]
     [SupportedOSPlatform("windows10.0.26100.0")]
@@ -28,7 +29,7 @@ namespace StockApp.Service.Tests
         public async Task AddTransactionAsync_HappyCase_AddsTransaction()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transaction = new TransactionLogTransaction
+            var transaction = new StockTransactionTransaction
             {
                 StockSymbol = "TEST",
                 StockName = "Test Stock",
@@ -56,7 +57,7 @@ namespace StockApp.Service.Tests
         public async Task AddTransactionAsync_RepositoryThrows_PropagatesException()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transaction = new TransactionLogTransaction
+            var transaction = new StockTransactionTransaction
             {
                 StockSymbol = "TEST",
                 StockName = "Test Stock",
@@ -76,7 +77,7 @@ namespace StockApp.Service.Tests
         public async Task GetAllTransactionsAsync_HappyCase_ReturnsList()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<TransactionLogTransaction>
+            var transactions = new List<StockTransactionTransaction>
             {
                 new() {
                     StockSymbol = "TEST",
@@ -105,9 +106,9 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetByFilterCriteriaAsync_HappyCase_ReturnsFilteredList()
         {
-            var criteria = new TransactionFilterCriteria();
+            var criteria = new StockTransactionFilterCriteria();
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<TransactionLogTransaction>
+            var transactions = new List<StockTransactionTransaction>
             {
                 new() {
                     StockSymbol = "TEST",
@@ -136,7 +137,7 @@ namespace StockApp.Service.Tests
         [TestMethod]
         public async Task GetByFilterCriteriaAsync_RepositoryThrows_PropagatesException()
         {
-            var criteria = new TransactionFilterCriteria();
+            var criteria = new StockTransactionFilterCriteria();
             _mockRepo.Setup(r => r.GetByFilterCriteriaAsync(criteria)).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.GetByFilterCriteriaAsync(criteria));
         }

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Windows.Storage;
 
-namespace StockApp.Services
+namespace BankAppDesktop.Services
 {
     // This class provides secure token storage using Windows.Storage.ApplicationDataContainer
     public class TokenStorageService(IConfiguration configuration)

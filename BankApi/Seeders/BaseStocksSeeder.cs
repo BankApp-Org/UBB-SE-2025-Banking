@@ -1,5 +1,5 @@
 ﻿using BankApi.Data;
-using Common.Models; // Assuming BaseStock and Stock models are in Common.Models
+using Common.Models.Trading; // Assuming BaseStock and Stock models are in Common.Models
 
 namespace BankApi.Seeders
 {

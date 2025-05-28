@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace StockAppWeb.Pages.News
+namespace BankAppWeb.Pages.News
 {
     [Authorize(Roles = "Admin")]
     public class AdminModel : PageModel

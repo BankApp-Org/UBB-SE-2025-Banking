@@ -1,6 +1,8 @@
 using System.Data;
 using BankApi.Repositories;
+using BankApi.Repositories.Bank;
 using Common.Models;
+using Common.Models.Bank;
 using Common.Services;
 
 namespace BankApi.Services
