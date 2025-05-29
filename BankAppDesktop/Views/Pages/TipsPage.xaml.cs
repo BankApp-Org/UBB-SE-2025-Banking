@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Navigation;
 using BankAppDesktop.ViewModels;
 using System;
 using System.Threading.Tasks;
+using Common.Services.Social;
 
 namespace BankAppDesktop.Views.Pages
 {

@@ -1,6 +1,6 @@
 using BankAppDesktop.ViewModels;
 using Common.Models.Bank;
-using Common.Services;
+using Common.Services.Bank;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;

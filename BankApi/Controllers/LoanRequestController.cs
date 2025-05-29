@@ -1,5 +1,5 @@
 using Common.Models.Bank;
-using Common.Services;
+using Common.Services.Bank;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

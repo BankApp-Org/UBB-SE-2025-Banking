@@ -2,7 +2,7 @@ namespace BankAppDesktop.Views.Pages
 {
     using BankAppDesktop.Views.Components;
     using Common.Models.Social;
-    using Common.Services;
+    using Common.Services.Social;
     using Microsoft.UI.Xaml.Controls;
     using System;
     using System.Collections.Generic;

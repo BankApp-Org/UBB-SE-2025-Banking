@@ -8,6 +8,7 @@ namespace BankAppDesktop.Pages
     using Common.Models;
     using Common.Models.Trading;
     using Common.Services;
+    using Common.Services.Social;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI;
     using Microsoft.UI.Text;

@@ -1,7 +1,10 @@
 using BankAppWeb.Services;
 using Common.Services;
+using Common.Services.Bank;
 using Common.Services.Impl;
 using Common.Services.Proxy;
+using Common.Services.Social;
+using Common.Services.Stock;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -132,7 +135,7 @@ builder.Services.AddScoped<IChatReportService, ChatReportProxyService>();
 builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
 builder.Services.AddScoped<IMessagesService, MessagesProxyService>();
 builder.Services.AddScoped<IActivityService, ActivityProxyService>();
-builder.Services.AddScoped<IHistoryService, HistoryProxyService>();
+builder.Services.AddScoped<ICreditHistoryService, HistoryProxyService>();
 builder.Services.AddScoped<IAlertService, AlertProxyService>();
 builder.Services.AddScoped<IStockPageService, StockPageProxyService>();
 builder.Services.AddScoped<IStoreService, StoreProxyService>();
@@ -164,7 +167,7 @@ builder.Services.AddHttpClient<IActivityService, ActivityProxyService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
-builder.Services.AddHttpClient<IHistoryService, HistoryProxyService>(client =>
+builder.Services.AddHttpClient<ICreditHistoryService, HistoryProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();

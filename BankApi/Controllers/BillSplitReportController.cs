@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using BankApi.Repositories;
 using Common.Models;
-using Common.Services;
+using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

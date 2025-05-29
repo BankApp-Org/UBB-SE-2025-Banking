@@ -1,7 +1,7 @@
 ﻿namespace BankApi.Repositories.Impl.Stocks
 {
     using BankApi.Data;
-    using BankApi.Repositories;
+    using BankApi.Repositories.Stock;
     using Common.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;

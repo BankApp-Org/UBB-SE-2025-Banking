@@ -18,6 +18,9 @@
     using BankAppDesktop.Views.Pages;
     using System;
     using System.Net.Http;
+    using Common.Services.Bank;
+    using Common.Services.Social;
+    using Common.Services.Stock;
 
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -85,7 +88,7 @@
                     services.AddScoped<ITransactionLogService, TransactionLogProxyService>();
                     services.AddScoped<ITransactionService, TransactionProxyService>();
                     services.AddScoped<IChatReportService, ChatReportProxyService>();
-                    services.AddScoped<IHistoryService, HistoryProxyService>();
+                    services.AddScoped<ICreditHistoryService, HistoryProxyService>();
                     services.AddScoped<IBillSplitReportService, BillSplitReportProxyService>();
                     services.AddScoped<ILoanService, LoanProxyService>();
                     services.AddScoped<ILoanRequestService, LoanRequestProxyService>();
@@ -150,7 +153,7 @@
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-                    services.AddHttpClient<IHistoryService, HistoryProxyService>(client =>
+                    services.AddHttpClient<ICreditHistoryService, HistoryProxyService>(client =>
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();

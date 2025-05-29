@@ -1,4 +1,5 @@
 using BankApi.Data;
+using BankApi.Repositories.Stock;
 using Common.Models.Trading;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ namespace BankApi.Repositories.Impl.Stocks
     /// Initializes a new instance of the <see cref="StockTransactionRepository"/> class.
     /// </remarks>
     /// <param name="context">The database context to use for data access.</param>
-    public class StockTransactionRepository(ApiDbContext context) : ITransactionRepository
+    public class StockTransactionRepository(ApiDbContext context) : IStockTransactionRepository
     {
         private readonly ApiDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 

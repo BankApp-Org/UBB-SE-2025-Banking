@@ -1,6 +1,7 @@
 using Common.Models;
 using Common.Models.Bank;
 using Common.Services;
+using Common.Services.Bank;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,13 +15,13 @@ namespace BankAppWeb.Pages.Analysis
     {
         private readonly IUserService _userService;
         private readonly IActivityService _activityService;
-        private readonly IHistoryService _historyService;
+        private readonly ICreditHistoryService _historyService;
         private readonly IConfiguration _configuration;
 
         public IndexModel(
             IUserService userService,
             IActivityService activityService,
-            IHistoryService historyService,
+            ICreditHistoryService historyService,
             IConfiguration configuration
             )
         {

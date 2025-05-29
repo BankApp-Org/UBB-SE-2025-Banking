@@ -3,10 +3,10 @@ namespace BankAppDesktop.Views.Controls
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using BankAppDesktop.ViewModels;
-    using Common.Services;
     using Common.Models;
     using System;
     using System.Diagnostics;
+    using Common.Services.Social;
 
     public sealed partial class AdminNewsControl : UserControl
     {

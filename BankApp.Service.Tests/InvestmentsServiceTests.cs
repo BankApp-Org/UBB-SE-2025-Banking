@@ -1,6 +1,6 @@
 ﻿using BankApi.Repositories;
 using BankApi.Repositories.Bank;
-using BankApi.Services;
+using BankApi.Services.Bank;
 using Common.Models;
 using Common.Models.Bank;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

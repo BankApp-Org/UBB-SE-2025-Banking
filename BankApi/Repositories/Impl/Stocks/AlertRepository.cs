@@ -1,5 +1,6 @@
 // BankApi/Repositories/AlertRepository.cs
 using BankApi.Data;
+using BankApi.Repositories.Stock;
 using Common.Models;
 using Common.Models.Trading;
 using Microsoft.EntityFrameworkCore;

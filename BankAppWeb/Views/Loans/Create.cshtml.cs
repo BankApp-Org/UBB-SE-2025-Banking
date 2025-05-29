@@ -1,6 +1,6 @@
 using Common.Attributes;
 using Common.Models.Bank;
-using Common.Services;
+using Common.Services.Bank;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

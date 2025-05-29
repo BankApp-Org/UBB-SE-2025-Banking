@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
-using Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using BankApi.Repositories; // Required for IUserRepository
 using System.Threading.Tasks; // Required for Task
 using System.Collections.Generic; // Required for List
 using System;
-using Common.Models.Bank; // Required for Decimal
+using Common.Models.Bank;
+using Common.Services.Bank; // Required for Decimal
 
 namespace BankApi.Controllers
 {

@@ -1,7 +1,7 @@
 using BankApi.Repositories;
 using BankApi.Repositories.Impl.Social;
 using Common.Models.Social;
-using Common.Services;
+using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

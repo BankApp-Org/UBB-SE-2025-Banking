@@ -1,13 +1,13 @@
 namespace BankAppDesktop.Views
 {
     using Common.Models;
-    using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using BankAppDesktop.ViewModels;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Common.Services.Social;
 
     public sealed partial class TipHistoryWindow : Window
     {

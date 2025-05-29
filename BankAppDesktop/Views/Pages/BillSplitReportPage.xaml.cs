@@ -1,7 +1,6 @@
 namespace BankAppDesktop.Views.Pages
 {
     using Common.Models;
-    using Common.Services;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using BankAppDesktop.ViewModels;
@@ -9,6 +8,7 @@ namespace BankAppDesktop.Views.Pages
     using System.Threading.Tasks;
     using Microsoft.Extensions.DependencyInjection;
     using BankAppDesktop.Views.Components;
+    using Common.Services.Social;
 
     /// <summary>
     /// Represents the page for displaying and managing bill split reports.

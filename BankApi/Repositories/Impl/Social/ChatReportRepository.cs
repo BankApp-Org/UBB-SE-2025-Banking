@@ -1,6 +1,7 @@
 ﻿namespace BankApi.Repositories.Impl.Social
 {
     using BankApi.Data;
+    using BankApi.Repositories.Social;
     using Common.Models;
     using Common.Models.Bank;
     using Common.Models.Social;

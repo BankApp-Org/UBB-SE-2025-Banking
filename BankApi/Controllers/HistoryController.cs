@@ -2,7 +2,7 @@ using System.Security.Claims;
 using BankApi.Repositories;
 using Common.Exceptions;
 using Common.Models;
-using Common.Services;
+using Common.Services.Bank;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +11,9 @@ namespace BankApi.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class HistoryController(IHistoryService historyService, IUserRepository userRepository) : ControllerBase
+    public class HistoryController(ICreditHistoryService historyService, IUserRepository userRepository) : ControllerBase
     {
-        private readonly IHistoryService _historyService = historyService ?? throw new ArgumentNullException(nameof(historyService));
+        private readonly ICreditHistoryService _historyService = historyService ?? throw new ArgumentNullException(nameof(historyService));
         private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 
         private async Task<string> GetCurrentUserCnp()

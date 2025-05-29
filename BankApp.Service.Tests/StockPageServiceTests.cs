@@ -1,5 +1,6 @@
 ﻿using BankApi.Repositories;
-using BankApi.Services;
+using BankApi.Repositories.Stock;
+using BankApi.Services.Stock;
 using Common.Models;
 using Common.Models.Trading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,7 +18,7 @@ namespace BankApp.Service.Tests
     {
         private Mock<IStockPageRepository> _mockStockRepo;
         private Mock<IUserRepository> _mockUserRepo;
-        private Mock<ITransactionRepository> _mockTransactionRepo;
+        private Mock<IStockTransactionRepository> _mockTransactionRepo;
         private StockPageService _service;
 
         [TestInitialize]
@@ -25,7 +26,7 @@ namespace BankApp.Service.Tests
         {
             _mockStockRepo = new Mock<IStockPageRepository>();
             _mockUserRepo = new Mock<IUserRepository>();
-            _mockTransactionRepo = new Mock<ITransactionRepository>();
+            _mockTransactionRepo = new Mock<IStockTransactionRepository>();
             _service = new StockPageService(_mockStockRepo.Object, _mockUserRepo.Object, _mockTransactionRepo.Object);
         }
 

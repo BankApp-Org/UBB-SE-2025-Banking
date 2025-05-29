@@ -1,6 +1,6 @@
-﻿using Common.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using BankAppWeb.Views.LoanRequest;
+using Common.Services.Bank;
 
 namespace BankAppWeb.Controllers
 {

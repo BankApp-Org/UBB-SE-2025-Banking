@@ -5,11 +5,19 @@ using BankApi.Repositories.Impl;
 using BankApi.Repositories.Impl.Bank;
 using BankApi.Repositories.Impl.Social;
 using BankApi.Repositories.Impl.Stocks;
+using BankApi.Repositories.Social;
+using BankApi.Repositories.Stock;
 using BankApi.Seeders;
 using BankApi.Services;
+using BankApi.Services.Bank;
+using BankApi.Services.Social;
+using BankApi.Services.Stock;
 using Common.Models; // Required for User
 using Common.Services;
+using Common.Services.Bank;
 using Common.Services.Impl;
+using Common.Services.Social;
+using Common.Services.Stock;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity; // Required for Identity
 using Microsoft.EntityFrameworkCore;
@@ -110,7 +118,7 @@ builder.Services.AddScoped<IBillSplitReportRepository, BillSplitReportRepository
 builder.Services.AddScoped<IStockHistoryRepository, StockHistoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILoanRequestRepository, LoanRequestRepository>();
-builder.Services.AddScoped<ITransactionRepository, StockTransactionRepository>();
+builder.Services.AddScoped<IStockTransactionRepository, StockTransactionRepository>();
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 builder.Services.AddScoped<ITipsRepository, TipsRepository>();
@@ -124,7 +132,7 @@ builder.Services.AddScoped<IActivityService, ActivityService>();
 builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddScoped<IBillSplitReportService, BillSplitReportService>();
 builder.Services.AddScoped<IChatReportService, ChatReportService>();
-builder.Services.AddScoped<IHistoryService, HistoryService>();
+builder.Services.AddScoped<ICreditHistoryService, HistoryService>();
 builder.Services.AddScoped<IInvestmentsService, InvestmentsService>();
 builder.Services.AddScoped<ILoanRequestService, LoanRequestService>();
 builder.Services.AddScoped<ILoanService, LoanService>();

@@ -1,7 +1,7 @@
 namespace BankAppDesktop.Views.Components
 {
     using Common.Models.Bank;
-    using Common.Services;
+    using Common.Services.Bank;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using System;

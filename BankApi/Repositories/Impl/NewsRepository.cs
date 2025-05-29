@@ -1,6 +1,7 @@
 ﻿namespace BankApi.Repositories.Impl
 {
     using BankApi.Data;
+    using BankApi.Repositories.Social;
     using Common.Models;
     using Common.Models.Trading;
     using Microsoft.EntityFrameworkCore;

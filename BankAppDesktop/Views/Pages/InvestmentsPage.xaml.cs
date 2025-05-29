@@ -1,11 +1,11 @@
 ﻿namespace BankAppDesktop.Views.Pages
 {
-    using Common.Services; // Added for IInvestmentsService
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks; // Added for Task
+    using Common.Services.Bank;
 
     public sealed partial class InvestmentsPage : Page
     {

@@ -1,5 +1,5 @@
-using BankApi.Repositories;
-using BankApi.Services;
+using BankApi.Repositories.Stock;
+using BankApi.Services.Stock;
 using Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

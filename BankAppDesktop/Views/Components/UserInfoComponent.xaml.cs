@@ -1,20 +1,20 @@
 namespace BankAppDesktop.Views.Components
 {
     using Common.Models;
-    using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using BankAppDesktop.Views.Pages;
     using System;
+    using Common.Services.Bank;
 
     public sealed partial class UserInfoComponent : Page
     {
         private readonly IActivityService activityService;
-        private readonly IHistoryService historyService;
+        private readonly ICreditHistoryService historyService;
         public User? User;
 
-        public UserInfoComponent(IActivityService activityService, IHistoryService historyService)
+        public UserInfoComponent(IActivityService activityService, ICreditHistoryService historyService)
         {
             this.InitializeComponent();
             this.activityService = activityService ?? throw new ArgumentNullException(nameof(activityService));

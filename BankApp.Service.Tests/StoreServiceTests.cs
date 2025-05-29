@@ -1,5 +1,6 @@
 ﻿using BankApi.Repositories;
-using BankApi.Services;
+using BankApi.Repositories.Stock;
+using BankApi.Services.Stock;
 using Common.Exceptions;
 using Common.Models;
 using Common.Models.Trading;

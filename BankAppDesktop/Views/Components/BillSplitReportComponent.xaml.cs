@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using BankAppDesktop.ViewModels;
 using System;
 using System.Threading.Tasks;
+using Common.Services.Social;
 
 namespace BankAppDesktop.Views.Components
 {

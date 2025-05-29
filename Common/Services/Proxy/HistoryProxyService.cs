@@ -1,4 +1,5 @@
 using Common.Models;
+using Common.Services.Bank;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
@@ -6,7 +7,7 @@ using System.Text.Json;
 
 namespace Common.Services.Proxy
 {
-    public class HistoryProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : IHistoryService
+    public class HistoryProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : ICreditHistoryService
     {
         private readonly HttpClient _httpClient = httpClient;
         private readonly JsonSerializerOptions _jsonOptions = jsonOptions.Value.SerializerOptions ?? throw new ArgumentNullException(nameof(jsonOptions), "JsonSerializerOptions cannot be null.");

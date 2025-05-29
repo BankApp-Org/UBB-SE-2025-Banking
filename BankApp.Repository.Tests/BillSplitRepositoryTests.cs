@@ -1,5 +1,5 @@
 using BankApi.Data;
-using BankApi.Repositories;
+using BankApi.Repositories.Bank;
 using BankApi.Repositories.Impl.Bank;
 using Common.Models;
 using FluentAssertions;

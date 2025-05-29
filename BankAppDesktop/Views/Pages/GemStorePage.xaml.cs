@@ -10,6 +10,7 @@ namespace BankAppDesktop.Views.Pages
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Threading.Tasks;
+    using Common.Services.Stock;
 
     public sealed partial class GemStorePage : Page
     {

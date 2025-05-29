@@ -1,5 +1,6 @@
 ﻿using BankApi.Repositories;
-using BankApi.Services;
+using BankApi.Repositories.Social;
+using BankApi.Services.Social;
 using Common.Models;
 using Common.Models.Social;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

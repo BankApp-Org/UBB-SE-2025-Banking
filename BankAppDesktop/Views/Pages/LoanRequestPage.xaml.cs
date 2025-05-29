@@ -1,13 +1,13 @@
 namespace BankAppDesktop.Views.Pages
 {
     using Common.Models.Bank;
-    using Common.Services;
     using Microsoft.UI.Xaml.Controls;
     using BankAppDesktop.ViewModels;
     using BankAppDesktop.Views.Components;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Common.Services.Bank;
 
     public sealed partial class LoanRequestPage : Page
     {

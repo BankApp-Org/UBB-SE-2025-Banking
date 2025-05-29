@@ -1,7 +1,7 @@
 using BankApi.Data;
-using BankApi.Repositories;
 using BankApi.Repositories.Impl;
 using BankApi.Repositories.Impl.Social;
+using BankApi.Repositories.Social;
 using Common.Models;
 using Common.Models.Bank;
 using Common.Models.Social;

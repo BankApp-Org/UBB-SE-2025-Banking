@@ -1,5 +1,5 @@
 using Common.Models.Bank;
-using Common.Services;
+using Common.Services.Bank;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace BankAppWeb.Views.Loans

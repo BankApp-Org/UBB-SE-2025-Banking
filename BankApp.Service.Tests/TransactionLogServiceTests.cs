@@ -1,5 +1,5 @@
-using BankApi.Repositories;
-using BankApi.Services;
+using BankApi.Repositories.Stock;
+using BankApi.Services.Stock;
 using Common.Exceptions;
 using Common.Models;
 using Common.Models.Trading;
@@ -16,13 +16,13 @@ namespace BankApp.Service.Tests
     [SupportedOSPlatform("windows10.0.26100.0")]
     public class TransactionLogServiceTests
     {
-        private Mock<ITransactionRepository> _mockRepo;
+        private Mock<IStockTransactionRepository> _mockRepo;
         private TransactionLogService _service;
 
         [TestInitialize]
         public void Init()
         {
-            _mockRepo = new Mock<ITransactionRepository>();
+            _mockRepo = new Mock<IStockTransactionRepository>();
             _service = new TransactionLogService(_mockRepo.Object);
         }
 

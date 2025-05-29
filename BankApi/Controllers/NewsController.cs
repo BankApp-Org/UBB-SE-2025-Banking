@@ -1,7 +1,7 @@
 using BankApi.Repositories; // Added missing using
 using Common.Models;
 using Common.Models.Trading;
-using Common.Services;
+using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

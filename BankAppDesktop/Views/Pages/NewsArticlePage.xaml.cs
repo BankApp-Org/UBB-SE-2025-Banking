@@ -3,6 +3,7 @@ namespace BankAppDesktop.Views.Pages
     using BankAppDesktop.ViewModels;
     using Common.Models;
     using Common.Services;
+    using Common.Services.Social;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using System;

@@ -1,6 +1,6 @@
 using BankApi.Repositories; // Required for IUserRepository
 using Common.Models.Trading; // Required for List
-using Common.Services;
+using Common.Services.Stock;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

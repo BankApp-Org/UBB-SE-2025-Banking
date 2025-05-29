@@ -1,7 +1,7 @@
 namespace BankAppDesktop.Views
 {
     using Common.Models;
-    using Common.Services;
+    using Common.Services.Bank;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using OxyPlot;
@@ -15,10 +15,10 @@ namespace BankAppDesktop.Views
     {
         private readonly User user;
         private readonly IActivityService activityService;
-        private readonly IHistoryService historyService;
+        private readonly ICreditHistoryService historyService;
         private bool isLoading;
 
-        public AnalysisWindow(User selectedUser, IActivityService activityService, IHistoryService historyService)
+        public AnalysisWindow(User selectedUser, IActivityService activityService, ICreditHistoryService historyService)
         {
             this.InitializeComponent();
             this.user = selectedUser;

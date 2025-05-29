@@ -1,4 +1,5 @@
 using BankApi.Data;
+using BankApi.Repositories.Stock;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
 

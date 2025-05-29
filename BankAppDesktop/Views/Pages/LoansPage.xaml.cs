@@ -1,7 +1,6 @@
 namespace BankAppDesktop.Views.Pages
 {
     using Common.Models.Bank;
-    using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -9,6 +8,7 @@ namespace BankAppDesktop.Views.Pages
     using BankAppDesktop.Views.Components;
     using System;
     using System.Threading.Tasks;
+    using Common.Services.Bank;
 
     public sealed partial class LoansPage : Page
     {

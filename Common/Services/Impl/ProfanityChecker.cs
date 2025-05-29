@@ -1,7 +1,7 @@
 ﻿namespace Common.Services.Impl
 {
     using Common.Models.Social;
-    using Common.Services;
+    using Common.Services.Social;
     using System;
     using System.Net.Http;
     using System.Threading.Tasks;
