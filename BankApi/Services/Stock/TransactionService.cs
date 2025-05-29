@@ -1,6 +1,6 @@
-using BankApi.Repositories.Stock;
+using BankApi.Repositories.Trading;
 using Common.Models.Trading;
-using Common.Services.Stock;
+using Common.Services.Trading;
 
 namespace BankApi.Services.Stock
 {

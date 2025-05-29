@@ -69,7 +69,8 @@ namespace BankApi.Data
                 entity.HasOne(e => e.StockDetails)
                       .WithOne()
                       .HasForeignKey<HomepageStock>(e => e.Id);
-            });            // ChatReport relationships
+            });
+            // ChatReport relationships
             modelBuilder.Entity<ChatReport>(entity =>
             {
                 entity.HasOne(e => e.ReportedUser)
@@ -83,7 +84,7 @@ namespace BankApi.Data
                     .HasForeignKey(e => e.SubmitterCnp)
                     .HasPrincipalKey(u => u.CNP)
                     .OnDelete(DeleteBehavior.NoAction);
-
+                    
                 entity.HasOne(e => e.Message)
                     .WithMany()
                     .HasForeignKey(e => e.MessageId)

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Common.Models.Social;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ namespace BankAppWeb.Controllers
         private readonly IChatReportService _chatReportService;
         private readonly IProfanityChecker _profanityChecker;
         private readonly IMessagesService _messagesService;
+        private readonly IChatService _chatService;
 
         public ChatController(IChatReportService chatReportService, IProfanityChecker profanityChecker, IMessagesService messagesService)
         {
@@ -50,7 +52,8 @@ namespace BankAppWeb.Controllers
                     // Send a warning message if message content is provided
                     if (sendMessage)
                     {
-                        await _messagesService.GiveMessageToUserAsync(report.ReportedUserCnp, "Warning", processActionDTO.MessageContent);
+                        throw new NotImplementedException("This method should be implemented to send a warning message to the user.");
+                        // await _messagesService.GiveMessageToUserAsync(report.ReportedUserCnp, "Warning", processActionDTO.MessageContent);
                     }
 
                     // Don't punish the user but close the report
@@ -62,7 +65,8 @@ namespace BankAppWeb.Controllers
                     // First send a message about the ban if message content is provided
                     if (sendMessage)
                     {
-                        await _messagesService.GiveMessageToUserAsync(report.ReportedUserCnp, "Ban", processActionDTO.MessageContent);
+                        throw new NotImplementedException("This method should be implemented to send a ban message to the user.");
+                        // await _messagesService.GiveMessageToUserAsync(report.ReportedUserCnp, "Ban", processActionDTO.MessageContent);
                     }
 
                     // Apply punishment
@@ -83,18 +87,34 @@ namespace BankAppWeb.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ViewMessages(string userCnp)
+        [Authorize]
+        [HttpGet("messages/{chatId}")]
+        public async Task<IActionResult> ViewMessages(int chatId, int take, int skip)
         {
-            if (string.IsNullOrEmpty(userCnp))
+            if (chatId <= 0)
             {
-                return BadRequest("User CNP is required");
+                return BadRequest("Invalid chat ID");
             }
-
+            if (take <= 0 || skip < 0)
+            {
+                return BadRequest("Invalid pagination parameters");
+            }
             try
             {
-                var messages = await _messagesService.GetMessagesForUserAsync(userCnp);
-                return View(messages);
+                Chat chat = await this._chatService.GetChatById(chatId);
+                if (chat.Users == null || !chat.Users.Any())
+                {
+                    return NotFound("Chat not found or has no users.");
+                }
+                if (!User.IsInRole("Admin") && !chat.Users.Any(u => u.CNP == User.FindFirstValue("CNP")))
+                {
+                    return Forbid("You do not have permission to view this chat.");
+                }
+
+                return View(chat.Messages
+                    .Skip(skip)
+                    .Take(take)
+                    .ToList());
             }
             catch (Exception ex)
             {
@@ -118,7 +138,8 @@ namespace BankAppWeb.Controllers
 
             try
             {
-                await _messagesService.GiveMessageToUserAsync(messageDTO.UserCNP, "System", messageDTO.MessageContent);
+                throw new NotImplementedException("This method should be implemented to send a message to the user.");
+                // await _messagesService.GiveMessageToUserAsync(messageDTO.UserCNP, "System", messageDTO.MessageContent);
                 TempData["SuccessMessage"] = "Message sent successfully";
                 return RedirectToAction("Reports");
             }

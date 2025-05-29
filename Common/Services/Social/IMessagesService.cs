@@ -1,12 +1,22 @@
 ﻿namespace Common.Services.Social
 {
+    using Common.Models;
     using Common.Models.Social;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
     public interface IMessagesService
     {
-        Task GiveMessageToUserAsync(string userCNP, string type, string messageText);
-        Task<List<Message>> GetMessagesForUserAsync(string userCnp); // Added missing method
+        Task<Message> SendMessageAsync(int chatId, User user, Message message);
+
+        Task DeleteMessageAsync(int chatId, int messageId, User user);
+
+        Task<Message> GetMessageByIdAsync(int chatId, int messageId);
+
+        Task<List<Message>> GetMessagesAsync(int chatId, int pageNumber = 1, int pageSize = 20);
+
+        Task ReportMessage(int chatId, int messageId, User user, ReportReason reason);
+        Task<List<Message>> GetMessagesForUserAsync(string cnp);
     }
+
 }

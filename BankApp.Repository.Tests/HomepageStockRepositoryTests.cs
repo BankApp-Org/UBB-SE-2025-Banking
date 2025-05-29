@@ -39,7 +39,7 @@ namespace BankApp.Repository.Tests
                 Name = "Apple Inc.",
                 Price = 21,
                 Quantity = 5,
-                Favorites = [new FavoriteStock { Id = 1, UserCNP = "123" }]
+                Favorites = [new FavoriteStock { UserCNP = "123", StockName = "Apple Inc." }]
             };
 
             var stockDetails2 = new Stock

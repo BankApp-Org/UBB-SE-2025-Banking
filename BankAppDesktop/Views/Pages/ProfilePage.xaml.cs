@@ -10,7 +10,7 @@ namespace BankAppDesktop.Views.Pages
     using System;
     using System.Threading.Tasks;
     using Windows.UI.Popups;
-    using Common.Services.Stock;
+    using Common.Services.Trading;
 
     /// <summary>
     /// Represents the Profile Page of the application.

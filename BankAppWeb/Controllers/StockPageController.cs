@@ -1,7 +1,7 @@
 using BankAppWeb.Views.StockPage;
 using Common.Models;
 using Common.Services;
-using Common.Services.Stock;
+using Common.Services.Trading;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankAppWeb.Controllers
@@ -32,7 +32,7 @@ namespace BankAppWeb.Controllers
 
             var model = new IndexModel(_stockPageService, _stockService, _userService, _authenticationService);
             await model.OnGetAsync(stockName);
-        
+
             if (model.SelectedStock == null)
             {
                 TempData["ErrorMessage"] = "Stock not found.";
@@ -137,9 +137,9 @@ namespace BankAppWeb.Controllers
                 var model = new IndexModel(_stockPageService, _stockService, _userService, _authenticationService);
                 await model.OnGetAsync(stockName);
                 await model.ToggleFavoriteAsync();
-            
-                TempData["SuccessMessage"] = model.IsFavorite 
-                    ? "Added to favorites!" 
+
+                TempData["SuccessMessage"] = model.IsFavorite
+                    ? "Added to favorites!"
                     : "Removed from favorites!";
             }
             catch (Exception ex)

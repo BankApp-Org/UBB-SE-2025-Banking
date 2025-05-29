@@ -1,6 +1,7 @@
 ﻿using BankApi.Data;
 using BankApi.Repositories.Impl.Bank;
 using Common.Models;
+using Common.Models.Bank;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

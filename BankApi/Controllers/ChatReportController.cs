@@ -205,7 +205,7 @@ namespace BankApi.Controllers
                 }
 
                 // Send a message to the user directly through the service
-                await Task.Run(() => _messagesService.GiveMessageToUserAsync(messageDto.UserCnp, messageDto.MessageType, messageDto.MessageContent));
+                throw new NotImplementedException("This method should be removed.");
 
                 return Ok(new { Message = "Message sent successfully" });
             }
@@ -227,10 +227,12 @@ namespace BankApi.Controllers
                     return NotFound($"Chat report with ID {id} not found");
                 }
 
+                throw new NotImplementedException("This method should be altered to send notifications.");
+
                 // Send a message to the user about the punishment
                 if (!string.IsNullOrEmpty(punishmentDto.MessageContent))
                 {
-                    await Task.Run(() => _messagesService.GiveMessageToUserAsync(report.ReportedUserCnp, "Punishment", punishmentDto.MessageContent));
+                    // await Task.Run(() => _messagesService.GiveMessageToUserAsync(report.ReportedUserCnp, "Punishment", punishmentDto.MessageContent));
                 }
 
                 // Apply the punishment using the existing report

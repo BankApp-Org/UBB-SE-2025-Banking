@@ -51,7 +51,8 @@ namespace BankApp.Service.Tests
                 Submitter = new User { CNP = "456" },
                 ReportedUser = new User { CNP = "123" },
                 MessageId = 1,
-                Message = new Message { Id = 1, MessageContent = "test message" }
+                Message = new Message { Id = 1, MessageContent = "test message" },
+                Reason = ReportReason.Other,
             };
             _mockChatReportRepo.Setup(r => r.DeleteChatReportAsync(report.Id)).Returns(Task.FromResult(true));
             await _service.DoNotPunishUser(report);
@@ -67,20 +68,20 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task PunishUser_EmptyReportedUserCnp_ThrowsArgumentException()
         {
-            await Assert.ThrowsExactlyAsync<ArgumentException>(async () => await _service.PunishUser(new ChatReport { ReportedUserCnp = "", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } }));
+            await Assert.ThrowsExactlyAsync<ArgumentException>(async () => await _service.PunishUser(new ChatReport { ReportedUserCnp = "", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other }));
         }
 
         [TestMethod]
         public async Task PunishUser_UserNotFound_ThrowsException()
         {
-            var report = new ChatReport { ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
+            var report = new ChatReport { ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other };
             _mockUserRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync((User)null);
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.PunishUser(report));
         }
         [TestMethod]
         public async Task PunishUser_HappyCase_PunishesUserAndDeletesReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other };
             var user = new User { Id = 2, NumberOfOffenses = 2, CreditScore = 500, GemBalance = 100, CNP = "123" };
             _mockUserRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync(user);
             _mockUserRepo.Setup(r => r.UpdateAsync(It.IsAny<User>())).ReturnsAsync(true);
@@ -98,16 +99,24 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task IsMessageOffensive_HappyCase_ReturnsFalse()
         {
-            _mockProfanityChecker.Setup(p => p.IsMessageOffensive("hello")).ReturnsAsync(false);
-            var result = await _service.IsMessageOffensive("hello");
+            Message message = new()
+            {
+                MessageContent = "hello"
+            };
+            _mockProfanityChecker.Setup(p => p.IsMessageOffensive(message)).ReturnsAsync(false);
+            var result = await _service.IsMessageOffensive(message);
             Assert.IsFalse(result);
         }
 
         [TestMethod]
         public async Task IsMessageOffensive_Offensive_ReturnsTrue()
         {
-            _mockProfanityChecker.Setup(p => p.IsMessageOffensive("badword")).ReturnsAsync(true);
-            var result = await _service.IsMessageOffensive("badword");
+            Message message = new()
+            {
+                MessageContent = "badword"
+            };
+            _mockProfanityChecker.Setup(p => p.IsMessageOffensive(message)).ReturnsAsync(true);
+            var result = await _service.IsMessageOffensive(message);
             Assert.IsTrue(result);
         }
 
@@ -120,7 +129,7 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task GetAllChatReportsAsync_HappyCase_ReturnsList()
         {
-            var reports = new List<ChatReport> { new() { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } } };
+            var reports = new List<ChatReport> { new() { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other } };
             _mockChatReportRepo.Setup(r => r.GetAllChatReportsAsync()).ReturnsAsync(reports);
             var result = await _service.GetAllChatReportsAsync();
             Assert.AreEqual(1, result.Count);
@@ -143,7 +152,7 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task DeleteChatReportAsync_HappyCase_DeletesReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other };
             _mockChatReportRepo.Setup(r => r.DeleteChatReportAsync(report.Id)).Returns(Task.FromResult(true));
             await _service.DeleteChatReportAsync(report.Id);
             _mockChatReportRepo.Verify(r => r.DeleteChatReportAsync(report.Id), Times.Once);
@@ -151,7 +160,7 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task DeleteChatReportAsync_RepositoryThrows_ThrowsException()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other };
             _mockChatReportRepo.Setup(r => r.DeleteChatReportAsync(report.Id)).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.DeleteChatReportAsync(report.Id));
         }
@@ -173,7 +182,7 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task AddChatReportAsync_HappyCase_AddsReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other };
             _mockChatReportRepo.Setup(r => r.AddChatReportAsync(report)).Returns(Task.FromResult(true));
             await _service.AddChatReportAsync(report);
             _mockChatReportRepo.Verify(r => r.AddChatReportAsync(report), Times.Once);
@@ -181,14 +190,14 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task AddChatReportAsync_RepositoryThrows_ThrowsException()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other };
             _mockChatReportRepo.Setup(r => r.AddChatReportAsync(report)).ThrowsAsync(new Exception());
             await Assert.ThrowsExactlyAsync<Exception>(async () => await _service.AddChatReportAsync(report));
         }
         [TestMethod]
         public async Task GetChatReportByIdAsync_HappyCase_ReturnsReport()
         {
-            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" } };
+            var report = new ChatReport { Id = 1, ReportedUserCnp = "123", SubmitterCnp = "456", Submitter = new User { CNP = "456" }, ReportedUser = new User { CNP = "123" }, MessageId = 1, Message = new Message { Id = 1, MessageContent = "test message" }, Reason = ReportReason.Other };
             _mockChatReportRepo.Setup(r => r.GetChatReportByIdAsync(1)).ReturnsAsync(report);
             var result = await _service.GetChatReportByIdAsync(1);
             Assert.IsNotNull(result);

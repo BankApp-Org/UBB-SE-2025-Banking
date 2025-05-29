@@ -2,7 +2,7 @@ namespace BankAppDesktop.Views.Pages
 {
     using Common.Models;
     using Common.Services;
-    using Common.Services.Stock;
+    using Common.Services.Trading;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using System;

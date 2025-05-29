@@ -18,6 +18,8 @@ namespace BankApp.Service.Tests
     {
         private Mock<IMessagesRepository> _mockMessagesRepository;
         private Mock<IUserRepository> _mockUserRepository;
+        private Mock<IChatRepository> _mockChatRepository;
+        private Mock<IChatReportRepository> _mockChatReportRepository;
         private MessagesService _service;
 
         [TestInitialize]
@@ -25,7 +27,7 @@ namespace BankApp.Service.Tests
         {
             _mockMessagesRepository = new Mock<IMessagesRepository>();
             _mockUserRepository = new Mock<IUserRepository>();
-            _service = new MessagesService(_mockMessagesRepository.Object, _mockUserRepository.Object);
+            _service = new MessagesService(_mockMessagesRepository.Object, _mockUserRepository.Object, _mockChatRepository.Object, _mockChatReportRepository.Object);
         }
 
         [TestMethod]
@@ -61,23 +63,18 @@ namespace BankApp.Service.Tests
         public async Task GetMessagesForUserAsync_ReturnsMessages_WhenUserExists()
         {
             // Arrange
-            var userCNP = "1234567890123";
-            var expectedMessages = new List<Message>
+            var userCNP = "1234567890123"; var expectedMessages = new List<Message>
             {
-                new Message(1, "Notification", "Test message 1"),
-                new Message(2, "Alert", "Test message 2")
+                new Message(1, MessageType.Text, "Test message 1"),
+                new Message(2, MessageType.Text, "Test message 2")
             };
-            _mockMessagesRepository.Setup(x => x.GetMessagesForUserAsync(userCNP)).ReturnsAsync(expectedMessages);
-
-            // Act
-            var result = await _service.GetMessagesForUserAsync(userCNP);
-
-            // Assert
+            _mockMessagesRepository.Setup(x => x.GetMessagesForUserAsync(userCNP)).ReturnsAsync(expectedMessages);            // Act
+            var result = await _service.GetMessagesForUserAsync(userCNP);            // Assert
             Assert.AreEqual(2, result.Count);
-            Assert.AreEqual("Test message 1", result[0].MessageText);
-            Assert.AreEqual("Notification", result[0].Type);
-            Assert.AreEqual("Test message 2", result[1].MessageText);
-            Assert.AreEqual("Alert", result[1].Type);
+            Assert.AreEqual("Test message 1", result[0].MessageContent);
+            Assert.AreEqual(MessageType.Text, result[0].Type);
+            Assert.AreEqual("Test message 2", result[1].MessageContent);
+            Assert.AreEqual(MessageType.Text, result[1].Type);
             _mockMessagesRepository.Verify(x => x.GetMessagesForUserAsync(userCNP), Times.Once);
         }
 
@@ -120,36 +117,34 @@ namespace BankApp.Service.Tests
             // Verify the exception was handled (logged to console)
             _mockMessagesRepository.Verify(x => x.GiveUserRandomMessageAsync(userCNP), Times.Once);
         }
-
         [TestMethod]
         public void Message_Model_InitializesCorrectly()
         {
             // Arrange & Act
             var message1 = new Message();
-            var message2 = new Message(1, "Type1", "Content1");
+            var message2 = new Message(1, MessageType.Text, "Content1");
 
             // Assert
             Assert.AreEqual(0, message1.Id);
-            Assert.AreEqual(string.Empty, message1.Type);
+            Assert.AreEqual(MessageType.Text, message1.Type);
             Assert.AreEqual(string.Empty, message1.MessageContent);
 
             Assert.AreEqual(1, message2.Id);
-            Assert.AreEqual("Type1", message2.Type);
+            Assert.AreEqual(MessageType.Text, message2.Type);
             Assert.AreEqual("Content1", message2.MessageContent);
         }
 
         [TestMethod]
-        public void Message_MessageText_PropertyWorksCorrectly()
+        public void Message_MessageContent_PropertyWorksCorrectly()
         {
             // Arrange
             var message = new Message();
 
             // Act
-            message.MessageText = "Test Content";
+            message.MessageContent = "Test Content";
 
             // Assert
             Assert.AreEqual("Test Content", message.MessageContent);
-            Assert.AreEqual("Test Content", message.MessageText);
         }
     }
 }

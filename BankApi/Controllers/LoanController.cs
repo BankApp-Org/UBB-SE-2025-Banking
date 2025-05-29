@@ -124,7 +124,9 @@ namespace BankApi.Controllers
                     return Forbid();
                 }
 
-                await _loanService.IncrementMonthlyPaymentsCompletedAsync(loanId, payment.Penalty);
+                throw new NotImplementedException("This method should be removed.");
+
+                // await _loanService.IncrementMonthlyPaymentsCompletedAsync(loanId, payment.Penalty);
                 return Ok();
             }
             catch (UnauthorizedAccessException)

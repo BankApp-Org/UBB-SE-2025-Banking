@@ -58,5 +58,21 @@ namespace Common.Services.Proxy
             var response = await _httpClient.PostAsync($"api/Loan/update-history?userCnp={userCNP}&newScore={newScore}", null);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task PayLoanAsync(int loanId, decimal amount, string userCNP, string iban)
+        {
+            var paymentRequest = new
+            {
+                Amount = amount,
+                Iban = iban
+            };
+            var response = await _httpClient.PostAsJsonAsync($"api/Loan/{loanId}/pay", paymentRequest, _jsonOptions);
+            response.EnsureSuccessStatusCode();
+        }
+    }
+
+    public class PaymentDto
+    {
+        public decimal Penalty { get; set; }
     }
 }

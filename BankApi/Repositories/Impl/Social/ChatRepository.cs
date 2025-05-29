@@ -1,10 +1,11 @@
 ﻿using BankApi.Data;
+using BankApi.Repositories.Social;
 using Common.Models.Social;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Repositories.Impl.Social
 {
-    public class ChatRepository
+    public class ChatRepository : IChatRepository
     {
         private readonly ApiDbContext _context;
         public ChatRepository(ApiDbContext context)

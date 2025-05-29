@@ -1,6 +1,7 @@
 ﻿using Common.Models;
+using Common.Models.Trading;
 
-namespace Common.Services.Stock
+namespace Common.Services.Trading
 {
     /// <summary>
     /// Provides methods for managing stock entities.

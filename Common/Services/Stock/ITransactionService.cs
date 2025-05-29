@@ -1,6 +1,6 @@
 using Common.Models.Trading;
 
-namespace Common.Services.Stock
+namespace Common.Services.Trading
 {
     public interface ITransactionService
     {

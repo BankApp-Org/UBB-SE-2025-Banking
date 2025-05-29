@@ -1,6 +1,6 @@
 ﻿using Common.Models.Trading;
 
-namespace BankApi.Repositories.Stock
+namespace BankApi.Repositories.Trading
 {
     public interface IStockPageRepository
     {

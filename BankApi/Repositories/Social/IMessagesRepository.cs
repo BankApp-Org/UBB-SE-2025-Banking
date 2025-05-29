@@ -8,9 +8,10 @@ namespace BankApi.Repositories.Social
         Task GiveUserRandomMessageAsync(string userCnp);
         Task GiveUserRandomRoastMessageAsync(string userCnp);
         Task AddMessageForUserAsync(string userCnp, Message message);
-        Task<List<Message>> GetMessagesByUserIdAsync(int userId);
+        Task<List<Message>> GetMessagesByChatIdAsync(int chatId, int pageNumber = 1, int pageSize = 20);
         Task<Message> SendMessageAsync(Message message);
         Task<List<Message>> GetAllMessagesAsync();
         Task<Message> GetMessageByIdAsync(int messageId);
+        Task DeleteMessageAsync(int chatId, int messageId);
     }
 }

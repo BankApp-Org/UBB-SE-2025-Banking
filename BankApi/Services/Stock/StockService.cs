@@ -1,9 +1,9 @@
 ﻿namespace BankApi.Services.Stock
 {
-    using BankApi.Repositories.Stock;
+    using BankApi.Repositories.Trading;
     using Common.Models;
     using Common.Models.Trading;
-    using Common.Services.Stock;
+    using Common.Services.Trading;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

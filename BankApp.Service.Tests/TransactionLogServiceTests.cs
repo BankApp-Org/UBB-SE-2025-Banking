@@ -1,4 +1,4 @@
-using BankApi.Repositories.Stock;
+using BankApi.Repositories.Trading;
 using BankApi.Services.Stock;
 using Common.Exceptions;
 using Common.Models;
@@ -30,7 +30,7 @@ namespace BankApp.Service.Tests
         public async Task GetFilteredTransactions_HappyCase_ReturnsList()
         {
             var criteria = new StockTransactionFilterCriteria();
-            var transactions = new List<StockTransactionTransaction> { new() { Amount = 1, PricePerStock = 1, StockName = "Test", Type = "BUY", Author = new()
+            var transactions = new List<StockTransaction> { new() { Amount = 1, PricePerStock = 1, StockName = "Test", Type = "BUY", Author = new()
             {
                 CNP = "1234567890123",
                 FirstName = "John",
@@ -66,7 +66,7 @@ namespace BankApp.Service.Tests
         public void SortTransactions_HappyCase_SortsByDateAscending()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var t1 = new StockTransactionTransaction
+            var t1 = new StockTransaction
             {
                 Date = DateTime.Now.AddDays(-1),
                 StockSymbol = "TEST1",
@@ -77,7 +77,7 @@ namespace BankApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var t2 = new StockTransactionTransaction
+            var t2 = new StockTransaction
             {
                 Date = DateTime.Now,
                 StockSymbol = "TEST2",
@@ -88,7 +88,7 @@ namespace BankApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var list = new List<StockTransactionTransaction> { t2, t1 };
+            var list = new List<StockTransaction> { t2, t1 };
             var sorted = _service.SortTransactions(list, "Date", true);
             Assert.AreEqual(t1, sorted[0]);
         }
@@ -97,7 +97,7 @@ namespace BankApp.Service.Tests
         public void SortTransactions_HappyCase_SortsByStockNameDescending()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var t1 = new StockTransactionTransaction
+            var t1 = new StockTransaction
             {
                 StockName = "A",
                 StockSymbol = "A",
@@ -108,7 +108,7 @@ namespace BankApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var t2 = new StockTransactionTransaction
+            var t2 = new StockTransaction
             {
                 StockName = "B",
                 StockSymbol = "B",
@@ -119,7 +119,7 @@ namespace BankApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var list = new List<StockTransactionTransaction> { t1, t2 };
+            var list = new List<StockTransaction> { t1, t2 };
             var sorted = _service.SortTransactions(list, "Stock Name", false);
             Assert.AreEqual(t2, sorted[0]);
         }
@@ -129,7 +129,7 @@ namespace BankApp.Service.Tests
         {
             // TotalValue is read-only, so set Amount and PricePerStock
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var t1 = new StockTransactionTransaction
+            var t1 = new StockTransaction
             {
                 Amount = 1,
                 PricePerStock = 1,
@@ -140,7 +140,7 @@ namespace BankApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var t2 = new StockTransactionTransaction
+            var t2 = new StockTransaction
             {
                 Amount = 1,
                 PricePerStock = 2,
@@ -151,7 +151,7 @@ namespace BankApp.Service.Tests
                 AuthorCNP = "1234567890123",
                 Author = author
             };
-            var list = new List<StockTransactionTransaction> { t2, t1 };
+            var list = new List<StockTransaction> { t2, t1 };
             var sorted = _service.SortTransactions(list, "Total Value", true);
             Assert.AreEqual(t1, sorted[0]);
         }
@@ -159,14 +159,14 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public void SortTransactions_InvalidSortType_Throws()
         {
-            var list = new List<StockTransactionTransaction>();
+            var list = new List<StockTransaction>();
             Assert.ThrowsExactly<InvalidSortTypeException>(() => _service.SortTransactions(list, "InvalidType"));
         }
 
         [TestMethod]
         public void ExportTransactions_UnsupportedFormat_Throws()
         {
-            var transactions = new List<StockTransactionTransaction>();
+            var transactions = new List<StockTransaction>();
             Assert.ThrowsExactly<ExportFormatNotSupportedException>(() => _service.ExportTransactions(transactions, "file.csv", "xml"));
         }
 
@@ -174,7 +174,7 @@ namespace BankApp.Service.Tests
         public void ExportTransactions_CsvFormat_CallsCsvExporter()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<StockTransactionTransaction> {
+            var transactions = new List<StockTransaction> {
                 new() {
                     StockSymbol = "TEST",
                     StockName = "Test Stock",
@@ -195,7 +195,7 @@ namespace BankApp.Service.Tests
         public void ExportTransactions_JsonFormat_CallsJsonExporter()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<StockTransactionTransaction> {
+            var transactions = new List<StockTransaction> {
                 new() {
                     StockSymbol = "TEST",
                     StockName = "Test Stock",
@@ -216,7 +216,7 @@ namespace BankApp.Service.Tests
         public void ExportTransactions_HtmlFormat_CallsHtmlExporter()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<StockTransactionTransaction> {
+            var transactions = new List<StockTransaction> {
                 new() {
                     StockSymbol = "TEST",
                     StockName = "Test Stock",
@@ -242,14 +242,14 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public void ExportTransactions_EmptyFilePath_Throws()
         {
-            var transactions = new List<StockTransactionTransaction>();
+            var transactions = new List<StockTransaction>();
             Assert.ThrowsExactly<ArgumentException>(() => _service.ExportTransactions(transactions, "", "csv"));
         }
 
         [TestMethod]
         public void ExportTransactions_EmptyFormat_Throws()
         {
-            var transactions = new List<StockTransactionTransaction>();
+            var transactions = new List<StockTransaction>();
             Assert.ThrowsExactly<ArgumentException>(() => _service.ExportTransactions(transactions, "file.csv", ""));
         }
     }

@@ -211,5 +211,44 @@
 
             return message;
         }
+
+        public async Task<List<Message>> GetMessagesByChatIdAsync(int chatId, int page, int pageSize)
+        {
+            if (page < 1)
+            {
+                throw new ArgumentException("Page must be greater than 0.", nameof(page));
+            }
+
+            if (pageSize < 1)
+            {
+                throw new ArgumentException("PageSize must be greater than 0.", nameof(pageSize));
+            }
+
+            return await _context.Messages
+                .Include(m => m.Sender)
+                .Include(m => m.Chat)
+                .Where(m => m.ChatId == chatId)
+                .OrderByDescending(m => m.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task DeleteMessageAsync(int messageId, int userId)
+        {
+            var message = await _context.Messages.FindAsync(messageId);
+            if (message == null)
+            {
+                throw new KeyNotFoundException($"Message with ID {messageId} not found.");
+            }
+
+            if (message.UserId != userId)
+            {
+                throw new UnauthorizedAccessException("User is not authorized to delete this message.");
+            }
+
+            _context.Messages.Remove(message);
+            await _context.SaveChangesAsync();
+        }
     }
 }

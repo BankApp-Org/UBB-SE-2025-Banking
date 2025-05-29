@@ -26,7 +26,7 @@ namespace BankAppDesktop.Views.Components
 
         public async Task SubmitLoanRequestAsync()
         {
-            if (!ViewModel.ValidateInputs()) // Use ViewModel's validation
+            if (!ViewModel.ValidateInputs())
             {
                 // ErrorMessage should be set by ValidateInputs in ViewModel
                 return;

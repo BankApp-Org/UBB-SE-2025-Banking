@@ -155,5 +155,32 @@
             }
             await loanRepository.UpdateLoanAsync(loan);
         }
+
+        public async Task PayLoanAsync(int loanId, decimal amount, string sourceAccountId, string destinationAccountId)
+        {
+            Loan loan = await loanRepository.GetLoanByIdAsync(loanId);
+            if (loan == null)
+            {
+                throw new Exception("Loan not found");
+            }
+
+            loan.RepaidAmount += amount;
+            if (loan.RepaidAmount >= loan.LoanAmount + loan.Penalty)
+            {
+                loan.Status = "completed";
+                User user = await userRepository.GetByCnpAsync(loan.UserCnp) ?? throw new Exception("User not found");
+                int newUserCreditScore = ILoanService.ComputeNewCreditScore(user, loan);
+
+                user.CreditScore = newUserCreditScore;
+                await userRepository.UpdateAsync(user);
+                await UpdateHistoryForUserAsync(loan.UserCnp, newUserCreditScore);
+            }
+            else
+            {
+                loan.Status = "active"; // Still active if not fully repaid
+            }
+
+            await loanRepository.UpdateLoanAsync(loan);
+        }
     }
 }

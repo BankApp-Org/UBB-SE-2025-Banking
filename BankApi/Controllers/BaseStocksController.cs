@@ -1,5 +1,5 @@
 using BankApi.Repositories;
-using BankApi.Repositories.Stock;
+using BankApi.Repositories.Trading;
 using Common.Models.Trading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

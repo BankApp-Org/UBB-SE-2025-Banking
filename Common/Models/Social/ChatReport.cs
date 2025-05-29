@@ -2,6 +2,8 @@
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using Common.Services.Social;
+
     public class ChatReport
     {
         [Key]
@@ -27,6 +29,12 @@
         required public int MessageId { get; set; }
 
         [Required]
+        required public ReportReason Reason { get; set; }
+
+        [Required]
         required public Message Message { get; set; }
+
+        [Required]
+        public DateTime ReportedAt { get; set; } = DateTime.UtcNow;
     }
 }

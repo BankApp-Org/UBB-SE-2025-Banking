@@ -1,4 +1,4 @@
-namespace BankApi.Repositories.Stock
+namespace BankApi.Repositories.Trading
 {
     using Common.Models.Trading;
     using System.Collections.Generic;

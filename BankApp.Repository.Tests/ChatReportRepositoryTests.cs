@@ -1,10 +1,10 @@
 using BankApi.Data;
-using BankApi.Repositories.Impl;
 using BankApi.Repositories.Impl.Social;
 using BankApi.Repositories.Social;
 using Common.Models;
 using Common.Models.Bank;
 using Common.Models.Social;
+using Common.Services.Social;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -34,10 +34,76 @@ namespace BankApp.Repository.Tests
         public async Task GetAllChatReportsAsync_Should_Return_All_Reports()
         {
             using var context = CreateContext();
+
+            var user1 = new User { CNP = "123", UserName = "user1", FirstName = "First1", LastName = "Last1" };
+            var user2 = new User { CNP = "456", UserName = "user2", FirstName = "First2", LastName = "Last2" };
+            var user3 = new User { CNP = "789", UserName = "user3", FirstName = "First3", LastName = "Last3" };
+
+            await context.Users.AddRangeAsync(new[] { user1, user2, user3 });
+            await context.SaveChangesAsync();
+
+            var chat = new Chat
+            {
+                Id = 1,
+                ChatName = "TestChat",
+                Users = new List<User> { user1, user2, user3 },
+                Messages = new List<Message>()
+            };
+            await context.Chats.AddAsync(chat);
+            await context.SaveChangesAsync();
+
+            var message1 = new Message
+            {
+                Id = 1,
+                ChatId = chat.Id,
+                Chat = chat,
+                UserId = 1,
+                Sender = user2,
+                MessageContent = "Test message 1",
+                Type = MessageType.Text
+            };
+
+            var message2 = new Message
+            {
+                Id = 2,
+                ChatId = chat.Id,
+                Chat = chat,
+                UserId = 1,
+                Sender = user2,
+                MessageContent = "Test message 2",
+                Type = MessageType.Text
+            };
+
+            chat.Messages.Add(message1);
+            chat.Messages.Add(message2);
+
+            await context.Messages.AddRangeAsync(new[] { message1, message2 });
+            await context.SaveChangesAsync();
+
             var reports = new List<ChatReport>
             {
-                new() { Id = 1, SubmitterCnp = "123", ReportedUserCnp = "456", ReportedMessage = "Test message 1" },
-                new() { Id = 2, SubmitterCnp = "789", ReportedUserCnp = "456", ReportedMessage = "Test message 2" }
+                new()
+                {
+                    Id = 1,
+                    SubmitterCnp = "123",
+                    Submitter = user1,
+                    ReportedUserCnp = "456",
+                    ReportedUser = user2,
+                    MessageId = 1,
+                    Message = message1,
+                    Reason = ReportReason.OffensiveContent
+                },
+                new()
+                {
+                    Id = 2,
+                    SubmitterCnp = "789",
+                    Submitter = user3,
+                    ReportedUserCnp = "456",
+                    ReportedUser = user2,
+                    MessageId = 2,
+                    Message = message2,
+                    Reason = ReportReason.Spam
+                }
             };
 
             await context.ChatReports.AddRangeAsync(reports);
@@ -56,12 +122,49 @@ namespace BankApp.Repository.Tests
         public async Task GetChatReportByIdAsync_Should_Return_Report_When_Found()
         {
             using var context = CreateContext();
+
+            var user1 = new User { CNP = "123", UserName = "user1", FirstName = "First1", LastName = "Last1" };
+            var user2 = new User { CNP = "456", UserName = "user2", FirstName = "First2", LastName = "Last2" };
+
+            await context.Users.AddRangeAsync(new[] { user1, user2 });
+            await context.SaveChangesAsync();
+
+            var chat = new Chat
+            {
+                Id = 1,
+                ChatName = "TestChat",
+                Users = new List<User> { user1, user2 },
+                Messages = new List<Message>()
+            };
+            await context.Chats.AddAsync(chat);
+            await context.SaveChangesAsync();
+
+            var message = new Message
+            {
+                Id = 1,
+                ChatId = chat.Id,
+                Chat = chat,
+                UserId = 1,
+                Sender = user2,
+                MessageContent = "Test message",
+                Type = MessageType.Text
+            };
+
+            chat.Messages.Add(message);
+
+            await context.Messages.AddAsync(message);
+            await context.SaveChangesAsync();
+
             var report = new ChatReport
             {
                 Id = 1,
                 SubmitterCnp = "123",
+                Submitter = user1,
                 ReportedUserCnp = "456",
-                ReportedMessage = "Test message"
+                ReportedUser = user2,
+                MessageId = 1,
+                Message = message,
+                Reason = ReportReason.OffensiveContent
             };
 
             await context.ChatReports.AddAsync(report);
@@ -89,11 +192,48 @@ namespace BankApp.Repository.Tests
         public async Task AddChatReportAsync_Should_Return_True_When_Added_Successfully()
         {
             using var context = CreateContext();
+
+            var user1 = new User { CNP = "123", UserName = "user1", FirstName = "First1", LastName = "Last1" };
+            var user2 = new User { CNP = "456", UserName = "user2", FirstName = "First2", LastName = "Last2" };
+
+            await context.Users.AddRangeAsync(new[] { user1, user2 });
+            await context.SaveChangesAsync();
+
+            var chat = new Chat
+            {
+                Id = 1,
+                ChatName = "TestChat",
+                Users = new List<User> { user1, user2 },
+                Messages = new List<Message>()
+            };
+            await context.Chats.AddAsync(chat);
+            await context.SaveChangesAsync();
+
+            var message = new Message
+            {
+                Id = 1,
+                ChatId = chat.Id,
+                Chat = chat,
+                UserId = 1,
+                Sender = user2,
+                MessageContent = "Test message",
+                Type = MessageType.Text
+            };
+
+            chat.Messages.Add(message);
+
+            await context.Messages.AddAsync(message);
+            await context.SaveChangesAsync();
+
             var report = new ChatReport
             {
                 SubmitterCnp = "123",
+                Submitter = user1,
                 ReportedUserCnp = "456",
-                ReportedMessage = "Test message"
+                ReportedUser = user2,
+                MessageId = 1,
+                Message = message,
+                Reason = ReportReason.OffensiveContent
             };
 
             var repository = new ChatReportRepository(context);
@@ -108,11 +248,38 @@ namespace BankApp.Repository.Tests
         public async Task AddChatReportAsync_Should_Return_False_When_Exception_Occurs()
         {
             var mockRepo = new Mock<IChatReportRepository>();
+
+            var user1 = new User { CNP = "123", UserName = "user1", FirstName = "First1", LastName = "Last1" };
+            var user2 = new User { CNP = "456", UserName = "user2", FirstName = "First2", LastName = "Last2" };
+            var chat = new Chat
+            {
+                Id = 1,
+                ChatName = "TestChat",
+                Users = new List<User> { user1, user2 },
+                Messages = new List<Message>()
+            };
+            var message = new Message
+            {
+                Id = 1,
+                ChatId = chat.Id,
+                Chat = chat,
+                UserId = 1,
+                Sender = user2,
+                MessageContent = "Test message",
+                Type = MessageType.Text
+            };
+
+            chat.Messages.Add(message);
+
             var report = new ChatReport
             {
                 SubmitterCnp = "123",
+                Submitter = user1,
                 ReportedUserCnp = "456",
-                ReportedMessage = "Test message"
+                ReportedUser = user2,
+                MessageId = 1,
+                Message = message,
+                Reason = ReportReason.OffensiveContent
             };
 
             mockRepo.Setup(r => r.AddChatReportAsync(It.IsAny<ChatReport>())).ReturnsAsync(false);
@@ -127,12 +294,49 @@ namespace BankApp.Repository.Tests
         public async Task DeleteChatReportAsync_Should_Return_True_When_Deleted_Successfully()
         {
             using var context = CreateContext();
+
+            var user1 = new User { CNP = "123", UserName = "user1", FirstName = "First1", LastName = "Last1" };
+            var user2 = new User { CNP = "456", UserName = "user2", FirstName = "First2", LastName = "Last2" };
+
+            await context.Users.AddRangeAsync(new[] { user1, user2 });
+            await context.SaveChangesAsync();
+
+            var chat = new Chat
+            {
+                Id = 1,
+                ChatName = "TestChat",
+                Users = new List<User> { user1, user2 },
+                Messages = new List<Message>()
+            };
+            await context.Chats.AddAsync(chat);
+            await context.SaveChangesAsync();
+
+            var message = new Message
+            {
+                Id = 1,
+                ChatId = chat.Id,
+                Chat = chat,
+                UserId = 1,
+                Sender = user2,
+                MessageContent = "Test message",
+                Type = MessageType.Text
+            };
+
+            chat.Messages.Add(message);
+
+            await context.Messages.AddAsync(message);
+            await context.SaveChangesAsync();
+
             var report = new ChatReport
             {
                 Id = 1,
                 SubmitterCnp = "123",
+                Submitter = user1,
                 ReportedUserCnp = "456",
-                ReportedMessage = "Test message"
+                ReportedUser = user2,
+                MessageId = 1,
+                Message = message,
+                Reason = ReportReason.OffensiveContent
             };
 
             await context.ChatReports.AddAsync(report);

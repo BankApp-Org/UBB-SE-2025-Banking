@@ -1,11 +1,11 @@
+using BankAppDesktop.ViewModels;
 using Common.Services;
+using Common.Services.Social;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using BankAppDesktop.ViewModels;
 using System;
 using System.Threading.Tasks;
-using Common.Services.Social;
 
 namespace BankAppDesktop.Views.Pages
 {
@@ -98,7 +98,8 @@ namespace BankAppDesktop.Views.Pages
                     return;
                 }
 
-                await _messagesService.GiveMessageToUserAsync(user.CNP, type, message);
+                throw new NotImplementedException("This should not exist");
+                // await _messagesService.GiveMessageToUserAsync(user.CNP, type, message);
                 ShowSuccess("Tip added successfully!");
                 AddTipDialog.Hide();
                 await LoadMessagesAsync();

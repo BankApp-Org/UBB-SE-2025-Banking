@@ -1,10 +1,10 @@
 ﻿namespace Common.Services.Bank
 {
+    using Common.Models;
+    using Common.Models.Bank;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Common.Models;
-    using Common.Models.Bank;
 
     public interface ILoanService
     {
@@ -36,7 +36,7 @@
         }
 
         Task UpdateHistoryForUserAsync(string userCNP, int newScore);
-
+        Task PayLoanAsync(int loanId, decimal amount, string userCNP, string iban);
         Task IncrementMonthlyPaymentsCompletedAsync(int loanID, decimal penalty);
     }
 }

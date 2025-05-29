@@ -47,8 +47,8 @@ namespace BankAppWeb.Pages.Tips
                     ErrorMessage = "User not found";
                     return Page();
                 }
-
-                Messages = await _messagesService.GetMessagesForUserAsync(user.CNP);
+                throw new NotImplementedException("This method should be implemented fetch messages for the user per chat");
+                Messages = [];
                 return Page();
             }
             catch (Exception ex)
@@ -74,10 +74,10 @@ namespace BankAppWeb.Pages.Tips
                     ErrorMessage = "User not found";
                     return Page();
                 }
-
-                await _messagesService.GiveMessageToUserAsync(user.CNP, Input.Type, Input.MessageText);
+                throw new NotImplementedException("This method should be removed");
+                // await _messagesService.GiveMessageToUserAsync(user.CNP, Input.Type, Input.MessageText);
                 SuccessMessage = "Message added successfully";
-                Messages = await _messagesService.GetMessagesForUserAsync(user.CNP);
+                // Messages = await _messagesService.GetMessagesForUserAsync(user.CNP);
                 return Page();
             }
             catch (Exception ex)

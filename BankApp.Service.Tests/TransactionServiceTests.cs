@@ -1,4 +1,4 @@
-using BankApi.Repositories.Stock;
+using BankApi.Repositories.Trading;
 using BankApi.Services.Stock;
 using Common.Models;
 using Common.Models.Trading;
@@ -29,7 +29,7 @@ namespace BankApp.Service.Tests
         public async Task AddTransactionAsync_HappyCase_AddsTransaction()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transaction = new StockTransactionTransaction
+            var transaction = new StockTransaction
             {
                 StockSymbol = "TEST",
                 StockName = "Test Stock",
@@ -57,7 +57,7 @@ namespace BankApp.Service.Tests
         public async Task AddTransactionAsync_RepositoryThrows_PropagatesException()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transaction = new StockTransactionTransaction
+            var transaction = new StockTransaction
             {
                 StockSymbol = "TEST",
                 StockName = "Test Stock",
@@ -77,7 +77,7 @@ namespace BankApp.Service.Tests
         public async Task GetAllTransactionsAsync_HappyCase_ReturnsList()
         {
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<StockTransactionTransaction>
+            var transactions = new List<StockTransaction>
             {
                 new() {
                     StockSymbol = "TEST",
@@ -108,7 +108,7 @@ namespace BankApp.Service.Tests
         {
             var criteria = new StockTransactionFilterCriteria();
             var author = new User { CNP = "1234567890123", FirstName = "John", LastName = "Doe" };
-            var transactions = new List<StockTransactionTransaction>
+            var transactions = new List<StockTransaction>
             {
                 new() {
                     StockSymbol = "TEST",

@@ -1,6 +1,6 @@
 using BankApi.Data;
-using BankApi.Repositories.Impl;
-using BankApi.Repositories.Stock;
+using BankApi.Repositories.Impl.Stocks;
+using BankApi.Repositories.Trading;
 using Common.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

@@ -42,7 +42,7 @@ namespace Common.Models.Bank
         public decimal ReceiverAmount { get; set; }
 
         [Required]
-        required public string TransactionType { get; set; }
+        required public TransactionType TransactionType { get; set; }
 
         [Required]
         [MaxLength(500)]

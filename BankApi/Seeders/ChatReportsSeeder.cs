@@ -1,7 +1,8 @@
 ﻿using BankApi.Data;
 using Common.Models.Social;
 using Common.Models;
-using Microsoft.EntityFrameworkCore; // Required for AnyAsync
+using Microsoft.EntityFrameworkCore;
+using Common.Services.Social; // Required for AnyAsync
 
 namespace BankApi.Seeders
 {
@@ -46,11 +47,11 @@ namespace BankApi.Seeders
 
             var reportData = new[]
             {
-                new { ReportedUserCnp = "1234567890123", SubmitterCnp = "3456789012345", MessageContent = "This user sent inappropriate content." },
-                new { ReportedUserCnp = "9876543210987", SubmitterCnp = "1234567890123", MessageContent = "Reported for spamming multiple messages." },
-                new { ReportedUserCnp = "2345678901234", SubmitterCnp = "1234567890123", MessageContent = "This user violated chat guidelines." },
-                new { ReportedUserCnp = "3456789012345", SubmitterCnp = "9876543210987", MessageContent = "Reported for offensive language." },
-                new { ReportedUserCnp = "4567890123456", SubmitterCnp = "4567890123456", MessageContent = "User harassed another member." }
+                new { ReportedUserCnp = "1234567890123", SubmitterCnp = "3456789012345", MessageContent = "This user sent inappropriate content.", Reason = ReportReason.OffensiveContent },
+                new { ReportedUserCnp = "9876543210987", SubmitterCnp = "1234567890123", MessageContent = "Reported for spamming multiple messages.", Reason = ReportReason.Spam },
+                new { ReportedUserCnp = "2345678901234", SubmitterCnp = "1234567890123", MessageContent = "This user violated chat guidelines.", Reason = ReportReason.GuidelineViolation },
+                new { ReportedUserCnp = "3456789012345", SubmitterCnp = "9876543210987", MessageContent = "Reported for offensive language.", Reason = ReportReason.OffensiveContent },
+                new { ReportedUserCnp = "4567890123456", SubmitterCnp = "4567890123456", MessageContent = "User harassed another member.", Reason = ReportReason.Harassment }
             };
 
             foreach (var data in reportData)
@@ -82,7 +83,8 @@ namespace BankApi.Seeders
                         SubmitterCnp = data.SubmitterCnp,
                         Submitter = submitter,
                         MessageId = message.Id,
-                        Message = message
+                        Message = message,
+                        Reason = data.Reason,
                     });
                 }
                 else

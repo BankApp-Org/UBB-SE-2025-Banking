@@ -4,11 +4,7 @@ using Common.Models.Social;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace BankApi.Controllers
 {
@@ -57,7 +53,8 @@ namespace BankApi.Controllers
         {
             try
             {
-                await _messagesService.GiveMessageToUserAsync(userCnp, request.Type, request.MessageText);
+                throw new NotImplementedException("This method should be removed.");
+                // await _messagesService.GiveMessageToUserAsync(userCnp, request.Type, request.MessageText);
                 return Ok($"Message sent to user {userCnp}.");
             }
             catch (Exception ex)
@@ -72,8 +69,9 @@ namespace BankApi.Controllers
             try
             {
                 var userCnp = await GetCurrentUserCnp();
-                var messages = await _messagesService.GetMessagesForUserAsync(userCnp);
-                return Ok(messages);
+                throw new NotImplementedException("This method should be removed.");
+                // var messages = await _messagesService.GetMessagesForUserAsync(userCnp);
+                // return Ok(messages);
             }
             catch (UnauthorizedAccessException)
             {
@@ -91,8 +89,9 @@ namespace BankApi.Controllers
         {
             try
             {
-                var messages = await _messagesService.GetMessagesForUserAsync(userCnp);
-                return Ok(messages);
+                throw new NotImplementedException("This method should be removed.");
+                // var messages = await _messagesService.GetMessagesForUserAsync(userCnp);
+                // return Ok(messages);
             }
             catch (Exception ex)
             {

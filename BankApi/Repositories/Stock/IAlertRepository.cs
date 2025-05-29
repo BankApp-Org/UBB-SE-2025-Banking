@@ -2,7 +2,7 @@
 using Common.Models;
 using Common.Models.Trading;
 
-namespace BankApi.Repositories.Stock
+namespace BankApi.Repositories.Trading
 {
     /// <summary>
     /// Interface for repository operations on <see cref="Alert"/> entities.

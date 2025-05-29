@@ -1,6 +1,6 @@
 using Common.Models.Trading;
 using Common.Services;
-using Common.Services.Stock;
+using Common.Services.Trading;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 

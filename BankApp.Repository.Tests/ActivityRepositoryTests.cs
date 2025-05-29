@@ -1,6 +1,6 @@
 using BankApi.Data;
 using BankApi.Repositories.Impl.Bank;
-using Common.Models;
+using Common.Models.Bank;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

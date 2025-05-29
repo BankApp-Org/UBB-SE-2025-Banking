@@ -6,7 +6,7 @@ using BankApi.Repositories.Impl.Bank;
 using BankApi.Repositories.Impl.Social;
 using BankApi.Repositories.Impl.Stocks;
 using BankApi.Repositories.Social;
-using BankApi.Repositories.Stock;
+using BankApi.Repositories.Trading;
 using BankApi.Seeders;
 using BankApi.Services;
 using BankApi.Services.Bank;
@@ -17,7 +17,7 @@ using Common.Services;
 using Common.Services.Bank;
 using Common.Services.Impl;
 using Common.Services.Social;
-using Common.Services.Stock;
+using Common.Services.Trading;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity; // Required for Identity
 using Microsoft.EntityFrameworkCore;
@@ -126,6 +126,7 @@ builder.Services.AddScoped<INewsRepository, NewsRepository>();
 builder.Services.AddScoped<IStockPageRepository, StockPageRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
 
 // Register services
 builder.Services.AddScoped<IActivityService, ActivityService>();
@@ -145,6 +146,7 @@ builder.Services.AddScoped<ITipsService, TipsService>();
 builder.Services.AddScoped<ITransactionLogService, TransactionLogService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
 builder.Services.AddHttpClient<IProfanityChecker, ProfanityChecker>();
 

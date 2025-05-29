@@ -17,5 +17,11 @@ namespace Common.Models.Social
 
         [Required]
         required public List<Message> Messages { get; set; } = [];
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Required]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }

@@ -1,6 +1,6 @@
 using Common.Models.Trading;
 
-namespace BankApi.Repositories.Stock
+namespace BankApi.Repositories.Trading
 {
     /// <summary>
     /// Interface for managing transactions in the application.

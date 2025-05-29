@@ -1,4 +1,4 @@
-﻿namespace Common.Services.Stock
+﻿namespace Common.Services.Trading
 {
     using Common.Models.Trading;
     using System.Collections.Generic;

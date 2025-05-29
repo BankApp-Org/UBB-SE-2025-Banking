@@ -1,6 +1,6 @@
 using Common.Models;
 using Common.Models.Trading;
-using Common.Services.Stock;
+using Common.Services.Trading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

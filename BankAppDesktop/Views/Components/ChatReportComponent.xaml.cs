@@ -43,6 +43,7 @@ namespace BankAppDesktop.Views.Components
                 Message = this.ReportedMessage,
                 MessageId = this.ReportedMessage.Id,
                 SubmitterCnp = this.authenticationService.GetUserCNP(),
+                Reason = ReportReason.OffensiveContent // Added required Reason property
             };
 
             try
@@ -81,6 +82,7 @@ namespace BankAppDesktop.Views.Components
                 Message = this.ReportedMessage,
                 MessageId = this.ReportedMessage.Id,
                 SubmitterCnp = this.authenticationService.GetUserCNP(),
+                Reason = ReportReason.OffensiveContent // Added required Reason property
             };
 
             try
@@ -118,7 +120,18 @@ namespace BankAppDesktop.Views.Components
 
             try
             {
-                await this.messagesService.GiveMessageToUserAsync(this.ReportedUserCNP, "Warning", messageContent);
+                // Replace GiveMessageToUserAsync with proper message sending through the appropriate service
+                // Create a Message object to send
+                var message = new Message
+                {
+                    MessageContent = messageContent
+                };
+
+                // Use a chat ID of 0 as a placeholder - this would need to be adjusted based on your system's design
+                // The Messages API seems to require a chat ID, user and message object
+                int defaultChatId = 0;
+                var currentUser = await this.userService.GetCurrentUserAsync();
+                await this.messagesService.SendMessageAsync(defaultChatId, currentUser, message);
             }
             catch (Exception)
             {

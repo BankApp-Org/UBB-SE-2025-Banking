@@ -8,7 +8,7 @@
     using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks;
-    using Common.Services.Stock;
+    using Common.Services.Trading;
 
     public sealed partial class HomePage : Page
     {

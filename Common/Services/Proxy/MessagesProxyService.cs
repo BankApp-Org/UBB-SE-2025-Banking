@@ -1,3 +1,4 @@
+using Common.Models;
 using Common.Models.Social;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Http.Json;
@@ -11,6 +12,39 @@ namespace Common.Services.Proxy
     {
         private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         private readonly JsonSerializerOptions _jsonOptions = jsonOptions.Value.SerializerOptions ?? throw new ArgumentNullException(nameof(jsonOptions), "JsonSerializerOptions cannot be null.");
+
+        public async Task<Message> SendMessageAsync(int chatId, User sender, Message message)
+        {
+            var response = await _httpClient.PostAsJsonAsync($"api/Messages/{chatId}", message, _jsonOptions);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<Message>(_jsonOptions) ??
+                throw new InvalidOperationException("Failed to deserialize send message response.");
+        }
+
+        public async Task DeleteMessageAsync(int chatId, int messageId, User requester)
+        {
+            var response = await _httpClient.DeleteAsync($"api/Messages/{chatId}/{messageId}");
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<Message> GetMessageByIdAsync(int chatId, int messageId)
+        {
+            return await _httpClient.GetFromJsonAsync<Message>($"api/Messages/{chatId}/{messageId}", _jsonOptions) ??
+                throw new InvalidOperationException("Failed to deserialize message response.");
+        }
+
+        public async Task<List<Message>> GetMessagesAsync(int chatId, int page, int pageSize)
+        {
+            return await _httpClient.GetFromJsonAsync<List<Message>>($"api/Messages/{chatId}?page={page}&pageSize={pageSize}", _jsonOptions) ??
+                throw new InvalidOperationException("Failed to deserialize messages response.");
+        }
+
+        public async Task ReportMessage(int chatId, int messageId, User reporter, ReportReason reason)
+        {
+            var report = new { ReportReason = reason };
+            var response = await _httpClient.PostAsJsonAsync($"api/Messages/{chatId}/{messageId}/report", report, _jsonOptions);
+            response.EnsureSuccessStatusCode();
+        }
 
         public async Task GiveMessageToUserAsync(string userCNP)
         {

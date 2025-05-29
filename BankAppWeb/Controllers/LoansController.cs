@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using BankAppWeb.Views.Loans;
+using Common.Models;
 using Common.Models.Bank;
 using Common.Services;
 using Common.Services.Bank;
@@ -30,7 +32,8 @@ namespace BankAppWeb.Controllers
         public async Task<IActionResult> Index(MakePaymentDTO payment)
         {
             var model = new IndexModel(_loanService);
-            await _loanService.IncrementMonthlyPaymentsCompletedAsync(payment.loanId, payment.penalty);
+            User user = await _userService.GetCurrentUserAsync();
+            await _loanService.PayLoanAsync(payment.LoanId, payment.Ammount, user.CNP, payment.Iban);
             return RedirectToAction("Index");
         }
 
@@ -89,7 +92,8 @@ namespace BankAppWeb.Controllers
 
     public class MakePaymentDTO
     {
-        public int loanId { get; set; }
-        public decimal penalty { get; set; }
+        public int LoanId { get; set; }
+        public decimal Ammount { get; set; }
+        required public string Iban { get; set; }
     }
 }

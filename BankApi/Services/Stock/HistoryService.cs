@@ -1,6 +1,6 @@
 ﻿namespace BankApi.Services.Stock
 {
-    using BankApi.Repositories.Stock;
+    using BankApi.Repositories.Trading;
     using Common.Exceptions;
     using Common.Models;
     using Common.Services.Bank;
