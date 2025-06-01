@@ -1,11 +1,11 @@
 namespace BankAppDesktop
 {
+    using BankAppDesktop.Pages;
+    using BankAppDesktop.Views.Pages;
     using Common.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using BankAppDesktop.Pages;
-    using BankAppDesktop.Views.Pages;
     using System;
     using System.ComponentModel;
 

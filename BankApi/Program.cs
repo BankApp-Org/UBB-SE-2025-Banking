@@ -127,6 +127,10 @@ builder.Services.AddScoped<IStockPageRepository, StockPageRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ILoanRepository, LoanRepository>();
 builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<IBankTransactionRepository, BankTransactionRepository>();
+builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
+builder.Services.AddScoped<IBankTransactionHistoryRepository, BankTransactionHistoryRepository>();
+
 
 // Register services
 builder.Services.AddScoped<IActivityService, ActivityService>();
@@ -148,7 +152,10 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
+builder.Services.AddScoped<IBankTransactionService, BankTransactionService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddHttpClient<IProfanityChecker, ProfanityChecker>();
+
 
 // Add CORS
 builder.Services.AddCors(options =>

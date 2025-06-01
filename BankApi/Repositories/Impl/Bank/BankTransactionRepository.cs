@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Repositories.Impl.Bank
 {
-    public class BankTransactionRepository
+    public class BankTransactionRepository : IBankTransactionRepository
     {
         private readonly ApiDbContext _dbContext;
 

@@ -2,7 +2,7 @@
 
 namespace Common.Services.Bank
 {
-    internal interface IBankAccountService
+    public interface IBankAccountService
     {
         Task<List<BankAccount>> GetUserBankAccounts(int userID);
         Task<BankAccount?> FindBankAccount(string iban);
