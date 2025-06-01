@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Repositories.Impl.Bank
 {
-    public class BankTransactionHistoryRepository
+    public class BankTransactionHistoryRepository : IBankTransactionHistoryRepository
     {
         private readonly ApiDbContext _context;
 
