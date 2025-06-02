@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Common.Models.Bank;
 using Common.Services.Bank;
-using Common.Services.Trading;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoanShark.API.Controllers
@@ -63,17 +62,17 @@ namespace LoanShark.API.Controllers
         {
             try
             {
+
                 LoanRequest loanRequest = new LoanRequest
                 {
                     UserCnp = User.FindFirst(ClaimTypes.NameIdentifier)?.Value, // Assuming CNP is stored in the user's claims
                     Loan = new Loan
                     {
-                         
                         LoanAmount = dto.LoanAmount,
                         ApplicationDate = DateTime.UtcNow,
                         RepaymentDate = DateTime.UtcNow.AddMonths(12) // Default to 12 months repayment period
                     },
-                   
+                    Status = "Pending",
                 };
 
                 await loanService.AddLoanAsync(loanRequest);
@@ -92,10 +91,9 @@ namespace LoanShark.API.Controllers
             try
             {
                 var userCNP = User.FindFirstValue("CNP");
-                var loanID =User.FindFirstValue("LoanID"); // Assuming LoanID is stored in the user's claims
 
-                await loanService.PayLoanAsync(loanID,dto.PaymentAmount,userCNP,dto.Iban);
-                return Ok(result);
+                await loanService.PayLoanAsync(dto.LoanID, dto.PaymentAmount, userCNP, dto.Iban);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -108,8 +106,9 @@ namespace LoanShark.API.Controllers
         {
             try
             {
-                var result = await bankAccountService.GetAllCurrencyExchangeRates(); ///am nevoie de functie care sa ia toate exchange rates din baza de date-> nu exista in service
-                return Ok(result);
+                throw new NotImplementedException("add a service for CurrencyExchangeRepository to get all exchange rates from the database");
+                //var result = await bankAccountService.GetAllCurrencyExchangeRates(); ///am nevoie de functie care sa ia toate exchange rates din baza de date-> nu exista in service
+                //return Ok(result);
             }
             catch (Exception ex)
             {
@@ -138,6 +137,8 @@ namespace LoanShark.API.Controllers
     {
         public string Iban { get; set; }
         public decimal PaymentAmount { get; set; }
+
+        public int LoanID { get; set; }
     }
 
 }

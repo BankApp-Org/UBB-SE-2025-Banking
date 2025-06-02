@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using BankAppWeb.Views.Loans;
 using Common.Models;
 using Common.Models.Bank;
@@ -66,12 +65,6 @@ namespace BankAppWeb.Controllers
                     RepaymentDate = input.RepaymentDate,
                     Currency = input.Currency,
                     Status = "Pending",
-                    InterestRate = 0m, // Placeholder - should be calculated by backend service
-                    NumberOfMonths = 0, // Placeholder - should be calculated by backend service
-                    MonthlyPaymentAmount = 0m, // Placeholder - should be calculated by backend service
-                    MonthlyPaymentsCompleted = 0,
-                    RepaidAmount = 0m,
-                    Penalty = 0m,
                 };
 
                 var request = new LoanRequest

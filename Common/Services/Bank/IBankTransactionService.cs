@@ -18,13 +18,13 @@ namespace Common.Services.Bank
     }
     public class TransactionFilters
     {
-        required public TransactionType Type { get; set; }
-        required public DateTime StartDate { get; set; }
-        required public DateTime EndDate { get; set; }
-        required public string? SenderIban { get; set; }
-        required public string? ReceiverIban { get; set; }
-        required public decimal? MinAmount { get; set; }
-        required public decimal? MaxAmount { get; set; }
-        required public Ordering Ordering { get; set; } = Ordering.Ascending;
+        public TransactionType Type { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string? SenderIban { get; set; }
+        public string? ReceiverIban { get; set; }
+        public decimal? MinAmount { get; set; }
+        public decimal? MaxAmount { get; set; }
+        public Ordering Ordering { get; set; } = Ordering.Ascending;
     }
 }

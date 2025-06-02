@@ -1,7 +1,7 @@
-﻿using System.Security.Claims;
-using Common.Models;
-using Common.Models.Bank;
+﻿using Common.Models.Bank;
+using Common.Services;
 using Common.Services.Bank;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankApi.Controllers
@@ -11,12 +11,15 @@ namespace BankApi.Controllers
     public class BankAccountController : ControllerBase
     {
         private readonly IBankAccountService bankAccountService;
+        private readonly IUserService userService;
 
-        public BankAccountController(IBankAccountService bank)
+        public BankAccountController(IBankAccountService bank, IUserService userService)
         {
-            bankAccountService = bank;
+            this.bankAccountService = bank;
+            this.userService = userService;
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<List<BankAccount>>> GetUserBankAccounts(int userId)
         {
@@ -61,7 +64,7 @@ namespace BankApi.Controllers
             {
                 currency = Currency.GBP;
             }
-            else if(request.Currency == "RON")
+            else if (request.Currency == "RON")
             {
                 currency = Currency.RON;
             }
@@ -74,20 +77,20 @@ namespace BankApi.Controllers
                 return BadRequest("Unsupported currency.");
             }
 
-            
-            BankAccount newBankAccount= new BankAccount
+
+            BankAccount newBankAccount = new BankAccount
             {
-                Iban= iban,
+                Iban = iban,
                 Balance = 0.0m,
                 UserId = request.UserId,
                 Name = request.CustomName,
-                Currency =currency,
+                Currency = currency,
                 DailyLimit = 1000.0m, // Default value
                 MaximumPerTransaction = 200.0m, // Default value
                 MaximumNrTransactions = 10, // Default value
                 Blocked = false, // Default value
                 Transactions = new List<BankTransaction>(),
-                User= User 
+                User = await userService.GetCurrentUserAsync()
             };
 
             var result = await bankAccountService.CreateBankAccount(newBankAccount);
@@ -122,12 +125,7 @@ namespace BankApi.Controllers
             return Ok(currencies);
         }
 
-        [HttpPost("verify")]
-        public async Task<ActionResult<bool>> VerifyUserCredentials([FromBody] VerifyCredentialsRequest request)
-        {
-            var result = await bankAccountService.VerifyUserCredentials(request.Email, request.Password);
-            return Ok(result);
-        }
+
 
         [HttpPut("{iban}")]
         public async Task<ActionResult> UpdateBankAccount(string iban, [FromBody] UpdateBankAccountRequest request)
@@ -146,7 +144,7 @@ namespace BankApi.Controllers
                 User = existingAccount.User,
                 Transactions = existingAccount.Transactions
             };
-            
+
             var result = await bankAccountService.UpdateBankAccount(bankAccount);
 
             return result ? Ok() : NotFound();

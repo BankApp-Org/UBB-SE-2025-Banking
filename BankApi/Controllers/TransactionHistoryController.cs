@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using Common.Models.Bank;
-using Common.Services.Trading;
-using LoanShark.Domain;
-using LoanShark.Service.BankService;
+using Common.Services.Bank;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoanShark.API.Controllers
@@ -11,68 +9,26 @@ namespace LoanShark.API.Controllers
     [Route("api/[controller]")]
     public class TransactionHistoryController : ControllerBase
     {
-        private readonly ITransactionService _transactionHistoryService;
+        private readonly IBankTransactionService _transactionHistoryService;
+        private readonly IBankAccountService _bankAccountService;
 
-        public TransactionHistoryController(ITransactionService transactionHistoryService)
+        public TransactionHistoryController(IBankTransactionService transactionHistoryService, IBankAccountService bankAccountService
         {
-            _transactionHistoryService = transactionHistoryService;
+            this._bankAccountService = bankAccountService;
+            this._transactionHistoryService = transactionHistoryService;
         }
 
-        [HttpGet("RetrieveForMenu/{iban}")]
-        public async Task<ActionResult<ObservableCollection<string>>> RetrieveForMenu(string iban)
+        [HttpGet]
+        public async Task<ActionResult<Collection<BankTransaction>>> GetAllTransactions([FromBody] TransactionFilters filters)
         {
             try
             {
-                _transactionHistoryService.iban = iban;
-                var result = await _transactionHistoryService.RetrieveForMenu();
-                return Ok(result);
+                var transactions = await _transactionHistoryService.GetTransactions(filters);
+                return Ok(transactions);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error retrieving transactions for menu: {ex.Message}");
-            }
-        }
-
-        [HttpGet("FilterByTypeForMenu")]
-        public async Task<ActionResult<ObservableCollection<string>>> FilterByTypeForMenu([FromQuery] string type, [FromQuery] string iban)
-        {
-            try
-            {
-                _transactionHistoryService.iban = iban;
-                var result = await _transactionHistoryService.FilterByTypeForMenu(type);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error filtering transactions by type for menu: {ex.Message}");
-            }
-        }
-
-        [HttpGet("FilterByTypeDetailed")]
-        public async Task<ActionResult<ObservableCollection<string>>> FilterByTypeDetailed([FromQuery] string type)
-        {
-            try
-            {
-                var result = await _transactionHistoryService.FilterByTypeDetailed(type);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error filtering transactions by type detailed: {ex.Message}");
-            }
-        }
-
-        [HttpGet("SortByDate")]
-        public async Task<ActionResult<ObservableCollection<string>>> SortByDate([FromQuery] string order)
-        {
-            try
-            {
-                var result = await _transactionHistoryService.SortByDate(order);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error sorting transactions by date: {ex.Message}");
+                return StatusCode(500, $"Error retrieving transactions: {ex.Message}");
             }
         }
 
@@ -81,8 +37,8 @@ namespace LoanShark.API.Controllers
         {
             try
             {
-                _transactionHistoryService.iban = iban;
-                await _transactionHistoryService.CreateCSV();
+                // see Repositories.Exporters
+
                 return Ok("CSV file created successfully");
             }
             catch (Exception ex)
@@ -91,46 +47,22 @@ namespace LoanShark.API.Controllers
             }
         }
 
-        [HttpGet("GetTransactionByMenuString")]
-        public async Task<ActionResult<BankTransaction>> GetTransactionByMenuString([FromQuery] string menuString)
-        {
-            try
-            {
-                var result = await _transactionHistoryService.GetTransactionByMenuString(menuString);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error getting transaction by menu string: {ex.Message}");
-            }
-        }
-
         [HttpGet("GetTransactionTypeCounts/{iban}")]
-        public async Task<ActionResult<Dictionary<string, int>>> GetTransactionTypeCounts(string iban)
+        public async Task<ActionResult<Dictionary<TransactionType, int>>> GetTransactionTypeCounts(string iban)
         {
             try
             {
-                _transactionHistoryService.iban = iban;
-                var result = await _transactionHistoryService.GetTransactionTypeCounts();
+                Dictionary<TransactionType, int> typeCounts = [];
+                var result = await _bankAccountService.FindBankAccount(iban) ?? throw new Exception("Bank account not found");
+                foreach (BankTransaction transaction in result.Transactions)
+                {
+                    typeCounts.Add(transaction.TransactionType, typeCounts.GetValueOrDefault(transaction.TransactionType, 0) + 1);
+                }
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error getting transaction type counts: {ex.Message}");
-            }
-        }
-
-        [HttpPut("UpdateTransactionDescription")]
-        public async Task<IActionResult> UpdateTransactionDescription([FromBody] UpdateTransactionDescriptionDTO dto)
-        {
-            try
-            {
-                await _transactionHistoryService.UpdateTransactionDescription(dto.TransactionId, dto.NewDescription);
-                return Ok("Transaction description updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error updating transaction description: {ex.Message}");
             }
         }
     }
@@ -140,4 +72,4 @@ namespace LoanShark.API.Controllers
         public int TransactionId { get; set; }
         public string NewDescription { get; set; }
     }
-} 
+}
