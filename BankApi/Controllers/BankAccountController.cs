@@ -1,4 +1,6 @@
-﻿using Common.Models.Bank;
+﻿using System.Security.Claims;
+using Common.Models;
+using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +34,63 @@ namespace BankApi.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateBankAccount([FromBody] CreateBankAccountRequest request)
         {
-            var result = await bankAccountService.CreateBankAccount(request.UserId, request.CustomName, request.Currency);
+            string iban = await bankAccountService.GenerateIBAN();
+            if (string.IsNullOrEmpty(iban))
+            {
+                return BadRequest("Failed to generate IBAN.");
+            }
+            if (string.IsNullOrWhiteSpace(request.CustomName))
+            {
+                request.CustomName = "Default Account Name";
+            }
+            if (string.IsNullOrWhiteSpace(request.Currency))
+            {
+                request.Currency = "USD"; // Default currency if not provided
+            }
+
+            Currency currency;
+            if (request.Currency == "USD")
+            {
+                currency = Currency.USD;
+            }
+            else if (request.Currency == "EUR")
+            {
+                currency = Currency.EUR;
+            }
+            else if (request.Currency == "GBP")
+            {
+                currency = Currency.GBP;
+            }
+            else if(request.Currency == "RON")
+            {
+                currency = Currency.RON;
+            }
+            else if (request.Currency == "JPY")
+            {
+                currency = Currency.JPY;
+            }
+            else
+            {
+                return BadRequest("Unsupported currency.");
+            }
+
+            
+            BankAccount newBankAccount= new BankAccount
+            {
+                Iban= iban,
+                Balance = 0.0m,
+                UserId = request.UserId,
+                Name = request.CustomName,
+                Currency =currency,
+                DailyLimit = 1000.0m, // Default value
+                MaximumPerTransaction = 200.0m, // Default value
+                MaximumNrTransactions = 10, // Default value
+                Blocked = false, // Default value
+                Transactions = new List<BankTransaction>(),
+                User= User 
+            };
+
+            var result = await bankAccountService.CreateBankAccount(newBankAccount);
             return result ? Ok() : BadRequest();
         }
 
@@ -60,7 +118,7 @@ namespace BankApi.Controllers
         [HttpGet("currencies")]
         public async Task<ActionResult<List<string>>> GetCurrencies()
         {
-            var currencies = await bankAccountService.GetCurrencies();
+            var currencies = Enum.GetNames(typeof(Currency)).ToList();
             return Ok(currencies);
         }
 
@@ -74,13 +132,22 @@ namespace BankApi.Controllers
         [HttpPut("{iban}")]
         public async Task<ActionResult> UpdateBankAccount(string iban, [FromBody] UpdateBankAccountRequest request)
         {
-            var result = await bankAccountService.UpdateBankAccount(
-                iban,
-                request.Name,
-                request.DailyLimit,
-                request.MaxPerTransaction,
-                request.MaxNrTransactions,
-                request.Blocked);
+            var existingAccount = await bankAccountService.FindBankAccount(iban);
+            BankAccount bankAccount = new BankAccount
+            {
+                Iban = iban,
+                Name = request.Name,
+                DailyLimit = request.DailyLimit,
+                MaximumPerTransaction = request.MaxPerTransaction,
+                MaximumNrTransactions = request.MaxNrTransactions,
+                Blocked = request.Blocked,
+                Balance = existingAccount.Balance,
+                Currency = existingAccount.Currency,
+                User = existingAccount.User,
+                Transactions = existingAccount.Transactions
+            };
+            
+            var result = await bankAccountService.UpdateBankAccount(bankAccount);
 
             return result ? Ok() : NotFound();
         }

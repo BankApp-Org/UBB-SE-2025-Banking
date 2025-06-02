@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using Common.Models.Bank;
+using Common.Services.Trading;
 using LoanShark.Domain;
 using LoanShark.Service.BankService;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +11,9 @@ namespace LoanShark.API.Controllers
     [Route("api/[controller]")]
     public class TransactionHistoryController : ControllerBase
     {
-        private readonly ITransactionHistoryService _transactionHistoryService;
+        private readonly ITransactionService _transactionHistoryService;
 
-        public TransactionHistoryController(ITransactionHistoryService transactionHistoryService)
+        public TransactionHistoryController(ITransactionService transactionHistoryService)
         {
             _transactionHistoryService = transactionHistoryService;
         }
@@ -90,7 +92,7 @@ namespace LoanShark.API.Controllers
         }
 
         [HttpGet("GetTransactionByMenuString")]
-        public async Task<ActionResult<Transaction>> GetTransactionByMenuString([FromQuery] string menuString)
+        public async Task<ActionResult<BankTransaction>> GetTransactionByMenuString([FromQuery] string menuString)
         {
             try
             {
