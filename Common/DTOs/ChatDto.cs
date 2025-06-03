@@ -2,7 +2,7 @@
 
 namespace Common.DTOs
 {
-    public class ChatViewModel
+    public class ChatDTO
     {
         public int ChatID { get; set; }
 

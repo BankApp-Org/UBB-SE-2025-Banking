@@ -99,11 +99,11 @@ namespace LoanShark.API.Controllers
         }
 
         [HttpGet("{userCNP}/friends")]
-        public async Task<ActionResult<List<SocialUserViewModel>>> GetFriendsByUser(string userCNP)
+        public async Task<ActionResult<List<SocialUserDto>>> GetFriendsByUser(string userCNP)
         {
             var user = await _userService.GetUserByCnpAsync(userCNP);
             var friends = user.Friends;
-            var dtos = friends.Select(f => new SocialUserViewModel
+            var dtos = friends.Select(f => new SocialUserDto
             {
                 UserID = f.Id,
                 Username = f.FirstName,
@@ -125,17 +125,17 @@ namespace LoanShark.API.Controllers
         }
 
         [HttpGet("chats/current")]
-        public async Task<ActionResult<List<ChatViewModel>>> GetCurrentUserChats()
+        public async Task<ActionResult<List<ChatDTO>>> GetCurrentUserChats()
         {
             var user = await _userService.GetCurrentUserAsync();
             var chats = user.Chats;
 
             if (chats == null)
             {
-                return Ok(new List<ChatViewModel>()); // Return empty list if no chats
+                return Ok(new List<ChatDTO>()); // Return empty list if no chats
             }
 
-            var dtos = chats.Select(c => new ChatViewModel
+            var dtos = chats.Select(c => new ChatDTO
             {
                 ChatID = c.Id,
                 Users = c.Users,
@@ -168,7 +168,7 @@ namespace LoanShark.API.Controllers
         //}
 
         [HttpGet("{userCNP}/nonfriends")]
-        public async Task<ActionResult<List<SocialUserViewModel>>> GetNonFriendsUsers(string userCNP)
+        public async Task<ActionResult<List<SocialUserDto>>> GetNonFriendsUsers(string userCNP)
         {
 
             var user = await _userService.GetUserByCnpAsync(userCNP);
@@ -192,9 +192,9 @@ namespace LoanShark.API.Controllers
             var nonFriends = allusers.Except(friends).ToList();
 
             if (nonFriends.Count == 0)
-                return new List<SocialUserViewModel>();
+                return new List<SocialUserDto>();
 
-            var result = nonFriends.Select(u => new SocialUserViewModel
+            var result = nonFriends.Select(u => new SocialUserDto
             {
                 UserID = u.Id, // Use the non-friend's UserID
                 Username = u.FirstName,

@@ -1,6 +1,6 @@
 namespace Common.DTOs
 {
-    public class ReportViewModel
+    public class ReportDto
     {
         public int MessageID { get; set; }
         public int ReporterUserID { get; set; }

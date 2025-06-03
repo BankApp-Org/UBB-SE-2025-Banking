@@ -26,7 +26,7 @@ namespace LoanShark.API.Controllers
         }
 
         [HttpPost("text")]
-        public async Task<ActionResult> SendTextMessage([FromBody] TextMessageViewModel messageDto)
+        public async Task<ActionResult> SendTextMessage([FromBody] TextMessageDto messageDto)
         {
             var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null || string.IsNullOrEmpty(messageDto.Content))
@@ -45,7 +45,7 @@ namespace LoanShark.API.Controllers
         }
 
         [HttpPost("image")]
-        public async Task<ActionResult> SendImageMessage([FromBody] ImageMessageViewModel messageDto)
+        public async Task<ActionResult> SendImageMessage([FromBody] ImageMessageDto messageDto)
         {
             var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null || string.IsNullOrEmpty(messageDto.ImageURL))
@@ -56,7 +56,7 @@ namespace LoanShark.API.Controllers
                 ChatId = messageDto.ChatID,
                 ImageUrl = messageDto.ImageURL,
                 CreatedAt = DateTime.Now,
-                Type = MessageType.Text,
+                Type = MessageType.Image,
                 UsersReport = messageDto.UsersReport ?? new List<User>()
             };
             await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
@@ -64,141 +64,70 @@ namespace LoanShark.API.Controllers
         }
 
         [HttpPost("transfer")]
-        public async Task<ActionResult> SendTransferMessage([FromBody] TransferMessageViewModel messageDto)
+        public async Task<ActionResult> SendTransferMessage([FromBody] TransferMessageDto messageDto)
         {
             var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null || string.IsNullOrEmpty(messageDto.Description) || string.IsNullOrEmpty(messageDto.Currency))
                 return BadRequest("Transfer details are required.");
 
-            await _messageService.SendTransferMessage(
-                messageDto.SenderID,
-                messageDto.ChatID,
-                messageDto.Description,
-                messageDto.Status,
-                messageDto.Amount,
-                messageDto.Currency);
+            TransferMessage message = new TransferMessage
+            {
+                UserId = user.Id,
+                ChatId = messageDto.ChatID,
+                CreatedAt = DateTime.Now,
+                Status = messageDto.Status,
+                Amount = messageDto.Amount,
+                Description = messageDto.Description,
+                Currency = messageDto.Currency,
+                Type = MessageType.Transfer,
+                ListOfReceivers = messageDto.ListOfReceivers
+            };
+            await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
             return NoContent();
         }
 
         [HttpPost("request")]
-        public async Task<ActionResult> SendRequestMessage([FromBody] RequestMessageViewModel messageDto)
+        public async Task<ActionResult> SendRequestMessage([FromBody] RequestMessageDto messageDto)
         {
-            UserSession.Instance.SetUserData("id_user", "2"); // Hardcoded for now
+            var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null || string.IsNullOrEmpty(messageDto.Description) || string.IsNullOrEmpty(messageDto.Currency))
                 return BadRequest("Request details are required.");
 
-            await _messageService.SendRequestMessage(
-                messageDto.SenderID,
-                messageDto.ChatID,
-                messageDto.Description,
-                messageDto.Status,
-                messageDto.Amount,
-                messageDto.Currency);
+            RequestMessage message = new RequestMessage
+            {
+                UserId = user.Id,
+                ChatId = messageDto.ChatID,
+                CreatedAt = DateTime.Now,
+                Status = messageDto.Status,
+                Amount = messageDto.Amount,
+                Description = messageDto.Description,
+                Currency = messageDto.Currency,
+                Type = MessageType.Request,
+            };
+            await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
             return NoContent();
         }
 
         [HttpPost("delete")]
-        public async Task<ActionResult> DeleteMessage([FromBody] MessageViewModel messageDto)
+        public async Task<ActionResult> DeleteMessage([FromBody] MessageDto messageDto)
         {
-            UserSession.Instance.SetUserData("id_user", "2"); // Hardcoded for now
+            var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null)
                 return BadRequest("Message data is required.");
 
-            Message message = messageDto.MessageType switch
-            {
-                "Text" => new TextMessage(
-                    messageDto.MessageID,
-                    messageDto.SenderID,
-                    messageDto.ChatID,
-                    DateTime.Parse(messageDto.Timestamp),
-                    (messageDto as TextMessageViewModel)?.Content ?? string.Empty,
-                    (messageDto as TextMessageViewModel)?.UsersReport ?? new List<int>()),
-                "Image" => new ImageMessage(
-                    messageDto.MessageID,
-                    messageDto.SenderID,
-                    messageDto.ChatID,
-                    DateTime.Parse(messageDto.Timestamp),
-                    (messageDto as ImageMessageViewModel)?.ImageURL ?? string.Empty,
-                    (messageDto as ImageMessageViewModel)?.UsersReport ?? new List<int>()),
-                "Transfer" => new TransferMessage(
-                    messageDto.MessageID,
-                    messageDto.SenderID,
-                    messageDto.ChatID,
-                    DateTime.Parse(messageDto.Timestamp),
-                    (messageDto as TransferMessageViewModel)?.Status ?? string.Empty,
-                    (messageDto as TransferMessageViewModel)?.Amount ?? 0f,
-                    (messageDto as TransferMessageViewModel)?.Description ?? string.Empty,
-                    (messageDto as TransferMessageViewModel)?.Currency ?? string.Empty),
-                "Request" => new RequestMessage(
-                    messageDto.MessageID,
-                    messageDto.SenderID,
-                    messageDto.ChatID,
-                    DateTime.Parse(messageDto.Timestamp),
-                    (messageDto as RequestMessageViewModel)?.Status ?? string.Empty,
-                    (messageDto as RequestMessageViewModel)?.Amount ?? 0f,
-                    (messageDto as RequestMessageViewModel)?.Description ?? string.Empty,
-                    (messageDto as RequestMessageViewModel)?.Currency ?? string.Empty),
-                _ => throw new ArgumentException("Invalid message type.")
-            };
-
-            await _messageService.DeleteMessage(message);
+            await _messageService.DeleteMessageAsync(messageDto.ChatID, messageDto.MessageID, user);
             return NoContent();
         }
 
         [HttpPost("report")]
-        public async Task<ActionResult> ReportMessage([FromBody] MessageViewModel messageDto)
+        public async Task<ActionResult> ReportMessage([FromBody] MessageDto messageDto, ReportReason reportReason)
         {
-            UserSession.Instance.SetUserData("id_user", "2"); // Hardcoded for now
+            var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null)
                 return BadRequest("Message data is required.");
 
-            Message message = messageDto.MessageType switch
-            {
-                "Text" => new TextMessage(
-                    messageDto.MessageID,
-                    messageDto.SenderID,
-                    messageDto.ChatID,
-                    DateTime.Parse(messageDto.Timestamp),
-                    (messageDto as TextMessageViewModel)?.Content ?? string.Empty,
-                    (messageDto as TextMessageViewModel)?.UsersReport ?? new List<int>()),
-                "Image" => new ImageMessage(
-                    messageDto.MessageID,
-                    messageDto.SenderID,
-                    messageDto.ChatID,
-                    DateTime.Parse(messageDto.Timestamp),
-                    (messageDto as ImageMessageViewModel)?.ImageURL ?? string.Empty,
-                    (messageDto as ImageMessageViewModel)?.UsersReport ?? new List<int>()),
-                "Transfer" => new TransferMessage(
-                    messageDto.MessageID,
-                    messageDto.SenderID,
-                    messageDto.ChatID,
-                    DateTime.Parse(messageDto.Timestamp),
-                    (messageDto as TransferMessageViewModel)?.Status ?? string.Empty,
-                    (messageDto as TransferMessageViewModel)?.Amount ?? 0f,
-                    (messageDto as TransferMessageViewModel)?.Description ?? string.Empty,
-                    (messageDto as TransferMessageViewModel)?.Currency ?? string.Empty),
-                "Request" => new RequestMessage(
-                    messageDto.MessageID,
-                    messageDto.SenderID,
-                    messageDto.ChatID,
-                    DateTime.Parse(messageDto.Timestamp),
-                    (messageDto as RequestMessageViewModel)?.Status ?? string.Empty,
-                    (messageDto as RequestMessageViewModel)?.Amount ?? 0f,
-                    (messageDto as RequestMessageViewModel)?.Description ?? string.Empty,
-                    (messageDto as RequestMessageViewModel)?.Currency ?? string.Empty),
-                _ => throw new ArgumentException("Invalid message type.")
-            };
-
-            await _messageService.ReportMessage(message);
+            await _messageService.ReportMessage(messageDto.ChatID, messageDto.MessageID, user, reportReason);
             return NoContent();
-        }
-
-        [HttpGet("repository")]
-        public async Task<ActionResult<string>> GetRepositoryInfo()
-        {
-            UserSession.Instance.SetUserData("id_user", "2"); // Hardcoded for now
-            var repo = _messageService.GetRepo();
-            return Ok($"Repository Type: {repo.GetType().Name}");
         }
     }
 }

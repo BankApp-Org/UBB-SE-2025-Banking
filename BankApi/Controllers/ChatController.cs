@@ -102,9 +102,9 @@ namespace BankApi.Controllers
             {
                 var messageType = m.Type;
 
-                MessageViewModel viewModel = messageType.ToString() switch
+                MessageDto viewModel = messageType.ToString() switch
                 {
-                    "Text" => new TextMessageViewModel
+                    "Text" => new TextMessageDto
                     {
                         MessageID = m.Id,
                         SenderID = m.UserId,
@@ -115,7 +115,7 @@ namespace BankApi.Controllers
                         Content = ((TextMessage)m).MessageContent,
                         UsersReport = ((TextMessage)m).UsersReport
                     },
-                    "Image" => new ImageMessageViewModel
+                    "Image" => new ImageMessageDto
                     {
                         MessageID = m.Id,
                         SenderID = m.UserId,
@@ -126,7 +126,7 @@ namespace BankApi.Controllers
                         ImageURL = ((ImageMessage)m).ImageUrl,
                         UsersReport = ((ImageMessage)m).UsersReport
                     },
-                    "Transfer" => new TransferMessageViewModel
+                    "Transfer" => new TransferMessageDto
                     {
                         MessageID = m.Id,
                         SenderID = m.UserId,
@@ -140,7 +140,7 @@ namespace BankApi.Controllers
                         Currency = ((TransferMessage)m).Currency,
                         ListOfReceivers = ((TransferMessage)m).ListOfReceivers
                     },
-                    "Request" => new RequestMessageViewModel
+                    "Request" => new RequestMessageDto
                     {
                         MessageID = m.Id,
                         SenderID = m.UserId,
@@ -226,7 +226,7 @@ namespace BankApi.Controllers
         {
             var chat = await chatService.GetChatById(chatId);
             var friends = chat.Users;
-            var dtos = friends.Select(f => new SocialUserViewModel
+            var dtos = friends.Select(f => new SocialUserDto
             {
                 UserID = f.Id,
                 Username = f.FirstName,

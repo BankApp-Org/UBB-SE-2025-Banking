@@ -8,9 +8,8 @@ namespace Common.Models.Social
         {
             Type = MessageType.Request;
         }
-        public RequestMessage(int id, int userId, int chatId, string status, float amount, string description, string currency, DateTime createdAt)
+        public RequestMessage(int userId, int chatId, string status, float amount, string description, string currency, DateTime createdAt)
         {
-            Id = id;
             UserId = userId;
             ChatId = chatId;
             Status = status;
@@ -21,9 +20,8 @@ namespace Common.Models.Social
             Type = MessageType.Request;
         }
         [JsonConstructor]
-        public RequestMessage(int id, int userId, int chatId, string status, float amount, string description, string currency, string createdAt)
+        public RequestMessage(int userId, int chatId, string status, float amount, string description, string currency, string createdAt)
         {
-            Id = id;
             UserId = userId;
             ChatId = chatId;
             Status = status;

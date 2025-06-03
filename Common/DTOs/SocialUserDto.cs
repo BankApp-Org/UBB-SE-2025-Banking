@@ -1,6 +1,6 @@
 namespace Common.DTOs
 {
-    public class SocialUserViewModel
+    public class SocialUserDto
     {
         public int UserID { get; set; }
         public string Cnp { get; set; }

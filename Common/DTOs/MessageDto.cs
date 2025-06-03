@@ -5,11 +5,11 @@ using Common.Models;
 namespace Common.DTOs
 {
     //[JsonPolymorphic(TypeDiscriminatorPropertyName = "messageType")]
-    //[JsonDerivedType(typeof(TextMessageViewModel), "Text")]
-    //[JsonDerivedType(typeof(ImageMessageViewModel), "Image")]
-    //[JsonDerivedType(typeof(TransferMessageViewModel), "Transfer")]
-    //[JsonDerivedType(typeof(RequestMessageViewModel), "Request")]
-    public abstract class MessageViewModel
+    //[JsonDerivedType(typeof(TextMessageDto), "Text")]
+    //[JsonDerivedType(typeof(ImageMessageDto), "Image")]
+    //[JsonDerivedType(typeof(TransferMessageDto), "Transfer")]
+    //[JsonDerivedType(typeof(RequestMessageDto), "Request")]
+    public abstract class MessageDto
     {
         public int MessageID { get; set; }
         public int SenderID { get; set; }
@@ -20,19 +20,19 @@ namespace Common.DTOs
         public string MessageType { get; set; }
     }
 
-    public class TextMessageViewModel : MessageViewModel
+    public class TextMessageDto : MessageDto
     {
         public string Content { get; set; }
         public List<User> UsersReport { get; set; }
     }
 
-    public class ImageMessageViewModel : MessageViewModel
+    public class ImageMessageDto : MessageDto
     {
         public string ImageURL { get; set; }
         public List<User> UsersReport { get; set; }
     }
 
-    public class TransferMessageViewModel : MessageViewModel
+    public class TransferMessageDto : MessageDto
     {
         public string Status { get; set; }
         public float Amount { get; set; }
@@ -41,7 +41,7 @@ namespace Common.DTOs
         public List<User> ListOfReceivers { get; set; }
     }
 
-    public class RequestMessageViewModel : MessageViewModel
+    public class RequestMessageDto : MessageDto
     {
         public string Status { get; set; }
         public float Amount { get; set; }

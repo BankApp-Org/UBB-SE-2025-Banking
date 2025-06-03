@@ -10,9 +10,8 @@ namespace Common.Models.Social
             Type = MessageType.Transfer;
             ListOfReceivers = new List<User>();
         }
-        public TransferMessage(int id, int userId, int chatId, string status, float amount, string description, string currency, DateTime createdAt, List<User>? receivers = null)
+        public TransferMessage(int userId, int chatId, string status, float amount, string description, string currency, DateTime createdAt, List<User>? receivers = null)
         {
-            Id = id;
             UserId = userId;
             ChatId = chatId;
             Status = status;
@@ -25,9 +24,8 @@ namespace Common.Models.Social
         }
 
         [JsonConstructor]
-        public TransferMessage(int id, int userId, int chatId, string status, float amount, string description, string currency, string createdAt, List<User> listOfReceivers)
+        public TransferMessage(int userId, int chatId, string status, float amount, string description, string currency, string createdAt, List<User> listOfReceivers)
         {
-            Id = id;
             UserId = userId;
             ChatId = chatId;
             Status = status;
