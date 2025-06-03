@@ -14,7 +14,7 @@ namespace BankAppDesktop.Views.Pages
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Common.Services.Trading;
+    using Common.Services.Stock;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

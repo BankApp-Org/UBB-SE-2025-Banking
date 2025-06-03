@@ -1,18 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Windows.System;
-using Microsoft.AspNetCore.Routing.Constraints;
-using Common.DTOs;
+﻿using Common.DTOs;
 using Common.Services;
-using Common.Models;
 using Common.Services.Social;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
-using NuGet.Protocol.Core.Types;
+using Microsoft.AspNetCore.Mvc;
 using User = Common.Models.User;
 
 
-namespace LoanShark.API.Controllers
+namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -25,7 +18,7 @@ namespace LoanShark.API.Controllers
         {
             //IRepository repository = new Repository();
             //INotificationService notificationService = new NotificationService(repository);
-            this._userService = us;
+            _userService = us;
         }
 
         //[HttpGet("repo")]

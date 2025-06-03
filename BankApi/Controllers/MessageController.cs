@@ -1,14 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using Common.DTOs;
 using Common.Models;
 using Common.Models.Social;
 using Common.Services;
 using Common.Services.Social;
+using Microsoft.AspNetCore.Mvc;
 
-namespace LoanShark.API.Controllers
+namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -20,9 +17,9 @@ namespace LoanShark.API.Controllers
 
         public MessageController(INotificationService notificationService, IUserService userService, IMessageService messageService)
         {
-            this._messageService = messageService;
-            this._notificationService = notificationService;
-            this._userService = userService;
+            _messageService = messageService;
+            _notificationService = notificationService;
+            _userService = userService;
         }
 
         [HttpPost("text")]

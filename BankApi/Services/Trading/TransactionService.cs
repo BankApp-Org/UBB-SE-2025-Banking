@@ -2,7 +2,7 @@ using BankApi.Repositories.Trading;
 using Common.Models.Trading;
 using Common.Services.Trading;
 
-namespace BankApi.Services.Stock
+namespace BankApi.Services.Trading
 {
     public class TransactionService(IStockTransactionRepository transactionRepository) : ITransactionService
     {

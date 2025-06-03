@@ -20,7 +20,7 @@
     using System.Net.Http;
     using Common.Services.Bank;
     using Common.Services.Social;
-    using Common.Services.Trading;
+    using Common.Services.Stock;
 
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

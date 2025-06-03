@@ -1,13 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using Common.DTOs;
-using Common.Models;
 using Common.Models.Social;
 using Common.Services;
 using Common.Services.Social;
+using Microsoft.AspNetCore.Mvc;
 
-namespace LoanShark.API.Controllers
+namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

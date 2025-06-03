@@ -3,7 +3,7 @@ using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LoanShark.API.Controllers
+namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

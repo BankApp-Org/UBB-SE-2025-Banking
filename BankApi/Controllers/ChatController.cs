@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Common.Models.Social;
-using Common.Models;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using Common.Services.Social;
-using BankApi.JSONConverters;
-using BankApi.Services;
-using BankApi.Services.Social;
-using Common.Services;
+﻿using BankApi.JSONConverters;
 using Common.DTOs;
+using Common.Models;
+using Common.Models.Social;
+using Common.Services;
+using Common.Services.Social;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BankApi.Controllers
 {
@@ -98,11 +95,11 @@ namespace BankApi.Controllers
         public async Task<IActionResult> GetChatHistory(int chatId)
         {
             var messages = await chatService.GetChatById(chatId);
-            var dtosTasks = messages.Messages.Select(async m =>
+            var dtos = messages.Messages.Select(m =>
             {
                 var messageType = m.Type;
 
-                MessageDto viewModel = messageType.ToString() switch
+                MessageDto dto = messageType.ToString() switch
                 {
                     "Text" => new TextMessageDto
                     {
@@ -155,29 +152,15 @@ namespace BankApi.Controllers
                     },
                     _ => throw new InvalidOperationException($"Unknown message type: {messageType}")
                 };
-                return viewModel;
+                return dto;
             }).ToList();
-
-            var dtos = await Task.WhenAll(dtosTasks);
-
-            //// Manually serialize using runtime types
-            //var options = new JsonSerializerOptions
-            //{
-            //    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            //    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            //    WriteIndented = true
-            //};
-
-            //string json = JsonSerializer.Serialize(dtos, options);
-            //return Content(json, "application/json");
-
-            //return Ok(dtos);
 
             var options = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                Converters = { new MessageViewModelConverter() }
+                ReferenceHandler = ReferenceHandler.Preserve,
+                Converters = { new MessageDtoConverter() }
             };
 
             string json = JsonSerializer.Serialize(dtos, options);

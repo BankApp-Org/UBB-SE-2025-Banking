@@ -81,17 +81,18 @@ namespace Common.Services.Proxy
         {
             ArgumentNullException.ThrowIfNull(user);
 
-            var payload = new { 
-                UserName = user.UserName, 
-                Image = user.Image, 
-                Description = user.Description, 
+            var payload = new
+            {
+                UserName = user.UserName,
+                Image = user.Image,
+                Description = user.Description,
                 IsHidden = user.IsHidden,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber
             };
 
             HttpResponseMessage response;
-        
+
             if (string.IsNullOrEmpty(userCNP))
             {
                 // Update current user
@@ -122,6 +123,26 @@ namespace Common.Services.Proxy
             // Extract the number from the message (e.g., "Successfully added the 'User' role to 5 users")
             string numberPart = result.Message.Split(' ').FirstOrDefault(part => int.TryParse(part, out _)) ?? "0";
             return int.TryParse(numberPart, out int count) ? count : 0;
+        }
+
+        public async Task AddFriend(User friend)
+        {
+            if (friend == null)
+            {
+                throw new ArgumentNullException(nameof(friend), "Friend cannot be null.");
+            }
+            var response = await _httpClient.PostAsJsonAsync($"api/User/{friend.CNP}/friends", friend, _jsonOptions);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task RemoveFriend(User friend)
+        {
+            if (friend == null)
+            {
+                throw new ArgumentNullException(nameof(friend), "Friend cannot be null.");
+            }
+            var response = await _httpClient.DeleteAsync($"api/User/{friend.CNP}/friends");
+            response.EnsureSuccessStatusCode();
         }
 
         private class DefaultRoleResponse

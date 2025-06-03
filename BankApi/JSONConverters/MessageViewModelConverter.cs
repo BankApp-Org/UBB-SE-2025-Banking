@@ -1,15 +1,15 @@
-﻿using LoanShark.API.Models;
+﻿using Common.DTOs;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace LoanShark.API.JSONConverters
+namespace BankApi.JSONConverters
 {
     /// <summary>
     /// USED ONLY FOR SERIALIZING!!!
     /// </summary>
-    public class MessageViewModelConverter : JsonConverter<MessageViewModel>
+    public class MessageDtoConverter : JsonConverter<MessageDto>
     {
-        public override MessageViewModel Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override MessageDto Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             using var jsonDoc = JsonDocument.ParseValue(ref reader);
             var root = jsonDoc.RootElement;
@@ -19,19 +19,19 @@ namespace LoanShark.API.JSONConverters
                 throw new JsonException("The 'messageType' property is missing or null.");
             }
 
-            MessageViewModel result = typeString switch
+            MessageDto result = typeString switch
             {
-                "Text" => JsonSerializer.Deserialize<TextMessageViewModel>(root.GetRawText(), options),
-                "Image" => JsonSerializer.Deserialize<ImageMessageViewModel>(root.GetRawText(), options),
-                "Transfer" => JsonSerializer.Deserialize<TransferMessageViewModel>(root.GetRawText(), options),
-                "Request" => JsonSerializer.Deserialize<RequestMessageViewModel>(root.GetRawText(), options),
+                "Text" => JsonSerializer.Deserialize<TextMessageDto>(root.GetRawText(), options),
+                "Image" => JsonSerializer.Deserialize<ImageMessageDto>(root.GetRawText(), options),
+                "Transfer" => JsonSerializer.Deserialize<TransferMessageDto>(root.GetRawText(), options),
+                "Request" => JsonSerializer.Deserialize<RequestMessageDto>(root.GetRawText(), options),
                 _ => throw new JsonException($"Unknown messageType: {typeString}. Expected one of: Text, Image, Transfer, Request.")
             };
 
             return result;
         }
 
-        public override void Write(Utf8JsonWriter writer, MessageViewModel value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, MessageDto value, JsonSerializerOptions options)
         {
             JsonSerializer.Serialize(writer, value, value.GetType(), options);
         }

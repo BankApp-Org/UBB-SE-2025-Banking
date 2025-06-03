@@ -1,6 +1,6 @@
 using BankAppWeb.Views.TransactionLog;
 using Common.Models;
-using Common.Services.Trading;
+using Common.Services.Stock;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

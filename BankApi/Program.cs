@@ -11,7 +11,7 @@ using BankApi.Seeders;
 using BankApi.Services;
 using BankApi.Services.Bank;
 using BankApi.Services.Social;
-using BankApi.Services.Stock;
+using BankApi.Services.Trading;
 using Common.Models; // Required for User
 using Common.Services;
 using Common.Services.Bank;

@@ -4,7 +4,7 @@ using Common.Services.Bank;
 using Common.Services.Impl;
 using Common.Services.Proxy;
 using Common.Services.Social;
-using Common.Services.Trading;
+using Common.Services.Stock;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;

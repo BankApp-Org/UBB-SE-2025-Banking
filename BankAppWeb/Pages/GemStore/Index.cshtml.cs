@@ -1,5 +1,5 @@
 ﻿using Common.Models.Trading;
-using Common.Services.Trading;
+using Common.Services.Stock;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel;

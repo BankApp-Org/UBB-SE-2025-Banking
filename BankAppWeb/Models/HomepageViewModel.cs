@@ -1,6 +1,6 @@
 ﻿using Common.Models;
 using Common.Services;
-using Common.Services.Trading;
+using Common.Services.Stock;
 
 namespace BankAppWeb.Models
 {

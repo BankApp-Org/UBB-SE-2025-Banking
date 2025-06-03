@@ -1,5 +1,4 @@
 using BankApi.Repositories;
-using Common.Models;
 using Common.Models.Social;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
@@ -192,28 +191,7 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpPost("send-message")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SendMessageToUser([FromBody] SendMessageDto messageDto)
-        {
-            try
-            {
-                // Parse string type to MessageType enum, default to Text if parsing fails
-                if (!Enum.TryParse<MessageType>(messageDto.MessageType, true, out var messageType))
-                {
-                    messageType = MessageType.Text;
-                }
 
-                // Send a message to the user directly through the service
-                throw new NotImplementedException("This method should be removed.");
-
-                return Ok(new { Message = "Message sent successfully" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
         [HttpPost("punish-with-message/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PunishUserWithMessage(int id, [FromBody] PunishmentMessageDto punishmentDto)

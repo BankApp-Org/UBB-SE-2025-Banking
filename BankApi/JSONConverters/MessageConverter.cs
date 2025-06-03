@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Common.Models.Social;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using LoanShark.Domain.Enums;
-using LoanShark.Domain.MessageClasses;
 
-namespace LoanShark.API.JSONConverters
+namespace BankApi.JSONConverters
 {
     public class MessageConverter : JsonConverter<Message>
     {

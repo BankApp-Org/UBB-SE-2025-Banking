@@ -1,6 +1,6 @@
 using Common.Models;
 using Common.Services.Social;
-using Common.Services.Trading;
+using Common.Services.Stock;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

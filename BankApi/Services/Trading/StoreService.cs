@@ -1,4 +1,4 @@
-﻿namespace BankApi.Services.Stock
+﻿namespace BankApi.Services.Trading
 {
     using BankApi.Repositories;
     using BankApi.Repositories.Trading;

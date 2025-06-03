@@ -1,9 +1,9 @@
-using System.Collections.ObjectModel;
 using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.ObjectModel;
 
-namespace LoanShark.API.Controllers
+namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -12,10 +12,10 @@ namespace LoanShark.API.Controllers
         private readonly IBankTransactionService _transactionHistoryService;
         private readonly IBankAccountService _bankAccountService;
 
-        public TransactionHistoryController(IBankTransactionService transactionHistoryService, IBankAccountService bankAccountService
+        public TransactionHistoryController(IBankTransactionService transactionHistoryService, IBankAccountService bankAccountService)
         {
-            this._bankAccountService = bankAccountService;
-            this._transactionHistoryService = transactionHistoryService;
+            _bankAccountService = bankAccountService;
+            _transactionHistoryService = transactionHistoryService;
         }
 
         [HttpGet]
