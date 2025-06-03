@@ -11,7 +11,7 @@
 
         Task DeleteMessageAsync(int chatId, int messageId, User user);
 
-        Task<Message> GetMessageByIdAsync(int chatId, int messageId);
+        Task<Message> GetMessageByIdAsync(int messageId);
 
         Task<List<Message>> GetMessagesAsync(int chatId, int pageNumber = 1, int pageSize = 20);
 

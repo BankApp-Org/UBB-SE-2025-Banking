@@ -1,7 +1,6 @@
 ﻿using BankAppWeb.Models;
-using Common.Models;
 using Common.Services;
-using Common.Services.Stock;
+using Common.Services.Trading;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankAppWeb.Controllers

@@ -89,13 +89,10 @@
             }
         }
 
-        public async Task<Message> GetMessageByIdAsync(int chatId, int messageId)
+        public async Task<Message> GetMessageByIdAsync(int messageId)
         {
             try
             {
-                Chat chat = await this.chatRepository.GetChatByIdAsync(chatId)
-                    ?? throw new Exception("Chat not found");
-
                 return await this.messagesRepository.GetMessageByIdAsync(messageId)
                     ?? throw new Exception("Message not found");
             }

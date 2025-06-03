@@ -1,7 +1,7 @@
 using BankAppWeb.Models;
 using Common.Models;
 using Common.Services;
-using Common.Services.Stock;
+using Common.Services.Trading;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

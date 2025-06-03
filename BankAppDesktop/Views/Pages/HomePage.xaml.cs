@@ -1,14 +1,14 @@
 ﻿namespace BankAppDesktop.Views.Pages
 {
+    using BankAppDesktop.ViewModels;
     using Common.Models;
     using Common.Services;
+    using Common.Services.Trading;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks;
-    using Common.Services.Stock;
 
     public sealed partial class HomePage : Page
     {

@@ -1,20 +1,19 @@
 namespace BankAppDesktop.Views.Pages
 {
-    using Common.Models;
+    using BankAppDesktop.ViewModels;
+    using BankAppDesktop.Views.Components;
     using Common.Services;
+    using Common.Services.Trading;
     using LiveChartsCore.SkiaSharpView;
     using LiveChartsCore.SkiaSharpView.Painting;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using SkiaSharp;
-    using BankAppDesktop.ViewModels;
-    using BankAppDesktop.Views.Components;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Common.Services.Stock;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

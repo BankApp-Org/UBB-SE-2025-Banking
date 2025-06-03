@@ -1,12 +1,12 @@
 namespace BankAppDesktop.Views.Pages
 {
+    using BankAppDesktop.ViewModels;
     using Common.Models.Trading;
+    using Common.Services.Trading;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks;
-    using Common.Services.Stock;
 
     public sealed partial class AlertsPage : Page
     {

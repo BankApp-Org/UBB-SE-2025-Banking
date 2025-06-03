@@ -1,5 +1,6 @@
 using BankApi.Repositories;
 using Common.Models.Social;
+using Common.Services;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,28 @@ using System.Security.Claims;
 
 namespace BankApi.Controllers
 {
+    // Static class for legacy models to avoid namespace conflicts
+    public static class LegacyReportModels
+    {
+        public class Report
+        {
+            public int MessageID { get; set; }
+            public int ReporterUserID { get; set; }
+            public string Status { get; set; } = string.Empty;
+            public string Reason { get; set; } = string.Empty;
+            public string Description { get; set; } = string.Empty;
+
+            public Report(int messageID, int reporterUserID, string status, string reason, string description)
+            {
+                MessageID = messageID;
+                ReporterUserID = reporterUserID;
+                Status = status;
+                Reason = reason;
+                Description = description;
+            }
+        }
+    }
+
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
@@ -15,12 +38,21 @@ namespace BankApi.Controllers
         private readonly IChatReportService _chatReportService;
         private readonly IUserRepository _userRepository;
         private readonly IMessageService _messagesService;
+        private readonly INotificationService _notificationService;
+        private readonly IUserService _userService;
 
-        public ChatReportController(IChatReportService chatReportService, IUserRepository userRepository, IMessageService messagesService)
+        public ChatReportController(
+            IChatReportService chatReportService,
+            IUserRepository userRepository,
+            IMessageService messagesService,
+            INotificationService notificationService = null,
+            IUserService userService = null)
         {
             _chatReportService = chatReportService ?? throw new ArgumentNullException(nameof(chatReportService));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _messagesService = messagesService ?? throw new ArgumentNullException(nameof(messagesService));
+            _notificationService = notificationService;
+            _userService = userService;
         }
 
         private async Task<string> GetCurrentUserCnp()
@@ -230,6 +262,26 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpGet("exists/{messageId}/{reporterUserId}")]
+        public async Task<ActionResult<bool>> CheckIfReportExists(int messageId, int reporterUserId)
+        {
+            try
+            {
+                if (_chatReportService == null)
+                {
+                    return StatusCode(500, "Service not available");
+                }
+
+                var exists = await _chatReportService.CheckIfReportExists(messageId, reporterUserId);
+                return Ok(exists);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 
     public class ActivityLogUpdateDto

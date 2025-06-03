@@ -159,5 +159,39 @@ namespace BankApi.Services.Social
         {
             await _chatReportRepository.UpdateActivityLogAsync(userCnp, amount);
         }
+
+        public async Task<bool> CheckIfReportExists(int messageId, int reporterUserId)
+        {
+            try
+            {
+                var reports = await GetAllChatReportsAsync();
+                return reports.Any(r => r.MessageId == messageId && r.SubmitterCnp == reporterUserId.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking if report exists: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task IncreaseReportCount(int reportedUserId)
+        {
+            try
+            {
+                // Attempt to get the user by ID
+                var user = await _userRepository.GetByIdAsync(reportedUserId);
+                if (user != null)
+                {
+                    user.ReportedCount++;
+                    await _userRepository.UpdateAsync(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error increasing report count: {ex.Message}");
+                throw;
+            }
+        }
+
     }
 }

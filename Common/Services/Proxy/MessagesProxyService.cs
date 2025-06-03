@@ -27,9 +27,9 @@ namespace Common.Services.Proxy
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<Message> GetMessageByIdAsync(int chatId, int messageId)
+        public async Task<Message> GetMessageByIdAsync(int messageId)
         {
-            return await _httpClient.GetFromJsonAsync<Message>($"api/Messages/{chatId}/{messageId}", _jsonOptions) ??
+            return await _httpClient.GetFromJsonAsync<Message>($"api/Messages/{messageId}", _jsonOptions) ??
                 throw new InvalidOperationException("Failed to deserialize message response.");
         }
 

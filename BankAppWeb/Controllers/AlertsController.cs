@@ -1,6 +1,6 @@
 using BankAppWeb.Views.Alerts;
 using Common.Models.Trading;
-using Common.Services.Stock;
+using Common.Services.Trading;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankAppWeb.Controllers

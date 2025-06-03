@@ -1,14 +1,5 @@
 ﻿namespace BankAppDesktop
 {
-    using Common.Services;
-    using Common.Services.Impl;
-    using Common.Services.Proxy;
-    using Microsoft.AspNetCore.Http.Json;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
-    using Microsoft.Extensions.Options;
-    using Microsoft.UI.Xaml;
     using BankAppDesktop.Pages;
     using BankAppDesktop.Services;
     using BankAppDesktop.ViewModels;
@@ -16,11 +7,20 @@
     using BankAppDesktop.Views.Components;
     using BankAppDesktop.Views.Controls;
     using BankAppDesktop.Views.Pages;
+    using Common.Services;
+    using Common.Services.Bank;
+    using Common.Services.Impl;
+    using Common.Services.Proxy;
+    using Common.Services.Social;
+    using Common.Services.Trading;
+    using Microsoft.AspNetCore.Http.Json;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Options;
+    using Microsoft.UI.Xaml;
     using System;
     using System.Net.Http;
-    using Common.Services.Bank;
-    using Common.Services.Social;
-    using Common.Services.Stock;
 
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

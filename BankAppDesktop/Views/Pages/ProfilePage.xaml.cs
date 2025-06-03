@@ -1,16 +1,16 @@
 namespace BankAppDesktop.Views.Pages
 {
+    using BankAppDesktop.ViewModels;
     using Common.Models;
     using Common.Services;
+    using Common.Services.Trading;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml.Media.Imaging;
-    using BankAppDesktop.ViewModels;
     using System;
     using System.Threading.Tasks;
     using Windows.UI.Popups;
-    using Common.Services.Stock;
 
     /// <summary>
     /// Represents the Profile Page of the application.

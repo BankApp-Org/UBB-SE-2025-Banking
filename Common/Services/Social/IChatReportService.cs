@@ -25,5 +25,6 @@
         Task DoNotPunishUser(ChatReport chatReportToBeSolved);
 
         Task<bool> IsMessageOffensive(Message messageToBeChecked);
+        Task<bool> CheckIfReportExists(int messageId, int reporterUserId);
     }
 }

@@ -160,6 +160,24 @@ namespace Common.Services.Proxy
             var response = await _httpClient.PostAsJsonAsync("api/ChatReport/send-message", messageDto, _jsonOptions);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<bool> CheckIfReportExists(int messageId, int reporterUserId)
+        {
+            if (messageId <= 0 || reporterUserId <= 0)
+            {
+                throw new ArgumentException("Message ID and Reporter User ID must be greater than zero.");
+            }
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/ChatReport/check-exists/{messageId}/{reporterUserId}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<bool>(_jsonOptions);
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return false; // Report does not exist
+            }
+        }
     }
 
     // DTOs needed for API calls
