@@ -28,29 +28,45 @@ namespace LoanShark.API.Controllers
         [HttpPost("text")]
         public async Task<ActionResult> SendTextMessage([FromBody] TextMessageViewModel messageDto)
         {
-            UserSession.Instance.SetUserData("id_user", "2"); // Hardcoded for now
+            var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null || string.IsNullOrEmpty(messageDto.Content))
                 return BadRequest("Message content is required.");
-
-            await _messageService.SendMessage(messageDto.SenderID, messageDto.ChatID, messageDto.Content);
+            TextMessage message = new TextMessage
+            {
+                UserId = user.Id,
+                ChatId = messageDto.ChatID,
+                MessageContent = messageDto.Content,
+                CreatedAt = DateTime.Now,
+                Type = MessageType.Text,
+                UsersReport = messageDto.UsersReport ?? new List<User>()
+            };
+            await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
             return NoContent();
         }
 
         [HttpPost("image")]
         public async Task<ActionResult> SendImageMessage([FromBody] ImageMessageViewModel messageDto)
         {
-            UserSession.Instance.SetUserData("id_user", "2"); // Hardcoded for now
+            var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null || string.IsNullOrEmpty(messageDto.ImageURL))
                 return BadRequest("Image URL is required.");
-
-            await _messageService.SendImage(messageDto.SenderID, messageDto.ChatID, messageDto.ImageURL);
+            ImageMessage message = new ImageMessage
+            {
+                UserId = user.Id,
+                ChatId = messageDto.ChatID,
+                ImageUrl = messageDto.ImageURL,
+                CreatedAt = DateTime.Now,
+                Type = MessageType.Text,
+                UsersReport = messageDto.UsersReport ?? new List<User>()
+            };
+            await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
             return NoContent();
         }
 
         [HttpPost("transfer")]
         public async Task<ActionResult> SendTransferMessage([FromBody] TransferMessageViewModel messageDto)
         {
-            UserSession.Instance.SetUserData("id_user", "2"); // Hardcoded for now
+            var user = await _userService.GetCurrentUserAsync();
             if (messageDto == null || string.IsNullOrEmpty(messageDto.Description) || string.IsNullOrEmpty(messageDto.Currency))
                 return BadRequest("Transfer details are required.");
 

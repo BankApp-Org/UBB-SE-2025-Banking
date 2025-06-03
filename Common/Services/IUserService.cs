@@ -11,6 +11,8 @@
         Task<User> GetUserByCnpAsync(string cnp);
 
         Task<List<User>> GetUsers();
+        Task AddFriend(User friend);
+        Task RemoveFriend(User friend);
 
         Task UpdateIsAdminAsync(bool newIsAdmin, string? userCNP = null);
 

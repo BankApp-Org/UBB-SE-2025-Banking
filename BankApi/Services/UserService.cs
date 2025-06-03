@@ -28,6 +28,18 @@
             return userRepository.GetAllAsync();
         }
 
+        public async Task AddFriend(User friend)
+        {
+            var user = await this.GetCurrentUserAsync(null);
+            user.Friends.Add(friend);
+        }
+
+        public async Task RemoveFriend(User friend)
+        {
+            var user = await this.GetCurrentUserAsync(null);
+            user.Friends.Remove(friend);
+        }
+
         public async Task CreateUser(User user)
         {
             ArgumentNullException.ThrowIfNull(user);

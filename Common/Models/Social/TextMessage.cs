@@ -11,9 +11,8 @@ namespace Common.Models.Social
             UsersReport = new List<User>();
         }
 
-        public TextMessage(int id, int userId, int chatId, string messageContent, DateTime createdAt, List<User> usersReport)
+        public TextMessage(int userId, int chatId, string messageContent, DateTime createdAt, List<User> usersReport)
         {
-            Id = id;
             UserId = userId;
             ChatId = chatId;
             MessageContent = messageContent;
@@ -23,9 +22,8 @@ namespace Common.Models.Social
         }
 
         [JsonConstructor]
-        public TextMessage(int id, int userId, int chatId, string messageContent, string createdAt, MessageType type, List<User> usersReport)
+        public TextMessage( int userId, int chatId, string messageContent, string createdAt, MessageType type, List<User> usersReport)
         {
-            Id = id;
             UserId = userId;
             ChatId = chatId;
             MessageContent = messageContent;
