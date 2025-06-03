@@ -141,7 +141,7 @@ builder.Services.AddScoped<ICreditHistoryService, HistoryService>();
 builder.Services.AddScoped<IInvestmentsService, InvestmentsService>();
 builder.Services.AddScoped<ILoanRequestService, LoanRequestService>();
 builder.Services.AddScoped<ILoanService, LoanService>();
-builder.Services.AddScoped<IMessagesService, MessagesService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IStockPageService, StockPageService>();
 builder.Services.AddScoped<IStockService, StockService>();

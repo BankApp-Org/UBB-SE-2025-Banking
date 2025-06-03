@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace Common.Services.Proxy
 {
-    public class MessagesProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : IProxyService, IMessagesService
+    public class MessagesProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : IProxyService, IMessageService
     {
         private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         private readonly JsonSerializerOptions _jsonOptions = jsonOptions.Value.SerializerOptions ?? throw new ArgumentNullException(nameof(jsonOptions), "JsonSerializerOptions cannot be null.");

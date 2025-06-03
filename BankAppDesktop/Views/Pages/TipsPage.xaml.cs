@@ -14,7 +14,7 @@ namespace BankAppDesktop.Views.Pages
     /// </summary>
     public sealed partial class TipsPage : Page
     {
-        private readonly IMessagesService _messagesService;
+        private readonly IMessageService _messagesService;
         private readonly IUserService _userService;
         private readonly IAuthenticationService _authenticationService;
         private TipHistoryViewModel _viewModel;
@@ -23,7 +23,7 @@ namespace BankAppDesktop.Views.Pages
 
         public bool IsLoggedIn => _authenticationService.IsUserLoggedIn();
 
-        public TipsPage(IMessagesService messagesService, IUserService userService, TipHistoryViewModel viewModel, IAuthenticationService authenticationService)
+        public TipsPage(IMessageService messagesService, IUserService userService, TipHistoryViewModel viewModel, IAuthenticationService authenticationService)
         {
             this.InitializeComponent();
             _messagesService = messagesService ?? throw new ArgumentNullException(nameof(messagesService));

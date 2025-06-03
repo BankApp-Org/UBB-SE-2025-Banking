@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using LoanShark.Service.SocialService.Implementations;
-using LoanShark.Domain;
 using System.Collections.Generic;
-using LoanShark.Domain.MessageClasses;
-using LoanShark.API.Models;
-using LoanShark.Service.SocialService.Interfaces;
+using Common.Models.Social;
+using Common.Models;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Common.Services.Social;
-using LoanShark.API.JSONConverters;
+using BankApi.JSONConverters;
+using BankApi.Services;
+using BankApi.Services.Social;
+using Common.Services;
+using Common.DTOs;
 
-namespace LoanShark.API.Controllers
+namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -18,17 +19,12 @@ namespace LoanShark.API.Controllers
     {
         private readonly IChatService chatService;
         private readonly IMessageService messageService;
+        private readonly IUserService userService;
 
         public ChatController(IChatService chatService, IMessageService messageService)
         {
             this.chatService = chatService;
             this.messageService = messageService;
-        }
-
-        [HttpGet("current-user-id")]
-        public ActionResult<int> GetCurrentUserID()
-        {
-            return Ok(chatService.GetCurrentUserID());
         }
 
         [HttpGet("{chatId}/participants/count")]
@@ -37,45 +33,51 @@ namespace LoanShark.API.Controllers
             return Ok(await chatService.GetNumberOfParticipants(chatId));
         }
 
-        [HttpPost("request-money")]
-        public async Task<IActionResult> RequestMoney([FromBody] RequestMoneyDto dto)
-        {
-            try
-            {
-                await chatService.RequestMoneyViaChat(dto.Amount, dto.Currency, dto.ChatID, dto.Description);
-                return Ok("Request sent.");
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpPost("request-money")]
+        //public async Task<IActionResult> RequestMoney([FromBody] RequestMoneyDto dto)
+        //{
+        //    try
+        //    {
+        //        await chatService.RequestMoneyViaChat(dto.Amount, dto.Currency, dto.ChatID, dto.Description);
+        //        return Ok("Request sent.");
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
-        [HttpPost("send-money")]
-        public async Task<IActionResult> SendMoney([FromBody] SendMoneyDto dto)
-        {
-            try
-            {
-                await chatService.SendMoneyViaChat(dto.Amount, dto.Currency, dto.Description, dto.ChatID);
-                return Ok("Transfer processed.");
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpPost("send-money")]
+        //public async Task<IActionResult> SendMoney([FromBody] SendMoneyDto dto)
+        //{
+        //    try
+        //    {
+        //        await chatService.SendMoneyViaChat(dto.Amount, dto.Currency, dto.Description, dto.ChatID);
+        //        return Ok("Transfer processed.");
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
-        [HttpPost("accept-request")]
-        public async Task<IActionResult> AcceptRequest([FromBody] AcceptRequestDto dto)
-        {
-            await chatService.AcceptRequestViaChat(dto.Amount, dto.Currency, dto.AccepterID, dto.RequesterID, dto.ChatID);
-            return Ok("Request handled.");
-        }
+        //[HttpPost("accept-request")]
+        //public async Task<IActionResult> AcceptRequest([FromBody] AcceptRequestDto dto)
+        //{
+        //    await chatService.AcceptRequestViaChat(dto.Amount, dto.Currency, dto.AccepterID, dto.RequesterID, dto.ChatID);
+        //    return Ok("Request handled.");
+        //}
 
         [HttpPost("create-chat")]
         public async Task<IActionResult> CreateChat([FromBody] CreateChatDto dto)
         {
-            await chatService.CreateChat(dto.ParticipantsID, dto.ChatName);
+            Chat newchat = new Chat
+            {
+                ChatName = dto.ChatName,
+                Users = dto.Participants,
+                Messages = new List<Message>()
+            };
+            await chatService.CreateChat(newchat);
             return Ok("Chat created.");
         }
 
@@ -86,65 +88,65 @@ namespace LoanShark.API.Controllers
             return Ok("Chat deleted.");
         }
 
-        [HttpGet("{chatId}/last-message-time")]
-        public async Task<ActionResult<DateTime>> GetLastMessageTimestamp(int chatId)
-        {
-            return Ok(await chatService.GetLastMessageTimeStamp(chatId));
-        }
+        //[HttpGet("{chatId}/last-message-time")]
+        //public async Task<ActionResult<DateTime>> GetLastMessageTimestamp(int chatId)
+        //{
+        //    return Ok(await chatService.GetLastMessageTimeStamp(chatId));
+        //}
 
         [HttpGet("{chatId}/history")]
         public async Task<IActionResult> GetChatHistory(int chatId)
         {
-            var messages = await chatService.GetChatHistory(chatId);
-            var dtosTasks = messages.Select(async m =>
+            var messages = await chatService.GetChatById(chatId);
+            var dtosTasks = messages.Messages.Select(async m =>
             {
-                var messageType = await this.messageService.GetMessageTypeByMessageId(m.MessageID);
+                var messageType = m.Type;
 
                 MessageViewModel viewModel = messageType.ToString() switch
                 {
                     "Text" => new TextMessageViewModel
                     {
-                        MessageID = m.MessageID,
-                        SenderID = m.SenderID,
-                        ChatID = m.ChatID,
-                        Timestamp = m.Timestamp.ToString("O"),
-                        SenderUsername = m.SenderUsername,
+                        MessageID = m.Id,
+                        SenderID = m.UserId,
+                        ChatID = m.ChatId,
+                        Timestamp = m.CreatedAt.ToString("O"),
+                        SenderUsername = m.Sender.FirstName,
                         MessageType = messageType.ToString(),
-                        Content = ((TextMessage)m).Content,
+                        Content = ((TextMessage)m).MessageContent,
                         UsersReport = ((TextMessage)m).UsersReport
                     },
                     "Image" => new ImageMessageViewModel
                     {
-                        MessageID = m.MessageID,
-                        SenderID = m.SenderID,
-                        ChatID = m.ChatID,
-                        Timestamp = m.Timestamp.ToString("O"),
-                        SenderUsername = m.SenderUsername,
+                        MessageID = m.Id,
+                        SenderID = m.UserId,
+                        ChatID = m.ChatId,
+                        Timestamp = m.CreatedAt.ToString("O"),
+                        SenderUsername = m.Sender.FirstName,
                         MessageType = messageType.ToString(),
-                        ImageURL = ((ImageMessage)m).ImageURL,
+                        ImageURL = ((ImageMessage)m).ImageUrl,
                         UsersReport = ((ImageMessage)m).UsersReport
                     },
                     "Transfer" => new TransferMessageViewModel
                     {
-                        MessageID = m.MessageID,
-                        SenderID = m.SenderID,
-                        ChatID = m.ChatID,
-                        Timestamp = m.Timestamp.ToString("O"),
-                        SenderUsername = m.SenderUsername,
+                        MessageID = m.Id,
+                        SenderID = m.UserId,
+                        ChatID = m.ChatId,
+                        Timestamp = m.CreatedAt.ToString("O"),
+                        SenderUsername = m.Sender.FirstName,
                         MessageType = messageType.ToString(),
                         Status = ((TransferMessage)m).Status,
                         Amount = ((TransferMessage)m).Amount,
                         Description = ((TransferMessage)m).Description,
                         Currency = ((TransferMessage)m).Currency,
-                        ListOfReceiversID = ((TransferMessage)m).ListOfReceiversID
+                        ListOfReceivers = ((TransferMessage)m).ListOfReceivers
                     },
                     "Request" => new RequestMessageViewModel
                     {
-                        MessageID = m.MessageID,
-                        SenderID = m.SenderID,
-                        ChatID = m.ChatID,
-                        Timestamp = m.Timestamp.ToString("O"),
-                        SenderUsername = m.SenderUsername,
+                        MessageID = m.Id,
+                        SenderID = m.UserId,
+                        ChatID = m.ChatId,
+                        Timestamp = m.CreatedAt.ToString("O"),
+                        SenderUsername = m.Sender.FirstName,
                         MessageType = messageType.ToString(),
                         Status = ((RequestMessage)m).Status,
                         Amount = ((RequestMessage)m).Amount,
@@ -182,17 +184,19 @@ namespace LoanShark.API.Controllers
             return Content(json, "application/json");
         }
 
-        [HttpPost("{chatId}/add-user/{userId}")]
-        public async Task<IActionResult> AddUserToChat(int chatId, int userId)
+        [HttpPost("{chatId}/add-user/{userCNP}")]
+        public async Task<IActionResult> AddUserToChat(int chatId, string userCNP)
         {
-            await chatService.AddUserToChat(userId, chatId);
+            var user = await userService.GetUserByCnpAsync(userCNP);
+            await chatService.AddUserToChat(chatId, user);
             return Ok("User added to chat.");
         }
 
-        [HttpDelete("{chatId}/remove-user/{userId}")]
-        public async Task<IActionResult> RemoveUserFromChat(int chatId, int userId)
+        [HttpDelete("{chatId}/remove-user/{userCNP}")]
+        public async Task<IActionResult> RemoveUserFromChat(int chatId, string userCNP)
         {
-            await chatService.RemoveUserFromChat(userId, chatId);
+            var user = await userService.GetUserByCnpAsync(userCNP);
+            await chatService.RemoveUserFromChat(chatId, user);
             return Ok("User removed from chat.");
         }
 
@@ -201,7 +205,8 @@ namespace LoanShark.API.Controllers
         {
             try
             {
-                return Ok(await chatService.GetChatNameByID(chatId));
+                var chat = await chatService.GetChatById(chatId);
+                return Ok(chat.ChatName);
             }
             catch (InvalidOperationException ex)
             {
@@ -212,23 +217,23 @@ namespace LoanShark.API.Controllers
         [HttpGet("{chatId}/participants/usernames")]
         public async Task<ActionResult<List<string>>> GetParticipantUsernames(int chatId)
         {
-            return Ok(await chatService.GetChatParticipantsStringList(chatId));
+            var chat = await chatService.GetChatById(chatId);
+            return Ok(chat.Users.Select(u => u.FirstName).ToList());
         }
 
         [HttpGet("{chatId}/participants")]
         public async Task<ActionResult<List<User>>> GetParticipants(int chatId)
         {
-            var friends = await chatService.GetChatParticipantsList(chatId);
+            var chat = await chatService.GetChatById(chatId);
+            var friends = chat.Users;
             var dtos = friends.Select(f => new SocialUserViewModel
             {
-                UserID = f.UserID,
-                Username = f.Username,
+                UserID = f.Id,
+                Username = f.FirstName,
                 FirstName = f.FirstName,
                 LastName = f.LastName,
                 Email = f.Email?.ToString(),
-                PhoneNumber = f.PhoneNumber?.ToString(),
-                Cnp = f.Cnp?.ToString(),
-                HashedPassword = f.HashedPassword?.ToString(),
+                Cnp = f.CNP?.ToString(),
                 ReportedCount = f.ReportedCount
             }).ToList();
             return Ok(dtos);

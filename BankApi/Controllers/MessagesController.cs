@@ -13,12 +13,12 @@ namespace BankApi.Controllers
     [Route("api/[controller]")]
     public class MessagesController : ControllerBase
     {
-        private readonly IMessagesService _messagesService;
+        private readonly IMessageService _messagesService;
         private readonly IUserRepository _userRepository;
         private readonly MessagesRepository _messagesRepository;
 
         public MessagesController(
-            IMessagesService messagesService,
+            IMessageService messagesService,
             IUserRepository userRepository,
             MessagesRepository messagesRepository)
         {

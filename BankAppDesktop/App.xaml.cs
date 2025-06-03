@@ -100,7 +100,7 @@
                     services.AddScoped<INewsService, NewsProxyService>();
                     services.AddScoped<IStockService, StockProxyService>();
                     services.AddScoped<IAlertService, AlertProxyService>();
-                    services.AddScoped<IMessagesService, MessagesProxyService>();
+                    services.AddScoped<IMessageService, MessagesProxyService>();
                     services.AddScoped<ITipsService, TipsProxyService>();
                     services.AddScoped<IProfanityChecker, ProfanityChecker>();
 
@@ -149,7 +149,7 @@
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-                    services.AddHttpClient<IMessagesService, MessagesProxyService>(client =>
+                    services.AddHttpClient<IMessageService, MessagesProxyService>(client =>
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();

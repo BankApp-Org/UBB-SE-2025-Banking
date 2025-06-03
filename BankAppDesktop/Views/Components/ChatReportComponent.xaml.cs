@@ -14,7 +14,7 @@ namespace BankAppDesktop.Views.Components
         private readonly IAuthenticationService authenticationService;
         private readonly IUserService userService;
         private readonly IProfanityChecker profanityChecker;
-        private readonly IMessagesService messagesService;
+        private readonly IMessageService messagesService;
 
         public event EventHandler? ReportSolved;
 
@@ -24,7 +24,7 @@ namespace BankAppDesktop.Views.Components
 
         public int ReportId { get; set; }
 
-        public ChatReportComponent(IChatReportService chatReportService, IProfanityChecker profanityChecker, IMessagesService messagesService, IUserService userService, IAuthenticationService authenticationService)
+        public ChatReportComponent(IChatReportService chatReportService, IProfanityChecker profanityChecker, IMessageService messagesService, IUserService userService, IAuthenticationService authenticationService)
         {
             this.InitializeComponent();
             this.chatReportService = chatReportService ?? throw new ArgumentNullException(nameof(chatReportService));

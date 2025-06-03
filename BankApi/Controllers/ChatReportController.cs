@@ -15,9 +15,9 @@ namespace BankApi.Controllers
     {
         private readonly IChatReportService _chatReportService;
         private readonly IUserRepository _userRepository;
-        private readonly IMessagesService _messagesService;
+        private readonly IMessageService _messagesService;
 
-        public ChatReportController(IChatReportService chatReportService, IUserRepository userRepository, IMessagesService messagesService)
+        public ChatReportController(IChatReportService chatReportService, IUserRepository userRepository, IMessageService messagesService)
         {
             _chatReportService = chatReportService ?? throw new ArgumentNullException(nameof(chatReportService));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));

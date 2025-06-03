@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public interface IMessagesService
+    public interface IMessageService
     {
         Task<Message> SendMessageAsync(int chatId, User user, Message message);
 

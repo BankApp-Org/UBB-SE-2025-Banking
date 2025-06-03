@@ -12,10 +12,10 @@ namespace BankAppWeb.Pages.Tips
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly IMessagesService _messagesService;
+        private readonly IMessageService _messagesService;
         private readonly IUserService _userService;
 
-        public IndexModel(IMessagesService messagesService, IUserService userService)
+        public IndexModel(IMessageService messagesService, IUserService userService)
         {
             _messagesService = messagesService;
             _userService = userService;

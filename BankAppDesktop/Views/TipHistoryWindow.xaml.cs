@@ -13,13 +13,13 @@ namespace BankAppDesktop.Views
     {
         private readonly TipHistoryViewModel viewModel;
         private readonly ITipsService tipsService;
-        private readonly IMessagesService messagesService;
+        private readonly IMessageService messagesService;
 
         public TipHistoryWindow(TipHistoryViewModel tipHistoryViewModel)
         {
             this.viewModel = tipHistoryViewModel;
             this.tipsService = App.Host.Services.GetRequiredService<ITipsService>();
-            this.messagesService = App.Host.Services.GetRequiredService<IMessagesService>();
+            this.messagesService = App.Host.Services.GetRequiredService<IMessageService>();
             this.InitializeComponent();
             this.MainPannel.DataContext = this.viewModel;
         }

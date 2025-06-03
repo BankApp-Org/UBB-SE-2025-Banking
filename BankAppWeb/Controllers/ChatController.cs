@@ -11,10 +11,10 @@ namespace BankAppWeb.Controllers
     {
         private readonly IChatReportService _chatReportService;
         private readonly IProfanityChecker _profanityChecker;
-        private readonly IMessagesService _messagesService;
+        private readonly IMessageService _messagesService;
         private readonly IChatService _chatService;
 
-        public ChatController(IChatReportService chatReportService, IProfanityChecker profanityChecker, IMessagesService messagesService)
+        public ChatController(IChatReportService chatReportService, IProfanityChecker profanityChecker, IMessageService messagesService)
         {
             _chatReportService = chatReportService;
             _profanityChecker = profanityChecker;

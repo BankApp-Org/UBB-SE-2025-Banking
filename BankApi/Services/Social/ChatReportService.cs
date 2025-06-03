@@ -6,12 +6,12 @@ using Common.Services.Social;
 
 namespace BankApi.Services.Social
 {
-    public class ChatReportService(IChatReportRepository chatReportRepository, IUserRepository userRepository, ITipsService tipsService, IMessagesService messageService, IProfanityChecker profanityChecker) : IChatReportService
+    public class ChatReportService(IChatReportRepository chatReportRepository, IUserRepository userRepository, ITipsService tipsService, IMessageService messageService, IProfanityChecker profanityChecker) : IChatReportService
     {
         private readonly IChatReportRepository _chatReportRepository = chatReportRepository ?? throw new ArgumentNullException(nameof(chatReportRepository));
         private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         private readonly ITipsService _tipsService = tipsService ?? throw new ArgumentNullException(nameof(tipsService));
-        private readonly IMessagesService _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+        private readonly IMessageService _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
         private readonly IProfanityChecker _profanityChecker = profanityChecker ?? throw new ArgumentNullException(nameof(profanityChecker));
 
         public async Task DoNotPunishUser(ChatReport chatReportToBeSolved)

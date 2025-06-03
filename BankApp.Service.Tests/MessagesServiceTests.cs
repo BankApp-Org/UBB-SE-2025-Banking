@@ -20,14 +20,14 @@ namespace BankApp.Service.Tests
         private Mock<IUserRepository> _mockUserRepository;
         private Mock<IChatRepository> _mockChatRepository;
         private Mock<IChatReportRepository> _mockChatReportRepository;
-        private MessagesService _service;
+        private MessageService _service;
 
         [TestInitialize]
         public void TestInitialize()
         {
             _mockMessagesRepository = new Mock<IMessagesRepository>();
             _mockUserRepository = new Mock<IUserRepository>();
-            _service = new MessagesService(_mockMessagesRepository.Object, _mockUserRepository.Object, _mockChatRepository.Object, _mockChatReportRepository.Object);
+            _service = new MessageService(_mockMessagesRepository.Object, _mockUserRepository.Object, _mockChatRepository.Object, _mockChatReportRepository.Object);
         }
 
         [TestMethod]

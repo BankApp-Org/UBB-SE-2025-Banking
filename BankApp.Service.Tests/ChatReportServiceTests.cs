@@ -20,7 +20,7 @@ namespace BankApp.Service.Tests
         private Mock<IChatReportRepository> _mockChatReportRepo;
         private Mock<IUserRepository> _mockUserRepo;
         private Mock<ITipsService> _mockTipsService;
-        private Mock<IMessagesService> _mockMessagesService;
+        private Mock<IMessageService> _mockMessagesService;
         private Mock<IProfanityChecker> _mockProfanityChecker;
         private ChatReportService _service;
 
@@ -30,7 +30,7 @@ namespace BankApp.Service.Tests
             _mockChatReportRepo = new Mock<IChatReportRepository>();
             _mockUserRepo = new Mock<IUserRepository>();
             _mockTipsService = new Mock<ITipsService>();
-            _mockMessagesService = new Mock<IMessagesService>();
+            _mockMessagesService = new Mock<IMessageService>();
             _mockProfanityChecker = new Mock<IProfanityChecker>();
             _service = new ChatReportService(
                 _mockChatReportRepo.Object,

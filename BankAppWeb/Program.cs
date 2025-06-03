@@ -133,7 +133,7 @@ builder.Services.AddScoped<ITransactionService, TransactionProxyService>();
 builder.Services.AddScoped<ITransactionLogService, TransactionLogProxyService>();
 builder.Services.AddScoped<IChatReportService, ChatReportProxyService>();
 builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
-builder.Services.AddScoped<IMessagesService, MessagesProxyService>();
+builder.Services.AddScoped<IMessageService, MessagesProxyService>();
 builder.Services.AddScoped<IActivityService, ActivityProxyService>();
 builder.Services.AddScoped<ICreditHistoryService, HistoryProxyService>();
 builder.Services.AddScoped<IAlertService, AlertProxyService>();
@@ -157,7 +157,7 @@ builder.Services.AddHttpClient<ILoanRequestService, LoanRequestProxyService>(cli
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
-builder.Services.AddHttpClient<IMessagesService, MessagesProxyService>(client =>
+builder.Services.AddHttpClient<IMessageService, MessagesProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
@@ -192,7 +192,7 @@ builder.Services.AddHttpClient<IChatReportService, ChatReportProxyService>(clien
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
-builder.Services.AddHttpClient<IMessagesService, MessagesProxyService>(client =>
+builder.Services.AddHttpClient<IMessageService, MessagesProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();

@@ -10,7 +10,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public class MessagesService(IMessagesRepository messagesRepository, IUserRepository userRepository, IChatRepository chatRepository, IChatReportRepository chatReportRepository) : IMessagesService
+    public class MessageService(IMessagesRepository messagesRepository, IUserRepository userRepository, IChatRepository chatRepository, IChatReportRepository chatReportRepository) : IMessageService
     {
         private readonly IMessagesRepository messagesRepository = messagesRepository ?? throw new ArgumentNullException(nameof(messagesRepository));
         private readonly IUserRepository userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
