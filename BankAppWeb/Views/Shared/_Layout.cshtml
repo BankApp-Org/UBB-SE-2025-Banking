@@ -96,6 +96,16 @@
                                 </li>
                             }
                         }
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-controller="Report" asp-action="CreateDemo" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-warning nav-link text-dark" style="border: none; background: none;">
+                                    Demo Report
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

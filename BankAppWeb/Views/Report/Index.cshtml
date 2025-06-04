@@ -2,11 +2,20 @@
 
 @{
     ViewData["Title"] = "Report Content";
+    bool isDemoData = Model.ChatId == 1 && Model.MessageId == 1 && Model.ReportedUserId == 1;
 }
 
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
+            @if (isDemoData)
+            {
+                <div class="alert alert-info mb-3">
+                    <strong>🎯 DEMO MODE</strong><br>
+                    Chat ID: @Model.ChatId | Message ID: @Model.MessageId | Reported User ID: @Model.ReportedUserId
+                </div>
+            }
+            
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0 text-center">Report Content</h4>
@@ -23,6 +32,20 @@
                     {
                         <div class="alert alert-success">
                             @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger">
+                            @ViewBag.ErrorMessage
+                        </div>
+                    }
+
+                    @if (ViewBag.SuccessMessage != null)
+                    {
+                        <div class="alert alert-success">
+                            @ViewBag.SuccessMessage
                         </div>
                     }
 

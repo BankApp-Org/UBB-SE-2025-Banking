@@ -17,9 +17,26 @@ namespace BankAppDesktop.ViewModels
     using BankAppDesktop.Commands;
 
     /// <summary>
+    /// Interface for report view models to ensure common properties and events.
+    /// </summary>
+    public interface IReportViewModel : INotifyPropertyChanged
+    {
+        event Action<string> ShowSuccessDialog;
+        event Action<string> ShowErrorDialog;
+        event Action CloseView;
+
+        ObservableCollection<ReportReason> ReportReasons { get; }
+        ReportReason SelectedReportReason { get; set; }
+        bool IsOtherCategorySelected { get; }
+        string OtherReason { get; set; }
+        ICommand SubmitCommand { get; }
+        ICommand CancelCommand { get; }
+    }
+
+    /// <summary>
     /// ViewModel for handling report functionality.
     /// </summary>
-    public class ReportViewModel : INotifyPropertyChanged
+    public class ReportViewModel : IReportViewModel
     {
         public event Action<string> ShowSuccessDialog = message => { };
         public event Action<string> ShowErrorDialog = message => { };
@@ -27,9 +44,9 @@ namespace BankAppDesktop.ViewModels
 
         private readonly IMessageService messageService;
         private readonly IAuthenticationService authenticationService;
-        private readonly int reportedUserId;
-        private readonly int messageId;
-        private readonly int chatId;
+        protected readonly int reportedUserId;
+        protected readonly int messageId;
+        protected readonly int chatId;
 
         private ReportReason selectedReportReason = ReportReason.Other;
         private string otherReason = string.Empty;
@@ -128,7 +145,7 @@ namespace BankAppDesktop.ViewModels
         /// <summary>
         /// Submits the report.
         /// </summary>
-        private async void SubmitReport()
+        protected virtual async void SubmitReport()
         {
             try
             {
@@ -171,7 +188,7 @@ namespace BankAppDesktop.ViewModels
         /// </summary>
         private void CancelReport()
         {
-            this.OnCloseView();
+            this.CloseView?.Invoke();
         }
 
         /// <summary>
@@ -198,6 +215,133 @@ namespace BankAppDesktop.ViewModels
         protected virtual void OnCloseView()
         {
             this.CloseView?.Invoke();
+        }
+    }
+
+    
+    public class ReportViewModelDemo : IReportViewModel
+    {
+        public event Action<string> ShowSuccessDialog = message => { };
+        public event Action<string> ShowErrorDialog = message => { };
+        public event Action CloseView = () => { };
+
+        protected readonly int reportedUserId;
+        protected readonly int messageId;
+        protected readonly int chatId;
+
+        private ReportReason selectedReportReason = ReportReason.Other;
+        private string otherReason = string.Empty;
+
+        /// <summary>
+        /// Gets the available report reasons from the enum.
+        /// </summary>
+        public ObservableCollection<ReportReason> ReportReasons { get; }
+
+        /// <summary>
+        /// Gets or sets the selected report reason.
+        /// </summary>
+        public ReportReason SelectedReportReason
+        {
+            get => this.selectedReportReason;
+            set
+            {
+                if (this.selectedReportReason != value)
+                {
+                    this.selectedReportReason = value;
+                    this.OnPropertyChanged(nameof(this.SelectedReportReason));
+                    this.OnPropertyChanged(nameof(this.IsOtherCategorySelected));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the selected category is "Other".
+        /// </summary>
+        public bool IsOtherCategorySelected => this.SelectedReportReason == ReportReason.Other;
+
+        /// <summary>
+        /// Gets or sets the reason for reporting when the selected category is "Other".
+        /// </summary>
+        public string OtherReason
+        {
+            get => this.otherReason;
+            set
+            {
+                if (this.otherReason != value)
+                {
+                    this.otherReason = value;
+                    this.OnPropertyChanged(nameof(this.OtherReason));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the command to submit the report.
+        /// </summary>
+        public ICommand SubmitCommand { get; }
+
+        /// <summary>
+        /// Gets the command to cancel the report.
+        /// </summary>
+        public ICommand CancelCommand { get; }
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public ReportViewModelDemo(int chatId, int messageId, int reportedUserId)
+        {
+            this.chatId = chatId;
+            this.messageId = messageId;
+            this.reportedUserId = reportedUserId;
+
+            // Initialize the collection with all enum values
+            this.ReportReasons = new ObservableCollection<ReportReason>(
+                Enum.GetValues<ReportReason>().ToList());
+
+            this.SubmitCommand = new RelayCommand(_ => this.SubmitReport());
+            this.CancelCommand = new RelayCommand(_ => this.CancelReport());
+        }
+
+        /// <summary>
+        /// Demo submit - just shows success popup without real logic.
+        /// </summary>
+        private async void SubmitReport()
+        {
+            // Simulate validation
+            if (this.SelectedReportReason == ReportReason.Other && string.IsNullOrWhiteSpace(this.OtherReason))
+            {
+                this.ShowErrorDialog?.Invoke("Please provide a reason when selecting 'Other'.");
+                return;
+            }
+
+            
+            string successMessage = $"🎯 Report submitted successfully!\n\n" +
+                                  $"Chat ID: {this.chatId}\n" +
+                                  $"Message ID: {this.messageId}\n" +
+                                  $"Reported User ID: {this.reportedUserId}\n" +
+                                  $"Reason: {this.SelectedReportReason}\n" +
+                                  (this.SelectedReportReason == ReportReason.Other ? $"Description: {this.OtherReason}" : "");
+
+            this.ShowSuccessDialog?.Invoke(successMessage);
+        }
+
+        /// <summary>
+        /// Cancels the report.
+        /// </summary>
+        private void CancelReport()
+        {
+            this.CloseView?.Invoke();
+        }
+
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">Name of the property that changed.</param>
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
