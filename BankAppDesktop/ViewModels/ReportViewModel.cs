@@ -149,8 +149,8 @@ namespace BankAppDesktop.ViewModels
                 var userCnp = this.authenticationService.GetUserCNP();
 
                 // Create a User object for the service call
-                var user = new User 
-                { 
+                var user = new User
+                {
                     CNP = userCnp
                 };
 
@@ -200,4 +200,4 @@ namespace BankAppDesktop.ViewModels
             this.CloseView?.Invoke();
         }
     }
-} 
+}

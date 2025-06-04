@@ -17,13 +17,13 @@ namespace BankAppDesktop.Views.Pages
         public ReportView(ReportViewModel viewModel)
         {
             this.InitializeComponent();
-            
+
             ViewModel = viewModel;
             if (this.Content is FrameworkElement content)
             {
                 content.DataContext = ViewModel;
             }
-            
+
             ViewModel.ShowErrorDialog += OnShowErrorDialog;
             ViewModel.ShowSuccessDialog += OnShowSuccessDialog;
             ViewModel.CloseView += OnCloseView;
@@ -67,4 +67,4 @@ namespace BankAppDesktop.Views.Pages
             }
         }
     }
-} 
+}
