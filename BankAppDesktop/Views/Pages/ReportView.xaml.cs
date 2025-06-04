@@ -19,7 +19,10 @@ namespace BankAppDesktop.Views.Pages
             this.InitializeComponent();
             
             ViewModel = viewModel;
-            this.Content.DataContext = ViewModel;
+            if (this.Content is FrameworkElement content)
+            {
+                content.DataContext = ViewModel;
+            }
             
             ViewModel.ShowErrorDialog += OnShowErrorDialog;
             ViewModel.ShowSuccessDialog += OnShowSuccessDialog;
