@@ -39,12 +39,12 @@
             <TextBlock x:Name="OtherReasonLabel" 
                        Text="Please Specify:" 
                        Margin="0,0,0,5"
-                       Visibility="{Binding IsOtherCategorySelected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                       Visibility="{Binding IsOtherCategorySelected, Converter={StaticResource BoolToVisibilityConverter}}"/>
             <TextBox x:Name="OtherReasonTextBox"
                      Height="80"
                      TextWrapping="Wrap"
                      AcceptsReturn="True"
-                     Visibility="{Binding IsOtherCategorySelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     Visibility="{Binding IsOtherCategorySelected, Converter={StaticResource BoolToVisibilityConverter}}"
                      Text="{Binding OtherReason, Mode=TwoWay}"/>
         </StackPanel>
 
