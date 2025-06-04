@@ -121,8 +121,8 @@ namespace BankAppDesktop.ViewModels
             this.ReportReasons = new ObservableCollection<ReportReason>(
                 Enum.GetValues<ReportReason>().ToList());
 
-            this.SubmitCommand = new RelayCommand(this.SubmitReport);
-            this.CancelCommand = new RelayCommand(this.CancelReport);
+            this.SubmitCommand = new RelayCommand(_ => this.SubmitReport());
+            this.CancelCommand = new RelayCommand(_ => this.CancelReport());
         }
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace BankAppDesktop.Views.Pages
             this.InitializeComponent();
             
             ViewModel = viewModel;
-            this.DataContext = ViewModel;
+            this.Content.DataContext = ViewModel;
             
             ViewModel.ShowErrorDialog += OnShowErrorDialog;
             ViewModel.ShowSuccessDialog += OnShowSuccessDialog;
