@@ -1,0 +1,81 @@
+@model BankAppWeb.Models.ReportViewModel
+
+@{
+    ViewData["Title"] = "Report Content";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0 text-center">Report Content</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <form asp-action="Submit" method="post">
+                        <input type="hidden" asp-for="ChatId" />
+                        <input type="hidden" asp-for="MessageId" />
+                        <input type="hidden" asp-for="ReportedUserId" />
+
+                        <div class="mb-3">
+                            <label asp-for="SelectedReportReason" class="form-label">Select Report Category</label>
+                            <select asp-for="SelectedReportReason" class="form-select" id="categorySelect">
+                                <option value="">-- Select a category --</option>
+                                @foreach (var reason in Model.AvailableReportReasons)
+                                {
+                                    <option value="@reason">@reason.ToString().Replace("_", " ")</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedReportReason" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3" id="otherReasonDiv" style="display: none;">
+                            <label asp-for="OtherReason" class="form-label">Please specify the reason</label>
+                            <textarea asp-for="OtherReason" class="form-control" rows="3" placeholder="Provide details about your report..."></textarea>
+                            <span asp-validation-for="OtherReason" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Report
+                            </button>
+                            <a asp-action="Cancel" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Show/hide the "Other Reason" text area based on selection
+        document.getElementById('categorySelect').addEventListener('change', function() {
+            var otherReasonDiv = document.getElementById('otherReasonDiv');
+            // Check if the selected value is "Other" (enum value)
+            if (this.value === '@((int)Common.Services.Social.ReportReason.Other)' || this.value === 'Other') {
+                otherReasonDiv.style.display = 'block';
+            } else {
+                otherReasonDiv.style.display = 'none';
+            }
+        });
+    </script>
+} 
