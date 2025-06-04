@@ -95,7 +95,7 @@
         }
 
         [NotMapped]
-        public decimal AmountToPay => this.AmountToPay * (1 + (this.TaxPercentage / 100));
+        public decimal AmountToPay => this.LoanAmount * (1 + (this.TaxPercentage / 100));
     }
 
 }
