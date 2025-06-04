@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using BankAppWeb.Models;
 using Common.Models;
 using Common.Services.Social;
+using Common.Services;
 using System.Threading.Tasks;
 
 namespace BankAppWeb.Controllers
@@ -12,12 +12,12 @@ namespace BankAppWeb.Controllers
     public class ReportController : Controller
     {
         private readonly IMessageService _messageService;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IAuthenticationService _authenticationService;
 
-        public ReportController(IMessageService messageService, UserManager<IdentityUser> userManager)
+        public ReportController(IMessageService messageService, IAuthenticationService authenticationService)
         {
             _messageService = messageService;
-            _userManager = userManager;
+            _authenticationService = authenticationService;
         }
 
         public IActionResult Index(int chatId, int messageId, int reportedUserId)
@@ -43,11 +43,10 @@ namespace BankAppWeb.Controllers
 
             try
             {
-                // Get current user from Identity
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser == null)
+                // Check if user is logged in
+                if (!_authenticationService.IsUserLoggedIn())
                 {
-                    TempData["ErrorMessage"] = "Unable to identify current user. Please log in again.";
+                    TempData["ErrorMessage"] = "You must be logged in to report content.";
                     return View("Index", model);
                 }
 
@@ -58,10 +57,13 @@ namespace BankAppWeb.Controllers
                     return View("Index", model);
                 }
 
+                // Get current user CNP
+                var userCnp = _authenticationService.GetUserCNP();
+
                 // Create user object for the service call
                 var user = new User 
                 { 
-                    CNP = currentUser.Id // Assuming the Identity user ID maps to CNP
+                    CNP = userCnp
                 };
 
                 // Submit the report using the message service

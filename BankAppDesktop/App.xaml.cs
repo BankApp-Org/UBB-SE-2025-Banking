@@ -181,6 +181,7 @@
                     services.AddTransient<BillSplitReportComponent>();
                     services.AddTransient<BillSplitReportPage>();
                     services.AddTransient<ChatReportComponent>();
+                    services.AddTransient<ReportView>();
                     services.AddTransient<LoanRequestComponent>();
                     services.AddTransient<LoanComponent>();
                     services.AddTransient<CreateLoanDialog>();
@@ -195,6 +196,7 @@
                     // ViewModels
                     services.AddTransient<BillSplitReportViewModel>();
                     services.AddTransient<BillSplitReportViewModel>();
+                    services.AddTransient<ReportViewModel>();
                     services.AddTransient<StoreViewModel>();
                     services.AddTransient<ProfilePageViewModel>();
                     services.AddTransient<InvestmentsViewModel>();

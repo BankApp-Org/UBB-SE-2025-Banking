@@ -2,9 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using Microsoft.AspNetCore.Identity;
 using System.Collections.ObjectModel;
 using Common.Services.Social;
+using Common.Services;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -26,7 +26,7 @@ namespace BankAppDesktop.ViewModels
         public event Action CloseView = () => { };
 
         private readonly IMessageService messageService;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly IAuthenticationService authenticationService;
         private readonly int reportedUserId;
         private readonly int messageId;
         private readonly int chatId;
@@ -105,14 +105,14 @@ namespace BankAppDesktop.ViewModels
         /// Initializes a new instance of the <see cref="ReportViewModel"/> class.
         /// </summary>
         /// <param name="messageService">The message service.</param>
-        /// <param name="userManager">The user manager for Identity-based access.</param>
+        /// <param name="authenticationService">The authentication service for user access.</param>
         /// <param name="chatId">The ID of the chat containing the message.</param>
         /// <param name="messageId">The ID of the message being reported.</param>
         /// <param name="reportedUserId">The ID of the reported user.</param>
-        public ReportViewModel(IMessageService messageService, UserManager<IdentityUser> userManager, int chatId, int messageId, int reportedUserId)
+        public ReportViewModel(IMessageService messageService, IAuthenticationService authenticationService, int chatId, int messageId, int reportedUserId)
         {
             this.messageService = messageService;
-            this.userManager = userManager;
+            this.authenticationService = authenticationService;
             this.chatId = chatId;
             this.messageId = messageId;
             this.reportedUserId = reportedUserId;
@@ -138,18 +138,20 @@ namespace BankAppDesktop.ViewModels
                     return;
                 }
 
-                // Get current user from Identity
-                var currentUser = await this.userManager.GetUserAsync(System.Security.Claims.ClaimsPrincipal.Current);
-                if (currentUser == null)
+                // Check if user is logged in
+                if (!this.authenticationService.IsUserLoggedIn())
                 {
-                    this.OnShowErrorDialog("Unable to identify current user. Please log in again.");
+                    this.OnShowErrorDialog("You must be logged in to report content.");
                     return;
                 }
 
-                // For now, create a simplified User object - this might need adjustment based on your User model
+                // Get current user CNP
+                var userCnp = this.authenticationService.GetUserCNP();
+
+                // Create a User object for the service call
                 var user = new User 
                 { 
-                    CNP = currentUser.Id // Assuming the Identity user ID maps to CNP
+                    CNP = userCnp
                 };
 
                 // Submit the report using the message service
