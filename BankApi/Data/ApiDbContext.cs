@@ -84,7 +84,7 @@ namespace BankApi.Data
                     .HasForeignKey(e => e.SubmitterCnp)
                     .HasPrincipalKey(u => u.CNP)
                     .OnDelete(DeleteBehavior.NoAction);
-                    
+
                 entity.HasOne(e => e.Message)
                     .WithMany()
                     .HasForeignKey(e => e.MessageId)

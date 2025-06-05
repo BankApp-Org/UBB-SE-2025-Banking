@@ -43,4 +43,4 @@ namespace BankAppWeb.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-} 
+}

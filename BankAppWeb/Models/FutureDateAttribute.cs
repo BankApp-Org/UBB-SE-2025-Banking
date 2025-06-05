@@ -37,7 +37,7 @@ namespace BankAppWeb.Models
                 }
                 return ValidationResult.Success;
             }
-        
+
             return new ValidationResult("Value is not a valid date.");
         }
     }
