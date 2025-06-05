@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
@@ -116,6 +116,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Views\Pages\CurrencyExchangeTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
     <Page Update="Views\Components\CreateLoanDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -138,6 +141,9 @@
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
   <ItemGroup>
     <PRIResource Remove="Services\Api\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Views\Pages\CurrencyExchangeTableView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Controls\" />
