@@ -115,7 +115,7 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Views\BankAccountListView.xaml">
+    <None Update="Views\Pages\BankAccountListView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
     <Page Update="Views\Components\CreateLoanDialog.xaml">
