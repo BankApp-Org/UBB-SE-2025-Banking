@@ -68,10 +68,9 @@ namespace BankAppDesktop.ViewModels
         public BankAccountListViewModel(IBankAccountService s)
         {
             // this.userID = int.Parse(UserSession.Instance.GetUserData("id_user") ?? "0");
-            // BankAccounts = new ObservableCollection<BankAccount>();
-            // var bankAccService = new BankAccountProxyService(new System.Net.Http.HttpClient());
-            // service = s;
-            // _ = LoadData(); // Start loading data but don't await it
+            BankAccounts = new ObservableCollection<BankAccount>();
+            service = s;
+            _ = LoadData(); // Start loading data but don't await it
             // MainPageCommand = new RelayCommand(ToMainPage);
             // SelectCommand = new RelayCommand(ViewDetails);
         }
@@ -103,8 +102,8 @@ namespace BankAppDesktop.ViewModels
             Debug.WriteLine(SelectedBankAccount.Iban);
             if (SelectedBankAccount != null)
             {
-                // var window = new BankAccountDetailsView();
-                // window.Activate();
+                var window = new BankAccountDetailsView();
+                window.Activate();
             }
         }
 

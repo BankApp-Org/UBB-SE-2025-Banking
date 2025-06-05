@@ -1,13 +1,12 @@
 using System;
-using LoanShark.ViewModel.BankViewModel;
+using BankAppDesktop.ViewModels;
 using Microsoft.UI.Xaml;
-using LoanShark.Helper;
-using LoanShark.Service.BankService;
+using BankAppDesktop.Converters;
 using Microsoft.Extensions.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-namespace LoanShark.View.BankView
+namespace BankAppDesktop.Views
 {
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
