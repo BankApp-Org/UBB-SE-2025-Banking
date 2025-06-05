@@ -149,6 +149,12 @@ namespace BankApi.Controllers
 
             return result ? Ok() : NotFound();
         }
+
+        [HttpGet("ExchangeRates")]
+        public async Task<ActionResult<List<CurrencyExchange>>> GetAllExchangeRates()
+        {
+            return Ok(await bankAccountService.GetAllExchangeRatesAsync());
+        }
     }
 
     public class CreateBankAccountRequest

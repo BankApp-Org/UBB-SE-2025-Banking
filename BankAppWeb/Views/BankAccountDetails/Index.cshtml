@@ -1,0 +1,46 @@
+﻿@model BankAccountDetailsModel
+
+@{
+    ViewData["Title"] = "Bank Account Details";
+}
+
+<div class="container mt-5">
+    <div class="text-center border-bottom mb-5 pb-3">
+        <h2 class="fw-bold">Bank Account Details</h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label">IBAN</label>
+                    <input class="form-control" value="@Model.BankAccount.Iban" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Daily Limit</label>
+                    <input class="form-control" value="@Model.BankAccount.DailyLimit" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Currency</label>
+                    <input class="form-control" value="@Model.BankAccount.Currency" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Maximum Per Transaction</label>
+                    <input class="form-control" value="@Model.BankAccount.MaximumPerTransaction" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Maximum Transactions Per Day</label>
+                    <input class="form-control" value="@Model.BankAccount.MaximumNrTransactions" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Custom Name</label>
+                    <input class="form-control" value="@Model.BankAccount.Name" readonly /> 
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a asp-controller="HomePage" asp-action="Index" class="btn btn-outline-primary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>

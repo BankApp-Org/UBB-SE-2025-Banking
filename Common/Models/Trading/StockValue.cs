@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -31,7 +30,6 @@ namespace Common.Models.Trading
                                                            /// Gets or sets the date and time when the stock value was recorded.
                                                            /// </summary>
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         required public DateTime DateTime { get; set; }
 
         [ForeignKey("StockName")]
