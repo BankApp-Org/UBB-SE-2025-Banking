@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace Common.Services.Proxy
 {
-    public class TransactionLogProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : ITransactionLogService
+    public class StockTransactionLogProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : ITransactionLogService
     {
         private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         private readonly JsonSerializerOptions _jsonOptions = jsonOptions.Value.SerializerOptions ?? throw new ArgumentNullException(nameof(jsonOptions), "JsonSerializerOptions cannot be null.");
