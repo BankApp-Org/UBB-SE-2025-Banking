@@ -15,56 +15,37 @@ namespace BankAppWeb.Controllers
     public class BankAccountListController : Controller
     {
         private readonly IBankAccountService _bankAccountService;
-        private readonly IAuthenticationService _authenticationService;
 
-        public BankAccountListController(IBankAccountService bankAccountService, IAuthenticationService attservice)
+        public BankAccountListController(IBankAccountService bankAccountService)
         {
             _bankAccountService = bankAccountService;
-            _authenticationService = attservice;
         }
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int userId)
         {
-            int userId = GetCurrentUserId();
             var accounts = await _bankAccountService.GetUserBankAccounts(userId);
             return this.View(accounts);
         }
+
         [HttpGet]
         public async Task<IActionResult> Details(string iban)
         {
             if (string.IsNullOrWhiteSpace(iban))
                 return NotFound();
 
-            int userId = GetCurrentUserId();
             var account = await _bankAccountService.FindBankAccount(iban);
 
             if (account == null)
                 return NotFound();
 
-            ///modifica cand ii da accept lui ale !!!!!!!!!!!!!1
-            var currentIban = HttpContext.Session.GetString("current_bank_account_iban");
-
-            ///var currentUser = _authenticationService.GetCurrentUserSession();
-            ///var currentIban = currentUseer.CurrentBankAccountIban;
             
-            if (!string.IsNullOrEmpty(currentIban) && currentIban == iban)
-            {
-                var model = new BankAccountListModel
-                {
-                    BankAccount = account
-                };
+             var model = new BankAccountListModel
+             {
+                 BankAccount = account
+             };
 
-                return RedirectToAction("Edit", new { iban = model.BankAccount.Iban });
-
-            }
-
-            var readOnlyModel = new BankAccountListModel
-            {
-                BankAccount = account
-            };
-
-            return View("~/Views/BankAccountDetails/Index.cshtml", readOnlyModel);
+             return RedirectToAction("Edit", new { iban = model.BankAccount.Iban });
         }
 
         [HttpGet]
@@ -111,20 +92,6 @@ namespace BankAppWeb.Controllers
             return RedirectToAction("Index");
             //return this.View(selectedAccount);
 
-        }
-
-        [HttpPost]
-        public IActionResult SetCurrentBankAccount(string iban)
-        {
-            HttpContext.Session.SetString("current_bank_account_iban", iban);
-            ///currentUseer.CurrentBankAccountIban =  iban;
-            return RedirectToAction("Edit", "BankAccountUpdate");
-        }
-
-
-        private int GetCurrentUserId()
-        {
-            return int.TryParse(HttpContext.Session.GetString("userId"), out int id) ? id : 0;
         }
     }
 }
