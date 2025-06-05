@@ -1,8 +1,11 @@
+using System;
 using Common.Models.Social;
 using Common.Services.Social;
 using Microsoft.UI.Xaml;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using BankAppDesktop.Commands;
+using Common.Models;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -16,11 +19,11 @@ namespace BankAppDesktop.ViewModels
         {
             _messageService = messageService;
             _messages = new ObservableCollection<Message>();
-            
+
             // Initialize commands
-            DeleteMessageCommand = new RelayCommand<Message>(ExecuteDeleteMessage);
-            ReportMessageCommand = new RelayCommand<Message>(ExecuteReportMessage);
-            AcceptRequestCommand = new RelayCommand<Message>(ExecuteAcceptRequest);
+            DeleteMessageCommand = new RelayCommandGeneric<Message>(ExecuteDeleteMessage);
+            ReportMessageCommand = new RelayCommandGeneric<Message>(ExecuteReportMessage);
+            AcceptRequestCommand = new RelayCommandGeneric<Message>(ExecuteAcceptRequest);
         }
 
         public ObservableCollection<Message> Messages
@@ -118,4 +121,4 @@ namespace BankAppDesktop.ViewModels
             }
         }
     }
-} 
+}

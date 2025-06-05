@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Catel.MVVM" Version="6.1.1" />
+    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="LiveChartsCore" Version="2.0.0-rc5.4" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView" Version="2.0.0-rc5.3" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-rc5.3" />

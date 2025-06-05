@@ -1,16 +1,20 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using BankApp.Service.Interfaces;
 using System.Windows.Input;
 using BankAppDesktop.Commands;
+using BankAppDesktop.Services;
+using LiveCharts;
+using LiveCharts.Wpf;
+using System.Linq;
 
 namespace BankAppDesktop.ViewModels
 {
     public class TransactionHistoryChartViewModel : INotifyPropertyChanged
     {
         private readonly ITransactionHistoryService _transactionHistoryService;
-        private Dictionary<string, int> _transactionTypeCounts;
+        private SeriesCollection _transactionTypeCounts;
         private ICommand _backCommand;
 
         public TransactionHistoryChartViewModel(ITransactionHistoryService transactionHistoryService)
@@ -20,7 +24,7 @@ namespace BankAppDesktop.ViewModels
             LoadData();
         }
 
-        public Dictionary<string, int> TransactionTypeCounts
+        public SeriesCollection TransactionTypeCounts
         {
             get => _transactionTypeCounts;
             set
@@ -34,15 +38,24 @@ namespace BankAppDesktop.ViewModels
 
         private async void LoadData()
         {
-            // Note: In desktop app, we'll need to get the current user ID from the authentication service
-            var userId = "current-user-id"; // Replace with actual user ID from auth service
-            TransactionTypeCounts = await _transactionHistoryService.GetTransactionTypeCounts(userId);
+            var userId = "current-user-id"; // Înlocuiește cu userId real
+            var transactionTypeCounts = await _transactionHistoryService.GetTransactionTypeCounts(userId);
+
+            TransactionTypeCounts = new SeriesCollection();
+            foreach (var tc in transactionTypeCounts)
+            {
+                TransactionTypeCounts.Add(new PieSeries
+                {
+                    Title = tc.TransactionType.Name,
+                    Values = new ChartValues<int> { tc.Count },
+                    DataLabels = true
+                });
+            }
         }
 
         private void ExecuteBack(object parameter)
         {
-            // Navigate back to transaction history
-            // Implementation depends on your navigation system
+            // Navigare înapoi
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -52,4 +65,4 @@ namespace BankAppDesktop.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-} 
+}
