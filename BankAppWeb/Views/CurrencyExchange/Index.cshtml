@@ -1,0 +1,39 @@
+﻿@model LoanShark.MVC.Models.CurrencyExchangeViewModel
+
+@{
+	ViewBag.Title = "Currency Exchange Rates";
+}
+
+<div class="container mt-4">
+    <div class="d-flex align-items-center mb-4">
+        <h2 class="ms-3">Currency Exchange Rates</h2>
+    </div>
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rate in Model.ExchangeRates)
+            {
+                    <tr>
+                        <td>@rate.FromCurrency</td>
+                        <td>@rate.ToCurrency</td>
+                        <td>@rate.ExchangeRate</td>
+                    </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-center mt-4">
+      <form asp-action="Close" method="get" >
+        <button type="submit" class="btn btn-secondary">Back</button>
+    </form>
+    </div>
+</div>
+
+
