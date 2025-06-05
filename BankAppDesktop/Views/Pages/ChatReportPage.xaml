@@ -4,7 +4,31 @@
       xmlns:local="using:BankAppDesktop">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20">
-        <TextBlock Text="Chat Reports" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Left"/>
+        <Grid Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Text="Chat Reports" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left" Grid.Column="0"/>
+            
+            <!-- Demo Button for Presentation -->
+            <Button x:Name="CreateDemoReportButton" 
+                    Content="🎯 Create Demo Report" 
+                    Click="CreateDemoReport_Click"
+                    Padding="15,8"
+                    Background="#539BF5"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    BorderBrush="Transparent"
+                    Grid.Column="1">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="CornerRadius" Value="8"/>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
 
         <ItemsControl x:Name="ChatReportsContainer">
             <!-- Each individual ChatReportComponent will be added here dynamically -->
