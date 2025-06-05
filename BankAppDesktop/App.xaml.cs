@@ -1,4 +1,4 @@
-﻿namespace BankAppDesktop
+namespace BankAppDesktop
 {
     using BankAppDesktop.Pages;
     using BankAppDesktop.Services;
@@ -85,8 +85,8 @@
                     services.AddTransient<AuthenticationDelegatingHandler>();
 
                     // Other Services
-                    services.AddScoped<ITransactionLogService, TransactionLogProxyService>();
-                    services.AddScoped<ITransactionService, TransactionProxyService>();
+                    services.AddScoped<ITransactionLogService, StockTransactionLogProxyService>();
+                    services.AddScoped<ITransactionService, StockTransactionProxyService>();
                     services.AddScoped<IChatReportService, ChatReportProxyService>();
                     services.AddScoped<ICreditHistoryService, HistoryProxyService>();
                     services.AddScoped<IBillSplitReportService, BillSplitReportProxyService>();
@@ -103,6 +103,10 @@
                     services.AddScoped<IMessageService, MessagesProxyService>();
                     services.AddScoped<ITipsService, TipsProxyService>();
                     services.AddScoped<IProfanityChecker, ProfanityChecker>();
+                    services.AddTransient<IChatService, ChatProxyService>();
+                    services.AddTransient<IMessageService, MessagesProxyService>();
+                    services.AddTransient<INotificationService, NotificationProxyService>();
+                    services.AddTransient<IBankAccountService, BankAccountProxyService>();
 
                     // Configure HttpClients with the AuthenticationDelegatingHandler
                     services.AddHttpClient<IStockService, StockProxyService>(client =>
@@ -165,14 +169,31 @@
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-                    services.AddHttpClient<ITransactionLogService, TransactionLogProxyService>(client =>
+                    services.AddHttpClient<ITransactionLogService, StockTransactionLogProxyService>(client =>
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-                    services.AddHttpClient<ITransactionService, TransactionProxyService>(client =>
+                    services.AddHttpClient<ITransactionService, StockTransactionProxyService>(client =>
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+                    services.AddHttpClient<IChatService, ChatProxyService>(client =>
+                    {
+                        client.BaseAddress = new Uri(apiBaseUrl);
+                    }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+                    services.AddHttpClient<IMessageService, MessagesProxyService>(client =>
+                    {
+                        client.BaseAddress = new Uri(apiBaseUrl);
+                    }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+                    services.AddHttpClient<INotificationService, NotificationProxyService>(client =>
+                    {
+                        client.BaseAddress = new Uri(apiBaseUrl);
+                    }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+                    services.AddHttpClient<IBankAccountService, BankAccountProxyService>(client =>
+                    {
+                        client.BaseAddress = new Uri(apiBaseUrl);
+                    }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+
                     // Don't add the handler to the authentication service's HttpClient
                     // to avoid circular dependencies
                     services.AddSingleton<MainWindow>();
@@ -181,6 +202,7 @@
                     services.AddTransient<BillSplitReportComponent>();
                     services.AddTransient<BillSplitReportPage>();
                     services.AddTransient<ChatReportComponent>();
+                    services.AddTransient<ReportView>();
                     services.AddTransient<LoanRequestComponent>();
                     services.AddTransient<LoanComponent>();
                     services.AddTransient<CreateLoanDialog>();
@@ -195,6 +217,7 @@
                     // ViewModels
                     services.AddTransient<BillSplitReportViewModel>();
                     services.AddTransient<BillSplitReportViewModel>();
+                    services.AddTransient<ReportViewModel>();
                     services.AddTransient<StoreViewModel>();
                     services.AddTransient<ProfilePageViewModel>();
                     services.AddTransient<InvestmentsViewModel>();

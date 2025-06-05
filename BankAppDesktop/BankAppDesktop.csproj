@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
@@ -7,10 +7,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>  
-	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	<WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -119,6 +120,9 @@
     <Page Update="Views\Pages\BankTransactionsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <None Update="Views\Pages\CurrencyExchangeTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
     <Page Update="Views\Components\CreateLoanDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -141,6 +145,9 @@
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
   <ItemGroup>
     <PRIResource Remove="Services\Api\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Views\Pages\CurrencyExchangeTableView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Controls\" />

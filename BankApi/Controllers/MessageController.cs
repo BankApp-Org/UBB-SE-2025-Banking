@@ -35,7 +35,7 @@ namespace BankApi.Controllers
                 MessageContent = messageDto.Content,
                 CreatedAt = DateTime.Now,
                 Type = MessageType.Text,
-                UsersReport = messageDto.UsersReport ?? new List<User>()
+                UsersReport = messageDto.UsersReport ?? []
             };
             await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
             return NoContent();
@@ -54,7 +54,7 @@ namespace BankApi.Controllers
                 ImageUrl = messageDto.ImageURL,
                 CreatedAt = DateTime.Now,
                 Type = MessageType.Image,
-                UsersReport = messageDto.UsersReport ?? new List<User>()
+                UsersReport = messageDto.UsersReport ?? []
             };
             await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
             return NoContent();
@@ -116,15 +116,20 @@ namespace BankApi.Controllers
             return NoContent();
         }
 
-        [HttpPost("report")]
-        public async Task<ActionResult> ReportMessage([FromBody] MessageDto messageDto, ReportReason reportReason)
+        [HttpPost("{chatId}/{messageId}/report")]
+        public async Task<ActionResult> ReportMessage(int chatId, int messageId, [FromBody] ReportRequest request)
         {
             var user = await _userService.GetCurrentUserAsync();
-            if (messageDto == null)
-                return BadRequest("Message data is required.");
+            if (request == null)
+                return BadRequest("Report data is required.");
 
-            await _messageService.ReportMessage(messageDto.ChatID, messageDto.MessageID, user, reportReason);
+            await _messageService.ReportMessage(chatId, messageId, user, request.ReportReason);
             return NoContent();
         }
+    }
+
+    public class ReportRequest
+    {
+        public ReportReason ReportReason { get; set; }
     }
 }

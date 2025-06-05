@@ -103,7 +103,7 @@ namespace BankAppDesktop.Views.Pages
             if (sender is Button button && button.CommandParameter is GemDeal selectedDeal)
             {
                 var bankAccounts = GetUserBankAccountsAsync();
-                if (!bankAccounts.Any())
+                if (bankAccounts.Count == 0)
                 {
                     this.ShowErrorDialog("No bank accounts available for purchase.");
                     return;
@@ -218,7 +218,7 @@ namespace BankAppDesktop.Views.Pages
             }
 
             var bankAccounts = GetUserBankAccountsAsync();
-            if (!bankAccounts.Any())
+            if (bankAccounts.Count == 0)
             {
                 this.ShowErrorDialog("No bank accounts available for selling.");
                 return;

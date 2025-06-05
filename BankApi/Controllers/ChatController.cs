@@ -72,7 +72,7 @@ namespace BankApi.Controllers
             {
                 ChatName = dto.ChatName,
                 Users = dto.Participants,
-                Messages = new List<Message>()
+                Messages = []
             };
             await chatService.CreateChat(newchat);
             return Ok("Chat created.");

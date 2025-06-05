@@ -37,7 +37,7 @@ namespace BankApi.Seeders
                 {
                     ChatName = "Default Chat",
                     Users = existingUsers.Take(2).ToList(),
-                    Messages = new List<Message>()
+                    Messages = []
                 };
                 context.Chats.Add(defaultChat);
                 await context.SaveChangesAsync();

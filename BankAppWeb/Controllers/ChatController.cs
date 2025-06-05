@@ -1,8 +1,8 @@
-using System.Security.Claims;
 using Common.Models.Social;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BankAppWeb.Controllers
 {
@@ -88,6 +88,33 @@ namespace BankAppWeb.Controllers
         }
 
         [Authorize]
+        [HttpGet("chat/{chatId}")]
+        public async Task<IActionResult> GetChatById(int chatId)
+        {
+            if (chatId <= 0)
+            {
+                return BadRequest("Invalid chat ID");
+            }
+            try
+            {
+                Chat chat = await this._chatService.GetChatById(chatId);
+                if (chat.Users == null || chat.Users.Count == 0)
+                {
+                    return NotFound("Chat not found or has no users.");
+                }
+                if (!User.IsInRole("Admin") && !chat.Users.Any(u => u.CNP == User.FindFirstValue("CNP")))
+                {
+                    return Forbid("You do not have permission to view this chat.");
+                }
+                return View(chat);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", ex.Message);
+            }
+        }
+
+        [Authorize]
         [HttpGet("messages/{chatId}")]
         public async Task<IActionResult> ViewMessages(int chatId, int take, int skip)
         {
@@ -102,7 +129,7 @@ namespace BankAppWeb.Controllers
             try
             {
                 Chat chat = await this._chatService.GetChatById(chatId);
-                if (chat.Users == null || !chat.Users.Any())
+                if (chat.Users == null || chat.Users.Count == 0)
                 {
                     return NotFound("Chat not found or has no users.");
                 }
