@@ -5,9 +5,11 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Common.Services.Proxy;
+using Common.Models;
 using Common.Models.Bank;
 using Common.Services.Bank;
 using BankAppDesktop.Views;
+using BankAppDesktop.Commands;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -65,13 +67,13 @@ namespace BankAppDesktop.ViewModels
         /// <param name="userID">The ID of the user whose bank accounts to display</param>
         public BankAccountListViewModel(IBankAccountService s)
         {
-            this.userID = int.Parse(UserSession.Instance.GetUserData("id_user") ?? "0");
-            BankAccounts = new ObservableCollection<BankAccount>();
-            var bankAccService = new BankAccountProxyService(new System.Net.Http.HttpClient());
-            service = s;
-            _ = LoadData(); // Start loading data but don't await it
-            MainPageCommand = new RelayCommand(ToMainPage);
-            SelectCommand = new RelayCommand(ViewDetails);
+            // this.userID = int.Parse(UserSession.Instance.GetUserData("id_user") ?? "0");
+            // BankAccounts = new ObservableCollection<BankAccount>();
+            // var bankAccService = new BankAccountProxyService(new System.Net.Http.HttpClient());
+            // service = s;
+            // _ = LoadData(); // Start loading data but don't await it
+            // MainPageCommand = new RelayCommand(ToMainPage);
+            // SelectCommand = new RelayCommand(ViewDetails);
         }
 
         /// <summary>
@@ -101,8 +103,8 @@ namespace BankAppDesktop.ViewModels
             Debug.WriteLine(SelectedBankAccount.Iban);
             if (SelectedBankAccount != null)
             {
-                var window = new BankAccountDetailsView();
-                window.Activate();
+                // var window = new BankAccountDetailsView();
+                // window.Activate();
             }
         }
 
