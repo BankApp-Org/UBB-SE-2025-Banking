@@ -8,7 +8,7 @@ namespace Common.Models.Social
         public TransferMessage()
         {
             Type = MessageType.Transfer;
-            ListOfReceivers = new List<User>();
+            ListOfReceivers = [];
         }
         public TransferMessage(int userId, int chatId, string status, float amount, string description, string currency, DateTime createdAt, List<User>? receivers = null)
         {
@@ -20,7 +20,7 @@ namespace Common.Models.Social
             Currency = currency;
             CreatedAt = createdAt;
             Type = MessageType.Transfer;
-            ListOfReceivers = receivers ?? new();
+            ListOfReceivers = receivers ?? [];
         }
 
         [JsonConstructor]
@@ -34,7 +34,7 @@ namespace Common.Models.Social
             Currency = currency;
             CreatedAt = DateTime.Parse(createdAt);
             Type = MessageType.Transfer;
-            ListOfReceivers = listOfReceivers ?? new();
+            ListOfReceivers = listOfReceivers ?? [];
         }
 
         public string Status { get; set; } = string.Empty;
@@ -44,7 +44,7 @@ namespace Common.Models.Social
         public string Description { get; set; } = string.Empty;
 
         public string Currency { get; set; } = string.Empty;
-        public List<User> ListOfReceivers { get; set; } = new();
+        public List<User> ListOfReceivers { get; set; } = [];
         public string FormattedAmount => $"{Amount} {Currency}";
         public override string ToString()
         {

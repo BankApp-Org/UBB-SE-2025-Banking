@@ -8,7 +8,7 @@ namespace Common.Models.Social
         public TextMessage()
         {
             Type = MessageType.Text;
-            UsersReport = new List<User>();
+            UsersReport = [];
         }
 
         public TextMessage(int userId, int chatId, string messageContent, DateTime createdAt, List<User> usersReport)
@@ -18,7 +18,7 @@ namespace Common.Models.Social
             MessageContent = messageContent;
             CreatedAt = createdAt;
             Type = MessageType.Text;
-            UsersReport = usersReport ?? new();
+            UsersReport = usersReport ?? [];
         }
 
         [JsonConstructor]
@@ -29,10 +29,10 @@ namespace Common.Models.Social
             MessageContent = messageContent;
             CreatedAt = DateTime.Parse(createdAt);
             Type = type;
-            UsersReport = usersReport ?? new();
+            UsersReport = usersReport ?? [];
         }
 
-        public List<User> UsersReport { get; set; } = new();
+        public List<User> UsersReport { get; set; } = [];
 
         public string GetContent() => MessageContent;
 
