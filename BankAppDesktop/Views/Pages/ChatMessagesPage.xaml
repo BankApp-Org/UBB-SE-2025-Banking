@@ -5,13 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BankAppDesktop.Views.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:commands="using:BankAppDesktop.Commands" xmlns:components="using:BankAppDesktop.Views.Components"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
-        <local:EmoticonToEmojiConverter x:Key="EmoticonConverter"/>
-        <local:CommandBindingProxy x:Key="DeleteCommandProxy" Command="{Binding DeleteMessageCommand}"/>
+        <commands:CommandBindingProxy x:Key="DeleteCommandProxy" Command="{Binding DeleteMessageCommand}"/>
     </Page.Resources>
 
     <Grid x:Name="MainGrid">
@@ -54,7 +53,7 @@
                       >
 
                 <ListView.ItemTemplateSelector>
-                    <local:MessageTemplateSelector 
+                    <components:MessageTemplateSelector 
                     TextMessageTemplateLeft="{StaticResource TextMessageTemplateLeft}"
                     TextMessageTemplateRight="{StaticResource TextMessageTemplateRight}"
                     ImageMessageTemplateLeft="{StaticResource ImageMessageTemplateLeft}"

@@ -1,18 +1,8 @@
-﻿using Common.DTOs;
+﻿using BankAppWeb.Models;
+using Common.DTOs;
 using Common.Services;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows.Input;
-using Common.Models;
-using Common.Services;
-using Common.Services.Social;
-using Common.Models.Social;
-using BankAppWeb.Models;
 
 namespace BankAppWeb.Controllers
 {
@@ -33,22 +23,26 @@ namespace BankAppWeb.Controllers
             {
                 var user = await userService.GetCurrentUserAsync();
                 var chat = await chatService.GetChatById(chatId);
-                int currentUserId = user.Id;
                 string chatName = chat.ChatName ?? "Unknown Chat";
 
                 var currentChatParticipants = chat.Users;
-                var allPotentialUsers = await userService.GetNonFriendsUsers(currentUserId);
+                var allPotentialUsers = await userService.GetNonFriendsUsers(user.CNP);
                 var allUnaddedFriends = allPotentialUsers
-                    .Where(f => f != null && !currentChatParticipants.Any(p => p?.Id == f.GetUserId()))
+                    .Where(f => f != null && !currentChatParticipants.Any(p => p?.CNP == f.Cnp))
                     .Select(f => new SocialUserDto
                     {
-                        UserID = f.GetUserId().ToString(),
-                        Username = f.Username
+                        UserID = f.UserID,
+                        Username = f.Username,
+                        Cnp = f.Cnp,
+                        Email = f.Email,
+                        FirstName = f.FirstName,
+                        LastName = f.LastName,
+                        ReportedCount = f.ReportedCount
                     })
                     .ToList();
 
                 // Use the passed newlyAddedFriends or initialize if null
-                newlyAddedFriends = newlyAddedFriends ?? new List<SocialUserDto>();
+                newlyAddedFriends = newlyAddedFriends ?? [];
 
                 var unaddedFriends = string.IsNullOrEmpty(searchQuery)
                     ? allUnaddedFriends
@@ -61,6 +55,12 @@ namespace BankAppWeb.Controllers
                     .Select(p => new SocialUserDto
                     {
                         UserID = p.Id,
+                        Cnp = p.CNP,
+                        Email = p.Email ?? "Unknown Email",
+                        FirstName = p.FirstName,
+                        LastName = p.LastName,
+                        ReportedCount = p.ReportedCount,
+                        Username = p.UserName ?? "Unknown User"
 
                     })
                     .ToList();
@@ -83,9 +83,9 @@ namespace BankAppWeb.Controllers
                 return View(new AddNewMemberViewModel
                 {
                     ChatName = "Unknown Chat",
-                    CurrentChatMembers = new List<SocialUserDto>(),
-                    UnaddedFriends = new List<SocialUserDto>(),
-                    NewlyAddedFriends = newlyAddedFriends ?? new List<SocialUserDto>(),
+                    CurrentChatMembers = [],
+                    UnaddedFriends = [],
+                    NewlyAddedFriends = newlyAddedFriends ?? [],
                     SearchQuery = searchQuery,
                     ChatId = chatId
                 });
@@ -97,8 +97,8 @@ namespace BankAppWeb.Controllers
         {
             var user = await userService.GetCurrentUserAsync();
 
-            var allUnaddedFriends = await GetUnaddedFriends(chatId); 
-            var friend = allUnaddedFriends.Where(f => f.UserID == user.Id).FirstOrDefault(); 
+            var allUnaddedFriends = await GetUnaddedFriends(chatId);
+            var friend = allUnaddedFriends.Where(f => f.UserID == user.Id).FirstOrDefault();
             if (friend != null && !newlyAddedFriends.Any(f => f.UserID == user.Id))
             {
                 newlyAddedFriends.Add(friend);
@@ -147,14 +147,18 @@ namespace BankAppWeb.Controllers
             var chat = await chatService.GetChatById(chatId);
             var user = await userService.GetCurrentUserAsync();
             var participants = chat.Users;
-            int currentUserId = user.Id;
-            var allPotentialUsers = await userService.GetNonFriendsUsers(currentUserId);
+            var allPotentialUsers = await userService.GetNonFriendsUsers(user.CNP);
             return allPotentialUsers
-                .Where(f => f != null && !participants.Any(p => p.Id == f.GetUserId()))
+                .Where(f => f != null && !participants.Any(p => p.CNP == f.Cnp))
                 .Select(f => new SocialUserDto
                 {
-                    UserID = f.GetUserId().ToString(),
-                    Username = f.Username
+                    UserID = f.UserID,
+                    Username = f.Username,
+                    Cnp = f.Cnp,
+                    Email = f.Email ?? "Unknown Email",
+                    FirstName = f.FirstName,
+                    LastName = f.LastName,
+                    ReportedCount = f.ReportedCount
                 })
                 .ToList();
         }

@@ -2,19 +2,18 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System.Collections.ObjectModel;
-using Common.Services.Social;
 using Common.Services;
+using Common.Services.Social;
+using System.Collections.ObjectModel;
 
 namespace BankAppDesktop.ViewModels
 {
+    using BankAppDesktop.Commands;
+    using Common.Models;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
     using System.Windows.Input;
-    using Common.Models;
-    using BankAppDesktop.Commands;
 
     /// <summary>
     /// Interface for report view models to ensure common properties and events.
@@ -218,7 +217,6 @@ namespace BankAppDesktop.ViewModels
         }
     }
 
-    
     public class ReportViewModelDemo : IReportViewModel
     {
         public event Action<string> ShowSuccessDialog = message => { };
@@ -316,13 +314,12 @@ namespace BankAppDesktop.ViewModels
                 return;
             }
 
-            
             string successMessage = $"🎯 Report submitted successfully!\n\n" +
                                   $"Chat ID: {this.chatId}\n" +
                                   $"Message ID: {this.messageId}\n" +
                                   $"Reported User ID: {this.reportedUserId}\n" +
                                   $"Reason: {this.SelectedReportReason}\n" +
-                                  (this.SelectedReportReason == ReportReason.Other ? $"Description: {this.OtherReason}" : "");
+                                  (this.SelectedReportReason == ReportReason.Other ? $"Description: {this.OtherReason}" : string.Empty);
 
             this.ShowSuccessDialog?.Invoke(successMessage);
         }

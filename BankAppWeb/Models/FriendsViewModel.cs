@@ -14,9 +14,9 @@ namespace BankAppWeb.Models
         public FriendsViewModel()
         {
             FriendSearchQuery = string.Empty;
-            FriendsList = new List<User>();
+            FriendsList = [];
             AddFriendSearchQuery = string.Empty;
-            UsersList = new List<User>();
+            UsersList = [];
         }
     }
 }

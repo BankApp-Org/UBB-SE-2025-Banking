@@ -71,8 +71,8 @@ namespace BankAppDesktop.ViewModels
             this.chatListViewModel = chatListViewModel;
             this.AddToSelectedList = new RelayCommandGeneric<object>(this.AddFriendToSelectedList);
             this.CreateGroupChat = new RelayCommandGeneric<object>(_ => this.AddNewGroupChat());
-            this.Friends = new ObservableCollection<User>();
-            this.SelectedFriends = new ObservableCollection<User>();
+            this.Friends = [];
+            this.SelectedFriends = [];
             this.chatService = chatService;
             this.userService = userService;
             LoadAllFriends();
@@ -94,7 +94,7 @@ namespace BankAppDesktop.ViewModels
 
         private async void AddNewGroupChat()
         {
-            List<User> selectedFriends = new List<User>();
+            List<User> selectedFriends = [];
             var currentUser = await this.userService.GetCurrentUserAsync();
             selectedFriends.Add(currentUser);
             foreach (User friend in this.SelectedFriends)
@@ -105,7 +105,7 @@ namespace BankAppDesktop.ViewModels
             {
                 ChatName = this.GroupName,
                 Users = selectedFriends,
-                Messages = new List<Message>(),
+                Messages = [],
             };
             await this.chatService.CreateChat(chat);
             this.chatListViewModel.LoadCurrentUserChats();
@@ -134,7 +134,7 @@ namespace BankAppDesktop.ViewModels
                 ?.Where(f => (string.IsNullOrEmpty(SearchQuery) ||
                              (f.FirstName?.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ?? false)) &&
                              !SelectedFriends.Contains(f))
-                .ToList() ?? new List<User>();
+                .ToList() ?? [];
 
             foreach (var friend in filteredFriends)
             {

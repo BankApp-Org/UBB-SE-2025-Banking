@@ -1,28 +1,11 @@
-using BankAppDesktop.Commands;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
 namespace BankAppDesktop.Views.Pages
 {
     using BankAppDesktop.ViewModels;
     using Common.Services;
+    using Common.Services.Bank;
     using Common.Services.Social;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
-    using NuGet.Protocol.Core.Types;
 
     public sealed partial class ChatMessagesPage : Page
     {
@@ -32,17 +15,21 @@ namespace BankAppDesktop.Views.Pages
         private Frame rightFrame;
         private IUserService userService;
         private IChatService chatService;
+        private IAuthenticationService authenticationService;
+        private IBankAccountService bankAccountService;
         private IChatReportService reportService;
         private ChatListViewModel chatListViewModel;
         private GenerateTransferViewModel generateTransferViewModel;
 
-        public ChatMessagesPage(ChatListViewModel chatListViewModel, Window mainWindow, Frame rightFrame, int chatID, IUserService userService, IChatService chatService, IMessageService messageService, IChatReportService reportService)
+        public ChatMessagesPage(ChatListViewModel chatListViewModel, Page mainWindow, Frame rightFrame, int chatID, IUserService userService, IChatService chatService, IMessageService messageService, IChatReportService reportService, IAuthenticationService authenticationService, IBankAccountService bankAccountService)
         {
             this.InitializeComponent();
             this.SelectedChat = chatID;
             this.chatListViewModel = chatListViewModel;
             this.userService = userService;
             this.chatService = chatService;
+            this.authenticationService = authenticationService;
+            this.bankAccountService = bankAccountService;
             this.reportService = reportService;
             this.rightFrame = rightFrame;
             this.chatMessagesViewModel = new ChatMessagesViewModel(mainWindow, rightFrame, chatID, messageService, chatService, userService, reportService);
@@ -53,7 +40,7 @@ namespace BankAppDesktop.Views.Pages
                 this.ChatListView.ItemTemplateSelector = this.chatMessagesViewModel.TemplateSelector;
             }
 
-            this.generateTransferViewModel = new GenerateTransferViewModel(chatService, chatID);
+            this.generateTransferViewModel = new GenerateTransferViewModel(chatService, authenticationService, bankAccountService, chatID);
             this.chatMessagesViewModel.ChatListView = this.ChatListView;
             this.chatMessagesViewModel.SetupMessageTracking();
 

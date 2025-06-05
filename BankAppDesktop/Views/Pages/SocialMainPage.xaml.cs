@@ -1,20 +1,9 @@
+using BankAppDesktop.Views.Components;
+using Common.Services;
+using Common.Services.Bank;
 using Common.Services.Social;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using BankAppDesktop.Views.Pages;
-using Common.Services;
 
 namespace BankAppDesktop.Views.Pages
 {
@@ -28,30 +17,33 @@ namespace BankAppDesktop.Views.Pages
         private readonly IMessageService messageService;
         private readonly IChatReportService reportService;
         private readonly INotificationService notificationService;
+        private readonly IAuthenticationService authenticationService;
+        private readonly IBankAccountService bankAccountService;
 
-        public SocialMainPage(IUserService us, IChatService cs, IMessageService ms, IChatReportService rs, INotificationService ns)
+        public SocialMainPage(IUserService userService, IChatService chatService, IMessageService messageService, IChatReportService reportService, INotificationService notificationService, IAuthenticationService authenticationService, IBankAccountService bankAccountService)
         {
             this.InitializeComponent();
 
-            this.notificationService = ns;
-            this.userService = us;
-            this.chatService = cs;
-            this.messageService = ms;
-            this.reportService = rs;
+            this.notificationService = notificationService;
+            this.userService = userService;
+            this.chatService = chatService;
+            this.messageService = messageService;
+            this.reportService = reportService;
+            this.authenticationService = authenticationService;
+            this.bankAccountService = bankAccountService;
 
             if (this.LeftFrame.Content == null || this.LeftFrame.Content is not ChatListComponent)
             {
-                var chatListView = new ChatListComponent(this, this.chatService, this.userService, this.reportService, this.messageService, this.RightFrame, this.repo);
+                var chatListView = new ChatListComponent(this, this.chatService, this.userService, this.reportService, this.messageService, this.RightFrame, this.authenticationService, this.bankAccountService);
                 this.LeftFrame.Content = chatListView;
             }
-
         }
 
         private void Chat_Click(object sender, RoutedEventArgs e)
         {
             if (this.LeftFrame.Content == null || this.LeftFrame.Content is not ChatListComponent)
             {
-                var chatListView = new ChatListComponent(this, this.chatService, this.userService, this.reportService, this.messageService, this.RightFrame, this.repo);
+                var chatListView = new ChatListComponent(this, this.chatService, this.userService, this.reportService, this.messageService, this.RightFrame, this.authenticationService, this.bankAccountService);
                 this.LeftFrame.Content = chatListView;
             }
         }
@@ -67,11 +59,11 @@ namespace BankAppDesktop.Views.Pages
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
-            if (this.RightFrame.Content == null || this.RightFrame.Content is not NotificationPage)
-            {
-                var notificationView = new NotificationPage(this.chatService, this.notificationService, this.userService);
-                this.RightFrame.Content = notificationView;
-            }
+            // if (this.RightFrame.Content == null || this.RightFrame.Content is not NotificationPage)
+            // {
+            //     var notificationView = new NotificationPage(this.chatService, this.notificationService, this.userService);
+            //     this.RightFrame.Content = notificationView;
+            // }
         }
     }
 }

@@ -1,36 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BankAppDesktop.ViewModels
+﻿namespace BankAppDesktop.ViewModels
 {
+    using BankAppDesktop.Commands;
+    using BankAppDesktop.Views.Components;
+    using BankAppDesktop.Views.Pages;
+    using Common.Helper;
+    using Common.Models;
+    using Common.Models.Social;
+    using Common.Services;
+    using Common.Services.Impl;
+    using Common.Services.Social;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Media;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
     using System.ComponentModel;
+    using System.IO;
     using System.Linq;
-    using System.Runtime.Intrinsics.X86;
     using System.Threading;
     using System.Windows.Input;
-    using BankAppDesktop.Commands;
-    using Common.Models;
-    using Common.Models.Social;
-    using Common.Services;
-    using Common.Services.Social;
-    using Microsoft.UI.Windowing;
-    using Microsoft.UI.Xaml;
-    using Microsoft.UI.Xaml.Controls;
-    using Microsoft.UI.Xaml.Media;
-    using Windows.Media.AppBroadcasting;
     using Windows.Storage;
     using Windows.Storage.Pickers;
     using WinRT.Interop;
-    internal class ChatMessagesViewModel : INotifyPropertyChanged
+    public class ChatMessagesViewModel : INotifyPropertyChanged
     {
-        private readonly Window window;
+        private readonly Page page;
 
         public ObservableCollection<Message> ChatMessages { get; set; }
 
@@ -40,6 +38,7 @@ namespace BankAppDesktop.ViewModels
         public IChatService ChatService;
         public IUserService UserService;
         public IChatReportService ReportService;
+        private ImgurImageUploader imgurImageUploader = App.Host.Services.GetService<ImgurImageUploader>() ?? throw new InvalidOperationException("ImgurImageUploader not found in services.");
         private MessageTemplateSelector templateSelector;
 
         // move message template selector
@@ -56,11 +55,11 @@ namespace BankAppDesktop.ViewModels
         private DateTime lastMessageTimestamp = DateTime.MinValue;
         private const int POLLING_INTERVAL = 2000; // 2 seconds
 
-        public string CurrentChatParticipantsString => string.Join(", ", this.CurrentChatParticipants ?? new List<string>());
+        public string CurrentChatParticipantsString => string.Join(", ", this.CurrentChatParticipants ?? []);
 
-        private List<string> currentChatParticipants = new List<string>();
+        private List<User> currentChatParticipants = [];
 
-        public List<string> CurrentChatParticipants
+        public List<User> CurrentChatParticipants
         {
             get => this.currentChatParticipants;
             set
@@ -138,27 +137,35 @@ namespace BankAppDesktop.ViewModels
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
 
-            var hwnd = WindowNative.GetWindowHandle(this.window);
+            var hwnd = WindowNative.GetWindowHandle(this.page);
             InitializeWithWindow.Initialize(picker, hwnd);
 
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                string imageUrl = await ImgurImageUploader.UploadImageAndGetUrl(file);
-                var user = await this.UserService.GetCurrentUserAsync();
-                Message message = new ImageMessage
+                // Convert StorageFile to a stream and then to IFormFile
+                using (var stream = await file.OpenStreamForReadAsync())
                 {
-                    ImageUrl = imageUrl,
-                    UserId = user.Id,
-                    ChatId = this.CurrentChatID,
-                    CreatedAt = DateTime.UtcNow,
-                    Sender = user
-                };
-                await this.MessageService.SendMessageAsync(this.CurrentUserID, user, message);
+                    var formFile = new FormFile(stream, 0, stream.Length, file.Name, file.Name)
+                    {
+                        Headers = new HeaderDictionary(),
+                        ContentType = file.ContentType
+                    };
+                    string imageUrl = await imgurImageUploader.UploadImageAndGetUrl(formFile);
+                    var user = await this.UserService.GetCurrentUserAsync();
+                    Message message = new ImageMessage
+                    {
+                        ImageUrl = imageUrl,
+                        UserId = user.Id,
+                        ChatId = this.CurrentChatID,
+                        CreatedAt = DateTime.UtcNow,
+                        Sender = user
+                    };
+                    await this.MessageService.SendMessageAsync(this.CurrentUserID, user, message);
 
-                // this.LoadAllMessagesForChat();
-                // force loading after
-                this.CheckForNewMessages();
+                    // Force loading after sending
+                    this.CheckForNewMessages();
+                }
             }
         }
 
@@ -188,8 +195,15 @@ namespace BankAppDesktop.ViewModels
 
         private void ReportMessage(Message message)
         {
-            // waiting for report view to be done
-            ReportView reportView = new ReportView(this.UserService, this.ReportService, message.Sender.Id, message.Id);
+            ReportViewModel reportViewModel = new(
+                App.Host.Services.GetService<IMessageService>() ?? throw new InvalidOperationException("MessageService not found"),
+                App.Host.Services.GetService<IAuthenticationService>() ?? throw new InvalidOperationException("AuthenticationService not found"),
+                this.CurrentChatID,
+                message.Id,
+                message.UserId
+            );
+
+            ReportView reportView = new(reportViewModel);
             reportView.Activate();
         }
 
@@ -217,32 +231,24 @@ namespace BankAppDesktop.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ChatMessagesViewModel"/> class.
         /// </summary>
-        /// <param name="window">The window instance.</param>
+        /// <param name="window">The page instance.</param>
         /// <param name="rightFrame">The right frame instance.</param>
         /// <param name="currentChatID">The current chat ID.</param>
         /// <param name="msgService">The message service instance.</param>
         /// <param name="chtService">The chat service instance.</param>
         /// <param name="usrService">The user service instance.</param>
         /// <param name="ReportService">The report service instance.</param>
-        public ChatMessagesViewModel(Window window, Frame rightFrame, int currentChatID, IMessageService msgService, IChatService chtService, IUserService usrService, IChatReportService reportService)
+        public ChatMessagesViewModel(Page page, Frame rightFrame, int currentChatID, IMessageService msgService, IChatService chtService, IUserService usrService, IChatReportService reportService)
         {
-            this.window = window;
-            this.ChatMessages = new ObservableCollection<Message>();
+            this.page = page;
+            this.ChatMessages = [];
             this.MessageService = msgService;
             this.ChatService = chtService;
             this.UserService = usrService;
             this.ReportService = reportService;
             this.CurrentChatID = currentChatID;
-            this.templateSelector = new MessageTemplateSelector(UserService)
+            this.templateSelector = new MessageTemplateSelector(App.Host.Services.GetService<IAuthenticationService>() ?? throw new InvalidOperationException("AuthenticationService not found"))
             {
-                // //TextMessageTemplateLeft = (DataTemplate)App.Current.Resources["TextMessageTemplateLeft"],
-                //    //TextMessageTemplateRight = (DataTemplate)App.Current.Resources["TextMessageTemplateRight"],
-                //    //ImageMessageTemplateLeft = (DataTemplate)App.Current.Resources["ImageMessageTemplateLeft"],
-                //    //ImageMessageTemplateRight = (DataTemplate)App.Current.Resources["ImageMessageTemplateRight"],
-                //    //TransferMessageTemplateLeft = (DataTemplate)App.Current.Resources["TransferMessageTemplateLeft"],
-                //    //TransferMessageTemplateRight = (DataTemplate)App.Current.Resources["TransferMessageTemplateRight"],
-                //    //RequestMessageTemplateLeft = (DataTemplate)App.Current.Resources["RequestMessageTemplateLeft"],
-                //    //RequestMessageTemplateRight = (DataTemplate)App.Current.Resources["RequestMessageTemplateRight"],
                 TextMessageTemplateLeft = App.Current.Resources["TextMessageTemplateLeft"] as DataTemplate ?? throw new InvalidOperationException("TextMessageTemplateLeft not found"),
                 TextMessageTemplateRight = App.Current.Resources["TextMessageTemplateRight"] as DataTemplate ?? throw new InvalidOperationException("TextMessageTemplateRight not found"),
                 ImageMessageTemplateLeft = App.Current.Resources["ImageMessageTemplateLeft"] as DataTemplate ?? throw new InvalidOperationException("ImageMessageTemplateLeft not found"),
@@ -258,7 +264,6 @@ namespace BankAppDesktop.ViewModels
             this.DeleteMessageCommand = new RelayCommand(parameter => this.DeleteMessage((Message)parameter));
             this.DeleteMessageCommand = new RelayCommand(parameter => this.ReportMessage((Message)parameter));
             LoadUserIdChatStuff();
-            this.templateSelector.CurrentUserID = this.CurrentUserID;
 
             // Initial load of messages
             // this.LoadAllMessagesForChat();
@@ -273,15 +278,11 @@ namespace BankAppDesktop.ViewModels
         {
             var mata = await this.UserService.GetCurrentUserAsync();
             this.CurrentUserID = mata.Id;
-            if (this.templateSelector != null)
-            {
-                this.templateSelector.InitializeCurrentUserId(this.CurrentUserID); // Set CurrentUserID after async fetch
-            }
             var chat = await this.ChatService.GetChatById(this.CurrentChatID);
             this.CurrentChatName = chat.ChatName;
 
             var participants = await this.ChatService.GetChatById(this.CurrentChatID);
-            this.CurrentChatParticipants = participants.Users.Select(user => $"{user.FirstName} {user.LastName}").ToList();
+            this.CurrentChatParticipants = participants.Users;
         }
 
         // Initial load of all messages

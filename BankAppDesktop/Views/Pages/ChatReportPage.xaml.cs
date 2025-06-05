@@ -68,7 +68,7 @@ namespace BankAppDesktop.Views.Pages
                     reportedUserId: 11111
                 );
                 
-                // Activate the window
+                // Activate the page
                 reportView.Activate();
             }
             catch (Exception ex)

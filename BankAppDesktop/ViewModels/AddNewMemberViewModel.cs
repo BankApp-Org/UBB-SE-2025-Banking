@@ -1,17 +1,15 @@
 ﻿namespace BankAppDesktop.ViewModels
 {
+    using Common.Models;
+    using Common.Services;
+    using Common.Services.Social;
+    using Microsoft.UI.Xaml.Controls;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
     using System.Windows.Input;
-    using Microsoft.UI.Xaml.Controls;
-    using BankAppDesktop.Commands;
-    using Common.Models;
-    using Common.Services;
-    using Common.Services.Social;
-    using Common.Models.Social;
 
     public class AddNewMemberViewModel : INotifyPropertyChanged
     {
@@ -56,9 +54,9 @@
             this.chatService = chat;
             this.LoadChatName();
 
-            this.UnaddedFriends = new ObservableCollection<User>();
-            this.CurrentChatMembers = new ObservableCollection<User>();
-            this.NewlyAddedFriends = new ObservableCollection<User>();
+            this.UnaddedFriends = [];
+            this.CurrentChatMembers = [];
+            this.NewlyAddedFriends = [];
 
             // this.AddToSelectedCommand = new RelayCommand<User>(this.AddToSelected);
             // this.RemoveFromSelectedCommand = new RelayCommand<User>(this.RemoveFromSelected);
@@ -124,7 +122,7 @@
             var currentChatParticipants = chat.Users;
             this.allUnaddedFriends = allFriends
                 .Where(friend => friend != null && !currentChatParticipants.Any(participant => participant.Id == friend.Id))
-                .ToList() ?? new List<User>();
+                .ToList() ?? [];
         }
 
         public async void UpdateObservableLists()
@@ -135,7 +133,7 @@
             var currentChatParticipants = chat.Users;
             this.allUnaddedFriends = allFriends
                 .Where(friend => friend != null && !currentChatParticipants.Any(participant => participant.Id == friend.Id))
-                .ToList() ?? new List<User>();
+                .ToList() ?? [];
 
             this.CurrentChatMembers.Clear();
             var chatParticipantList = chat.Users;
