@@ -103,6 +103,7 @@
                     services.AddScoped<IMessageService, MessagesProxyService>();
                     services.AddScoped<ITipsService, TipsProxyService>();
                     services.AddScoped<IProfanityChecker, ProfanityChecker>();
+                    services.AddScoped<IBankAccountService, BankAccountProxyService>();
 
                     // Configure HttpClients with the AuthenticationDelegatingHandler
                     services.AddHttpClient<IStockService, StockProxyService>(client =>
@@ -173,6 +174,10 @@
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+                    services.AddHttpClient<IBankAccountService, BankAccountProxyService>(client =>
+                    {
+                        client.BaseAddress = new Uri(apiBaseUrl);
+                    }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
                     // Don't add the handler to the authentication service's HttpClient
                     // to avoid circular dependencies
                     services.AddSingleton<MainWindow>();
@@ -217,6 +222,7 @@
                     services.AddTransient<LoansViewModel>();
                     services.AddTransient<CreateLoanDialogViewModel>();
                     services.AddTransient<LoanRequestViewModel>();
+                    services.AddTransient<BankAccountDeleteViewModel>();
 
                     // Pages
                     services.AddTransient<LoansPage>();
@@ -239,6 +245,7 @@
                     services.AddTransient<StockPage>();
                     services.AddTransient<UpdateProfilePage>();
                     services.AddTransient<LoginPage>();
+                    services.AddTransient<BankAccountDeleteView>();
 
                     // FIXME: remove \/\/\/\/
                     services.AddTransient<Func<LoanRequestComponent>>(sp => () => sp.GetRequiredService<LoanRequestComponent>());

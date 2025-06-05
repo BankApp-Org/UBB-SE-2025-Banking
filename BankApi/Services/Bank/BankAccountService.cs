@@ -8,15 +8,15 @@ namespace BankApi.Services.Bank
 {
     public class BankAccountService : IBankAccountService
     {
-        private readonly BankAccountRepository _bankAccountRepository;
-        private readonly BankTransactionRepository _bankTransactionRepository;
+        private readonly IBankAccountRepository _bankAccountRepository;
+        private readonly IBankTransactionRepository _bankTransactionRepository;
         private readonly ApiDbContext _dbContext;
         private const string CountryCode = "RO";
         private const string BankCode = "BANK";
         private const int AccountNumberLength = 16;
         private readonly Random _random = new();
 
-        public BankAccountService(BankAccountRepository bankAccountRepository, BankTransactionRepository bankTransactionRepository, ApiDbContext dbContext)
+        public BankAccountService(IBankAccountRepository bankAccountRepository, IBankTransactionRepository bankTransactionRepository, ApiDbContext dbContext)
         {
             _bankAccountRepository = bankAccountRepository ?? throw new ArgumentNullException(nameof(bankAccountRepository));
             _bankTransactionRepository = bankTransactionRepository ?? throw new ArgumentNullException(nameof(bankTransactionRepository));

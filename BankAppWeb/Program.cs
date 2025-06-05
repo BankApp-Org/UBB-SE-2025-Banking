@@ -141,6 +141,7 @@ builder.Services.AddScoped<IStockPageService, StockPageProxyService>();
 builder.Services.AddScoped<IStoreService, StoreProxyService>();
 builder.Services.AddScoped<INewsService, NewsProxyService>();
 builder.Services.AddTransient<AuthenticationDelegatingHandler>();
+builder.Services.AddScoped<IBankAccountService, BankAccountProxyService>();
 
 builder.Services.AddHttpClient<IUserService, UserProxyService>(client =>
 {
@@ -213,6 +214,12 @@ builder.Services.AddHttpClient<IStoreService, StoreProxyService>(client =>
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
 builder.Services.AddHttpClient<INewsService, NewsProxyService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+
+
+builder.Services.AddHttpClient<IBankAccountService, BankAccountProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
