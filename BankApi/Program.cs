@@ -107,6 +107,9 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Add HTTP context accessor for accessing HTTP context in services
+builder.Services.AddHttpContextAccessor();
+
 // Register repository
 builder.Services.AddScoped<IBaseStocksRepository, BaseStocksRepository>();
 builder.Services.AddScoped<IChatReportRepository, ChatReportRepository>();
@@ -155,6 +158,7 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
 builder.Services.AddScoped<IBankTransactionService, BankTransactionService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 builder.Services.AddHttpClient<IProfanityChecker, ProfanityChecker>();
 
 // Add CORS

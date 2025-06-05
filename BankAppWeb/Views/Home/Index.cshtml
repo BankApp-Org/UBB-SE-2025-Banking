@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<!-- Demo Section for Report Functionality -->
+<div class="row mt-5">
+    <div class="col-md-12">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <h4>🎯 Report View Migration Demo</h4>
+            </div>
+            <div class="card-body">
+                <h5>Successfully Migrated from UBB-SE-2025-926-1 Team</h5>
+                <p class="card-text">
+                    The Report View functionality has been successfully migrated and integrated into BigBankApp:
+                </p>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">✅ Desktop WinUI 3 Report Dialog</li>
+                    <li class="list-group-item">✅ Web ASP.NET Core Report Form</li>
+                    <li class="list-group-item">✅ API Integration with Chat Reports</li>
+                    <li class="list-group-item">✅ Authentication Service Integration</li>
+                    <li class="list-group-item">✅ ReportReason Enum Support</li>
+                </ul>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Test Report Submission:</h6>
+                        <form asp-controller="Report" asp-action="CreateDemo" method="post">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                🎯 Create Demo Report (Web)
+                            </button>
+                        </form>
+                        <small class="text-muted">Creates a test report with hardcoded data</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>View Report Form:</h6>
+                        <a asp-controller="Report" asp-action="Index" 
+                           asp-route-chatId="999" 
+                           asp-route-messageId="888" 
+                           asp-route-reportedUserId="777" 
+                           class="btn btn-outline-primary btn-lg">
+                            📝 Open Report Form
+                        </a>
+                        <small class="text-muted">Test the migrated report form</small>
+                    </div>
+                </div>
+                
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success mt-3">
+                        <strong>Success!</strong> @TempData["SuccessMessage"]
+                    </div>
+                }
+                
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger mt-3">
+                        <strong>Error!</strong> @TempData["ErrorMessage"]
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,121 @@
+﻿@model BankAppWeb.Models.AddNewMemberViewModel
+@{
+    ViewData["Title"] = "Add New Member";
+    var alertMessage = TempData["AlertMessage"] as string;
+}
+
+<h1 style="text-align: center;">Add a new friend to the chat!</h1>
+<h3 style="text-align: center;">@Model.ChatName</h3>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left Side: Available Friends -->
+        <div class="col-md-8">
+            <div class="card p-4 shadow-sm">
+                <h4>Friends</h4>
+                <form asp-action="Index" method="get">
+                    <input type="hidden" name="chatId" value="@Model.ChatId" />
+                    <input asp-for="SearchQuery" class="form-control mb-3" placeholder="Search by username or phone..." />
+                    <button type="submit" class="btn btn-info">Search</button>
+                </form>
+                @if (Model.UnaddedFriends?.Count > 0)
+                {
+                    <div class="list-group">
+                        @foreach (var friend in Model.UnaddedFriends)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>@friend.Username</strong><br />
+                                </div>
+                                <form asp-action="AddToSelected" method="post">
+                                    <input type="hidden" name="userId" value="@friend.UserID" />
+                                    <input type="hidden" name="chatId" value="@Model.ChatId" />
+                                    @for (int i = 0; i < Model.NewlyAddedFriends?.Count; i++)
+                                    {
+                                        <input type="hidden" name="newlyAddedFriends[@i].UserId" value="@Model.NewlyAddedFriends[i].UserID" />
+                                        <input type="hidden" name="newlyAddedFriends[@i].Username" value="@Model.NewlyAddedFriends[i].Username" />
+                                    }
+                                    <button type="submit" class="btn btn-sm btn-success">+</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>No friends found.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Right Side: Current and Newly Added Members -->
+        <div class="col-md-4">
+            <div class="card p-4 shadow-sm" style="background-color: #403d52; color: white;">
+                <h4>Current Chat Members</h4>
+                @if (Model.CurrentChatMembers?.Count > 0)
+                {
+                    <div class="list-group mb-3">
+                        @foreach (var member in Model.CurrentChatMembers)
+                        {
+                            <div class="list-group-item" style="background-color: transparent; color: white;">
+                                @member.Username
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>No current members.</p>
+                }
+
+                <h4>Newly Added Friends</h4>
+                @if (Model.NewlyAddedFriends?.Count > 0)
+                {
+                    <div class="list-group mb-3">
+                        @foreach (var friend in Model.NewlyAddedFriends)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; color: white;">
+                                @friend.Username
+                                <form asp-action="RemoveFromSelected" method="post">
+                                    <input type="hidden" name="userId" value="@friend.UserID" />
+                                    <input type="hidden" name="chatId" value="@Model.ChatId" />
+                                    @for (int i = 0; i < Model.NewlyAddedFriends?.Count; i++)
+                                    {
+                                        <input type="hidden" name="newlyAddedFriends[@i].UserId" value="@Model.NewlyAddedFriends[i].UserID" />
+                                        <input type="hidden" name="newlyAddedFriends[@i].Username" value="@Model.NewlyAddedFriends[i].Username" />
+                                    }
+                                    <button type="submit" class="btn btn-sm btn-danger">−</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>No newly added friends.</p>
+                }
+
+                <form asp-action="AddUsersToChat" method="post">
+                    <input type="hidden" name="chatId" value="@Model.ChatId" />
+                    @for (int i = 0; i < Model.NewlyAddedFriends?.Count; i++)
+                    {
+                        <input type="hidden" name="newlyAddedFriends[@i].UserId" value="@Model.NewlyAddedFriends[i].UserID" />
+                        <input type="hidden" name="newlyAddedFriends[@i].Username" value="@Model.NewlyAddedFriends[i].Username" />
+                    }
+                    <button type="submit" class="btn btn-info mt-3" style="width: 100%;">Done</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <a class="btn btn-danger" style="width: 200px;" asp-controller="ChatMessages" asp-action="Messages" asp-route-chatId="@Model.ChatId">Back</a>
+    </div>
+</div>
+
+<script>
+    var message = '@alertMessage';
+    if (message) {
+        alert(message);
+    }
+</script>

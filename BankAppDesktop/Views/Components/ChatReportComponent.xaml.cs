@@ -41,7 +41,7 @@ namespace BankAppDesktop.Views.Components
                 Id = this.ReportId,
                 ReportedUserCnp = this.ReportedUserCNP,
                 Message = this.ReportedMessage,
-                MessageId = this.ReportedMessage.Id,
+                MessageId = this.ReportedMessage?.Id ?? 0,
                 SubmitterCnp = this.authenticationService.GetUserCNP(),
                 Reason = ReportReason.OffensiveContent // Added required Reason property
             };
@@ -67,7 +67,8 @@ namespace BankAppDesktop.Views.Components
                 {
                     Title = "Error",
                     Content = $"An error occurred: {ex.Message}",
-                    CloseButtonText = "OK"
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
                 };
                 await errorDialog.ShowAsync();
             }
@@ -80,7 +81,7 @@ namespace BankAppDesktop.Views.Components
                 Id = this.ReportId,
                 ReportedUserCnp = this.ReportedUserCNP,
                 Message = this.ReportedMessage,
-                MessageId = this.ReportedMessage.Id,
+                MessageId = this.ReportedMessage?.Id ?? 0,
                 SubmitterCnp = this.authenticationService.GetUserCNP(),
                 Reason = ReportReason.OffensiveContent // Added required Reason property
             };
@@ -105,7 +106,8 @@ namespace BankAppDesktop.Views.Components
                 {
                     Title = "Error",
                     Content = $"An error occurred: {ex.Message}",
-                    CloseButtonText = "OK"
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
                 };
                 await errorDialog.ShowAsync();
             }
@@ -145,11 +147,16 @@ namespace BankAppDesktop.Views.Components
             this.ReportedUserCNP = reportedUserCnp;
             this.ReportedMessage = reportedMessage;
 
-            bool apiSuggestion = await this.profanityChecker.IsMessageOffensive(reportedMessage);
+            // Add null check before calling profanity checker
+            bool apiSuggestion = false;
+            if (reportedMessage != null)
+            {
+                apiSuggestion = await this.profanityChecker.IsMessageOffensive(reportedMessage);
+            }
 
             this.IdTextBlock.Text = $"Report ID: {id}";
             this.ReportedUserCNPTextBlock.Text = $"Reported user's CNP: {reportedUserCnp}";
-            this.ReportedMessageTextBlock.Text = $"Message: {reportedMessage}";
+            this.ReportedMessageTextBlock.Text = $"Message: {reportedMessage?.MessageContent ?? "No message content"}";
             this.ApiSuggestionTextBlock.Text = apiSuggestion ? "The software marked this message as offensive" : "The software marked this message as inoffensive";
 
             // Initialize the message checkbox state
