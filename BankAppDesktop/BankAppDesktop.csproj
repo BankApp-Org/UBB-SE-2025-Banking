@@ -106,6 +106,7 @@
     <None Remove="Views\Components\CreateLoanDialog.xaml" />
     <None Remove="Views\Components\LoginComponent.xaml" />
     <None Remove="Views\Components\UserAuthStatusComponent.xaml" />
+    <None Remove="Views\Pages\BankTransactionsWindow.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +117,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\Pages\BankTransactionsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Views\Pages\CurrencyExchangeTableView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>

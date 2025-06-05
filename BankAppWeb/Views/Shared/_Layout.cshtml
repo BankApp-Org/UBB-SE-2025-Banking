@@ -1,4 +1,4 @@
-﻿@using Common.Services
+@using Common.Services
 @using Common.Models
 @inject IAuthenticationService AuthenticationService
 <!DOCTYPE html>
@@ -93,6 +93,11 @@
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Loans" asp-action="Index">Loans</a>
+                                </li>
+
+                                <!-- Temporar -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="BankTransactions" asp-action="Index">Transactions Menu</a>
                                 </li>
                             }
                         }
