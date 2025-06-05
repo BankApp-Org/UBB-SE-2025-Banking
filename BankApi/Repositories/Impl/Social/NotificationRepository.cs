@@ -1,10 +1,11 @@
 ﻿using BankApi.Data;
+using BankApi.Repositories.Social;
 using Common.Models.Social;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Repositories.Impl.Social
 {
-    public class NotificationRepository
+    public class NotificationRepository : INotificationRepository
     {
         private readonly ApiDbContext _context;
         public NotificationRepository(ApiDbContext context)
@@ -16,7 +17,14 @@ namespace BankApi.Repositories.Impl.Social
         {
             return await _context.Notifications
                 .Where(n => n.UserId == userId)
+                .OrderByDescending(n => n.Timestamp)
                 .ToListAsync();
+        }
+
+        public async Task<Notification> GetNotificationByIdAsync(int notificationId)
+        {
+            return await _context.Notifications
+                .FirstOrDefaultAsync(n => n.NotificationID == notificationId);
         }
 
         public async Task<Notification> CreateNotificationAsync(Notification notification)

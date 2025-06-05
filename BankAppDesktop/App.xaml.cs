@@ -238,6 +238,7 @@
                     services.AddTransient<LoansViewModel>();
                     services.AddTransient<CreateLoanDialogViewModel>();
                     services.AddTransient<LoanRequestViewModel>();
+                    services.AddTransient<NotificationsViewModel>();
 
                     // Pages
                     services.AddTransient<LoansPage>();
@@ -260,6 +261,7 @@
                     services.AddTransient<StockPage>();
                     services.AddTransient<UpdateProfilePage>();
                     services.AddTransient<LoginPage>();
+                    services.AddTransient<NotificationsPage>();
 
                     // FIXME: remove \/\/\/\/
                     services.AddTransient<Func<LoanRequestComponent>>(sp => () => sp.GetRequiredService<LoanRequestComponent>());
