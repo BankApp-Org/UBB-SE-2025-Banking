@@ -5,27 +5,51 @@
     using Common.Services;
     using System;
     using System.Collections.Generic;
+    using System.Security.Claims;
     using System.Threading.Tasks;
 
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
         {
+            this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         public async Task<User> GetUserByCnpAsync(string cnp)
         {
-            return string.IsNullOrWhiteSpace(cnp)
-                ? throw new ArgumentException("CNP cannot be empty")
-                : await userRepository.GetByCnpAsync(cnp) ?? throw new KeyNotFoundException($"User with CNP {cnp} not found.");
+            var httpContext = httpContextAccessor.HttpContext;
+            if (httpContext?.User?.Identity?.IsAuthenticated != true)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
+            var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in claims.");
+            }
+
+            return await userRepository.GetByIdAsync(int.Parse(userId)) ?? throw new KeyNotFoundException($"User with CNP {cnp} not found.");
+        }
+
+        public async Task<User> GetByIdAsync(int userId)
+        {
+            return await this.userRepository.GetByIdAsync(userId);
         }
 
         public Task<List<User>> GetUsers()
         {
             return userRepository.GetAllAsync();
+        }
+
+        public async Task<List<User>> GetNonFriends(string userCNP)
+        {             
+            var user = await this.GetCurrentUserAsync(userCNP);
+            return await userRepository.GetAllAsync().ContinueWith(t => t.Result.FindAll(u => !user.Friends.Contains(u)));
         }
 
         public async Task AddFriend(User friend)
@@ -55,14 +79,14 @@
         public async Task UpdateUserAsync(User updatedUser, string userCNP)
         {
             ArgumentNullException.ThrowIfNull(updatedUser);
-        
+
             if (string.IsNullOrWhiteSpace(userCNP))
             {
                 throw new ArgumentException("User CNP cannot be empty");
             }
 
             User existingUser = await this.GetUserByCnpAsync(userCNP) ?? throw new KeyNotFoundException($"User with CNP {userCNP} not found.");
-        
+
             // Update only the fields that are allowed to be updated
             existingUser.UserName = updatedUser.UserName;
             existingUser.Image = updatedUser.Image;
@@ -70,7 +94,7 @@
             existingUser.IsHidden = updatedUser.IsHidden;
             existingUser.Email = updatedUser.Email;
             existingUser.PhoneNumber = updatedUser.PhoneNumber;
-        
+
             await userRepository.UpdateAsync(existingUser);
         }
 

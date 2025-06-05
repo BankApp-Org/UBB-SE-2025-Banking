@@ -14,5 +14,6 @@ namespace Common.Services.Bank
         Task<decimal> ConvertCurrency(decimal amount, Currency fromCurrency, Currency toCurrency);
         Task<CurrencyExchange> GetExchangeRateAsync(Currency fromCurrency, Currency toCurrency);
         Task<bool> CheckSufficientFunds(int userID, string accountIBAN, decimal amount, Currency currency);
+        Task<List<CurrencyExchange>> GetAllExchangeRatesAsync();
     }
 }

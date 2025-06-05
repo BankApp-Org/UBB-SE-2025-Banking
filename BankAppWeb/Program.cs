@@ -129,8 +129,8 @@ builder.Services.AddScoped<IUserService, UserProxyService>();
 builder.Services.AddScoped<ILoanService, LoanProxyService>();
 builder.Services.AddScoped<ILoanRequestService, LoanRequestProxyService>();
 builder.Services.AddScoped<IStockService, StockProxyService>();
-builder.Services.AddScoped<ITransactionService, TransactionProxyService>();
-builder.Services.AddScoped<ITransactionLogService, TransactionLogProxyService>();
+builder.Services.AddScoped<ITransactionService, StockTransactionProxyService>();
+builder.Services.AddScoped<ITransactionLogService, StockTransactionLogProxyService>();
 builder.Services.AddScoped<IChatReportService, ChatReportProxyService>();
 builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
 builder.Services.AddScoped<IMessageService, MessagesProxyService>();
@@ -140,6 +140,10 @@ builder.Services.AddScoped<IAlertService, AlertProxyService>();
 builder.Services.AddScoped<IStockPageService, StockPageProxyService>();
 builder.Services.AddScoped<IStoreService, StoreProxyService>();
 builder.Services.AddScoped<INewsService, NewsProxyService>();
+builder.Services.AddTransient<IChatService, ChatProxyService>();
+builder.Services.AddTransient<IMessageService, MessagesProxyService>();
+builder.Services.AddTransient<INotificationService, NotificationProxyService>();
+builder.Services.AddTransient<IBankAccountService, BankAccountProxyService>();
 builder.Services.AddTransient<AuthenticationDelegatingHandler>();
 
 builder.Services.AddHttpClient<IUserService, UserProxyService>(client =>
@@ -177,12 +181,12 @@ builder.Services.AddHttpClient<IStockService, StockProxyService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
-builder.Services.AddHttpClient<ITransactionService, TransactionProxyService>(client =>
+builder.Services.AddHttpClient<ITransactionService, StockTransactionProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
-builder.Services.AddHttpClient<ITransactionLogService, TransactionLogProxyService>(client =>
+builder.Services.AddHttpClient<ITransactionLogService, StockTransactionLogProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
@@ -217,6 +221,22 @@ builder.Services.AddHttpClient<INewsService, NewsProxyService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
+builder.Services.AddHttpClient<IChatService, ChatProxyService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+builder.Services.AddHttpClient<IMessageService, MessagesProxyService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+builder.Services.AddHttpClient<INotificationService, NotificationProxyService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+builder.Services.AddHttpClient<IBankAccountService, BankAccountProxyService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

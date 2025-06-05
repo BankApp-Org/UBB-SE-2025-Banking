@@ -1,26 +1,22 @@
-﻿using BankApi.Data;
 using BankApi.Repositories.Impl.Bank;
 using Common.Models.Bank;
 using Common.Services.Bank;
-using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Services.Bank
 {
     public class BankAccountService : IBankAccountService
     {
-        private readonly BankAccountRepository _bankAccountRepository;
-        private readonly BankTransactionRepository _bankTransactionRepository;
-        private readonly ApiDbContext _dbContext;
+        private readonly IBankAccountRepository _bankAccountRepository;
+        private readonly ICurrencyExchangeRepository _currencyExchangeRepository;
         private const string CountryCode = "RO";
         private const string BankCode = "BANK";
         private const int AccountNumberLength = 16;
         private readonly Random _random = new();
 
-        public BankAccountService(BankAccountRepository bankAccountRepository, BankTransactionRepository bankTransactionRepository, ApiDbContext dbContext)
+        public BankAccountService(IBankAccountRepository bankAccountRepository, ICurrencyExchangeRepository currencyExchangeRepository)
         {
             _bankAccountRepository = bankAccountRepository ?? throw new ArgumentNullException(nameof(bankAccountRepository));
-            _bankTransactionRepository = bankTransactionRepository ?? throw new ArgumentNullException(nameof(bankTransactionRepository));
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _currencyExchangeRepository = currencyExchangeRepository ?? throw new ArgumentNullException(nameof(currencyExchangeRepository));
         }
 
         public async Task<List<BankAccount>> GetUserBankAccounts(int userID)
@@ -64,7 +60,7 @@ namespace BankApi.Services.Bank
             {
                 throw new ArgumentNullException(nameof(bankAccount), "Bank account cannot be null.");
             }
-            
+
             if (string.IsNullOrWhiteSpace(bankAccount.Iban))
             {
                 // Generate IBAN if not provided
@@ -146,7 +142,7 @@ namespace BankApi.Services.Bank
             // This is a simplified IBAN check digit calculation - in a real application, use a proper IBAN validation library
             // Actual algorithm: move country code to the end, convert letters to digits (A=10, B=11...), calculate MOD 97
             // Then subtract from 98 to get the check digits
-            
+
             // For this implementation, we'll just use a placeholder
             return "42";
         }
@@ -199,30 +195,7 @@ namespace BankApi.Services.Bank
         {
             try
             {
-                var exchange = await _dbContext.CurrencyExchanges
-                    .FirstOrDefaultAsync(ce => ce.FromCurrency == fromCurrency && ce.ToCurrency == toCurrency);
-
-                if (exchange == null)
-                {
-                    // Try to find the inverse rate and calculate the reciprocal
-                    var inverseExchange = await _dbContext.CurrencyExchanges
-                        .FirstOrDefaultAsync(ce => ce.FromCurrency == toCurrency && ce.ToCurrency == fromCurrency);
-
-                    if (inverseExchange != null)
-                    {
-                        return new CurrencyExchange
-                        {
-                            FromCurrency = fromCurrency,
-                            ToCurrency = toCurrency,
-                            ExchangeRate = 1 / inverseExchange.ExchangeRate
-                        };
-                    }
-
-                    // If no direct or inverse rate is found, throw an exception
-                    throw new Exception($"Exchange rate not found for {fromCurrency} to {toCurrency}");
-                }
-
-                return exchange;
+                return await _currencyExchangeRepository.GetExchangeRateAsync(fromCurrency, toCurrency);
             }
             catch (Exception ex) when (!(ex.Message.Contains("Exchange rate not found")))
             {
@@ -274,6 +247,11 @@ namespace BankApi.Services.Bank
             {
                 throw new Exception($"Error checking sufficient funds for account {accountIBAN}", ex);
             }
+        }
+
+        public async Task<List<CurrencyExchange>> GetAllExchangeRatesAsync()
+        {
+            return await _currencyExchangeRepository.GetAllExchangeRatesAsync();
         }
     }
 }

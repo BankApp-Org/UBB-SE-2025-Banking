@@ -46,8 +46,8 @@ namespace BankApp.Repository.Tests
             {
                 Id = 1,
                 ChatName = "TestChat",
-                Users = new List<User> { user1, user2, user3 },
-                Messages = new List<Message>()
+                Users = [user1, user2, user3],
+                Messages = []
             };
             await context.Chats.AddAsync(chat);
             await context.SaveChangesAsync();
@@ -133,8 +133,8 @@ namespace BankApp.Repository.Tests
             {
                 Id = 1,
                 ChatName = "TestChat",
-                Users = new List<User> { user1, user2 },
-                Messages = new List<Message>()
+                Users = [user1, user2],
+                Messages = []
             };
             await context.Chats.AddAsync(chat);
             await context.SaveChangesAsync();
@@ -203,8 +203,8 @@ namespace BankApp.Repository.Tests
             {
                 Id = 1,
                 ChatName = "TestChat",
-                Users = new List<User> { user1, user2 },
-                Messages = new List<Message>()
+                Users = [user1, user2],
+                Messages = []
             };
             await context.Chats.AddAsync(chat);
             await context.SaveChangesAsync();
@@ -255,8 +255,8 @@ namespace BankApp.Repository.Tests
             {
                 Id = 1,
                 ChatName = "TestChat",
-                Users = new List<User> { user1, user2 },
-                Messages = new List<Message>()
+                Users = [user1, user2],
+                Messages = []
             };
             var message = new Message
             {
@@ -305,8 +305,8 @@ namespace BankApp.Repository.Tests
             {
                 Id = 1,
                 ChatName = "TestChat",
-                Users = new List<User> { user1, user2 },
-                Messages = new List<Message>()
+                Users = [user1, user2],
+                Messages = []
             };
             await context.Chats.AddAsync(chat);
             await context.SaveChangesAsync();
