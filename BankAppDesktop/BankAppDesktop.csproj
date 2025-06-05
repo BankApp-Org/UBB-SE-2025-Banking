@@ -115,6 +115,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Views\BankAccountListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
     <Page Update="Views\Components\CreateLoanDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,6 +140,9 @@
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
   <ItemGroup>
     <PRIResource Remove="Services\Api\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Views\BankAccountListView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Controls\" />
