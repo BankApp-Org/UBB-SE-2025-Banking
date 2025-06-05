@@ -1,4 +1,6 @@
 using BankAppDesktop.ViewModels;
+using Common.Services;
+using Common.Services.Social;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -25,12 +27,12 @@ namespace BankAppDesktop.Views.Pages
     {
         private FriendsListViewModel friendsListViewModel;
         private IChatService chatService;
-        private IlUserService userService;
-        private IService messageService;
+        private IUserService userService;
+        private IMessageService messageService;
         private Frame rightFrame;
         private Page addFriendsPage;
 
-        public FriendsListView(IChatServiceProxy chatService, ISocialUserServiceProxy userService, IMessageServiceProxy messageService, Frame rightFrame)
+        public FriendsListPage(IChatService chatService, IUserService userService, IMessageService messageService, Frame rightFrame)
         {
             this.InitializeComponent();
             this.chatService = chatService;
@@ -44,7 +46,7 @@ namespace BankAppDesktop.Views.Pages
 
         private void AddFriend_Click(object sender, RoutedEventArgs e)
         {
-            this.rightFrame.Content = new AddFriendsView(this.friendsListViewModel, this.userService);
+            this.rightFrame.Content = new AddFriendsPage(this.friendsListViewModel, this.userService);
         }
     }
 }

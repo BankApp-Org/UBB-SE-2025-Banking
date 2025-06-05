@@ -1,3 +1,5 @@
+using BankAppDesktop.ViewModels;
+using Common.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -15,7 +17,6 @@ using Windows.Foundation.Collections;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace BankAppDesktop.Views.Pages
 {
     /// <summary>
@@ -23,9 +24,19 @@ namespace BankAppDesktop.Views.Pages
     /// </summary>
     public sealed partial class AddFriendsPage : Page
     {
-        public AddFriendsPage()
+        private IUserService userService;
+        private FriendsListViewModel friendsListViewModel;
+        private AddFriendsViewModel addFriendsViewModel;
+
+        public AddFriendsPage(FriendsListViewModel friendsListViewModel, IUserService userService)
         {
-            InitializeComponent();
+            this.InitializeComponent();
+
+            this.friendsListViewModel = friendsListViewModel;
+            this.userService = userService;
+            this.addFriendsViewModel = new AddFriendsViewModel(friendsListViewModel, userService);
+
+            this.DataContext = this.addFriendsViewModel;
         }
     }
 }
