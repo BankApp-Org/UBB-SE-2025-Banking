@@ -1,0 +1,52 @@
+@model BankAppWeb.Models.BankAccountCreateModel
+
+@{
+	ViewData["Title"] = "Create Bank Account";
+}
+
+<h2>Create Bank Account</h2>
+
+<div class="container">
+	<div class="header">
+		<a href="@Url.Action("Index", "Homepage")" class="back-button">&#x2190;</a>
+		<h1>Create Bank Account</h1>
+	</div>
+
+	@if (TempData["SuccessMessage"] != null)
+	{
+		<div class="notification">
+			@TempData["SuccessMessage"]
+		</div>
+	}
+
+	<form asp-action="Index" method="post" class="form-container">
+		<div class="form-group">
+			<label>Select currency:</label>
+			<div class="currency-list">
+				@for (int i = 0; i < Model.AvailableCurrencies.Count; i++)
+				{
+					<label class="currency-item">
+						<input type="radio"
+						       name="SelectedCurrencyIndex"
+						       value="@i"
+						       @(Model.AvailableCurrencies[i].IsChecked ? "checked" : "") />
+						<span>@Model.AvailableCurrencies[i].Name</span>
+
+						<input type="hidden" asp-for="AvailableCurrencies[(i)].Name" />
+						<input type="hidden" asp-for="AvailableCurrencies[(i)].IsChecked" />
+
+					</label>
+				}
+			</div>
+			<span asp-validation-for="SelectedCurrency" class="text-danger"></span>
+		</div>
+
+		<div class="form-group">
+			<label for="CustomName">Custom Name</label>
+			<input asp-for="CustomName" class="form-control" placeholder="Custom Name" />
+			<span asp-validation-for="CustomName" class="text-danger"></span>
+		</div>
+
+		<button type="submit" class="btn-confirm">Confirm creation</button>
+	</form>
+</div> 

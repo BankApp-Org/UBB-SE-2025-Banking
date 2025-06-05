@@ -265,6 +265,9 @@
                     services.AddTransient<Func<LoanRequestComponent>>(sp => () => sp.GetRequiredService<LoanRequestComponent>());
                     services.AddTransient<Func<ChatReportComponent>>(sp => () => sp.GetRequiredService<ChatReportComponent>());
                     services.AddTransient<Func<UserInfoComponent>>(sp => () => sp.GetRequiredService<UserInfoComponent>());
+
+                    services.AddTransient<BankAccountCreateView>();
+                    services.AddTransient<BankAccountCreateViewModel>();
                 }).Build();
         }
 
@@ -280,6 +283,8 @@
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
+
+        public static IServiceProvider Services => Host.Services;
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points

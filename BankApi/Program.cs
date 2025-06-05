@@ -130,6 +130,7 @@ builder.Services.AddScoped<IChatRepository, ChatRepository>();
 builder.Services.AddScoped<IBankTransactionRepository, BankTransactionRepository>();
 builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
 builder.Services.AddScoped<IBankTransactionHistoryRepository, BankTransactionHistoryRepository>();
+builder.Services.AddScoped<ICurrencyExchangeRepository, CurrencyExchangeRepository>();
 
 
 // Register services
@@ -155,6 +156,7 @@ builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
 builder.Services.AddScoped<IBankTransactionService, BankTransactionService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddHttpClient<IProfanityChecker, ProfanityChecker>();
+builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 
 
 // Add CORS
