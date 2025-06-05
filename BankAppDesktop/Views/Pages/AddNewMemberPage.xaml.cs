@@ -8,17 +8,19 @@ namespace BankAppDesktop.Views.Pages
     using BankAppDesktop.ViewModels;
     using BankApi.Services.Social;
     using BankApi.Services;
+    using Common.Services.Social;
+    using Common.Services;
 
     public sealed partial class AddNewMemberPage : Page
     {
-        private ChatService chatService;
-        private UserService userService;
+        private IChatService chatService;
+        private IUserService userService;
         private AddNewMemberViewModel addNewMemberViewModel;
         private Page lastChat;
         private Frame rightFrame;
         private ChatMessagesViewModel chatMessagesViewModel;
 
-        public AddNewMemberPage(ChatMessagesViewModel chatMessagesViewModel, Page lastChat, Frame rightFrame, int chatID, ChatService chatService, UserService userService)
+        public AddNewMemberPage(ChatMessagesViewModel chatMessagesViewModel, Page lastChat, Frame rightFrame, int chatID, IChatService chatService, IUserService userService)
         {
             this.InitializeComponent();
             this.chatMessagesViewModel = chatMessagesViewModel;
