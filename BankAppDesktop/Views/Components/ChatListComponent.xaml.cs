@@ -17,6 +17,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using BankAppDesktop.Views.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -56,17 +57,16 @@ namespace BankAppDesktop.Views.Components
             this.repository = repository;
         }
 
-        // TODO
         private void CreateChat_Click(object sender, RoutedEventArgs e)
         {
-            this.RightFrame.Content = new CreateChatView(this.chatListViewModel, this.ChatService, this.UserService);
+            this.RightFrame.Content = new CreateChatPage(this.chatListViewModel, this.ChatService, this.UserService);
         }
 
         private void ChatList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.ChatList.SelectedItem is Chat selectedChat)
             {
-                this.RightFrame.Content = new ChatMessagesView(this.chatListViewModel, this.MainFrame, this.RightFrame, selectedChat.Id, this.UserService, this.ChatService, this.MessageService, this.ReportService, this.repository);
+                this.RightFrame.Content = new ChatMessagesPage(this.chatListViewModel, this.MainFrame, this.RightFrame, selectedChat.Id, this.UserService, this.ChatService, this.MessageService, this.ReportService, this.repository);
             }
         }
     }

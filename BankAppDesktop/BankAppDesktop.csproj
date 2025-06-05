@@ -102,9 +102,11 @@
     <PRIResource Remove="Homepage\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Views\Components\ChatListComponent.xaml" />
     <None Remove="Views\Components\CreateLoanDialog.xaml" />
     <None Remove="Views\Components\LoginComponent.xaml" />
     <None Remove="Views\Components\UserAuthStatusComponent.xaml" />
+    <None Remove="Views\Pages\CreateChatPage.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +117,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\Pages\CreateChatPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Components\ChatListComponent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Components\CreateLoanDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
