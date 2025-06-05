@@ -1,0 +1,134 @@
+/* Message Templates Styles */
+
+/* Common styles for all messages */
+.message-container {
+    display: flex;
+    margin: 10px 0;
+}
+
+.message-container.left {
+    justify-content: flex-start;
+}
+
+.message-container.right {
+    justify-content: flex-end;
+}
+
+.sender-name {
+    color: #d3d3d3;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.message-content {
+    max-width: 400px;
+    padding: 10px;
+    border-radius: 10px;
+    position: relative;
+}
+
+/* Text Messages */
+.text-message.left .message-content {
+    background-color: #39374f;
+    color: white;
+}
+
+.text-message.right .message-content {
+    background-color: #4e6e8e;
+    color: white;
+}
+
+/* Image Messages */
+.image-message .message-content {
+    background-color: transparent;
+    padding: 5px;
+}
+
+.image-message img {
+    max-width: 200px;
+    border-radius: 10px;
+}
+
+/* Transfer Messages */
+.transfer-message.left .message-content {
+    background-color: #39374f;
+    color: white;
+}
+
+.transfer-message.right .message-content {
+    background-color: #4e6e8e;
+}
+
+.transfer-message .amount {
+    font-weight: bold;
+}
+
+/* Request Messages */
+.request-message.left .message-content {
+    background-color: #39374f;
+    color: white;
+}
+
+.request-message.right .message-content {
+    background-color: #4e6e8e;
+}
+
+.accept-request-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px auto;
+    display: block;
+}
+
+/* Message Menu */
+.message-menu-btn {
+    background: transparent;
+    border: none;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 0;
+    cursor: pointer;
+}
+
+.message-menu-btn.left {
+    right: -30px;
+}
+
+.message-menu-btn.right {
+    left: -30px;
+}
+
+.message-menu-btn i {
+    color: #d3d3d3;
+}
+
+/* Menu Items */
+.message-menu {
+    position: absolute;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+.message-menu-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.message-menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+.message-menu-item i {
+    margin-right: 5px;
+} 
