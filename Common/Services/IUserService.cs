@@ -10,7 +10,12 @@
 
         Task<User> GetUserByCnpAsync(string cnp);
 
+        Task<User> GetByIdAsync(int userId);
+
         Task<List<User>> GetUsers();
+
+        Task<List<User>> GetNonFriends(string cnp);
+
         Task AddFriend(User friend);
         Task RemoveFriend(User friend);
 

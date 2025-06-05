@@ -1,0 +1,31 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "SocialMainPage";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar for Navigation -->
+        <div class="col-md-3 bg-dark text-light p-3" style="background-color: #1b1a26; min-height: 100vh;">
+            <h4 class="text-center mb-4">Social Navigation</h4>
+            <div class="list-group">
+                <a asp-controller="ChatList" asp-action="Index" class="list-group-item list-group-item-action bg-secondary text-white mb-2">Chat</a>
+                @* <a asp-controller="Feed" asp-action="Index" class="list-group-item list-group-item-action bg-secondary text-white mb-2">Feed</a> *@
+                <a asp-controller="FriendsList" asp-action="Index" class="list-group-item list-group-item-action bg-secondary text-white mb-2">Friends</a>
+                <a asp-controller="Notifications" asp-action="Index" class="list-group-item list-group-item-action bg-secondary text-white mb-2">Notifications</a>
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="col-md-9 p-4">
+            <h2>Welcome to LoanShark Social</h2>
+            <p class="lead">This is the main hub for the social features of LoanShark. Use the sidebar to navigate to different sections:</p>
+            <ul>
+                <li><strong>Chat</strong>: Access your chat lists and messages.</li>
+                @* <li><strong>Feed</strong>: View the latest posts and updates.</li> *@
+                <li><strong>Friends</strong>: Manage your friends list.</li>
+                <li><strong>Notifications</strong>: Check your notifications.</li>
+            </ul>
+            <p>Select an option from the sidebar to get started!</p>
+        </div>
+    </div>
+</div>
