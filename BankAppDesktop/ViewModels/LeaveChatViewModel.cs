@@ -21,7 +21,7 @@ namespace BankAppDesktop.ViewModels
         private ChatListViewModel lastViewModel;
         private int chatID;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
