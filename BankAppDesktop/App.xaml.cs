@@ -85,8 +85,8 @@
                     services.AddTransient<AuthenticationDelegatingHandler>();
 
                     // Other Services
-                    services.AddScoped<ITransactionLogService, TransactionLogProxyService>();
-                    services.AddScoped<ITransactionService, TransactionProxyService>();
+                    services.AddScoped<ITransactionLogService, StockTransactionLogProxyService>();
+                    services.AddScoped<ITransactionService, StockTransactionProxyService>();
                     services.AddScoped<IChatReportService, ChatReportProxyService>();
                     services.AddScoped<ICreditHistoryService, HistoryProxyService>();
                     services.AddScoped<IBillSplitReportService, BillSplitReportProxyService>();
@@ -169,11 +169,11 @@
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-                    services.AddHttpClient<ITransactionLogService, TransactionLogProxyService>(client =>
+                    services.AddHttpClient<ITransactionLogService, StockTransactionLogProxyService>(client =>
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-                    services.AddHttpClient<ITransactionService, TransactionProxyService>(client =>
+                    services.AddHttpClient<ITransactionService, StockTransactionProxyService>(client =>
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
