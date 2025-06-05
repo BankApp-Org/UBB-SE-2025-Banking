@@ -89,7 +89,7 @@ namespace BankApi.Controllers
                 MaximumPerTransaction = 200.0m, // Default value
                 MaximumNrTransactions = 10, // Default value
                 Blocked = false, // Default value
-                Transactions = new List<BankTransaction>(),
+                Transactions = [],
                 User = await userService.GetCurrentUserAsync()
             };
 

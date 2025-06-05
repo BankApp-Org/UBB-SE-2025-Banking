@@ -82,7 +82,7 @@ namespace BankAppDesktop.Pages
             }
 
             var allArticles = await this.newsService.GetNewsArticlesAsync();
-            if (allArticles == null || !allArticles.Any())
+            if (allArticles == null || allArticles.Count == 0)
             {
                 this.ViewModel.Articles.Clear();
                 this.ViewModel.IsEmptyState = true;
