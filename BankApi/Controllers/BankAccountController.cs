@@ -89,7 +89,7 @@ namespace BankApi.Controllers
                 MaximumPerTransaction = 200.0m, // Default value
                 MaximumNrTransactions = 10, // Default value
                 Blocked = false, // Default value
-                Transactions = new List<BankTransaction>(),
+                Transactions = [],
                 User = await userService.GetCurrentUserAsync()
             };
 
@@ -148,6 +148,12 @@ namespace BankApi.Controllers
             var result = await bankAccountService.UpdateBankAccount(bankAccount);
 
             return result ? Ok() : NotFound();
+        }
+
+        [HttpGet("ExchangeRates")]
+        public async Task<ActionResult<List<CurrencyExchange>>> GetAllExchangeRates()
+        {
+            return Ok(await bankAccountService.GetAllExchangeRatesAsync());
         }
     }
 

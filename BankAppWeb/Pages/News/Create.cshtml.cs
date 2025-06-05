@@ -66,7 +66,7 @@ namespace BankAppWeb.Pages.News
                 TopicOptions = [.. topics.Select(t => new SelectListItem(t, t))];
 
                 // Set a default topic if none is selected
-                if (string.IsNullOrEmpty(SelectedTopic) && TopicOptions.Any())
+                if (string.IsNullOrEmpty(SelectedTopic) && TopicOptions.Count != 0)
                 {
                     SelectedTopic = TopicOptions.First().Value;
                 }

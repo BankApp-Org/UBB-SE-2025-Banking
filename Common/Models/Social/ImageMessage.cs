@@ -13,7 +13,7 @@ namespace Common.Models.Social
             UserId = userId;
             ChatId = chatId;
             ImageUrl = imageUrl;
-            UsersReport = usersReport ?? new List<User>();
+            UsersReport = usersReport ?? [];
             CreatedAt = createdAt;
             Type = MessageType.Image;
         }
@@ -23,12 +23,12 @@ namespace Common.Models.Social
             UserId = userId;
             ChatId = chatId;
             ImageUrl = imageUrl;
-            UsersReport = usersReport ?? new List<User>();
+            UsersReport = usersReport ?? [];
             CreatedAt = DateTime.Parse(createdAt);
             Type = MessageType.Image;
         }
         public string ImageUrl { get; set; } = string.Empty;
-        public List<User> UsersReport { get; set; } = new();
+        public List<User> UsersReport { get; set; } = [];
         public override string ToString() => ImageUrl;
     }
 }
