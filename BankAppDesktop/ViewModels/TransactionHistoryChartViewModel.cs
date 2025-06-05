@@ -5,8 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using BankAppDesktop.Commands;
 using BankAppDesktop.Services;
-using LiveCharts;
-using LiveCharts.Wpf;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using System.Linq;
 
 namespace BankAppDesktop.ViewModels
@@ -14,7 +14,7 @@ namespace BankAppDesktop.ViewModels
     public class TransactionHistoryChartViewModel : INotifyPropertyChanged
     {
         private readonly ITransactionHistoryService _transactionHistoryService;
-        private SeriesCollection _transactionTypeCounts;
+        private IEnumerable<ISeries> _transactionTypeCounts;
         private ICommand _backCommand;
 
         public TransactionHistoryChartViewModel(ITransactionHistoryService transactionHistoryService)
@@ -24,7 +24,7 @@ namespace BankAppDesktop.ViewModels
             LoadData();
         }
 
-        public SeriesCollection TransactionTypeCounts
+        public IEnumerable<ISeries> TransactionTypeCounts
         {
             get => _transactionTypeCounts;
             set
@@ -41,16 +41,15 @@ namespace BankAppDesktop.ViewModels
             var userId = "current-user-id"; // Înlocuiește cu userId real
             var transactionTypeCounts = await _transactionHistoryService.GetTransactionTypeCounts(userId);
 
-            TransactionTypeCounts = new SeriesCollection();
-            foreach (var tc in transactionTypeCounts)
-            {
-                TransactionTypeCounts.Add(new PieSeries
+            TransactionTypeCounts = transactionTypeCounts.Select(tc =>
+                new PieSeries<int>
                 {
-                    Title = tc.TransactionType.Name,
-                    Values = new ChartValues<int> { tc.Count },
-                    DataLabels = true
-                });
-            }
+                    Name = tc.TransactionType.Name,
+                    Values = new[] { tc.Count },
+                    DataLabelsSize = 16,
+                    DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle
+                }
+            ).ToArray();
         }
 
         private void ExecuteBack(object parameter)
