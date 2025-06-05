@@ -8,7 +8,7 @@ using LoanShark.Data;
 using LoanShark.Domain;
 using LoanShark.View.BankView;
 
-namespace LoanShark.Helper
+namespace BankAppDesktop.Views.Converters
 {
     public static class WindowManager
     {

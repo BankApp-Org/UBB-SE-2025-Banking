@@ -1,7 +1,7 @@
 using System;
 using BankAppDesktop.ViewModels;
 using Microsoft.UI.Xaml;
-using BankAppDesktop.Converters;
+using BankAppDesktop.Views.Converters;
 using Microsoft.Extensions.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -18,7 +18,8 @@ namespace BankAppDesktop.Views
         public BankAccountListView()
         {
             this.InitializeComponent();
-            viewModel = App.Services.GetRequiredService<BankAccountListViewModel>();
+            // This should be uncommneted after App is configured
+            // viewModel = App.Services.GetRequiredService<BankAccountListViewModel>();
             MainGrid.DataContext = viewModel;
 
             viewModel.OnClose = () => this.Close();

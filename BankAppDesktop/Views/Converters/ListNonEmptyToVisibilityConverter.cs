@@ -1,20 +1,18 @@
 ﻿using System;
-using LoanShark.Domain;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
-namespace LoanShark.Helper
+namespace BankAppDesktop.Views.Converters
 {
-    public class BankAccountDisplayConverter : IValueConverter
+    public class ListNonEmptyToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is BankAccount account)
+            if (value is int count)
             {
-                return string.IsNullOrEmpty(account.Name)
-                    ? $"{account.Iban} ({account.Currency})"
-                    : account.Name;
+                return count != 0 ? Visibility.Visible : Visibility.Collapsed;
             }
-            return "Unknown Account";
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

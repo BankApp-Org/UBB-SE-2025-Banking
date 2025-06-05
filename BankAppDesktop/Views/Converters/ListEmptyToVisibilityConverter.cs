@@ -2,7 +2,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 
-namespace LoanShark.Helper
+namespace BankAppDesktop.Views.Converters
 {
     public class ListEmptyToVisibilityConverter : IValueConverter
     {
