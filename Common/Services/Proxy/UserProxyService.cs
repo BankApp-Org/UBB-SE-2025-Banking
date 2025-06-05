@@ -65,6 +65,12 @@ namespace Common.Services.Proxy
             return await response.Content.ReadFromJsonAsync<List<User>>(_jsonOptions) ?? [];
         }
 
+        public async Task<List<User>> GetNonFriends(string userCNP)
+        {
+            var response = await _httpClient.GetAsync($"api/User/non-friends");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<User>>(_jsonOptions) ?? [];
+        }
         public async Task UpdateIsAdminAsync(bool newIsAdmin, string? userCNP = null)
         {
             if (string.IsNullOrEmpty(userCNP))
