@@ -1,0 +1,103 @@
+@model BankAppWeb.Models.ChatMessagesViewModel
+
+@{
+    ViewData["Title"] = "Chat Messages";
+}
+
+<div class="container">
+    <!-- Chat Header -->
+    <div class="row bg-dark text-white p-3 mb-3">
+        <div class="col">
+            <h3>@Model.CurrentChatName</h3>
+            <p>@Model.CurrentChatParticipantsString</p>
+        </div>
+        <div class="col-auto">
+            <a asp-controller="AddNewMember" asp-action="Index" asp-route-chatId="@Model.CurrentChatID" class="btn btn-secondary me-2">Add Member</a>
+            <a asp-controller="LeaveChat" asp-action="Index" asp-route-chatId="@Model.CurrentChatID" class="btn btn-danger">Leave Chat</a>
+        </div>
+    </div>
+
+    <!-- Messages List -->
+    <div class="row">
+        <div class="col">
+            <div id="messagesContainer" class="border p-3" style="min-height: 400px; max-height: 400px; overflow-y: auto; background-color: #000; color: #fff;">
+                @foreach (var message in Model.ChatMessages)
+                {
+                    <div class="message mb-2 @(message.SenderID == Model.CurrentUserID ? "text-end" : "text-start")">
+                        <strong>@message.SenderUsername</strong> <small>@message.Timestamp.ToString("g")</small>
+                        @switch (message)
+                        {
+                            case LoanShark.Domain.MessageClasses.TextMessage text:
+                                <p>@text.Content</p>
+                                break;
+                            case LoanShark.Domain.MessageClasses.ImageMessage image:
+                                <img src="@image.ImageURL" alt="Image" style="max-width: 200px;" />
+                                break;
+                            case LoanShark.Domain.MessageClasses.TransferMessage transfer:
+                                <p>Transfer: @transfer.Amount @transfer.Currency (@transfer.Status) - @transfer.Description</p>
+                                break;
+                            case LoanShark.Domain.MessageClasses.RequestMessage request:
+                                <p>Request: @request.Amount @request.Currency (@request.Status) - @request.Description</p>
+                                break;
+                        }
+                        <div>
+                            <form asp-controller="ChatMessages" asp-action="DeleteMessage" method="post" class="d-inline">
+                                <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                                <input type="hidden" name="messageId" value="@message.MessageID" />
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                            @if (message is LoanShark.Domain.MessageClasses.TextMessage || message is LoanShark.Domain.MessageClasses.ImageMessage)
+                            {
+                                <form asp-controller="ChatMessages" asp-action="ReportMessage" method="get" class="d-inline">
+                                    <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                                    <input type="hidden" name="messageId" value="@message.MessageID" />
+                                    <button type="submit" class="btn btn-sm btn-warning">Report</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="row mt-3">
+        <form asp-controller="ChatMessages" asp-action="SendMessage" method="post" class="input-group">
+            <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+            <div class="input-group">
+                <input type="text" class="form-control" asp-for="MessageContent" placeholder="Type a message..." maxlength="256" />
+                <span class="input-group-text">@Model.RemainingCharacterCount</span>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </form>
+        <form asp-controller="ChatMessages" asp-action="SendImage" method="post" enctype="multipart/form-data" class="input-group mt-2">
+            <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+            <input type="file" name="imageFile" accept=".jpg,.jpeg,.png" class="form-control" />
+            <button type="submit" class="btn btn-primary">+</button>
+        </form>
+        <a asp-controller="GenerateTransfer" asp-action="Index" asp-route-chatId="@Model.CurrentChatID" class="btn btn-primary mt-2">Send Transfer</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Scroll to bottom on load
+            var messagesContainer = $("#messagesContainer");
+            messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+
+            // Poll for new messages every 2 seconds
+            setInterval(function () {
+                $.ajax({
+                    url: "/ChatMessages/Messages?chatId=@Model.CurrentChatID",
+                    success: function (data) {
+                        $("#messagesContainer").html($(data).find("#messagesContainer").html());
+                        messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                    }
+                });
+            }, 2000);
+        });
+    </script>
+}
