@@ -35,7 +35,7 @@ namespace BankApi.Controllers
                 MessageContent = messageDto.Content,
                 CreatedAt = DateTime.Now,
                 Type = MessageType.Text,
-                UsersReport = messageDto.UsersReport ?? new List<User>()
+                UsersReport = messageDto.UsersReport ?? []
             };
             await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
             return NoContent();
@@ -54,7 +54,7 @@ namespace BankApi.Controllers
                 ImageUrl = messageDto.ImageURL,
                 CreatedAt = DateTime.Now,
                 Type = MessageType.Image,
-                UsersReport = messageDto.UsersReport ?? new List<User>()
+                UsersReport = messageDto.UsersReport ?? []
             };
             await _messageService.SendMessageAsync(messageDto.ChatID, user, message);
             return NoContent();

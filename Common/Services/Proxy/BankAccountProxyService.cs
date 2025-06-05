@@ -1,46 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-
-using System.Threading.Tasks;
 using Common.Models.Bank;
 using Common.Services.Bank;
+using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Extensions.Options;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Common.Services.Proxy
 {
-    public class BankAccountProxyService : IBankAccountService
-
+    public class BankAccountProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : IProxyService, IBankAccountService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        private readonly JsonSerializerOptions _jsonOptions = jsonOptions.Value.SerializerOptions ?? throw new ArgumentNullException(nameof(jsonOptions), "JsonSerializerOptions cannot be null.");
 
-        public BankAccountProxyService(HttpClient httpClient)
+        public async Task<List<BankAccount>> GetUserBankAccounts(int userId)
         {
-            _httpClient = httpClient;
-        }
-
-        public async Task<List<BankAccount>?> GetUserBankAccounts(int userID)
-        {
-            return await _httpClient.GetFromJsonAsync<List<BankAccount>>($"api/BankAccount/user/{userID}");
+            return await _httpClient.GetFromJsonAsync<List<BankAccount>>($"api/BankAccount/user/{userId}", _jsonOptions) ??
+                throw new InvalidOperationException("Failed to deserialize bank accounts response.");
         }
 
         public async Task<BankAccount?> FindBankAccount(string iban)
         {
-            return await _httpClient.GetFromJsonAsync<BankAccount>($"api/BankAccount/{iban}");
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<BankAccount>($"api/BankAccount/{iban}", _jsonOptions);
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
         }
 
-        public async Task <bool> CreateBankAccount(BankAccount bankAccount)
+        public async Task<bool> CreateBankAccount(BankAccount bankAccount)
         {
-            var payload = new
+            var request = new CreateBankAccountRequest
             {
                 UserId = bankAccount.UserId,
                 CustomName = bankAccount.Name,
-                Currency = bankAccount.Currency
+                Currency = bankAccount.Currency.ToString()
             };
-            var response =  await _httpClient.PostAsJsonAsync("api/BankAccount", payload);
+
+            var response = await _httpClient.PostAsJsonAsync("api/BankAccount", request, _jsonOptions);
             return response.IsSuccessStatusCode;
         }
 
@@ -52,136 +51,78 @@ namespace Common.Services.Proxy
 
         public async Task<bool> CheckIBANExists(string iban)
         {
-            var response = await _httpClient.GetAsync($"api/BankAccount/exists/{iban}");
-            return response.IsSuccessStatusCode && bool.Parse(await response.Content.ReadAsStringAsync());
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/BankAccount/{iban}/exists");
+                return response.IsSuccessStatusCode;
+            }
+            catch (HttpRequestException)
+            {
+                return false;
+            }
         }
 
         public async Task<string> GenerateIBAN()
         {
-            return await _httpClient.GetStringAsync("api/BankAccount/generate-iban");
+            var response = await _httpClient.GetStringAsync("api/BankAccount/generate-iban");
+            return response;
         }
 
-        public async Task<List<string>> GetCurrencies()
+        public async Task<bool> UpdateBankAccount(BankAccount bankAccount)
         {
-            return await _httpClient.GetFromJsonAsync<List<string>>("api/BankAccount/currencies");
-        }
-
-        public async Task<bool> VerifyUserCredentials(string email, string password)
-        {
-            var payload = new { Email = email, Password = password };
-            var response = await _httpClient.PostAsJsonAsync("api/BankAccount/verify", payload);
-            return response.IsSuccessStatusCode && bool.Parse(await response.Content.ReadAsStringAsync());
-        }
-
-        public async Task <bool> UpdateBankAccount(BankAccount bankAccount)
-        {
-            var payload = new
-            {
-                Iban = bankAccount.Iban,
-                Name = bankAccount.Name,
-                DailyLimit = bankAccount.DailyLimit,
-                MaxPerTransaction = bankAccount.MaximumPerTransaction,
-                MaxNrTransactions = bankAccount.MaximumNrTransactions,
-                Blocked = bankAccount.Blocked
-            };
-
-            var json = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync($"https://localhost:7097/api/bankaccount/{bankAccount.Iban}", json);
+            var response = await _httpClient.PutAsJsonAsync($"api/BankAccount/{bankAccount.Iban}", bankAccount, _jsonOptions);
             return response.IsSuccessStatusCode;
         }
 
         public async Task<decimal> ConvertCurrency(decimal amount, Currency fromCurrency, Currency toCurrency)
         {
-            try
-            {
-                var dto = new ConvertCurrencyDTO
-                {
-                    Amount = amount,
-                    FromCurrency = fromCurrency,
-                    ToCurrency = toCurrency,
-                };
+            var response = await _httpClient.GetFromJsonAsync<CurrencyConversionResult>(
+                $"api/BankAccount/convert?amount={amount}&fromCurrency={fromCurrency}&toCurrency={toCurrency}", 
+                _jsonOptions);
 
-                var content = new StringContent(
-                    JsonSerializer.Serialize(dto),
-                    Encoding.UTF8,
-                    "application/json");
-
-                var response = await _httpClient.PostAsync("api/BankAccount/ConvertCurrency", content);
-                response.EnsureSuccessStatusCode();
-
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<decimal>(json);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error converting currency in proxy: {ex.Message}");
-                throw new Exception($"Error converting currency in proxy: {ex.Message}");
-            }
+            return response?.ConvertedAmount ?? throw new InvalidOperationException("Failed to deserialize currency conversion response.");
         }
+
         public async Task<CurrencyExchange> GetExchangeRateAsync(Currency fromCurrency, Currency toCurrency)
         {
-            try
-            {
-                var payload = new
-                {
-                    FromCurrency = fromCurrency,
-                    ToCurrency = toCurrency
-                };
-
-                var response = await _httpClient.PostAsJsonAsync("api/BankAccount/GetExchangeRate", payload);
-                response.EnsureSuccessStatusCode();
-
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<CurrencyExchange>(json);
-
-                return result!;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error fetching exchange rate: {ex.Message}");
-                throw new Exception($"Error fetching exchange rate: {ex.Message}");
-            }
+            return await _httpClient.GetFromJsonAsync<CurrencyExchange>(
+                $"api/BankAccount/exchange-rate?fromCurrency={fromCurrency}&toCurrency={toCurrency}",
+                _jsonOptions) ?? throw new InvalidOperationException("Failed to deserialize exchange rate response.");
         }
 
-        public async Task<bool> CheckSufficientFunds(int userID, string accountIBAN, decimal amount, Currency currency)
+        public async Task<bool> CheckSufficientFunds(int userId, string accountIBAN, decimal amount, Currency currency)
         {
-            try
+            var request = new CheckFundsRequest
             {
-                var payload = new
-                {
-                    UserId = userID,
-                    AccountIban = accountIBAN,
-                    Amount = amount,
-                    Currency = currency
-                };
+                UserId = userId,
+                Iban = accountIBAN,
+                Amount = amount,
+                Currency = currency.ToString()
+            };
 
-                var response = await _httpClient.PostAsJsonAsync("api/BankAccount/CheckSufficientFunds", payload);
-                response.EnsureSuccessStatusCode();
-
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<bool>(json);
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error checking funds: {ex.Message}");
-                throw new Exception($"Error checking funds: {ex.Message}");
-            }
+            var response = await _httpClient.PostAsJsonAsync("api/BankAccount/check-funds", request, _jsonOptions);
+            return response.IsSuccessStatusCode;
         }
-
     }
 
+    // DTO classes for API requests
+    public class CreateBankAccountRequest
+    {
+        public int UserId { get; set; }
+        public string? CustomName { get; set; }
+        public string? Currency { get; set; }
+    }
 
+    public class CurrencyConversionResult
+    {
+        public decimal ConvertedAmount { get; set; }
+    }
+
+    public class CheckFundsRequest
+    {
+        public int UserId { get; set; }
+        public string Iban { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public string Currency { get; set; } = string.Empty;
+    }
 }
-
-public class ConvertCurrencyDTO
-{
-    public decimal Amount { get; set; }
-
-    public Currency FromCurrency { get; set; }
-
-    public Currency ToCurrency { get; set; }
-}
-

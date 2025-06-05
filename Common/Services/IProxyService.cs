@@ -1,6 +1,6 @@
 ﻿namespace Common.Services
 {
-    public class IProxyService
+    public interface IProxyService
     {
     }
 }
