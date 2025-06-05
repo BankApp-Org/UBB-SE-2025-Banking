@@ -46,6 +46,12 @@
             return userRepository.GetAllAsync();
         }
 
+        public async Task<List<User>> GetNonFriends(string userCNP)
+        {             
+            var user = await this.GetCurrentUserAsync(userCNP);
+            return await userRepository.GetAllAsync().ContinueWith(t => t.Result.FindAll(u => !user.Friends.Contains(u)));
+        }
+
         public async Task AddFriend(User friend)
         {
             var user = await this.GetCurrentUserAsync(null);

@@ -133,6 +133,25 @@ namespace BankApi.Controllers
             }
         }
 
+        [HttpGet("non-friends")]
+        public async Task<ActionResult<List<User>>> GetNonFriends()
+        {             
+            try
+            {
+                var userCnp = await this.GetCurrentUserCnp();
+                var nonFriends = await _userService.GetNonFriends(userCnp);
+                return Ok(nonFriends);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpPost] // Typically, user creation is handled by an Identity system or a dedicated registration endpoint.
                    // This endpoint is provided if direct creation via this controller is intended.
         [AllowAnonymous] // This endpoint should be accessible without authentication
