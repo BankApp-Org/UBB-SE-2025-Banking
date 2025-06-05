@@ -1,6 +1,8 @@
 using BankApi.Repositories;
+using BankApi.Services.Trading;
 using Common.Models;
 using Common.Models.Trading;
+using Common.Services;
 using Common.Services.Trading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +13,23 @@ namespace BankApi.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class StockController(IStockService stockService, IUserRepository userRepository) : ControllerBase
+    public class StockController(IStockService stockService, IUserService userService) : ControllerBase
     {
         private readonly IStockService _stockService = stockService ?? throw new ArgumentNullException(nameof(stockService));
-        private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        private readonly IUserService _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+
+
+        private async Task<string> GetCurrentUserCnp()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+            var user = await _userService.GetByIdAsync(int.Parse(userId));
+            return user == null ? throw new Exception("User not found") : user.CNP;
+        }
+
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Stock>>> GetAllStocks()
@@ -50,13 +65,7 @@ namespace BankApi.Controllers
         {
             try
             {
-                // Get the current user's CNP from the principal
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return Forbid();
-                }
-                var user = await _userRepository.GetByIdAsync(int.Parse(userId));
+                var user = await _userService.GetCurrentUserAsync();
                 if (user == null)
                 {
                     return Forbid();
@@ -66,7 +75,7 @@ namespace BankApi.Controllers
                 {
                     Price = partialStock.Price,
                     Quantity = partialStock.Quantity,
-                    AuthorCNP = userId,
+                    AuthorCNP = user.CNP,
                     Name = partialStock.Name,
                     Symbol = partialStock.Symbol,
                 };
@@ -114,13 +123,12 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
         [HttpGet("user")]
         public async Task<ActionResult<List<Stock>>> GetUserStocks()
         {
             try
             {
-                var userCnp = await GetCurrentUserCnp();
+                var userCnp = await this.GetCurrentUserCnp();
                 var stocks = await _stockService.UserStocksAsync(userCnp);
                 return Ok(stocks);
             }
@@ -148,18 +156,6 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-        private async Task<string> GetCurrentUserCnp()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new UnauthorizedAccessException("User is not authenticated.");
-            }
-            var user = await _userRepository.GetByIdAsync(int.Parse(userId));
-            return user == null ? throw new Exception("User not found") : user.CNP;
-        }
-
         [HttpGet("stocks")]
         public async Task<ActionResult<List<HomepageStock>>> GetFilteredAndSortedStocks(
             [FromQuery] string query,
@@ -168,7 +164,7 @@ namespace BankApi.Controllers
         {
             try
             {
-                var userCnp = await GetCurrentUserCnp();
+                var userCnp = await this.GetCurrentUserCnp();
                 var stocks = await _stockService.GetFilteredAndSortedStocksAsync(query ?? string.Empty, sortOption ?? string.Empty, favoritesOnly, userCnp);
                 return Ok(stocks);
             }

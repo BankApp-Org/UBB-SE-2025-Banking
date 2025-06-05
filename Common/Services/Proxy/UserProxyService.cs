@@ -17,6 +17,17 @@ namespace Common.Services.Proxy
             response.EnsureSuccessStatusCode();
         }
 
+        public async Task<User> GetByIdAsync(int userId)
+        {
+            if (userId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(userId), "User ID must be greater than zero.");
+            }
+            var response = await _httpClient.GetAsync($"api/User/id/{userId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<User>(_jsonOptions) ?? throw new InvalidOperationException("Failed to deserialize user.");
+        }
+
         public async Task<User> GetCurrentUserAsync(string? userCNP = null) // userCNP is not used by the API endpoint for current user
         {
             // If userCNP is provided, it implies fetching a specific user, otherwise the current one.

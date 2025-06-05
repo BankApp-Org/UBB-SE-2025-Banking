@@ -1,10 +1,11 @@
 ﻿using BankApi.Data;
 using Common.Models.Bank;
+using Common.Services.Bank;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Repositories.Impl.Bank
 {
-    public class CurrencyExchangeRepository
+    public class CurrencyExchangeRepository : ICurrencyExchangeRepository
     {
         private readonly ApiDbContext _context;
         public CurrencyExchangeRepository(ApiDbContext context)

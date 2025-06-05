@@ -77,7 +77,7 @@ namespace Common.Services.Proxy
         public async Task<decimal> ConvertCurrency(decimal amount, Currency fromCurrency, Currency toCurrency)
         {
             var response = await _httpClient.GetFromJsonAsync<CurrencyConversionResult>(
-                $"api/BankAccount/convert?amount={amount}&fromCurrency={fromCurrency}&toCurrency={toCurrency}", 
+                $"api/BankAccount/convert?amount={amount}&fromCurrency={fromCurrency}&toCurrency={toCurrency}",
                 _jsonOptions);
 
             return response?.ConvertedAmount ?? throw new InvalidOperationException("Failed to deserialize currency conversion response.");
@@ -102,6 +102,13 @@ namespace Common.Services.Proxy
 
             var response = await _httpClient.PostAsJsonAsync("api/BankAccount/check-funds", request, _jsonOptions);
             return response.IsSuccessStatusCode;
+        }
+
+        public async Task<List<CurrencyExchange>> GetAllExchangeRatesAsync()
+        {
+            return await _httpClient.GetFromJsonAsync<List<CurrencyExchange>>(
+                $"api/BankAccount/ExchangeRates",
+                _jsonOptions) ?? throw new InvalidOperationException("Failed to deserialize exchange rates response.");
         }
     }
 

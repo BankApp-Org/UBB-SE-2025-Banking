@@ -104,6 +104,20 @@ namespace BankApi.Controllers
             }
         }
 
+        [HttpGet("id/{id}")]
+        public async Task<ActionResult<User>> GetUserById(int id)
+        {
+            try
+            {
+                var user = await _userService.GetByIdAsync(id);
+                return user == null ? NotFound($"User with ID {id} not found.") : Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpGet]
         [Authorize(Roles = "Admin")] // Only admins can get a list of all users
         public async Task<ActionResult<List<User>>> GetAllUsers()
