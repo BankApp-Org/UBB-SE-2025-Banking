@@ -240,6 +240,7 @@ namespace BankAppDesktop
                     services.AddTransient<LoansViewModel>();
                     services.AddTransient<CreateLoanDialogViewModel>();
                     services.AddTransient<LoanRequestViewModel>();
+                    services.AddTransient<NotificationsViewModel>();
                     services.AddTransient<BankTransactionsViewModel>();
 
                     // Pages
@@ -263,6 +264,7 @@ namespace BankAppDesktop
                     services.AddTransient<StockPage>();
                     services.AddTransient<UpdateProfilePage>();
                     services.AddTransient<LoginPage>();
+                    services.AddTransient<NotificationsPage>();
                     services.AddTransient<BankTransactionsWindow>();
 
                     // FIXME: remove \/\/\/\/

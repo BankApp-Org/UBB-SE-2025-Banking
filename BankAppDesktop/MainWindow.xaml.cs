@@ -133,6 +133,7 @@ namespace BankAppDesktop
                     "ProfilePage" => this.serviceProvider.GetRequiredService<ProfilePage>(),
                     "LoginPage" => this.serviceProvider.GetRequiredService<LoginPage>(),
                     "GemStorePage" => this.serviceProvider.GetRequiredService<GemStorePage>(),
+                    "NotificationsPage" => this.serviceProvider.GetRequiredService<NotificationsPage>(),
                     _ => throw new InvalidOperationException($"Unknown navigation item: {invokedItemTag}")
                 };
             }
