@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Common.Services.Bank;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using LoanShark.MVC.Models;
+using BankAppWeb.Models;
 
 namespace BankAppWeb.Controllers
 {
@@ -11,14 +11,14 @@ namespace BankAppWeb.Controllers
         private readonly IBankAccountService bankaccountService;
         public async Task<IActionResult> Index()
         {
-            var rawRates = await this.bankaccountService.GetExchangeRateAsync();
+            var rawRates = await this.bankaccountService.GetAllExchangeRatesAsync();
 
             var rates = rawRates.Select(rate =>
             {
                 return new CurrencyExchangeRateDTO
                 {
-                    FromCurrency = rate.FromCurrency,
-                    ToCurrency = rate.ToCurrency,
+                    FromCurrency = rate.FromCurrency.ToString(),
+                    ToCurrency = rate.ToCurrency.ToString(),
                     ExchangeRate = rate.ExchangeRate,
                 };
                 

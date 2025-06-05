@@ -1,4 +1,4 @@
-﻿namespace LoanShark.MVC.Models
+﻿namespace BankAppWeb.Models
 {
     public class CurrencyExchangeViewModel
     {
