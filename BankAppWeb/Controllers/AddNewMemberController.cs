@@ -60,8 +60,8 @@ namespace BankAppWeb.Controllers
                 var currentChatMembersDto = participants
                     .Select(p => new SocialUserDto
                     {
-                        UserID = p.Id.ToString(),
-                        Username = p.Username
+                        UserID = p.Id,
+
                     })
                     .ToList();
 
@@ -98,8 +98,8 @@ namespace BankAppWeb.Controllers
             var user = await userService.GetCurrentUserAsync();
 
             var allUnaddedFriends = await GetUnaddedFriends(chatId); 
-            var friend = allUnaddedFriends.Where(f => f.Id == userId).FirstOrDefault(); 
-            if (friend != null && !newlyAddedFriends.Any(f => f.Id == userId))
+            var friend = allUnaddedFriends.Where(f => f.UserID == user.Id).FirstOrDefault(); 
+            if (friend != null && !newlyAddedFriends.Any(f => f.UserID == user.Id))
             {
                 newlyAddedFriends.Add(friend);
                 TempData["AlertMessage"] = $"Added {friend.Username} to selection.";
@@ -115,7 +115,8 @@ namespace BankAppWeb.Controllers
         [HttpPost]
         public IActionResult RemoveFromSelected(string userId, int chatId, List<SocialUserDto> newlyAddedFriends)
         {
-            var friend = newlyAddedFriends.Where(f => f.Id == userId).First();
+            var user = userService.GetCurrentUserAsync();
+            var friend = newlyAddedFriends.Where(f => f.UserID == user.Id).First();
             if (friend != null)
             {
                 newlyAddedFriends.Remove(friend);
@@ -130,11 +131,6 @@ namespace BankAppWeb.Controllers
         {
             try
             {
-                foreach (var friend in newlyAddedFriends)
-                {
-                    await chatService.AddUserToChat(int.Parse(friend.UserId), chatId);
-                }
-
                 newlyAddedFriends.Clear();
                 TempData["AlertMessage"] = "New members added to chat successfully!";
                 return RedirectToAction("Messages", "ChatMessages", new { chatId });
