@@ -144,8 +144,8 @@
                     defaultChat = new Chat
                     {
                         ChatName = $"{user.UserName}'s Chat",
-                        Users = new List<User> { user },
-                        Messages = new List<Message>()
+                        Users = [user],
+                        Messages = []
                     };
                     _context.Chats.Add(defaultChat);
                     await _context.SaveChangesAsync();
