@@ -11,7 +11,7 @@
     /// ViewModel for updating user profile details including username, image, description, and visibility.
     /// Contains only data properties and UI state management - business logic handled in code-behind.
     /// </summary>
-    public class UpdateProfilePageViewModel : INotifyPropertyChanged
+    public partial class UpdateProfilePageViewModel : INotifyPropertyChanged
     {
         private string username = string.Empty;
         private string image = string.Empty;

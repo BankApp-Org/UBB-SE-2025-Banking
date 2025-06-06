@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class BankTransactionsViewModel : ObservableObject
+    public partial class BankTransactionsViewModel : ObservableObject
     {
         public ICommand CloseCommand { get; }
         public ICommand SendMoneyCommand { get; }

@@ -1,4 +1,4 @@
-﻿namespace Common.Models.Bank
+﻿namespace BankAppWeb.Models
 {
     public class BankAccountEditModel
     {

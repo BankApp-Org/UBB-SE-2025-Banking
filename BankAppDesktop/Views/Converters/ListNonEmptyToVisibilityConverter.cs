@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace BankAppDesktop.Views.Converters
 {
-    public class ListNonEmptyToVisibilityConverter : IValueConverter
+    public partial class ListNonEmptyToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

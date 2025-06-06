@@ -8,7 +8,7 @@
     /// <summary>
     /// Converts a string value representing a change to a corresponding color.
     /// </summary>
-    public class ChangeToColorConverter : IValueConverter
+    public partial class ChangeToColorConverter : IValueConverter
     {
         /// <summary>
         /// Converts a string value to a SolidColorBrush based on its content.

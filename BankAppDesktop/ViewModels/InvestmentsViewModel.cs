@@ -6,7 +6,7 @@
     /// <summary>
     /// ViewModel for investments display, containing only data properties.
     /// </summary>
-    public class InvestmentsViewModel : ViewModelBase
+    public partial class InvestmentsViewModel : ViewModelBase
     {
         private ObservableCollection<InvestmentPortfolio> usersPortfolio = [];
         private bool isLoading;

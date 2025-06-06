@@ -13,7 +13,7 @@ namespace BankAppDesktop.ViewModels
     /// <summary>
     /// ViewModel for the bank account deletion confirmation view
     /// </summary>
-    public class BankAccountDeleteViewModel : ViewModelBase
+    public partial class BankAccountDeleteViewModel : ViewModelBase
     {
         private readonly IBankAccountService _bankAccountService;
         private string _iban = string.Empty;

@@ -11,7 +11,7 @@ using BankAppDesktop.Commands;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class BankAccountCreateViewModel : INotifyPropertyChanged
+    public partial class BankAccountCreateViewModel : INotifyPropertyChanged
     {
         public Action? OnClose { get; set; }
         public Action? OnSuccess { get; set; }
@@ -106,7 +106,7 @@ namespace BankAppDesktop.ViewModels
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-    public class CurrencyItem : INotifyPropertyChanged
+    public partial class CurrencyItem : INotifyPropertyChanged
     {
         public string Name { get; set; } = string.Empty;
         private bool isChecked;

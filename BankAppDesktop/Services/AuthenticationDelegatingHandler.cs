@@ -8,7 +8,7 @@ using Common.Services;
 namespace BankAppDesktop.Services
 {
     // This DelegatingHandler adds the JWT token to outgoing HTTP requests
-    public class AuthenticationDelegatingHandler(IAuthenticationService authenticationService) : DelegatingHandler
+    public partial class AuthenticationDelegatingHandler(IAuthenticationService authenticationService) : DelegatingHandler
     {
         private readonly IAuthenticationService _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
 

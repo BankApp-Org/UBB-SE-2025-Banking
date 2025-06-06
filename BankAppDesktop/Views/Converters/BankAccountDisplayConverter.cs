@@ -1,10 +1,10 @@
-﻿using System;
-using LoanShark.Domain;
+﻿using Common.Models.Bank;
 using Microsoft.UI.Xaml.Data;
+using System;
 
 namespace BankAppDesktop.Views.Converters
 {
-    public class BankAccountDisplayConverter : IValueConverter
+    public partial class BankAccountDisplayConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

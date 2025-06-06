@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace BankAppDesktop.Converters
 {
-    public class DateTimeOffsetToDateTimeConverter : IValueConverter
+    public partial class DateTimeOffsetToDateTimeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

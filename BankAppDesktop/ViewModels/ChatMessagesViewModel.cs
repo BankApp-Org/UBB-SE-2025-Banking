@@ -26,7 +26,7 @@
     using Windows.Storage;
     using Windows.Storage.Pickers;
     using WinRT.Interop;
-    public class ChatMessagesViewModel : INotifyPropertyChanged
+    public partial class ChatMessagesViewModel : INotifyPropertyChanged
     {
         private readonly Page page;
 

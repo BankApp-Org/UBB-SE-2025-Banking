@@ -34,7 +34,7 @@ namespace BankAppDesktop.ViewModels
     /// <summary>
     /// ViewModel for handling report functionality.
     /// </summary>
-    public class ReportViewModel : IReportViewModel
+    public partial class ReportViewModel : IReportViewModel
     {
         public event Action<string> ShowSuccessDialog = message => { };
         public event Action<string> ShowErrorDialog = message => { };
@@ -211,7 +211,7 @@ namespace BankAppDesktop.ViewModels
         }
     }
 
-    public class ReportViewModelDemo : IReportViewModel
+    public partial class ReportViewModelDemo : IReportViewModel
     {
         public event Action<string> ShowSuccessDialog = message => { };
         public event Action<string> ShowErrorDialog = message => { };

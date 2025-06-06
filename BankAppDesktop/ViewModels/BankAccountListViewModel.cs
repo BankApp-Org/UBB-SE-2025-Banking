@@ -1,22 +1,20 @@
-﻿using System;
+﻿using BankAppDesktop.Views.Pages;
+using Common.Models.Bank;
+using Common.Services.Bank;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Common.Services.Proxy;
-using Common.Models;
-using Common.Models.Bank;
-using Common.Services.Bank;
-using BankAppDesktop.Views;
-using BankAppDesktop.Commands;
 
 namespace BankAppDesktop.ViewModels
 {
     /// <summary>
     /// ViewModel for displaying and managing a list of bank accounts
     /// </summary>
-    public class BankAccountListViewModel : INotifyPropertyChanged
+    public partial class BankAccountListViewModel : INotifyPropertyChanged
     {
         /// <summary>
         /// Action to be invoked when the view should be closed
@@ -102,7 +100,8 @@ namespace BankAppDesktop.ViewModels
             Debug.WriteLine(SelectedBankAccount.Iban);
             if (SelectedBankAccount != null)
             {
-                var window = new BankAccountDetailsView();
+                BankAccountDetailsViewModel viewModel = App.Host.Services.GetRequiredService<BankAccountDetailsViewModel>();
+                var window = new BankAccountDetailsView(viewModel);
                 window.Activate();
             }
         }

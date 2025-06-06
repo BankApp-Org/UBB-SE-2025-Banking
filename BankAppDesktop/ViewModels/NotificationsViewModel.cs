@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class NotificationsViewModel : ViewModelBase
+    public partial class NotificationsViewModel : ViewModelBase
     {
         private readonly INotificationService _notificationService;
         private readonly IUserService _userService;

@@ -10,7 +10,7 @@ namespace BankAppDesktop.ViewModels
     /// ViewModel for bill split reports display, containing only data properties.
     /// Business logic for report management is handled in code-behind.
     /// </summary>
-    public class BillSplitReportViewModel : INotifyPropertyChanged
+    public partial class BillSplitReportViewModel : INotifyPropertyChanged
     {
         private bool isLoading;
         private string errorMessage = string.Empty;

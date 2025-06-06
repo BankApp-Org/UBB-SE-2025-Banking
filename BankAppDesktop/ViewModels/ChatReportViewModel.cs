@@ -10,7 +10,7 @@
     /// ViewModel for chat reports display, containing only data properties.
     /// Business logic for report management is handled in code-behind.
     /// </summary>
-    public class ChatReportsViewModel : INotifyPropertyChanged
+    public partial class ChatReportsViewModel : INotifyPropertyChanged
     {
         private bool isLoading;
         private string errorMessage = string.Empty;

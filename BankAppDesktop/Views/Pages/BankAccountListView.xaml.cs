@@ -1,8 +1,5 @@
-using System;
 using BankAppDesktop.ViewModels;
 using Microsoft.UI.Xaml;
-using BankAppDesktop.Views.Converters;
-using Microsoft.Extensions.DependencyInjection;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,8 +20,6 @@ namespace BankAppDesktop.Views
             MainGrid.DataContext = viewModel;
 
             viewModel.OnClose = () => this.Close();
-
-            WindowManager.RegisterWindow(this);
         }
     }
 }

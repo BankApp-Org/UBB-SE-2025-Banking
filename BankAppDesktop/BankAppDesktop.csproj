@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
@@ -108,6 +108,7 @@
     <None Remove="Views\Components\LoginComponent.xaml" />
     <None Remove="Views\Components\UserAuthStatusComponent.xaml" />
     <None Remove="Views\Pages\AddNewMemberPage.xaml" />
+    <None Remove="Views\Pages\BankAccountListView.xaml" />
     <None Remove="Views\Pages\CreateChatPage.xaml" />
     <None Remove="Views\Pages\BankTransactionsWindow.xaml" />
     <None Remove="Views\Pages\GenerateTransferPage.xaml" />

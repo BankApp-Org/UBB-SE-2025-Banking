@@ -10,7 +10,7 @@
     /// ViewModel for the profile page, managing user profile UI state and data properties.
     /// Contains only data properties and UI state management - business logic handled in code-behind.
     /// </summary>
-    public class ProfilePageViewModel : ViewModelBase
+    public partial class ProfilePageViewModel : ViewModelBase
     {
         private BitmapImage? imageSource;
         private string username = string.Empty;
