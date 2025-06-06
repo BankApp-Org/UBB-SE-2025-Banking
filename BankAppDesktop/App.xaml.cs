@@ -1,4 +1,4 @@
-﻿namespace BankAppDesktop
+namespace BankAppDesktop
 {
     using BankAppDesktop.Pages;
     using BankAppDesktop.Services;
@@ -85,8 +85,8 @@
                     services.AddTransient<AuthenticationDelegatingHandler>();
 
                     // Other Services
-                    services.AddScoped<ITransactionLogService, TransactionLogProxyService>();
-                    services.AddScoped<ITransactionService, TransactionProxyService>();
+                    services.AddScoped<ITransactionLogService, StockTransactionLogProxyService>();
+                    services.AddScoped<ITransactionService, StockTransactionProxyService>();
                     services.AddScoped<IChatReportService, ChatReportProxyService>();
                     services.AddScoped<ICreditHistoryService, HistoryProxyService>();
                     services.AddScoped<IBillSplitReportService, BillSplitReportProxyService>();
@@ -169,11 +169,11 @@
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-                    services.AddHttpClient<ITransactionLogService, TransactionLogProxyService>(client =>
+                    services.AddHttpClient<ITransactionLogService, StockTransactionLogProxyService>(client =>
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-                    services.AddHttpClient<ITransactionService, TransactionProxyService>(client =>
+                    services.AddHttpClient<ITransactionService, StockTransactionProxyService>(client =>
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
@@ -202,6 +202,7 @@
                     services.AddTransient<BillSplitReportComponent>();
                     services.AddTransient<BillSplitReportPage>();
                     services.AddTransient<ChatReportComponent>();
+                    services.AddTransient<ReportView>();
                     services.AddTransient<LoanRequestComponent>();
                     services.AddTransient<LoanComponent>();
                     services.AddTransient<CreateLoanDialog>();
@@ -216,6 +217,7 @@
                     // ViewModels
                     services.AddTransient<BillSplitReportViewModel>();
                     services.AddTransient<BillSplitReportViewModel>();
+                    services.AddTransient<ReportViewModel>();
                     services.AddTransient<StoreViewModel>();
                     services.AddTransient<ProfilePageViewModel>();
                     services.AddTransient<InvestmentsViewModel>();
@@ -238,6 +240,8 @@
                     services.AddTransient<LoansViewModel>();
                     services.AddTransient<CreateLoanDialogViewModel>();
                     services.AddTransient<LoanRequestViewModel>();
+                    services.AddTransient<NotificationsViewModel>();
+                    services.AddTransient<BankTransactionsViewModel>();
 
                     // Pages
                     services.AddTransient<LoansPage>();
@@ -260,6 +264,8 @@
                     services.AddTransient<StockPage>();
                     services.AddTransient<UpdateProfilePage>();
                     services.AddTransient<LoginPage>();
+                    services.AddTransient<NotificationsPage>();
+                    services.AddTransient<BankTransactionsWindow>();
 
                     // FIXME: remove \/\/\/\/
                     services.AddTransient<Func<LoanRequestComponent>>(sp => () => sp.GetRequiredService<LoanRequestComponent>());
@@ -272,7 +278,7 @@
         }
 
         /// <summary>
-        /// Gets or sets the current window of the application.
+        /// Gets or sets the current page of the application.
         /// </summary>
         public static Window CurrentWindow { get; set; } = null!;
 

@@ -1,19 +1,19 @@
-﻿using System.Security.Claims;
-using Common.Models.Bank;
+﻿using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TransactionsController : ControllerBase
+    public class BankTransactionController : ControllerBase
     {
         private readonly IBankTransactionService transactionsService;
         private readonly IBankAccountService bankAccountService;
         private readonly ILoanService loanService;
 
-        public TransactionsController(IBankTransactionService transactionsService, IBankAccountService bankAccountService, ILoanService loanService)
+        public BankTransactionController(IBankTransactionService transactionsService, IBankAccountService bankAccountService, ILoanService loanService)
         {
             this.transactionsService = transactionsService;
             this.bankAccountService = bankAccountService;
@@ -114,6 +114,22 @@ namespace BankApi.Controllers
             {
                 return StatusCode(500, $"Error retrieving exchange rates: {ex.Message}");
             }
+        }
+
+        [HttpGet("TransactionTypeCounts")]
+        public async Task<ActionResult<List<TransactionTypeCountDTO>>> GetTransactionTypeCounts()
+        {
+            try
+            {
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("User not logged in"));
+                var result = await transactionsService.GetTransactionTypeCounts(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving transaction type counts: {ex.Message}");
+            }
+
         }
     }
     /// <summary>

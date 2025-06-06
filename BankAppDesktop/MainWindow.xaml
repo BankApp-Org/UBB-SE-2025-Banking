@@ -37,6 +37,7 @@
                     <NavigationViewItem Content="Create Bank Account" Tag="BankAccountCreateView" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="Log in" Tag="LoginPage" Visibility="{Binding IsUnauthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="Profile" Tag="ProfilePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="Notifications" Tag="NotificationsPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                 </NavigationView.MenuItems>
             </NavigationView>
 

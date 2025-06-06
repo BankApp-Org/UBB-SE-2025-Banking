@@ -129,8 +129,8 @@ builder.Services.AddScoped<IUserService, UserProxyService>();
 builder.Services.AddScoped<ILoanService, LoanProxyService>();
 builder.Services.AddScoped<ILoanRequestService, LoanRequestProxyService>();
 builder.Services.AddScoped<IStockService, StockProxyService>();
-builder.Services.AddScoped<ITransactionService, TransactionProxyService>();
-builder.Services.AddScoped<ITransactionLogService, TransactionLogProxyService>();
+builder.Services.AddScoped<ITransactionService, StockTransactionProxyService>();
+builder.Services.AddScoped<ITransactionLogService, StockTransactionLogProxyService>();
 builder.Services.AddScoped<IChatReportService, ChatReportProxyService>();
 builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
 builder.Services.AddScoped<IMessageService, MessagesProxyService>();
@@ -145,6 +145,8 @@ builder.Services.AddTransient<IMessageService, MessagesProxyService>();
 builder.Services.AddTransient<INotificationService, NotificationProxyService>();
 builder.Services.AddTransient<IBankAccountService, BankAccountProxyService>();
 builder.Services.AddTransient<AuthenticationDelegatingHandler>();
+builder.Services.AddTransient<IBankTransactionService, BankTransactionProxyService>();
+
 
 builder.Services.AddHttpClient<IUserService, UserProxyService>(client =>
 {
@@ -181,12 +183,12 @@ builder.Services.AddHttpClient<IStockService, StockProxyService>(client =>
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
-builder.Services.AddHttpClient<ITransactionService, TransactionProxyService>(client =>
+builder.Services.AddHttpClient<ITransactionService, StockTransactionProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
-builder.Services.AddHttpClient<ITransactionLogService, TransactionLogProxyService>(client =>
+builder.Services.AddHttpClient<ITransactionLogService, StockTransactionLogProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
@@ -7,10 +7,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>  
-	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	<WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -102,9 +103,14 @@
     <PRIResource Remove="Homepage\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Views\Components\ChatListComponent.xaml" />
     <None Remove="Views\Components\CreateLoanDialog.xaml" />
     <None Remove="Views\Components\LoginComponent.xaml" />
     <None Remove="Views\Components\UserAuthStatusComponent.xaml" />
+    <None Remove="Views\Pages\AddNewMemberPage.xaml" />
+    <None Remove="Views\Pages\CreateChatPage.xaml" />
+    <None Remove="Views\Pages\BankTransactionsWindow.xaml" />
+    <None Remove="Views\Pages\GenerateTransferPage.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +120,27 @@
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Page Update="Views\Pages\BankAccountListView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\GenerateTransferPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\AddNewMemberPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\CreateChatPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Components\ChatListComponent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\BankTransactionsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <None Update="Views\Pages\CurrencyExchangeTableView.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </None>
     <Page Update="Views\Components\CreateLoanDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -137,6 +164,9 @@
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
   <ItemGroup>
     <PRIResource Remove="Services\Api\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Views\Pages\CurrencyExchangeTableView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Controls\" />

@@ -11,7 +11,7 @@ namespace BankAppDesktop
     using BankAppDesktop.Views;
 
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
@@ -135,6 +135,7 @@ namespace BankAppDesktop
                     "LoginPage" => this.serviceProvider.GetRequiredService<LoginPage>(),
                     "GemStorePage" => this.serviceProvider.GetRequiredService<GemStorePage>(),
                     "BankAccountCreateView" => this.serviceProvider.GetRequiredService<BankAccountCreateView>(),
+                    "NotificationsPage" => this.serviceProvider.GetRequiredService<NotificationsPage>(),
                     _ => throw new InvalidOperationException($"Unknown navigation item: {invokedItemTag}")
                 };
             }

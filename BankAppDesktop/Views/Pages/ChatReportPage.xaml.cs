@@ -3,6 +3,7 @@ namespace BankAppDesktop.Views.Pages
     using BankAppDesktop.Views.Components;
     using Common.Models.Social;
     using Common.Services.Social;
+    using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using System;
     using System.Collections.Generic;
@@ -49,6 +50,36 @@ namespace BankAppDesktop.Views.Pages
         private async void OnReportSolved(object? sender, EventArgs e)
         {
             await this.LoadChatReportsAsync();
+        }
+
+        // Demo functionality for presentation
+        private async void CreateDemoReport_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Create the ReportView with demo data
+                var reportView = new Views.Pages.ReportView();
+
+                // Initialize with demo data (hardcoded values)
+                reportView.InitializeDemoData(
+                    chatId: 12345,
+                    messageId: 67890,
+                    reportedUserId: 11111);
+
+                // Activate the page
+                reportView.Activate();
+            }
+            catch (Exception ex)
+            {
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Could not open report dialog: {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
         }
     }
 }

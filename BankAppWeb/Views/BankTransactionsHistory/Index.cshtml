@@ -1,0 +1,50 @@
+﻿@model BankAppWeb.Models.BankTransactionsHistoryViewModel
+
+@{
+    ViewData["Title"] = "TransactionsHistory";
+    var alertMessage = TempData["AlertMessage"] as string;
+}
+
+<h1 style="text-align:center">Transactions</h1>
+
+<div style="display:flex;">
+    <form asp-action="ExportToCsv" method="get" style="margin:20px">
+        <input asp-for="IBAN" value="@Model.IBAN" hidden/>
+        <button type="submit">Export to CSV</button>
+    </form>
+
+    <form asp-action="Chart" method="get" style="margin:20px">
+        <input asp-for="IBAN" value="@Model.IBAN" hidden />
+        <button type="submit">View Chart</button>
+    </form>
+
+    <form method="get" asp-action="Index" style="margin:20px; width: 400px; margin-top:17px">
+        <input asp-for="IBAN" value="@Model.IBAN" hidden />
+        <input asp-for="Filter" class="form-control" placeholder="Filter by Type" />
+    </form>
+
+    <a class="btn btn-danger" style="margin-left: 455px; width:100px; margin-top:20px; height: 40px" asp-controller="MainPage" asp-action="Index">Back</a>
+
+</div>
+
+@if (Model.Transactions.Count > 0)
+{
+    @foreach (var transaction in Model.Transactions)
+    {
+        <div class="card" style="margin:10px; padding:5px; background-color: whitesmoke">
+            <div>@transaction.SenderIBAN</div>
+            <div>@transaction.ReceiverIBAN</div>
+            <div>@transaction.SentAmount</div>
+            <div>@transaction.ReceivedAmount</div>
+            <div>@transaction.Date</div>
+            <div>@transaction.Type</div>
+        </div>
+    }
+}
+
+<script>
+    var message = '@alertMessage';
+    if (message) {
+        alert(message); // Or use a modal (e.g., Bootstrap or SweetAlert)
+    }
+</script>

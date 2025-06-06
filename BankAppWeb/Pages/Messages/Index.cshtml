@@ -1,0 +1,68 @@
+@page
+@model BankAppWeb.Pages.Messages.IndexModel
+@using Common.Models.Social
+@{
+    ViewData["Title"] = "Messages";
+}
+
+<div class="container">
+    <h1>Messages</h1>
+
+    @if (!string.IsNullOrEmpty(Model.ViewModel.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            @Model.ViewModel.ErrorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ViewModel.SuccessMessage))
+    {
+        <div class="alert alert-success">
+            @Model.ViewModel.SuccessMessage
+        </div>
+    }
+
+    <div class="messages-container">
+        @foreach (var message in Model.ViewModel.Messages)
+        {
+            var isSender = message.Sender.Id == Model.ViewModel.CurrentUserId;
+            var messageType = message.Type.ToString().ToLower();
+            var content = message.MessageContent;
+            string? imageUrl = null;
+            string? formattedAmount = null;
+            string? description = null;
+
+            if (message is ImageMessage imgMsg)
+            {
+                imageUrl = imgMsg.ImageUrl;
+            }
+            else if (message is TransferMessage transferMsg)
+            {
+                formattedAmount = transferMsg.FormattedAmount;
+                description = transferMsg.Description;
+            }
+            else if (message is RequestMessage requestMsg)
+            {
+                formattedAmount = requestMsg.FormattedAmount;
+                description = requestMsg.Description;
+            }
+
+            <partial name="_MessageTemplates" model="new {
+                Id = message.Id,
+                MessageType = messageType,
+                SenderUsername = message.Sender.UserName,
+                IsSender = isSender,
+                Content = content,
+                ImageURL = imageUrl,
+                FormattedAmount = formattedAmount,
+                Description = description
+            }" />
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Any additional JavaScript specific to this page
+    </script>
+} 

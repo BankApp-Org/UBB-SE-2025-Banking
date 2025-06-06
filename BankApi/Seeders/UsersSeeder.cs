@@ -61,14 +61,14 @@ namespace BankApi.Seeders
                     {
                         // Assign User role by default
                         await userManager.AddToRoleAsync(user, defaultRole);
-                    
+
                         // Make the first user an admin as well
                         if (user.UserName == "user1_cnp123")
                         {
                             await userManager.AddToRoleAsync(user, adminRole);
                             Console.WriteLine($"User {user.UserName} assigned Admin role");
                         }
-                    
+
                         Console.WriteLine($"User {user.UserName} created successfully");
                     }
                     else
