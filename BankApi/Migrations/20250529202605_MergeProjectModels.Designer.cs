@@ -155,7 +155,7 @@ namespace BankApi.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("TransactionType")
+                    b.Property<int>("TransactionTypes")
                         .HasColumnType("int");
 
                     b.HasKey("TransactionId");

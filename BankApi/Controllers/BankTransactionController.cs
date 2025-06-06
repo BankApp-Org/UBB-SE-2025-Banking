@@ -115,6 +115,22 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Error retrieving exchange rates: {ex.Message}");
             }
         }
+
+        [HttpGet("TransactionTypeCounts")]
+        public async Task<ActionResult<List<TransactionTypeCountDTO>>> GetTransactionTypeCounts()
+        {
+            try
+            {
+                int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("User not logged in"));
+                var result = await transactionsService.GetTransactionTypeCounts(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error retrieving transaction type counts: {ex.Message}");
+            }
+
+        }
     }
     /// <summary>
     /// Nu le schimbam pe astea ca sa nu modificam si in proxyuri dupa. Pliiiiz

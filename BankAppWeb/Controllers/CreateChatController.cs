@@ -28,7 +28,7 @@ namespace BankAppWeb.Controllers
 
             // fetch current user and the corresponding friends
             var currentUser = await _userService.GetCurrentUserAsync();
-            var allFriends = currentUser.Friends?.ToList() ?? new List<User>();
+            var allFriends = currentUser.Friends?.ToList() ?? [];
 
             // filter friends based on search query and exclude selected users
             viewModel.AvailableUsers = allFriends
@@ -52,7 +52,7 @@ namespace BankAppWeb.Controllers
         {
             // Re-populate AvailableUsers for validation errors
             var currentUser = await _userService.GetCurrentUserAsync();
-            var allFriends = currentUser.Friends?.ToList() ?? new List<User>();
+            var allFriends = currentUser.Friends?.ToList() ?? [];
 
             if (string.IsNullOrEmpty(model.ChatName))
             {
@@ -95,7 +95,7 @@ namespace BankAppWeb.Controllers
                 {
                     ChatName = model.ChatName,
                     Users = allFriends.Where(f => participants.Contains(f.Id)).ToList(),
-                    Messages = new List<Message>()
+                    Messages = []
                 };
                 await _chatService.CreateChat(chat);
 

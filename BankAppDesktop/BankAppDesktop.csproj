@@ -110,6 +110,7 @@
     <None Remove="Views\Pages\AddNewMemberPage.xaml" />
     <None Remove="Views\Pages\CreateChatPage.xaml" />
     <None Remove="Views\Pages\BankTransactionsWindow.xaml" />
+    <None Remove="Views\Pages\GenerateTransferPage.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +121,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\Pages\GenerateTransferPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\Pages\AddNewMemberPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

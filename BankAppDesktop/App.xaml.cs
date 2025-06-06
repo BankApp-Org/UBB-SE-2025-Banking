@@ -275,7 +275,7 @@ namespace BankAppDesktop
         }
 
         /// <summary>
-        /// Gets or sets the current window of the application.
+        /// Gets or sets the current page of the application.
         /// </summary>
         public static Window CurrentWindow { get; set; } = null!;
 

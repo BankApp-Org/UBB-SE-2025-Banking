@@ -1,6 +1,7 @@
 ﻿namespace BankApi.Services
 {
     using BankApi.Repositories;
+    using Common.DTOs;
     using Common.Models;
     using Common.Services;
     using System;
@@ -47,7 +48,7 @@
         }
 
         public async Task<List<User>> GetNonFriends(string userCNP)
-        {             
+        {
             var user = await this.GetCurrentUserAsync(userCNP);
             return await userRepository.GetAllAsync().ContinueWith(t => t.Result.FindAll(u => !user.Friends.Contains(u)));
         }
@@ -129,6 +130,27 @@
         public async Task<int> AddDefaultRoleToAllUsersAsync()
         {
             return await userRepository.AddDefaultRoleToAllUsersAsync();
+        }
+
+        public async Task<List<SocialUserDto>> GetNonFriendsUsers(string userCNP)
+        {
+            if (string.IsNullOrWhiteSpace(userCNP))
+            {
+                throw new ArgumentException("CNP cannot be empty");
+            }
+            User currentUser = await this.GetCurrentUserAsync(userCNP);
+            List<User> allUsers = await this.GetUsers();
+            List<User> nonFriends = allUsers.FindAll(u => !currentUser.Friends.Contains(u) && u.CNP != userCNP);
+            return nonFriends.ConvertAll(u => new SocialUserDto
+            {
+                Cnp = u.CNP,
+                UserID = u.Id,
+                Email = u.Email?.ToString(),
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Username = u.UserName,
+                ReportedCount = u.ReportedCount
+            });
         }
     }
 }

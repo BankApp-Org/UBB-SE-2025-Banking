@@ -49,10 +49,10 @@ namespace BankAppDesktop.ViewModels
 
         public ChatListViewModel(IChatService chatS, IUserService userS)
         {
-            this.ChatList = new ObservableCollection<Chat>();
+            this.ChatList = [];
             this.ChatService = chatS;
             this.UserService = userS;
-            this.CurrentUserChats = new List<Chat>();
+            this.CurrentUserChats = [];
             LoadCurrentUserChats();
             this.CountToVisibilityConverter = new CountToVisibilityConverter();
         }

@@ -52,9 +52,9 @@ namespace BankAppDesktop.ViewModels
         {
             this.UserService = userService;
             this.friendsListViewModel = friendsListViewModel;
-            this.AllUsers = new List<User>();
+            this.AllUsers = [];
             this.LoadAllUsers();
-            this.UsersList = new ObservableCollection<User>();
+            this.UsersList = [];
             // this.AddFriendCommand = new RelayCommand<object>(AddFriend);
             this.LoadUsers();
         }

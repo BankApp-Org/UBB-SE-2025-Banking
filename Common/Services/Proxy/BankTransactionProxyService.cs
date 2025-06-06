@@ -73,7 +73,12 @@ namespace Common.Services.Proxy
             var response = await _httpClient.DeleteAsync($"api/BankTransaction/{transactionId}");
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<List<TransactionTypeCountDTO>> GetTransactionTypeCounts(int userId)
+        {
+            return await _httpClient.GetFromJsonAsync<List<TransactionTypeCountDTO>>($"api/BankTransaction/TransactionTypeCounts?userId={userId}", _jsonOptions) ??
+                throw new InvalidOperationException("Failed to deserialize transaction type counts response.");
+        }
     }
 }
-
 

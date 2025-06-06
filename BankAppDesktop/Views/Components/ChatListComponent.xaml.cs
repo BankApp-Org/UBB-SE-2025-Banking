@@ -1,23 +1,12 @@
-using BankApi.Repositories.Social;
 using BankAppDesktop.ViewModels;
+using BankAppDesktop.Views.Pages;
 using Common.Models.Social;
-using Common.Services.Social;
 using Common.Services;
+using Common.Services.Bank;
+using Common.Services.Social;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using BankAppDesktop.Views.Pages;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,14 +22,12 @@ namespace BankAppDesktop.Views.Components
         public IChatService ChatService;
         public IMessageService MessageService;
         public IChatReportService ReportService;
+        private readonly IAuthenticationService authenticationService;
+        private readonly IBankAccountService bankAccountService;
         public Frame RightFrame;
-        public Window MainFrame;
+        public Page MainFrame;
 
-        // ?
-        // change IRepository into IChatRepository?
-        private IChatRepository repository;
-
-        public ChatListComponent(Window mainFrame, IChatService chatService, IUserService userService, IChatReportService reportService, IMessageService messageService, Frame rightFrame, IChatRepository repository)
+        public ChatListComponent(Page mainFrame, IChatService chatService, IUserService userService, IChatReportService reportService, IMessageService messageService, Frame rightFrame, IAuthenticationService authenticationService, IBankAccountService bankAccountService)
         {
             this.InitializeComponent();
 
@@ -50,11 +37,10 @@ namespace BankAppDesktop.Views.Components
             this.MessageService = messageService;
             this.ReportService = reportService;
             this.RightFrame = rightFrame;
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this.bankAccountService = bankAccountService ?? throw new ArgumentNullException(nameof(bankAccountService));
             this.chatListViewModel = new ChatListViewModel(ChatService, UserService);
             this.MainGrid.DataContext = this.chatListViewModel;
-
-            // ?
-            this.repository = repository;
         }
 
         private void CreateChat_Click(object sender, RoutedEventArgs e)
@@ -66,7 +52,7 @@ namespace BankAppDesktop.Views.Components
         {
             if (this.ChatList.SelectedItem is Chat selectedChat)
             {
-                this.RightFrame.Content = new ChatMessagesPage(this.chatListViewModel, this.MainFrame, this.RightFrame, selectedChat.Id, this.UserService, this.ChatService, this.MessageService, this.ReportService, this.repository);
+                this.RightFrame.Content = new ChatMessagesPage(this.chatListViewModel, this.MainFrame, this.RightFrame, selectedChat.Id, this.UserService, this.ChatService, this.MessageService, this.ReportService, this.authenticationService, this.bankAccountService);
             }
         }
     }

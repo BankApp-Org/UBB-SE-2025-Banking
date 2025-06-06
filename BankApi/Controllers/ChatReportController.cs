@@ -254,7 +254,7 @@ namespace BankApi.Controllers
                                 User = reportedUser,
                                 Timestamp = DateTime.UtcNow
                             };
-                            
+
                             // Send notification using the correct method name
                             await _notificationService.CreateNotification(notification);
                         }

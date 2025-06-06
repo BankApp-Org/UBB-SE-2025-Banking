@@ -134,6 +134,7 @@ builder.Services.AddScoped<IBankTransactionRepository, BankTransactionRepository
 builder.Services.AddScoped<IBankAccountRepository, BankAccountRepository>();
 builder.Services.AddScoped<IBankTransactionHistoryRepository, BankTransactionHistoryRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<ICurrencyExchangeRepository, CurrencyExchangeRepository>();
 
 // Register services
 builder.Services.AddScoped<IActivityService, ActivityService>();

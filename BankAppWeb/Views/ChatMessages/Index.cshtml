@@ -1,3 +1,4 @@
+@using Common.Models.Social
 @model BankAppWeb.Models.ChatMessagesViewModel
 
 @{
@@ -23,34 +24,34 @@
             <div id="messagesContainer" class="border p-3" style="min-height: 400px; max-height: 400px; overflow-y: auto; background-color: #000; color: #fff;">
                 @foreach (var message in Model.ChatMessages)
                 {
-                    <div class="message mb-2 @(message.SenderID == Model.CurrentUserID ? "text-end" : "text-start")">
-                        <strong>@message.SenderUsername</strong> <small>@message.Timestamp.ToString("g")</small>
+                    <div class="message mb-2 @(message.UserId == Model.CurrentUserID ? "text-end" : "text-start")">
+                        <strong>@message.Sender.UserName</strong> <small>@message.CreatedAt.ToString("g")</small>
                         @switch (message)
                         {
-                            case LoanShark.Domain.MessageClasses.TextMessage text:
-                                <p>@text.Content</p>
+                            case TextMessage text:
+                                <p>@text.MessageContent</p>
                                 break;
-                            case LoanShark.Domain.MessageClasses.ImageMessage image:
-                                <img src="@image.ImageURL" alt="Image" style="max-width: 200px;" />
+                            case ImageMessage image:
+                                <img src="@image.ImageUrl" alt="Image" style="max-width: 200px;" />
                                 break;
-                            case LoanShark.Domain.MessageClasses.TransferMessage transfer:
+                            case TransferMessage transfer:
                                 <p>Transfer: @transfer.Amount @transfer.Currency (@transfer.Status) - @transfer.Description</p>
                                 break;
-                            case LoanShark.Domain.MessageClasses.RequestMessage request:
+                            case RequestMessage request:
                                 <p>Request: @request.Amount @request.Currency (@request.Status) - @request.Description</p>
                                 break;
                         }
                         <div>
                             <form asp-controller="ChatMessages" asp-action="DeleteMessage" method="post" class="d-inline">
                                 <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
-                                <input type="hidden" name="messageId" value="@message.MessageID" />
+                                <input type="hidden" name="messageId" value="@message.Id" />
                                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                             </form>
-                            @if (message is LoanShark.Domain.MessageClasses.TextMessage || message is LoanShark.Domain.MessageClasses.ImageMessage)
+                            @if (message is TextMessage || message is ImageMessage)
                             {
                                 <form asp-controller="ChatMessages" asp-action="ReportMessage" method="get" class="d-inline">
                                     <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
-                                    <input type="hidden" name="messageId" value="@message.MessageID" />
+                                    <input type="hidden" name="messageId" value="@message.Id" />
                                     <button type="submit" class="btn btn-sm btn-warning">Report</button>
                                 </form>
                             }

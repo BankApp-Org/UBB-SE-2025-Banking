@@ -10,9 +10,9 @@ namespace BankAppWeb.Models
         public string ChatName { get; set; }
 
         [Display(Name = "Select Users")]
-        public List<int> SelectedUserIds { get; set; } = new List<int>();
+        public List<int> SelectedUserIds { get; set; } = [];
 
-        public List<UserForChatViewModel> AvailableUsers { get; set; } = new List<UserForChatViewModel>();
+        public List<UserForChatViewModel> AvailableUsers { get; set; } = [];
 
         public string SearchQuery { get; set; }  // search functionality
     }

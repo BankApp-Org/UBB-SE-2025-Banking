@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Common.Services.Social;
-using Common.Services;
+using BankAppWeb.Models;
 using Common.Models;
 using Common.Models.Social;
-using BankAppWeb.Models;
+using Common.Services;
+using Common.Services.Impl;
+using Common.Services.Social;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LoanShark.MVC.Controllers
 {

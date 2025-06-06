@@ -1,7 +1,6 @@
-using System;
 using Common.Models.Social;
 using Common.Services.Social;
-using Microsoft.UI.Xaml;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using BankAppDesktop.Commands;
@@ -18,12 +17,30 @@ namespace BankAppDesktop.ViewModels
         public MessageTemplatesViewModel(IMessageService messageService)
         {
             _messageService = messageService;
-            _messages = new ObservableCollection<Message>();
+            _messages = [];
 
             // Initialize commands
-            DeleteMessageCommand = new RelayCommandGeneric<Message>(ExecuteDeleteMessage);
-            ReportMessageCommand = new RelayCommandGeneric<Message>(ExecuteReportMessage);
-            AcceptRequestCommand = new RelayCommandGeneric<Message>(ExecuteAcceptRequest);
+            DeleteMessageCommand = new RelayCommand(o =>
+            {
+                if (o is Message message)
+                {
+                    ExecuteDeleteMessage(message);
+                }
+            }, o => o is Message);
+            ReportMessageCommand = new RelayCommand(o =>
+            {
+                if (o is Message message)
+                {
+                    ExecuteReportMessage(message);
+                }
+            }, o => o is Message);
+            AcceptRequestCommand = new RelayCommand(o =>
+            {
+                if (o is Message message)
+                {
+                    ExecuteAcceptRequest(message);
+                }
+            }, o => o is Message);
         }
 
         public ObservableCollection<Message> Messages
@@ -53,7 +70,10 @@ namespace BankAppDesktop.ViewModels
 
         private async void LoadMessages()
         {
-            if (_currentChatId <= 0) return;
+            if (_currentChatId <= 0)
+            {
+                return;
+            }
 
             try
             {
@@ -73,7 +93,10 @@ namespace BankAppDesktop.ViewModels
 
         private async void ExecuteDeleteMessage(Message message)
         {
-            if (message == null) return;
+            if (message == null)
+            {
+                return;
+            }
 
             try
             {
@@ -89,7 +112,10 @@ namespace BankAppDesktop.ViewModels
 
         private async void ExecuteReportMessage(Message message)
         {
-            if (message == null) return;
+            if (message == null)
+            {
+                return;
+            }
 
             try
             {
@@ -105,7 +131,10 @@ namespace BankAppDesktop.ViewModels
 
         private async void ExecuteAcceptRequest(Message message)
         {
-            if (message == null || message.Type != MessageType.Request) return;
+            if (message == null || message.Type != MessageType.Request)
+            {
+                return;
+            }
 
             try
             {

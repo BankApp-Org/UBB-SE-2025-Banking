@@ -4,17 +4,16 @@
 
 namespace BankAppDesktop.Views.Pages
 {
-    using System;
-    using Microsoft.UI.Xaml;
-    using Microsoft.UI.Xaml.Controls;
     using BankAppDesktop.ViewModels;
     using Common.Services.Social;
+    using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml.Controls;
+    using System;
 
     public sealed partial class ReportView : Window
     {
         public IReportViewModel ViewModel { get; private set; }
 
-        
         public ReportView(ReportViewModel viewModel)
         {
             this.InitializeComponent();
@@ -36,13 +35,12 @@ namespace BankAppDesktop.Views.Pages
             this.InitializeComponent();
         }
 
-        // Initialize with demo data 
+        // Initialize with demo data
         public void InitializeDemoData(int chatId, int messageId, int reportedUserId)
         {
-        
             var demoViewModel = new ReportViewModelDemo(chatId, messageId, reportedUserId);
             ViewModel = demoViewModel;
-            
+
             if (this.Content is FrameworkElement content)
             {
                 content.DataContext = ViewModel;

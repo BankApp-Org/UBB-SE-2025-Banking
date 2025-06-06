@@ -19,7 +19,6 @@
         <StackPanel Grid.Column="0" Orientation="Vertical" Margin="10">
             <Button x:Name="ChatButton" Content="Chat" Click="Chat_Click" Margin="5" />
             <Button x:Name="FriendsButton" Content="Friends" Click="Friends_Click" Margin="5" />
-            <Button x:Name="FeedButton" Content="Feed" Click="Feed_Click" Margin="5" />
             <Button x:Name="NotificationsButton" Content="Notifications" Click="Notifications_Click" Margin="5" />
         </StackPanel>
 

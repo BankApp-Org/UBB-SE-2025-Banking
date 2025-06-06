@@ -53,7 +53,7 @@ namespace BankAppWeb.Controllers
 
                 // Remove user from chat
                 var users = await _userServiceProxy.GetUsers();
-                User ?user = users.FirstOrDefault(u => u.Id == currentUserId);
+                User? user = users.FirstOrDefault(u => u.Id == currentUserId);
                 await _chatServiceProxy.RemoveUserFromChat(chatId, user);
 
 

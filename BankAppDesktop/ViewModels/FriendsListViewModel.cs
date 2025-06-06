@@ -81,8 +81,8 @@ namespace BankAppDesktop.ViewModels
             this.UserService = user;
             this.ChatService = chat;
             this.MessageService = message;
-            this.AllFriends = new List<User>();
-            this.FriendsList = new ObservableCollection<User>();
+            this.AllFriends = [];
+            this.FriendsList = [];
             LoadAllFriends();
             // this.RemoveFriend = new RelayCommand<object>(this.RemoveFriendFromList);
         }

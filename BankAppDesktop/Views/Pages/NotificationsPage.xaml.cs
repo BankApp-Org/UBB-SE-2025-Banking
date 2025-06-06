@@ -1,14 +1,14 @@
 using BankAppDesktop.ViewModels;
-using System.Windows.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace BankAppDesktop.Views.Pages
 {
     public partial class NotificationsPage : Page
     {
-        public NotificationsPage()
+        public NotificationsPage(NotificationsViewModel notificationsViewModel)
         {
             InitializeComponent();
-            DataContext = App.Current.Services.GetService(typeof(NotificationsViewModel));
+            DataContext = notificationsViewModel;
         }
     }
-} 
+}

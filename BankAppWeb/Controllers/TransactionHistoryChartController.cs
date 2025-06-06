@@ -1,32 +1,30 @@
 using BankAppWeb.ViewModels;
+using Common.Services.Bank;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using BankApp.Service.Interfaces;
-
 namespace BankAppWeb.Controllers
 {
     [Authorize]
     public class TransactionHistoryChartController : Controller
     {
-        private readonly ITransactionHistoryService _transactionHistoryService;
+        private readonly IBankTransactionService _transactionHistoryService;
 
-        public TransactionHistoryChartController(ITransactionHistoryService transactionHistoryService)
+        public TransactionHistoryChartController(IBankTransactionService transactionHistoryService)
         {
             _transactionHistoryService = transactionHistoryService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var transactionTypesCount = await _transactionHistoryService.GetTransactionTypeCounts(userId);
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("User not logged in"));
+            List<TransactionTypeCountDTO> transactionTypesCount = await _transactionHistoryService.GetTransactionTypeCounts(userId);
 
-            var viewModel = new TransactionHistoryChartViewModel
+            TransactionHistoryChartViewModel viewModel = new()
             {
                 TransactionTypeCounts = transactionTypesCount
             };
-
             return View(viewModel);
         }
     }
-} 
+}

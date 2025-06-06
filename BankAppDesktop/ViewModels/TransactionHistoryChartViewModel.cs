@@ -1,25 +1,28 @@
+using BankAppDesktop.Commands;
+using Common.Services;
+using Common.Services.Bank;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using BankAppDesktop.Commands;
-using BankAppDesktop.Services;
-using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
-using System.Linq;
 
 namespace BankAppDesktop.ViewModels
 {
     public class TransactionHistoryChartViewModel : INotifyPropertyChanged
     {
-        private readonly ITransactionHistoryService _transactionHistoryService;
+        private readonly IBankTransactionService _transactionHistoryService;
+        private readonly IAuthenticationService _authenticationService;
         private IEnumerable<ISeries> _transactionTypeCounts;
         private ICommand _backCommand;
 
-        public TransactionHistoryChartViewModel(ITransactionHistoryService transactionHistoryService)
+        public TransactionHistoryChartViewModel(IBankTransactionService transactionHistoryService, IAuthenticationService authenticationService)
         {
             _transactionHistoryService = transactionHistoryService;
+            _authenticationService = authenticationService;
             _backCommand = new RelayCommand(ExecuteBack);
             LoadData();
         }
@@ -38,18 +41,17 @@ namespace BankAppDesktop.ViewModels
 
         private async void LoadData()
         {
-            var userId = "current-user-id"; // Înlocuiește cu userId real
-            var transactionTypeCounts = await _transactionHistoryService.GetTransactionTypeCounts(userId);
+            int currentUserId = int.Parse(_authenticationService.GetCurrentUserSession()?.UserId ?? throw new Exception("User not authenticated"));
+            var transactionTypeCounts = await _transactionHistoryService.GetTransactionTypeCounts(currentUserId);
 
-            TransactionTypeCounts = transactionTypeCounts.Select(tc =>
+            TransactionTypeCounts = [.. transactionTypeCounts.Select(tc =>
                 new PieSeries<int>
                 {
-                    Name = tc.TransactionType.Name,
-                    Values = new[] { tc.Count },
+                    Name = tc.TransactionType.ToString(),
+                    Values = [tc.Count],
                     DataLabelsSize = 16,
                     DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle
-                }
-            ).ToArray();
+                })];
         }
 
         private void ExecuteBack(object parameter)

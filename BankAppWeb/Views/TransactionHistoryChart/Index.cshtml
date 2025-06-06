@@ -1,8 +1,8 @@
 @model BankAppWeb.ViewModels.TransactionHistoryChartViewModel
 @{
     ViewData["Title"] = "Transaction History Chart";
-    var labels = string.Join(",", Model.TransactionTypeCounts.Keys.Select(k => $"'{k}'"));
-    var values = string.Join(",", Model.TransactionTypeCounts.Values);
+    var labels = string.Join(",", Model.TransactionTypeCounts.Select(k => $"'{k.TransactionType.TransactionType}'"));
+    var values = string.Join(",", Model.TransactionTypeCounts.Select(t => t.Count));
 }
 
 <div class="container mt-4">

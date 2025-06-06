@@ -57,6 +57,7 @@
             <converters:DateFormatConverter x:Key="DateFormatConverter" />
             <converters:BoolToFavoriteColorConverter x:Key="BoolToFavoriteColorConverter" />
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
+            <converters:EmoticonToEmojiConverter x:Key="EmoticonToEmojiConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

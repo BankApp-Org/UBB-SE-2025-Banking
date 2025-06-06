@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+using Common.Services.Bank;
 
 namespace BankAppWeb.ViewModels
 {
     public class TransactionHistoryChartViewModel
     {
-        public Dictionary<string, int> TransactionTypeCounts { get; set; }
+        required public List<TransactionTypeCountDTO> TransactionTypeCounts { get; set; }
     }
-} 
+}

@@ -1,3 +1,4 @@
+using Common.DTOs;
 using Common.Models;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
@@ -162,6 +163,21 @@ namespace Common.Services.Proxy
             response.EnsureSuccessStatusCode();
         }
 
+        public async Task<List<SocialUserDto>> GetNonFriendsUsers(string userCNP)
+        {
+            if (string.IsNullOrEmpty(userCNP))
+            {
+                throw new ArgumentException("User CNP cannot be null or empty.", nameof(userCNP));
+            }
+            var response = await _httpClient.GetAsync($"api/friend/{userCNP}/nonfriends");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"Failed to retrieve non-friends users: {response.ReasonPhrase}");
+            }
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<SocialUserDto>>(content, _jsonOptions)
+                   ?? throw new InvalidOperationException("Deserialization returned null.");
+        }
         private class DefaultRoleResponse
         {
             public string Message { get; set; } = string.Empty;

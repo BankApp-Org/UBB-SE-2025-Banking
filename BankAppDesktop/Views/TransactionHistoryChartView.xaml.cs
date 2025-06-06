@@ -1,5 +1,6 @@
-using System.Windows.Controls;
 using BankAppDesktop.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 
 namespace BankAppDesktop.Views
 {
@@ -10,8 +11,8 @@ namespace BankAppDesktop.Views
         public TransactionHistoryChartView()
         {
             this.InitializeComponent();
-            ViewModel = new TransactionHistoryChartViewModel(/* TODO: injectează serviciul real */ null);
+            ViewModel = App.Host.Services.GetRequiredService<TransactionHistoryChartViewModel>();
             this.DataContext = ViewModel;
         }
     }
-} 
+}

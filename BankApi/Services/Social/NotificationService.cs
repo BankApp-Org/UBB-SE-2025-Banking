@@ -36,7 +36,7 @@ namespace BankApi.Services.Social
         {
             var notifications = await _notificationRepository.GetNotificationsByUserIdAsync(userId);
             var notification = notifications.FirstOrDefault(n => n.NotificationID == notificationId);
-            
+
             if (notification != null)
             {
                 await _notificationRepository.DeleteNotificationAsync(notificationId);
@@ -52,4 +52,4 @@ namespace BankApi.Services.Social
             }
         }
     }
-} 
+}

@@ -3,9 +3,8 @@ namespace BankAppDesktop.Views.Pages
     using BankAppDesktop.Views.Components;
     using Common.Models.Social;
     using Common.Services.Social;
-    using Common.Services;
-    using Microsoft.UI.Xaml.Controls;
     using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml.Controls;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -60,15 +59,14 @@ namespace BankAppDesktop.Views.Pages
             {
                 // Create the ReportView with demo data
                 var reportView = new Views.Pages.ReportView();
-                
+
                 // Initialize with demo data (hardcoded values)
                 reportView.InitializeDemoData(
                     chatId: 12345,
                     messageId: 67890,
-                    reportedUserId: 11111
-                );
-                
-                // Activate the window
+                    reportedUserId: 11111);
+
+                // Activate the page
                 reportView.Activate();
             }
             catch (Exception ex)

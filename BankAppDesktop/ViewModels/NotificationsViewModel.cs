@@ -1,10 +1,11 @@
+using BankAppDesktop.Commands;
 using Common.Models.Social;
+using Common.Services;
 using Common.Services.Social;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -30,12 +31,19 @@ namespace BankAppDesktop.ViewModels
         {
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            
-            Notifications = new ObservableCollection<Notification>();
-            
-            ClearNotificationCommand = new AsyncRelayCommand<int>(ClearNotification);
-            ClearAllNotificationsCommand = new AsyncRelayCommand(ClearAllNotifications);
-            RefreshCommand = new AsyncRelayCommand(LoadNotifications);
+            _notifications = [];
+
+            Notifications = [];
+
+            ClearNotificationCommand = new RelayCommand(async o =>
+            {
+                if (o is int notificationId)
+                {
+                    await ClearNotification(notificationId);
+                }
+            }, o => o is int);
+            ClearAllNotificationsCommand = new RelayCommand(async o => await ClearAllNotifications());
+            RefreshCommand = new RelayCommand(async o => await LoadNotifications());
 
             _ = LoadNotifications();
         }
@@ -46,7 +54,7 @@ namespace BankAppDesktop.ViewModels
             {
                 var user = await _userService.GetCurrentUserAsync();
                 var notifications = await _notificationService.GetNotificationsForUser(user.Id);
-                
+
                 Notifications.Clear();
                 foreach (var notification in notifications)
                 {
@@ -90,4 +98,4 @@ namespace BankAppDesktop.ViewModels
             }
         }
     }
-} 
+}

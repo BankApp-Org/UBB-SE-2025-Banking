@@ -1,4 +1,5 @@
-﻿using Common.Models;
+﻿using Common.DTOs;
+using Common.Models;
 using Common.Models.Bank;
 
 namespace Common.Services.Bank
@@ -15,6 +16,12 @@ namespace Common.Services.Bank
 
         Task<bool> DeleteTransaction(int transactionId);
 
+        Task<List<TransactionTypeCountDTO>> GetTransactionTypeCounts(int userId);
+    }
+    public class TransactionTypeCountDTO
+    {
+        required public TransactionTypeDTO TransactionType { get; set; }
+        required public int Count { get; set; }
     }
     public class TransactionFilters
     {

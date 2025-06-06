@@ -15,7 +15,7 @@ namespace BankAppWeb.ViewModels
         {
             _messageService = messageService;
             _userService = userService;
-            Messages = new List<Message>();
+            Messages = [];
         }
 
         public List<Message> Messages { get; set; }
@@ -144,4 +144,4 @@ namespace BankAppWeb.ViewModels
             }
         }
     }
-} 
+}
