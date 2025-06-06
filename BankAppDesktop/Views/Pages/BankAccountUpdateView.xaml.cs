@@ -3,11 +3,13 @@ namespace BankAppDesktop.Views.Pages
     using BankAppDesktop.ViewModels;
     using Common.Models.Trading;
     using Common.Services.Trading;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
     using System;
+    using System.Diagnostics;
     using System.Threading.Tasks;
-    public sealed partial class BankAccountUpdateView : Window
+    public sealed partial class BankAccountUpdateView : Page
     {
         private BankAccountUpdateViewModel? viewModel;
 
@@ -17,23 +19,9 @@ namespace BankAppDesktop.Views.Pages
             {
                 this.InitializeComponent();
 
-                // Initialize the ViewModel after the component is initialized
                 viewModel = App.Services.GetRequiredService<BankAccountUpdateViewModel>();
 
-                AppWindow.Resize(new Windows.Graphics.SizeInt32(800, 1400));
                 MainGrid.DataContext = viewModel;
-
-                viewModel.OnUpdateSuccess = () =>
-                {
-                    this.Close();
-                };
-
-                viewModel.OnClose = () =>
-                {
-                    this.Close();
-                };
-
-                WindowManager.RegisterWindow(this);
             }
             catch (Exception ex)
             {
@@ -58,7 +46,6 @@ namespace BankAppDesktop.Views.Pages
                 if (result == "Success")
                 {
                     await ShowDialog("Success", "Bank account updated successfully.", "OK");
-                    WindowManager.ShouldReloadBankAccounts = true;
                     viewModel.OnUpdateSuccess?.Invoke();
                 }
                 else
@@ -82,11 +69,6 @@ namespace BankAppDesktop.Views.Pages
             {
                 ShowErrorDialog("Error", $"Failed to delete bank account: {ex.Message}");
             }
-        }
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
 
         private async Task ShowDialog(string title, string content, string closeButtonText)

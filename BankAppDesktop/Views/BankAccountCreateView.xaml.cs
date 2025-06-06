@@ -52,4 +52,4 @@ namespace BankAppDesktop.Views
             await dialog.ShowAsync();
         }
     }
-} 
+}

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Window
-  x:Class="BankAppDesktop.Views.Pages.BankAccountUpdateView"
+<Page
+    x:Class="BankAppDesktop.Views.Pages.BankAccountUpdateView"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:local="using:BankAppDesktop.Views.Pages"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  mc:Ignorable="d"
-  Title="Loan Shark - Bank Account Update">
+  mc:Ignorable="d">
 
     <Grid x:Name="MainGrid" Padding="24">
         <StackPanel Spacing="16">
@@ -69,4 +68,4 @@
             </StackPanel>
         </StackPanel>
     </Grid>
-</Window>
+</Page>

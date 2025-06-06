@@ -8,250 +8,130 @@ using System.Windows.Input;
 using Common.Services.Bank;
 using Common.Models.Bank;
 using BankAppDesktop.Commands;
-using Common.Services;
-using Common.Models;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class BankAccountUpdateViewModel : INotifyPropertyChanged
+    public partial class BankAccountCreateViewModel : INotifyPropertyChanged
     {
-        private readonly IBankAccountService bankAccountService;
-        private readonly IAuthenticationService authSerivce;
-        private UserSession currentUser;
-        private BankAccount? bankAccount;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        private string accountIBAN = string.Empty;
-        public string AccountIBAN
-        {
-            get => accountIBAN;
-            set
-            {
-                if (accountIBAN != value)
-                {
-                    accountIBAN = value ?? string.Empty;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string accountName = string.Empty;
-        public string AccountName
-        {
-            get => accountName;
-            set
-            {
-                if (accountName != value)
-                {
-                    accountName = value ?? string.Empty;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        // left those two as double because the NumberBox expects a double to display the value
-        private double dailyLimit = 1000.0;
-        public double DailyLimit
-        {
-            get => dailyLimit;
-            set
-            {
-                if (dailyLimit != value)
-                {
-                    dailyLimit = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private double maximumPerTransaction = 200.0;
-        public double MaximumPerTransaction
-        {
-            get => maximumPerTransaction;
-            set
-            {
-                if (maximumPerTransaction != value)
-                {
-                    maximumPerTransaction = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private int maximumNrTransactions = 10;
-        public int MaximumNrTransactions
-        {
-            get => maximumNrTransactions;
-            set
-            {
-                if (maximumNrTransactions != value)
-                {
-                    maximumNrTransactions = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private bool isBlocked = false;
-        public bool IsBlocked
-        {
-            get => isBlocked;
-            set
-            {
-                if (isBlocked != value)
-                {
-                    isBlocked = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public Action? OnUpdateSuccess { get; set; }
         public Action? OnClose { get; set; }
-
-        // initializes the view model and loads the bank account for which the settings are to be updated
-        public BankAccountUpdateViewModel(IBankAccountService s, IAuthenticationService a)
+        public Action? OnSuccess { get; set; }
+        public ObservableCollection<CurrencyItem> Currencies { get; set; } = new ObservableCollection<CurrencyItem>();
+        public ICommand CancelCommand { get; }
+        public ICommand ConfirmCommand { get; }
+        public int UserID { get; set; }
+        private CurrencyItem? selectedItem;
+        public CurrencyItem? SelectedItem
         {
-            try
+            get => selectedItem;
+            set
             {
-                var bankAccService = new BankAccountServiceProxy(new System.Net.Http.HttpClient());
-                bankAccountService = s;
-                authSerivce = a;
-                // Note: Async initialization will be done by calling InitializeAsync()
-                _ = InitializeAsync();
-                currentUser = authSerivce.GetCurrentUserSession();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error in BankAccountUpdateViewModel constructor: {ex.Message}");
-                throw;
+                if (selectedItem != value)
+                {
+                    if (selectedItem != null)
+                    {
+                        selectedItem.IsChecked = false;
+                    }
+                    selectedItem = value;
+                    if (selectedItem != null)
+                    {
+                        selectedItem.IsChecked = true;
+                    }
+                    OnPropertyChanged(nameof(SelectedItem));
+                }
             }
         }
-
-        public async Task InitializeAsync()
+        private string? customName;
+        public string? CustomName
         {
-            await LoadBankAccount();
-            BankAccount bk = bankAccount;
-
-            AccountName = bk.Name;
-            DailyLimit = decimal.ToDouble(bk.DailyLimit);
-            MaximumPerTransaction = decimal.ToDouble(bk.MaximumPerTransaction);
-            MaximumNrTransactions = bk.MaximumNrTransactions;
-            IsBlocked = bk.Blocked;
-        }
-
-        // loads the bank account with the given iban from the database
-        private async Task LoadBankAccount()
-        {
-            if (string.IsNullOrEmpty(currentUser.CurrentBankAccountIban))
+            get
             {
-                throw new ArgumentException("IBAN cannot be null or empty");
+                return customName ?? string.Empty;
             }
 
-            try
+            set
             {
-                string iban = currentUser.CurrentBankAccountIban ?? string.Empty;
-                bankAccount = await bankAccountService.FindBankAccount(iban);
-                if (bankAccount != null)
-                {
-                    AccountIBAN = bankAccount.Iban ?? string.Empty;
-                    AccountName = bankAccount.Name ?? string.Empty;
-                    DailyLimit = decimal.ToDouble(bankAccount.DailyLimit);
-                    MaximumPerTransaction = decimal.ToDouble(bankAccount.MaximumPerTransaction);
-                    MaximumNrTransactions = bankAccount.MaximumNrTransactions;
-                    IsBlocked = bankAccount.Blocked;
-                }
-                else
-                {
-                    
-                    throw new InvalidOperationException($"Bank account not found for IBAN: {currentUser.CurrentBankAccountIban}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error loading bank account: {ex.Message}");
-                throw;
+                customName = value;
+                OnPropertyChanged(nameof(CustomName));
             }
         }
-        // checks for the inputs to be valid and be changed from the initial ones and updates the database
-        // with the new settings, otherwise returns a message according to the error
-        public async Task<string> UpdateBankAccount()
+        private IBankAccountService service;
+        public BankAccountCreateViewModel(IBankAccountService s)
         {
-            try
+            service = s;
+            LoadData();
+            ConfirmCommand = new RelayCommand(_ => OnConfirmButtonClicked());
+            CancelCommand = new RelayCommand(_ => OnCancelButtonClicked());
+        }
+        public async void OnConfirmButtonClicked()
+        {
+            Debug.WriteLine($"Pressed create confirm bank account: {SelectedItem?.Name}");
+            if (SelectedItem != null)
             {
-                if (string.IsNullOrEmpty(AccountIBAN))
+                string iban = await service.GenerateIBAN();
+                var bankAccount = new BankAccount
                 {
-                    return "IBAN cannot be empty";
-                }
-
-                if (string.IsNullOrEmpty(AccountName))
-                {
-                    return "Account name cannot be empty";
-                }
-
-                if (DailyLimit < 0)
-                {
-                    return "Daily limit cannot be negative";
-                }
-
-                if (MaximumPerTransaction < 0)
-                {
-                    return "Maximum per transaction cannot be negative";
-                }
-
-                if (MaximumNrTransactions < 0)
-                {
-                    return "Maximum number of transactions cannot be negative";
-                }
-                if (AccountName == bankAccount.Name && DailyLimit == decimal.ToDouble(bankAccount.DailyLimit) &&
-                    MaximumPerTransaction == decimal.ToDouble(bankAccount.MaximumPerTransaction) &&
-                    MaximumNrTransactions == bankAccount.MaximumNrTransactions &&
-                    IsBlocked == bankAccount.Blocked)
-                {
-                    return "Failed to update bank account. No settings were changed";
-                }
-
-                bool result = await bankAccountService.UpdateBankAccount(
-                    AccountIBAN,
-                    AccountName,
-                    (decimal)DailyLimit, // converting back from double to decimal
-                    (decimal)MaximumPerTransaction,
-                    MaximumNrTransactions,
-                    IsBlocked);
-
-                if (result)
-                {
-                    return "Success";
-                }
-
-                return "Failed to update bank account";
+                    Iban = iban,
+                    UserId = UserID,
+                    Name = CustomName ?? string.Empty,
+                    Currency = Enum.TryParse<Currency>(SelectedItem.Name, out var currency) ? currency : Currency.USD,
+                    Balance = 0,
+                    Blocked = false,
+                    DailyLimit = 1000.0m,
+                    MaximumPerTransaction = 200.0m,
+                    MaximumNrTransactions = 10,
+                    Transactions = new List<BankTransaction>(),
+                    User = null!
+                };
+                await service.CreateBankAccount(bankAccount);
+                // WindowManager.ShouldReloadBankAccounts = true; // Uncomment if WindowManager is implemented
+                OnSuccess?.Invoke();
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine($"Error updating bank account: {ex.Message}");
-                return $"Error: {ex.Message}";
+                Debug.WriteLine("Bank account creation failed because no currency was selected");
             }
         }
-
-        public void DeleteBankAccount()
+        public void OnCancelButtonClicked()
         {
-            try
+            Debug.WriteLine("Pressed cancel create bank account");
+            // WindowManager.ShouldReloadBankAccounts = false; // Uncomment if WindowManager is implemented
+            OnClose?.Invoke();
+        }
+        public void LoadData()
+        {
+            var currencyList = Enum.GetNames(typeof(Currency));
+            foreach (var c in currencyList)
             {
-                BankAccountDeleteView deleteBankAccountView = new BankAccountDeleteView();
-                deleteBankAccountView.Activate();
-                OnClose?.Invoke();
+                Currencies.Add(new CurrencyItem { Name = c });
             }
-            catch (Exception ex)
+            if (Currencies.Count > 0)
             {
-                Debug.WriteLine($"Error deleting bank account: {ex.Message}");
-                throw new Exception("Error deleting bank account", ex);
+                SelectedItem = Currencies.FirstOrDefault(c => c.Name == "RON") ?? Currencies[0];
+                OnPropertyChanged(nameof(SelectedItem));
             }
         }
-
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
-} 
+    public partial class CurrencyItem : INotifyPropertyChanged
+    {
+        public string Name { get; set; } = string.Empty;
+        private bool isChecked;
+        public bool IsChecked
+        {
+            get => isChecked;
+            set
+            {
+                if (isChecked != value)
+                {
+                    isChecked = value;
+                    OnPropertyChanged(nameof(IsChecked));
+                }
+            }
+        }
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
