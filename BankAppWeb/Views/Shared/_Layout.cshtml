@@ -61,26 +61,26 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Alerts" asp-action="Index">Alerts</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark position-relative" asp-area="" asp-controller="Notifications" asp-action="Index">
-                                    Notifications
-                                </a>
-                            </li>
+                            @* <li class="nav-item"> *@
+                            @*     <a class="nav-link text-dark position-relative" asp-area="" asp-controller="Notifications" asp-action="Index"> *@
+                            @*         Notifications *@
+                            @*     </a> *@
+                            @* </li> *@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/Analysis/Index">Analysis</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Tips/Index">Tips</a>
-                            </li>
+                            @* <li class="nav-item"> *@
+                            @*     <a class="nav-link text-dark" asp-page="/Tips/Index">Tips</a> *@
+                            @* </li> *@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="TransactionLog" asp-action="Index">Transaction Log</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="GemStore" asp-action="Index">Gem store</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="BankAccountCreate" asp-action="Index">Create Bank Account</a>
-                            </li>
+                            @* <li class="nav-item"> *@
+                            @*     <a class="nav-link text-dark" asp-area="" asp-controller="BankAccountCreate" asp-action="Index">Create Bank Account</a> *@
+                            @* </li> *@
                             @if (AuthenticationService.IsUserAdmin())
                             {
                                 <li class="nav-item">
