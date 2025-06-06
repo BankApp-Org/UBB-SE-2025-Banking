@@ -15,9 +15,12 @@ namespace Common.Services.Proxy
 
         public async Task<List<BankTransaction>> GetTransactions(TransactionFilters transactionFilters)
         {
-            var queryString = BuildQueryString(transactionFilters);
-            return await _httpClient.GetFromJsonAsync<List<BankTransaction>>($"api/BankTransaction{queryString}", _jsonOptions) ??
-                throw new InvalidOperationException("Failed to deserialize bank transactions response.");
+            //var queryString = BuildQueryString(transactionFilters);
+            var response =
+                await _httpClient.PostAsJsonAsync("api/TransactionHistory", transactionFilters, _jsonOptions);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<BankTransaction>>(_jsonOptions) ??
+                   throw new InvalidOperationException("Failed to deserialize bank transactions response.");
         }
 
         private string BuildQueryString(TransactionFilters filters)
