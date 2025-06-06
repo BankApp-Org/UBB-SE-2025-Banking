@@ -114,6 +114,36 @@ namespace BankAppDesktop.ViewModels
         public Action? OnUpdateSuccess { get; set; }
         public Action? OnClose { get; set; }
 
+        #region UI State Properties
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                if (_isLoading != value)
+                {
+                    _isLoading = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string? _errorMessage;
+        public string? ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                if (_errorMessage != value)
+                {
+                    _errorMessage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        #endregion
+
         // initializes the view model and loads the bank account for which the settings are to be updated
         public BankAccountUpdateViewModel(IBankAccountService s, IAuthenticationService a)
         {
@@ -121,9 +151,7 @@ namespace BankAppDesktop.ViewModels
             {
                 bankAccountService = s;
                 authSerivce = a;
-                // Note: Async initialization will be done by calling InitializeAsync()
                 currentUser = authSerivce.GetCurrentUserSession();
-                _ = InitializeAsync();
             }
             catch (Exception ex)
             {
@@ -135,12 +163,11 @@ namespace BankAppDesktop.ViewModels
         public void SetIban(string iban)
         {
             CurrentIban = iban;
-            _ = InitializeAsync();
         }
 
         public async Task InitializeAsync()
         {
-            await LoadBankAccount();
+            await LoadAccountDetailsAsync();
             BankAccount bk = bankAccount;
 
             AccountName = bk.Name;
@@ -151,37 +178,49 @@ namespace BankAppDesktop.ViewModels
         }
 
         // loads the bank account with the given iban from the database
-        private async Task LoadBankAccount()
+        public async Task LoadAccountDetailsAsync()
         {
-            if (string.IsNullOrEmpty(currentUser.CurrentBankAccountIban))
+            if (string.IsNullOrEmpty(CurrentIban))
             {
-                throw new ArgumentException("IBAN cannot be null or empty");
+                ErrorMessage = "IBAN was not provided.";
+                return;
             }
+
+            IsLoading = true;
+            ErrorMessage = null;
 
             try
             {
-                // string iban = currentUser.CurrentBankAccountIban ?? string.Empty;
+                // Fetch the original account details from the service
                 bankAccount = await bankAccountService.FindBankAccount(CurrentIban);
+
                 if (bankAccount != null)
                 {
-                    AccountIBAN = bankAccount.Iban ?? string.Empty;
-                    AccountName = bankAccount.Name ?? string.Empty;
-                    DailyLimit = decimal.ToDouble(bankAccount.DailyLimit);
-                    MaximumPerTransaction = decimal.ToDouble(bankAccount.MaximumPerTransaction);
+                    // Copy the loaded data into the ViewModel properties that are bound to the UI.
+                    // This happens only ONCE after a successful load.
+                    AccountIBAN = bankAccount.Iban;
+                    AccountName = bankAccount.Name;
+                    DailyLimit = Convert.ToDouble(bankAccount.DailyLimit);
+                    MaximumPerTransaction = Convert.ToDouble(bankAccount.MaximumPerTransaction);
                     MaximumNrTransactions = bankAccount.MaximumNrTransactions;
                     IsBlocked = bankAccount.Blocked;
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Bank account not found for IBAN: {currentUser.CurrentBankAccountIban}");
+                    ErrorMessage = $"Bank account not found for IBAN: {CurrentIban}";
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error loading bank account: {ex.Message}");
-                throw;
+                ErrorMessage = "Failed to load account details.";
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
+
         // checks for the inputs to be valid and be changed from the initial ones and updates the database
         // with the new settings, otherwise returns a message according to the error
         public async Task<string> UpdateBankAccount()
@@ -249,13 +288,14 @@ namespace BankAppDesktop.ViewModels
             }
         }
 
-        public void DeleteBankAccount()
+        public void DeleteBankAccount(string iban = null)
         {
             try
             {
-                BankAccountDeleteView deleteBankAccountView = App.Host.Services.GetRequiredService<BankAccountDeleteView>();
+                BankAccountDeleteView deleteBankAccountView = new BankAccountDeleteView(iban);
                 deleteBankAccountView.Activate();
                 OnClose?.Invoke();
+
             }
             catch (Exception ex)
             {
