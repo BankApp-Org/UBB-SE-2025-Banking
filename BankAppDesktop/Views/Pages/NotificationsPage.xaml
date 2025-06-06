@@ -4,11 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:Common.Models.Social;assembly=Common" xmlns:viewmodels="using:BankAppDesktop.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:NotificationsViewModel}"
+    xmlns:models="clr-namespace:Common.Models.Social;assembly=Common" 
+    xmlns:viewmodels="using:BankAppDesktop.ViewModels"
+    xmlns:converters="using:BankAppDesktop.Views.Converters"
+    d:DataContext="{d:DesignInstance Type=viewmodels:NotificationsViewModel}"
     mc:Ignorable="d">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -19,10 +23,26 @@
                    Grid.Row="0"
                    Margin="0,0,0,20"/>
 
+        <!-- Error Message -->
+        <TextBlock Grid.Row="1"
+                   Text="{Binding ErrorMessage}"
+                   Foreground="Red"
+                   TextWrapping="Wrap"
+                   Visibility="{Binding HasError, Converter={StaticResource BoolToVisibilityConverter}}"
+                   Margin="0,0,0,10"/>
+
+        <!-- Loading Indicator -->
+        <ProgressRing Grid.Row="2"
+                      IsActive="{Binding IsLoading}"
+                      Width="50"
+                      Height="50"
+                      Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
         <ListView x:Name="NotificationListView" 
                   ItemsSource="{Binding Notifications}"
-                  Grid.Row="1"
-                  Margin="0,0,0,10">
+                  Grid.Row="2"
+                  Margin="0,0,0,10"
+                  Visibility="{Binding IsLoading, Converter={StaticResource BoolToInverseVisibilityConverter}}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Border Background="White" 
@@ -59,10 +79,11 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <Button Grid.Row="2"
+        <Button Grid.Row="3"
                 Content="Clear All" 
                 Command="{Binding ClearAllNotificationsCommand}"
                 Style="{StaticResource AccentButtonStyle}"
-                HorizontalAlignment="Right"/>
+                HorizontalAlignment="Right"
+                IsEnabled="{Binding IsLoading, Converter={StaticResource BoolToInverseBoolConverter}}"/>
     </Grid>
 </Page> 

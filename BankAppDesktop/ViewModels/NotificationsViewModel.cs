@@ -2,6 +2,7 @@ using BankAppDesktop.Commands;
 using Common.Models.Social;
 using Common.Services;
 using Common.Services.Social;
+using Microsoft.UI.Xaml;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -14,11 +15,36 @@ namespace BankAppDesktop.ViewModels
         private readonly INotificationService _notificationService;
         private readonly IUserService _userService;
         private ObservableCollection<Notification> _notifications;
+        private string _errorMessage;
+        private bool _isLoading;
+        private bool _hasError;
 
         public ObservableCollection<Notification> Notifications
         {
             get => _notifications;
             set => SetProperty(ref _notifications, value);
+        }
+
+        public string ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                SetProperty(ref _errorMessage, value);
+                HasError = !string.IsNullOrEmpty(value);
+            }
+        }
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
+        }
+
+        public bool HasError
+        {
+            get => _hasError;
+            set => SetProperty(ref _hasError, value);
         }
 
         public ICommand ClearNotificationCommand { get; }
@@ -32,6 +58,7 @@ namespace BankAppDesktop.ViewModels
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _notifications = [];
+            _errorMessage = string.Empty;
 
             Notifications = [];
 
@@ -52,7 +79,16 @@ namespace BankAppDesktop.ViewModels
         {
             try
             {
+                IsLoading = true;
+                ErrorMessage = string.Empty;
+
                 var user = await _userService.GetCurrentUserAsync();
+                if (user == null)
+                {
+                    ErrorMessage = "Please log in to view notifications.";
+                    return;
+                }
+
                 var notifications = await _notificationService.GetNotificationsForUser(user.Id);
 
                 Notifications.Clear();
@@ -63,8 +99,12 @@ namespace BankAppDesktop.ViewModels
             }
             catch (Exception ex)
             {
-                // Handle error appropriately
+                ErrorMessage = $"Error loading notifications: {ex.Message}";
                 System.Diagnostics.Debug.WriteLine($"Error loading notifications: {ex}");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
@@ -72,14 +112,27 @@ namespace BankAppDesktop.ViewModels
         {
             try
             {
+                IsLoading = true;
+                ErrorMessage = string.Empty;
+
                 var user = await _userService.GetCurrentUserAsync();
+                if (user == null)
+                {
+                    ErrorMessage = "Please log in to clear notifications.";
+                    return;
+                }
+
                 await _notificationService.MarkNotificationAsRead(notificationId, user.Id);
                 await LoadNotifications();
             }
             catch (Exception ex)
             {
-                // Handle error appropriately
+                ErrorMessage = $"Error clearing notification: {ex.Message}";
                 System.Diagnostics.Debug.WriteLine($"Error clearing notification: {ex}");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
 
@@ -87,14 +140,27 @@ namespace BankAppDesktop.ViewModels
         {
             try
             {
+                IsLoading = true;
+                ErrorMessage = string.Empty;
+
                 var user = await _userService.GetCurrentUserAsync();
+                if (user == null)
+                {
+                    ErrorMessage = "Please log in to clear notifications.";
+                    return;
+                }
+
                 await _notificationService.MarkAllNotificationsAsRead(user.Id);
                 await LoadNotifications();
             }
             catch (Exception ex)
             {
-                // Handle error appropriately
+                ErrorMessage = $"Error clearing all notifications: {ex.Message}";
                 System.Diagnostics.Debug.WriteLine($"Error clearing all notifications: {ex}");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
     }
