@@ -88,7 +88,7 @@ namespace BankApi.Repositories.Impl.Bank
 
         public async Task<List<BankAccount>> GetAllBankAccountsAsync()
         {
-            return await _context.BankAccounts.Include(b => b.Currency).ToListAsync();
+            return await _context.BankAccounts.ToListAsync();
         }
     }
 }
