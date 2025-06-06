@@ -50,6 +50,7 @@ namespace BankAppDesktop.Services
                 string userId = _localSettings.Values[$"{_tokenKey}_UserId"] as string ?? string.Empty;
                 string username = _localSettings.Values[$"{_tokenKey}_Username"] as string ?? string.Empty;
                 string rolesStr = _localSettings.Values[$"{_tokenKey}_Roles"] as string ?? string.Empty;
+                string cnp = _localSettings.Values[$"{_tokenKey}_CNP"] as string ?? string.Empty;
 
                 DateTime expiry = DateTime.Parse(expiryStr);
                 List<string> roles = !string.IsNullOrEmpty(rolesStr)
@@ -62,7 +63,8 @@ namespace BankAppDesktop.Services
                     ExpiryTimestamp = expiry,
                     UserId = userId,
                     UserName = username,
-                    Roles = roles
+                    Roles = roles,
+                    CNP = cnp,
                 };
             }
             catch (Exception ex)

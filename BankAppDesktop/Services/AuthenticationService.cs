@@ -73,6 +73,7 @@ namespace BankAppDesktop.Services
             var userId = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("User ID not found in token claims");
             var userName = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? throw new Exception("User name not found in token claims");
             var roles = token.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+            string userCNP = token.Claims.FirstOrDefault(c => c.Type == "cnp")?.Value ?? throw new Exception("CNP not found in token claims");
 
             // Create and store the session
             _currentUserSession = new UserSession
@@ -82,6 +83,7 @@ namespace BankAppDesktop.Services
                 Token = tokenResponse.Token,
                 Roles = roles,
                 ExpiryTimestamp = token.ValidTo,
+                CNP = userCNP
             };
 
             // Save token in secure storage

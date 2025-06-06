@@ -50,6 +50,7 @@ namespace BankAppWeb.Services
                         UserName = userName,
                         Roles = roles,
                         Token = token,
+                        CNP = GetUserCNP(),
                     };
                 }
             }
@@ -73,7 +74,8 @@ namespace BankAppWeb.Services
                         UserId = userId,
                         UserName = userName,
                         Roles = roles,
-                        Token = token
+                        Token = token,
+                        CNP = GetUserCNP(),
                     };
                     return _currentUserSession;
                 }
@@ -163,7 +165,8 @@ namespace BankAppWeb.Services
                 UserName = userName,
                 Token = tokenResponse.Token,
                 Roles = roles,
-                ExpiryTimestamp = token.ValidTo
+                ExpiryTimestamp = token.ValidTo,
+                CNP = GetUserCNP()
             };
 
             OnUserLoggedIn(new UserLoggedInEventArgs(userId));

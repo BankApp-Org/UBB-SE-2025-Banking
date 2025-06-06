@@ -88,6 +88,7 @@ namespace BankApi.Controllers
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.UserName),
+                new("CNP", user.CNP),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

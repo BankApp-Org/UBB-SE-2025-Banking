@@ -1,7 +1,9 @@
+using BankApi.Data;
 using BankApi.Repositories;
 using BankApi.Services;
 using Common.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -17,6 +19,8 @@ namespace BankApp.Service.Tests
     {
         private Mock<IUserRepository> _mockRepo;
         private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
+        private Mock<UserManager<User>> _mockUserManager;
+        private Mock<ApiDbContext> _mockDBcontext;
         private UserService _service;
 
         [TestInitialize]
@@ -24,7 +28,11 @@ namespace BankApp.Service.Tests
         {
             _mockRepo = new Mock<IUserRepository>();
             _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _service = new UserService(_mockRepo.Object, _mockHttpContextAccessor.Object);
+            _mockUserManager = new Mock<UserManager<User>>(
+                new Mock<IUserStore<User>>().Object,
+                null, null, null, null, null, null, null, null);
+            _mockDBcontext = new Mock<ApiDbContext>();
+            _service = new UserService(_mockRepo.Object, _mockHttpContextAccessor.Object, _mockUserManager.Object, _mockDBcontext.Object);
         }
 
         [TestMethod]
