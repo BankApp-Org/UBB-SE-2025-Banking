@@ -8,7 +8,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Common.Models;
-using Common.Models;
 
 namespace BankAppWeb.Controllers
 {
@@ -78,7 +77,22 @@ namespace BankAppWeb.Controllers
                 return View(model);
 
             var account = await _bankAccountService.FindBankAccount(model.Iban);
-
+            if (account == null)
+                return NotFound();
+                
+            // Update account with values from model
+            account.Name = model.Name;
+            account.DailyLimit = model.DailyLimit;
+            account.MaximumPerTransaction = model.MaximumPerTransaction;
+            account.MaximumNrTransactions = model.MaximumNrTransactions;
+            
+            // Parse currency if changed
+            if (Enum.TryParse<Currency>(model.Currency, out var currency))
+            {
+                account.Currency = currency;
+            }
+            
+            account.Blocked = model.IsBlocked;
 
             await _bankAccountService.UpdateBankAccount(account);
             TempData["SuccessMessage"] = "Account updated successfully.";

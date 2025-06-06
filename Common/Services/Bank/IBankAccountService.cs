@@ -5,7 +5,7 @@ namespace Common.Services.Bank
     public interface IBankAccountService
     {
         Task<List<BankAccount>> GetUserBankAccounts(int userID);
-        Task<BankAccount?> FindBankAccount(string iban);
+        Task<BankAccount> FindBankAccount(string iban);
         Task<bool> CreateBankAccount(BankAccount bankAccount);
         Task<bool> RemoveBankAccount(string iban);
         Task<bool> CheckIBANExists(string iban);
