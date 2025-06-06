@@ -1,3 +1,6 @@
+using BankAppDesktop.Commands;
+using Common.Models.Bank;
+using Common.Services.Bank;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -5,9 +8,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
-using Common.Services.Bank;
-using Common.Models.Bank;
-using BankAppDesktop.Commands;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -43,8 +43,15 @@ namespace BankAppDesktop.ViewModels
         private string? customName;
         public string? CustomName
         {
-            get { return customName ?? string.Empty; }
-            set { customName = value; OnPropertyChanged(nameof(CustomName)); }
+            get
+            {
+                return customName ?? string.Empty;
+            }
+            set
+            {
+                customName = value;
+                OnPropertyChanged(nameof(CustomName));
+            }
         }
         private IBankAccountService service;
         public BankAccountCreateViewModel(IBankAccountService s)
@@ -126,4 +133,4 @@ namespace BankAppDesktop.ViewModels
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-} 
+}

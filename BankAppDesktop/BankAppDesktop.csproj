@@ -126,6 +126,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Views\Pages\SendMoneyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
 	<Page Update="Views\Pages\BankTransactionsHistoryPage.xaml">
 		<Generator>MSBuild:Compile</Generator>
 	</Page>
