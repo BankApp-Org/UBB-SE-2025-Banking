@@ -5,6 +5,7 @@
     using Common.Exceptions;
     using Common.Models.Trading;
     using Common.Services.Trading;
+    using Common.Services.Bank;
     using System;
     using System.Threading.Tasks;
 
@@ -12,11 +13,13 @@
     {
         private readonly IGemStoreRepository _repository;
         private readonly IUserRepository _userRepository;
+        private readonly ICreditScoringService _creditScoringService;
 
-        public StoreService(IGemStoreRepository repository, IUserRepository userRepository)
+        public StoreService(IGemStoreRepository repository, IUserRepository userRepository, ICreditScoringService creditScoringService)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _creditScoringService = creditScoringService ?? throw new ArgumentNullException(nameof(creditScoringService));
         }
 
         /// <summary>
@@ -49,6 +52,9 @@
             int currentBalance = await GetUserGemBalanceAsync(userCNP);
             await UpdateUserGemBalanceAsync(currentBalance + deal.GemAmount, userCNP);
 
+            // Apply credit score impact for gem purchase
+            await ApplyGemTransactionImpactAsync(userCNP, true, deal.GemAmount, deal.Price);
+
             return $"Successfully purchased {deal.GemAmount} gems for {deal.Price}€";
         }
 
@@ -71,6 +77,10 @@
             }
 
             await UpdateUserGemBalanceAsync(currentBalance - gemAmount, userCNP);
+
+            // Apply credit score impact for gem sale
+            await ApplyGemTransactionImpactAsync(userCNP, false, gemAmount, moneyEarned);
+
             return $"Successfully sold {gemAmount} gems for {moneyEarned}€";
         }
 
@@ -80,6 +90,33 @@
         protected virtual Task<bool> ProcessBankTransaction(string accountId, double amount)
         {
             return Task.FromResult(true);
+        }
+
+        /// <summary>
+        /// Applies credit score impact for gem transactions.
+        /// </summary>
+        private async Task ApplyGemTransactionImpactAsync(string userCnp, bool isBuying, int gemAmount, double transactionValue)
+        {
+            try
+            {
+                int impact = await _creditScoringService.CalculateGemTransactionImpactAsync(userCnp, isBuying, gemAmount, transactionValue);
+                
+                if (impact != 0)
+                {
+                    int currentScore = await _creditScoringService.GetCurrentCreditScoreAsync(userCnp);
+                    int newScore = currentScore + impact;
+                    
+                    string action = isBuying ? "Purchased" : "Sold";
+                    string reason = $"{action} {gemAmount} gems for {transactionValue:C}";
+                    
+                    await _creditScoringService.UpdateCreditScoreAsync(userCnp, newScore, reason);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error but don't fail the transaction
+                Console.WriteLine($"Error applying gem transaction credit impact: {ex.Message}");
+            }
         }
     }
 }

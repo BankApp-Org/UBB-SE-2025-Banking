@@ -137,6 +137,7 @@ builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
 builder.Services.AddScoped<IMessageService, MessagesProxyService>();
 builder.Services.AddScoped<IActivityService, ActivityProxyService>();
 builder.Services.AddScoped<ICreditHistoryService, HistoryProxyService>();
+builder.Services.AddScoped<ICreditScoringService, CreditScoringProxyService>();
 builder.Services.AddScoped<IAlertService, AlertProxyService>();
 builder.Services.AddScoped<IStockPageService, StockPageProxyService>();
 builder.Services.AddScoped<IStoreService, StoreProxyService>();
@@ -175,6 +176,11 @@ builder.Services.AddHttpClient<IActivityService, ActivityProxyService>(client =>
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
 builder.Services.AddHttpClient<ICreditHistoryService, HistoryProxyService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+
+builder.Services.AddHttpClient<ICreditScoringService, CreditScoringProxyService>(client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
