@@ -1,4 +1,5 @@
 ﻿using BankAppDesktop.Commands;
+using BankAppDesktop.Views.Pages;
 using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.UI.Xaml;
@@ -101,6 +102,7 @@ namespace BankAppDesktop.ViewModels
         {
             this.transactionService = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
             // Initialize properties
+            this.SelectedBankAccountIban = iban;
             iban = string.Empty;
             sumOfMoney = string.Empty;
             details = string.Empty;
@@ -187,7 +189,7 @@ namespace BankAppDesktop.ViewModels
 
         private void CloseWindow()
         {
-            CloseAction?.Invoke();
+            App.MainAppWindow.MainAppFrame.Content = new BankTransactionsPage(SelectedBankAccountIban);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
