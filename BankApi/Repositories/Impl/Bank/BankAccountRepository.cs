@@ -21,7 +21,6 @@ namespace BankApi.Repositories.Impl.Bank
             }
 
             var account = await _context.BankAccounts
-                .Include(b => b.Currency)
                 .Include(b => b.Transactions)
                 .FirstOrDefaultAsync(b => b.Iban == IBAN) ?? throw new Exception($"Bank account with IBAN {IBAN} not found.");
 

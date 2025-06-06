@@ -43,15 +43,7 @@ namespace BankApi.Services.Bank
                 throw new ArgumentException("IBAN cannot be null or empty.", nameof(iban));
             }
 
-            try
-            {
-                return await _bankAccountRepository.GetBankAccountBalanceByIbanAsync(iban);
-            }
-            catch (Exception)
-            {
-                // Return null instead of throwing the exception if not found
-                return null;
-            }
+            return await _bankAccountRepository.GetBankAccountBalanceByIbanAsync(iban);
         }
 
         public async Task<bool> CreateBankAccount(BankAccount bankAccount)

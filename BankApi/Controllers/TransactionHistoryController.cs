@@ -3,7 +3,6 @@ using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.ObjectModel;
-using static NuGet.Packaging.PackagingConstants;
 
 namespace BankApi.Controllers
 {
@@ -40,7 +39,7 @@ namespace BankApi.Controllers
             try
             {
                 CSVBankTransactionExporter cSVBankTransactionExporter = new CSVBankTransactionExporter();
-                
+
                 TransactionFilters filters = new TransactionFilters
                 {
                     Type = Common.Models.Bank.TransactionType.LoanPayment,
