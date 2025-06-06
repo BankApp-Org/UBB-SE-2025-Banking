@@ -1,9 +1,10 @@
 ﻿namespace BankApi.Services
 {
-    using BankApi.Repositories;
     using BankApi.Data;
+    using BankApi.Repositories;
     using Common.DTOs;
     using Common.Models;
+    using Common.Models.Social;
     using Common.Services;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,6 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using Common.Models.Social;
 
     public class UserService : IUserService
     {
@@ -31,19 +31,7 @@
 
         public async Task<User> GetUserByCnpAsync(string cnp)
         {
-            var httpContext = httpContextAccessor.HttpContext;
-            if (httpContext?.User?.Identity?.IsAuthenticated != true)
-            {
-                throw new UnauthorizedAccessException("User is not authenticated.");
-            }
-
-            var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new UnauthorizedAccessException("User ID not found in claims.");
-            }
-
-            return await userRepository.GetByIdAsync(int.Parse(userId)) ?? throw new KeyNotFoundException($"User with CNP {cnp} not found.");
+            return await userRepository.GetByCnpAsync(cnp);
         }
 
         public async Task<User> GetByIdAsync(int userId)
@@ -121,9 +109,19 @@
 
         public async Task<User> GetCurrentUserAsync(string userCNP)
         {
-            return string.IsNullOrWhiteSpace(userCNP)
-                ? throw new ArgumentException("CNP cannot be empty")
-                : await this.GetUserByCnpAsync(userCNP) ?? throw new KeyNotFoundException($"User with CNP {userCNP} not found.");
+            var httpContext = httpContextAccessor.HttpContext;
+            if (httpContext?.User?.Identity?.IsAuthenticated != true)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
+            var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in claims.");
+            }
+
+            return await userRepository.GetByIdAsync(int.Parse(userId)) ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
         }
 
         public async Task<int> GetCurrentUserGemsAsync(string userCNP)
