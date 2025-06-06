@@ -130,6 +130,7 @@ builder.Services.AddScoped<ILoanService, LoanProxyService>();
 builder.Services.AddScoped<ILoanRequestService, LoanRequestProxyService>();
 builder.Services.AddScoped<IStockService, StockProxyService>();
 builder.Services.AddScoped<ITransactionService, StockTransactionProxyService>();
+builder.Services.AddScoped<IBankTransactionService, BankTransactionProxyService>();
 builder.Services.AddScoped<ITransactionLogService, StockTransactionLogProxyService>();
 builder.Services.AddScoped<IChatReportService, ChatReportProxyService>();
 builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();

@@ -15,6 +15,7 @@ namespace Common.Services.Bank
 
         Task<bool> DeleteTransaction(int transactionId);
 
+
     }
     public class TransactionFilters
     {
