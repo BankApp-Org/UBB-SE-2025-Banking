@@ -1,0 +1,47 @@
+@model dynamic
+
+@{
+    var messageType = Model.MessageType;
+    var alignment = Model.IsSender ? "right" : "left";
+    var messageClass = $"{messageType}-message {alignment}";
+}
+
+<div class="message-container @alignment" data-message-id="@Model.Id">
+    <div class="@messageClass">
+        <div class="sender-name">@Model.SenderUsername</div>
+        <div class="message-content">
+            @switch (messageType)
+            {
+                case "text":
+                    <div>@Model.Content</div>
+                    break;
+                case "image":
+                    <img src="@Model.ImageURL" alt="Message image" />
+                    break;
+                case "transfer":
+                    <div>
+                        <div>Sent:</div>
+                        <div class="amount">@Model.FormattedAmount</div>
+                        <div>@Model.Description</div>
+                    </div>
+                    break;
+                case "request":
+                    <div>
+                        <div>@(Model.IsSender ? "You requested:" : "Requested:")</div>
+                        <div class="amount">@Model.FormattedAmount</div>
+                        <div>@Model.Description</div>
+                        @if (!Model.IsSender)
+                        {
+                            <button class="accept-request-btn" onclick="messageTemplates.acceptRequest('@Model.Id')">
+                                Accept Request
+                            </button>
+                        }
+                    </div>
+                    break;
+            }
+            <button class="message-menu-btn @alignment">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+    </div>
+</div> 

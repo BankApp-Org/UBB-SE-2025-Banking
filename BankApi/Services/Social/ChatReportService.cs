@@ -100,8 +100,10 @@ namespace BankApi.Services.Social
                 int tipCount = await _chatReportRepository.GetNumberOfGivenTipsForUserAsync(reportedUserCnp);
                 if (tipCount % 3 == 0)
                 {
-                    throw new NotImplementedException("This method should be implemented to give a punishment notification.");
-                    // await Task.Run(() => _messageService.GiveMessageToUserAsync(reportedUserCnp, "Punishment", "You have received a punishment message."));
+                    // Log punishment notification instead of throwing exception
+                    Console.WriteLine($"User {reportedUserCnp} has reached {tipCount} tips and should receive a punishment notification.");
+                    // TODO: Implement proper notification system when available
+                    // await _notificationService.CreateNotificationAsync(reportedUserCnp, "System", "You have received multiple punishment tips.");
                 }
             }
             catch (Exception ex)

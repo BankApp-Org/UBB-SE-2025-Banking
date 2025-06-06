@@ -1,0 +1,70 @@
+﻿@model BankAppWeb.Models.ChatListViewModel;
+
+@{
+    ViewData["Title"] = "Chat List";
+}
+
+<div class="container">
+    <!-- Search Box -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <form asp-controller="ChatList" asp-action="Index" method="get">
+                <div class="input-group">
+                    <input type="text" class="form-control" asp-for="SearchQuery" placeholder="Search chats..." />
+                    <button type="submit" class="btn btn-outline-secondary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chats Title and Add Button -->
+    <div class="row mb-3">
+        <div class="col">
+            <h2>Chats</h2>
+        </div>
+        <div class="col-auto">
+            <a asp-controller="CreateChat" asp-action="Index" class="btn btn-primary">+</a>
+        </div>
+    </div>
+
+    <!-- Chat List -->
+    <div class="row">
+        @if (Model.ChatList.Any())
+        {
+            <ul class="list-group">
+                @foreach (var chat in Model.ChatList)
+                {
+                    <li class="list-group-item">
+                        <a asp-controller="ChatMessages" asp-action="Messages" asp-route-chatId="@chat.Id">@chat.ChatName</a>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="text-center">
+                <p>You have no chats!</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#SearchQuery").on("input", function () {
+                var query = $(this).val();
+                $.ajax({
+                    url: "/ChatList/Index",
+                    data: { searchQuery: query },
+                    success: function (data) {
+                        $(".list-group").html($(data).find(".list-group").html());
+                    }
+                });
+            });
+        });
+    </script>
+}

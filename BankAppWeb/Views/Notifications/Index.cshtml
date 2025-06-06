@@ -1,0 +1,72 @@
+@model IEnumerable<Common.Models.Social.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Notifications</h2>
+                <form asp-action="ClearAll" method="post">
+                    <button type="submit" class="btn btn-outline-danger">Clear All</button>
+                </form>
+            </div>
+
+            <div class="notifications-container">
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info">
+                        No notifications to display.
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group">
+                        @foreach (var notification in Model.OrderByDescending(n => n.Timestamp))
+                        {
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">@notification.Content</h5>
+                                    <small class="text-muted">@notification.Timestamp.ToLocalTime().ToString("g")</small>
+                                </div>
+                                <form asp-action="Clear" method="post" class="mt-2">
+                                    <input type="hidden" name="notificationId" value="@notification.NotificationID" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Mark as Read</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .notifications-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .notification-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .notification-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-text {
+            color: #495057;
+        }
+
+        .text-muted {
+            font-size: 0.875rem;
+        }
+    </style>
+} 
