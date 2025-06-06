@@ -1,8 +1,11 @@
 namespace BankAppDesktop.Views.Pages
 {
     using BankAppDesktop.ViewModels;
+    using Common.Models;
+    using Common.Models.Bank;
     using Common.Models.Trading;
     using Common.Services;
+    using Common.Services.Bank;
     using Common.Services.Trading;
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Controls;
@@ -18,13 +21,15 @@ namespace BankAppDesktop.Views.Pages
         private readonly IStoreService _storeService;
         private readonly IUserService _userService;
         private readonly IAuthenticationService _authService;
+        private readonly IBankAccountService _bankAccountService;
 
-        public GemStorePage(StoreViewModel storeViewModel, IStoreService storeService, IUserService userService, IAuthenticationService authService)
+        public GemStorePage(StoreViewModel storeViewModel, IStoreService storeService, IUserService userService, IBankAccountService bankAccountService, IAuthenticationService authService)
         {
             _viewModel = storeViewModel ?? throw new ArgumentNullException(nameof(storeViewModel));
             _storeService = storeService ?? throw new ArgumentNullException(nameof(storeService));
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
+            _bankAccountService = bankAccountService ?? throw new ArgumentNullException(nameof(bankAccountService));
             this.DataContext = _viewModel;
             this.InitializeComponent();
             this.Loaded += OnPageLoaded;
@@ -82,14 +87,15 @@ namespace BankAppDesktop.Views.Pages
             return _authService.IsUserLoggedIn() ? _authService.GetUserCNP() : null;
         }
 
-        private List<string> GetUserBankAccountsAsync()
+        private async Task GetUserBankAccountsAsync()
         {
             if (!_authService.IsUserLoggedIn())
             {
-                return ["Account 1", "Account 2", "Account 3"];
+                return;
             }
+            string userCnp = _authService.GetCurrentUserSession().UserId;
 
-            return StoreViewModel.UserBankAccounts;
+            _viewModel.UserBankAccounts = await _bankAccountService.GetUserBankAccounts(int.Parse(userCnp));
         }
 
         private async void OnBuyClicked(object sender, RoutedEventArgs e)
@@ -100,10 +106,11 @@ namespace BankAppDesktop.Views.Pages
                 return;
             }
 
+            await GetUserBankAccountsAsync();
+
             if (sender is Button button && button.CommandParameter is GemDeal selectedDeal)
             {
-                var bankAccounts = GetUserBankAccountsAsync();
-                if (bankAccounts.Count == 0)
+                if (_viewModel.UserBankAccounts.Count == 0)
                 {
                     this.ShowErrorDialog("No bank accounts available for purchase.");
                     return;
@@ -111,8 +118,9 @@ namespace BankAppDesktop.Views.Pages
 
                 ComboBox bankAccountDropdown = new()
                 {
-                    ItemsSource = bankAccounts,
+                    ItemsSource = _viewModel.UserBankAccounts,
                     SelectedIndex = 0,
+                    DisplayMemberPath = "Name",
                 };
 
                 StackPanel dialogContent = new();
@@ -131,7 +139,7 @@ namespace BankAppDesktop.Views.Pages
                 ContentDialogResult result = await confirmDialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    if (bankAccountDropdown.SelectedItem is not string selectedAccount)
+                    if (bankAccountDropdown.SelectedItem is not BankAccount selectedAccount)
                     {
                         this.ShowErrorDialog("No bank account selected.");
                         return;
@@ -145,7 +153,7 @@ namespace BankAppDesktop.Views.Pages
                             ShowErrorDialog("User session error.");
                             return;
                         }
-                        string purchaseResult = await _storeService.BuyGems(selectedDeal, selectedAccount, userCnp);
+                        string purchaseResult = await _storeService.BuyGems(selectedDeal, selectedAccount.Id.ToString(), userCnp);
                         this.ShowSuccessDialog(purchaseResult);
                         _viewModel.UserGems = await _storeService.GetUserGemBalanceAsync(userCnp);
                     }
@@ -217,8 +225,7 @@ namespace BankAppDesktop.Views.Pages
                 return;
             }
 
-            var bankAccounts = GetUserBankAccountsAsync();
-            if (bankAccounts.Count == 0)
+            if (_viewModel.UserBankAccounts.Count == 0)
             {
                 this.ShowErrorDialog("No bank accounts available for selling.");
                 return;
@@ -226,7 +233,7 @@ namespace BankAppDesktop.Views.Pages
 
             ComboBox bankAccountDropdown = new()
             {
-                ItemsSource = bankAccounts,
+                ItemsSource = _viewModel.UserBankAccounts,
                 SelectedIndex = 0,
             };
 
