@@ -9,12 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
 
+    [TestClass]
     public class UserRepositoryTests
     {
         private static ApiDbContext GetInMemoryContext()
@@ -52,7 +53,7 @@ namespace BankApp.Repository.Tests
             return new Mock<RoleManager<IdentityRole<int>>>(store.Object, null, null, null, null);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetAllAsync_ReturnsAllUsers()
         {
             using var context = GetInMemoryContext();
@@ -63,10 +64,10 @@ namespace BankApp.Repository.Tests
 
             var users = await repo.GetAllAsync();
 
-            Assert.Single(users);
+            Assert.ContainsSingle(users);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetByIdAsync_ReturnsCorrectUser()
         {
             using var context = GetInMemoryContext();
@@ -78,11 +79,11 @@ namespace BankApp.Repository.Tests
 
             var result = await repo.GetByIdAsync(user.Id);
 
-            Assert.NotNull(result);
-            Assert.Equal(user.Id, result.Id);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(user.Id, result.Id);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetByCnpAsync_ReturnsCorrectUser()
         {
             using var context = GetInMemoryContext();
@@ -94,11 +95,11 @@ namespace BankApp.Repository.Tests
 
             var result = await repo.GetByCnpAsync(user.CNP);
 
-            Assert.NotNull(result);
-            Assert.Equal(user.CNP, result.CNP);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(user.CNP, result.CNP);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetByUsernameAsync_ReturnsCorrectUser()
         {
             using var context = GetInMemoryContext();
@@ -110,11 +111,11 @@ namespace BankApp.Repository.Tests
 
             var result = await repo.GetByUsernameAsync(user.UserName);
 
-            Assert.NotNull(result);
-            Assert.Equal(user.UserName, result.UserName);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(user.UserName, result.UserName);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task CreateAsync_Succeeds_WhenValid()
         {
             using var context = GetInMemoryContext();
@@ -128,11 +129,11 @@ namespace BankApp.Repository.Tests
 
             var result = await repo.CreateAsync(user);
 
-            Assert.NotNull(result);
-            Assert.Equal(user.UserName, result.UserName);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(user.UserName, result.UserName);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task CreateAsync_Throws_WhenDuplicate()
         {
             using var context = GetInMemoryContext();
@@ -145,10 +146,10 @@ namespace BankApp.Repository.Tests
 
             var repo = GetRepository(context, userManagerMock, GetMockRoleManager());
 
-            await Assert.ThrowsAsync<InvalidOperationException>(() => repo.CreateAsync(user));
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => repo.CreateAsync(user));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task CreateAsync_Throws_WhenIdentityCreateFails()
         {
             using var context = GetInMemoryContext();
@@ -161,11 +162,11 @@ namespace BankApp.Repository.Tests
 
             var repo = GetRepository(context, userManagerMock, GetMockRoleManager());
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => repo.CreateAsync(user));
-            Assert.Contains("Password too weak", ex.Message);
+            var ex = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => repo.CreateAsync(user));
+            Assert.IsTrue(ex.Message.Contains("Password too weak"));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateAsync_ReturnsTrue_WhenUpdated()
         {
             using var context = GetInMemoryContext();
@@ -178,24 +179,24 @@ namespace BankApp.Repository.Tests
 
             var result = await repo.UpdateAsync(user);
 
-            Assert.True(result);
+            Assert.IsTrue(result);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateRolesAsync_Throws_WhenUserIsNull()
         {
             var repo = GetRepository(GetInMemoryContext(), GetMockUserManager(), GetMockRoleManager());
-            await Assert.ThrowsAsync<ArgumentNullException>(() => repo.UpdateRolesAsync(null, ["Admin"]));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => repo.UpdateRolesAsync(null, ["Admin"]));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateRolesAsync_Throws_WhenRolesAreNull()
         {
             var repo = GetRepository(GetInMemoryContext(), GetMockUserManager(), GetMockRoleManager());
-            await Assert.ThrowsAsync<ArgumentNullException>(() => repo.UpdateRolesAsync(CreateTestUser(), null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => repo.UpdateRolesAsync(CreateTestUser(), null));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateRolesAsync_ReturnsFalse_WhenRemoveFails()
         {
             var user = CreateTestUser();
@@ -207,10 +208,10 @@ namespace BankApp.Repository.Tests
             var repo = GetRepository(GetInMemoryContext(), userManagerMock, GetMockRoleManager());
 
             var result = await repo.UpdateRolesAsync(user, ["Admin"]);
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateRolesAsync_ReturnsFalse_WhenAddFails()
         {
             var user = CreateTestUser();
@@ -222,10 +223,10 @@ namespace BankApp.Repository.Tests
             var repo = GetRepository(GetInMemoryContext(), userManagerMock, GetMockRoleManager());
 
             var result = await repo.UpdateRolesAsync(user, ["Admin"]);
-            Assert.False(result);
+            Assert.IsFalse(result);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteAsync_RemovesUser()
         {
             // Arrange
@@ -251,10 +252,10 @@ namespace BankApp.Repository.Tests
             var result = await repo.DeleteAsync(user.Id);
 
             // Assert
-            Assert.True(result);
+            Assert.IsTrue(result);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddDefaultRoleToAllUsersAsync_AssignsRole()
         {
             var context = GetInMemoryContext();
@@ -274,10 +275,10 @@ namespace BankApp.Repository.Tests
 
             var count = await repo.AddDefaultRoleToAllUsersAsync();
 
-            Assert.Equal(1, count);
+            Assert.AreEqual(1, count);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddDefaultRoleToAllUsersAsync_LogsAndContinues_OnAddFailure()
         {
             var context = GetInMemoryContext();
@@ -297,10 +298,10 @@ namespace BankApp.Repository.Tests
 
             var count = await repo.AddDefaultRoleToAllUsersAsync();
 
-            Assert.Equal(0, count);
+            Assert.AreEqual(0, count);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddDefaultRoleToAllUsersAsync_Throws_OnException()
         {
             var context = GetInMemoryContext();
@@ -315,7 +316,7 @@ namespace BankApp.Repository.Tests
 
             var repo = GetRepository(context, userManagerMock, roleManagerMock);
 
-            await Assert.ThrowsAsync<Exception>(() => repo.AddDefaultRoleToAllUsersAsync());
+            await Assert.ThrowsExceptionAsync<Exception>(() => repo.AddDefaultRoleToAllUsersAsync());
         }
     }
 }

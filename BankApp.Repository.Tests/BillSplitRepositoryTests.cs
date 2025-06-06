@@ -10,11 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
+    [TestClass]
     public class BillSplitRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -31,7 +32,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task GetAllReportsAsync_Should_Return_All_Reports()
         {
             using var context = CreateContext();
@@ -53,7 +54,7 @@ namespace BankApp.Repository.Tests
             result.Should().ContainEquivalentOf(reports[1]);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetReportByIdAsync_Should_Return_Report_When_Found()
         {
             using var context = CreateContext();
@@ -76,16 +77,16 @@ namespace BankApp.Repository.Tests
             result.Should().BeEquivalentTo(report);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetReportByIdAsync_Should_Throw_When_Report_Not_Found()
         {
             using var context = CreateContext();
             var repository = new BillSplitReportRepository(context, _loggerMock.Object);
 
-            await Assert.ThrowsAnyAsync<KeyNotFoundException>(() => repository.GetReportByIdAsync(999));
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () => await repository.GetReportByIdAsync(999));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddReportAsync_Should_Add_Report()
         {
             using var context = CreateContext();
@@ -105,7 +106,7 @@ namespace BankApp.Repository.Tests
             context.BillSplitReports.Should().ContainEquivalentOf(report);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateReportAsync_Should_Update_Report_When_Found()
         {
             using var context = CreateContext();
@@ -138,7 +139,7 @@ namespace BankApp.Repository.Tests
             context.BillSplitReports.Find(1).BillShare.Should().Be(75.0m);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateReportAsync_Should_Throw_When_Report_Not_Found()
         {
             using var context = CreateContext();
@@ -153,10 +154,10 @@ namespace BankApp.Repository.Tests
 
             var repository = new BillSplitReportRepository(context, _loggerMock.Object);
 
-            await Assert.ThrowsAnyAsync<KeyNotFoundException>(() => repository.UpdateReportAsync(report));
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () => await repository.UpdateReportAsync(report));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteReportAsync_Should_Return_True_When_Report_Deleted()
         {
             using var context = CreateContext();
@@ -180,7 +181,7 @@ namespace BankApp.Repository.Tests
             context.BillSplitReports.Should().BeEmpty();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteReportAsync_Should_Return_False_When_Report_Not_Found()
         {
             using var context = CreateContext();
@@ -191,7 +192,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetCurrentBalanceAsync_Should_Return_Balance()
         {
             var mockRepo = new Mock<IBillSplitReportRepository>();
@@ -203,7 +204,7 @@ namespace BankApp.Repository.Tests
             mockRepo.Verify(r => r.GetCurrentBalanceAsync("123"), Times.Once);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task SumTransactionsSinceReportAsync_Should_Return_Sum()
         {
             var mockRepo = new Mock<IBillSplitReportRepository>();
@@ -216,7 +217,7 @@ namespace BankApp.Repository.Tests
             mockRepo.Verify(r => r.SumTransactionsSinceReportAsync("123", testDate), Times.Once);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetCurrentCreditScoreAsync_Should_Return_Score()
         {
             var mockRepo = new Mock<IBillSplitReportRepository>();
@@ -228,7 +229,7 @@ namespace BankApp.Repository.Tests
             mockRepo.Verify(r => r.GetCurrentCreditScoreAsync("123"), Times.Once);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateCreditScoreAsync_Should_Execute_SQL_Command()
         {
             var mockRepo = new Mock<IBillSplitReportRepository>();
@@ -239,7 +240,7 @@ namespace BankApp.Repository.Tests
             mockRepo.Verify(r => r.UpdateCreditScoreAsync("123", 750), Times.Once);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task IncrementBillSharesPaidAsync_Should_Execute_SQL_Command()
         {
             var mockRepo = new Mock<IBillSplitReportRepository>();

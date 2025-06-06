@@ -12,11 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
+    [TestClass]
     public class ChatReportRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -30,7 +31,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task GetAllChatReportsAsync_Should_Return_All_Reports()
         {
             using var context = CreateContext();
@@ -118,7 +119,7 @@ namespace BankApp.Repository.Tests
             result.Should().ContainEquivalentOf(reports[1]);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetChatReportByIdAsync_Should_Return_Report_When_Found()
         {
             using var context = CreateContext();
@@ -177,7 +178,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeEquivalentTo(report);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetChatReportByIdAsync_Should_Return_Null_When_Not_Found()
         {
             using var context = CreateContext();
@@ -188,7 +189,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeNull();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddChatReportAsync_Should_Return_True_When_Added_Successfully()
         {
             using var context = CreateContext();
@@ -244,7 +245,7 @@ namespace BankApp.Repository.Tests
             context.ChatReports.Should().ContainEquivalentOf(report, options => options.Excluding(r => r.Id));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddChatReportAsync_Should_Return_False_When_Exception_Occurs()
         {
             var mockRepo = new Mock<IChatReportRepository>();
@@ -290,7 +291,7 @@ namespace BankApp.Repository.Tests
             mockRepo.Verify(r => r.AddChatReportAsync(It.IsAny<ChatReport>()), Times.Once);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteChatReportAsync_Should_Return_True_When_Deleted_Successfully()
         {
             using var context = CreateContext();
@@ -350,17 +351,17 @@ namespace BankApp.Repository.Tests
             context.ChatReports.Should().BeEmpty();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteChatReportAsync_Should_Throw_When_Report_Not_Found()
         {
             var mockRepo = new Mock<IChatReportRepository>();
             mockRepo.Setup(r => r.DeleteChatReportAsync(999))
                 .ThrowsAsync(new Exception("Chat report with id 999 not found."));
 
-            await Assert.ThrowsAsync<Exception>(() => mockRepo.Object.DeleteChatReportAsync(999));
+            await Assert.ThrowsExceptionAsync<Exception>(async () => await mockRepo.Object.DeleteChatReportAsync(999));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteChatReportAsync_Should_Return_False_When_Exception_Occurs()
         {
             var mockRepo = new Mock<IChatReportRepository>();
@@ -372,7 +373,7 @@ namespace BankApp.Repository.Tests
             mockRepo.Verify(r => r.DeleteChatReportAsync(1), Times.Once);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetNumberOfGivenTipsForUserAsync_Should_Return_Count()
         {
             using var context = CreateContext();
@@ -409,7 +410,7 @@ namespace BankApp.Repository.Tests
             result.Should().Be(2);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateActivityLogAsync_Should_Add_New_Log_When_Not_Exists()
         {
             using var context = CreateContext();
@@ -423,7 +424,7 @@ namespace BankApp.Repository.Tests
             log.ActivityDetails.Should().Be("Chat abuse");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateActivityLogAsync_Should_Update_Existing_Log()
         {
             using var context = CreateContext();
@@ -448,7 +449,7 @@ namespace BankApp.Repository.Tests
             updatedLog.ActivityDetails.Should().Be("Chat abuse");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateScoreHistoryForUserAsync_Should_Add_New_History_When_Not_Exists()
         {
             using var context = CreateContext();
@@ -461,7 +462,7 @@ namespace BankApp.Repository.Tests
             history.Score.Should().Be(750);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateScoreHistoryForUserAsync_Should_Update_Existing_History()
         {
             using var context = CreateContext();

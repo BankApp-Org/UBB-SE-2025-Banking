@@ -9,11 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
+    [TestClass]
     public class ActivityRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -30,7 +31,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task GetActivityForUserAsync_Should_Return_Activities_For_User()
         {
             // Arrange
@@ -69,7 +70,7 @@ namespace BankApp.Repository.Tests
             result[0].ActivityName.Should().Be("Test Activity");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetActivityForUserAsync_Should_Throw_When_UserCnp_IsNullOrEmpty()
         {
             // Arrange
@@ -77,11 +78,11 @@ namespace BankApp.Repository.Tests
             var repo = new ActivityRepository(context, _loggerMock.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.GetActivityForUserAsync(null!));
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.GetActivityForUserAsync(""));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.GetActivityForUserAsync(null!));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.GetActivityForUserAsync(""));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddActivityAsync_Should_Add_Valid_Activity()
         {
             // Arrange
@@ -109,7 +110,7 @@ namespace BankApp.Repository.Tests
             savedActivity!.ActivityName.Should().Be("New Activity");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddActivityAsync_Should_Throw_When_UserCnp_IsNullOrEmpty()
         {
             // Arrange
@@ -124,10 +125,10 @@ namespace BankApp.Repository.Tests
             };
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.AddActivityAsync(activity));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.AddActivityAsync(activity));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddActivityAsync_Should_Throw_When_ActivityName_IsNullOrEmpty()
         {
             // Arrange
@@ -142,10 +143,10 @@ namespace BankApp.Repository.Tests
             };
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.AddActivityAsync(activity));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.AddActivityAsync(activity));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddActivityAsync_Should_Throw_When_Amount_IsNotPositive()
         {
             // Arrange
@@ -160,10 +161,10 @@ namespace BankApp.Repository.Tests
             };
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.AddActivityAsync(activity));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.AddActivityAsync(activity));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetAllActivitiesAsync_Should_Return_All_Activities()
         {
             // Arrange
@@ -186,7 +187,7 @@ namespace BankApp.Repository.Tests
             result.Should().Contain(a => a.ActivityName == "A2");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetActivityByIdAsync_Should_Return_Activity_When_Found()
         {
             // Arrange
@@ -215,7 +216,7 @@ namespace BankApp.Repository.Tests
             result.LastModifiedAmount.Should().Be(999);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetActivityByIdAsync_Should_Throw_When_NotFound()
         {
             // Arrange
@@ -223,10 +224,10 @@ namespace BankApp.Repository.Tests
             var repo = new ActivityRepository(context, _loggerMock.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.GetActivityByIdAsync(999));
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () => await repo.GetActivityByIdAsync(999));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteActivityAsync_Should_Return_True_When_Deleted()
         {
             // Arrange
@@ -253,7 +254,7 @@ namespace BankApp.Repository.Tests
             (await context.ActivityLogs.FindAsync(5)).Should().BeNull();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteActivityAsync_Should_Return_False_When_NotFound()
         {
             // Arrange

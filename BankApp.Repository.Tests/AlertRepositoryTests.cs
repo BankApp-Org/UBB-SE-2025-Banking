@@ -8,11 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
+    [TestClass]
     public class AlertRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -26,7 +27,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task GetAllAlertsAsync_Should_Return_All_Alerts()
         {
             // Arrange
@@ -49,7 +50,7 @@ namespace BankApp.Repository.Tests
             result.Should().Contain(a => a.StockName == "MSFT");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetAlertByIdAsync_Should_Return_Alert_When_Found()
         {
             // Arrange
@@ -79,7 +80,7 @@ namespace BankApp.Repository.Tests
             result.Name.Should().Be("Tesla Alert");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetAlertByIdAsync_Should_Throw_When_NotFound()
         {
             // Arrange
@@ -87,10 +88,10 @@ namespace BankApp.Repository.Tests
             var repo = new AlertRepository(context);
 
             // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.GetAlertByIdAsync(999));
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () => await repo.GetAlertByIdAsync(999));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddAlertAsync_Should_Add_Alert()
         {
             // Arrange
@@ -118,7 +119,7 @@ namespace BankApp.Repository.Tests
             savedAlert!.Name.Should().Be("Google Alert");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateAlertAsync_Should_Update_Alert_Properties()
         {
             // Arrange
@@ -163,7 +164,7 @@ namespace BankApp.Repository.Tests
             savedAlert!.Name.Should().Be("Updated Name");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateAlertAsync_Should_Throw_When_Alert_NotFound()
         {
             // Arrange
@@ -173,10 +174,10 @@ namespace BankApp.Repository.Tests
             var alert = new Alert { AlertId = 999, StockName = "INVALID", Name = "Invalid Alert" };
 
             // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.UpdateAlertAsync(alert));
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () => await repo.UpdateAlertAsync(alert));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteAlertAsync_Should_Return_True_When_Deleted()
         {
             // Arrange
@@ -205,7 +206,7 @@ namespace BankApp.Repository.Tests
             (await context.Alerts.FindAsync(20)).Should().BeNull();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteAlertAsync_Should_Return_False_When_NotFound()
         {
             // Arrange
@@ -219,7 +220,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetTriggeredAlertsAsync_Should_Return_All_TriggeredAlerts()
         {
             // Arrange
@@ -242,7 +243,7 @@ namespace BankApp.Repository.Tests
             result.Should().Contain(a => a.StockName == "MSFT");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task ClearTriggeredAlertsAsync_Should_Remove_All_TriggeredAlerts()
         {
             // Arrange
@@ -263,7 +264,7 @@ namespace BankApp.Repository.Tests
             (await context.TriggeredAlerts.CountAsync()).Should().Be(0);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task IsAlertTriggeredAsync_Should_Return_True_When_Triggered()
         {
             // Arrange
@@ -297,7 +298,7 @@ namespace BankApp.Repository.Tests
             resultLow.Should().BeTrue();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task IsAlertTriggeredAsync_Should_Return_False_When_Not_Triggered()
         {
             // Arrange
@@ -325,7 +326,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task IsAlertTriggeredAsync_Should_Return_False_When_Alert_Is_Off()
         {
             // Arrange
@@ -353,7 +354,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task TriggerAlertAsync_Should_Create_TriggeredAlert_When_Conditions_Met()
         {
             // Arrange
@@ -387,7 +388,7 @@ namespace BankApp.Repository.Tests
             triggeredAlert!.StockName.Should().Be("NVDA");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task TriggerAlertAsync_Should_Return_Null_When_Conditions_Not_Met()
         {
             // Arrange

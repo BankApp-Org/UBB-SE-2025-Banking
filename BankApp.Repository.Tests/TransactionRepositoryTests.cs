@@ -9,11 +9,12 @@ using System;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
+    [TestClass]
     public class TransactionRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -27,7 +28,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task GetAllTransactions_Should_Return_All_With_Authors()
         {
             using var context = CreateContext();
@@ -58,7 +59,7 @@ namespace BankApp.Repository.Tests
             result[0].StockName.Should().Be("Apple");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetByFilterCriteriaAsync_Should_Filter_By_StockName()
         {
             using var context = CreateContext();
@@ -97,16 +98,16 @@ namespace BankApp.Repository.Tests
             result.Should().ContainSingle(t => t.StockName == "APPLE");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetByFilterCriteriaAsync_Should_Throw_On_Null()
         {
             using var context = CreateContext();
             var repo = new StockTransactionRepository(context);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => repo.GetByFilterCriteriaAsync(null!));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => repo.GetByFilterCriteriaAsync(null!));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetByFilterCriteriaAsync_Should_Filter_By_Type_And_Value_And_Dates()
         {
             using var context = CreateContext();
@@ -152,7 +153,7 @@ namespace BankApp.Repository.Tests
             result.Should().ContainSingle(t => t.Type == "SELL");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddTransactionAsync_Should_Add_When_Stock_Exists_And_User_Provided()
         {
             using var context = CreateContext();
@@ -183,16 +184,16 @@ namespace BankApp.Repository.Tests
             context.TransactionLogTransactions.First().Author.CNP.Should().Be("999");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddTransactionAsync_Should_Throw_When_Transaction_Null()
         {
             using var context = CreateContext();
             var repo = new StockTransactionRepository(context);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => repo.AddTransactionAsync(null!));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => repo.AddTransactionAsync(null!));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddTransactionAsync_Should_Throw_When_Stock_Does_Not_Exist()
         {
             using var context = CreateContext();
@@ -220,7 +221,7 @@ namespace BankApp.Repository.Tests
                 .WithMessage("Stock with name*does not exist*");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddTransactionAsync_Should_Reset_Id()
         {
             using var context = CreateContext();

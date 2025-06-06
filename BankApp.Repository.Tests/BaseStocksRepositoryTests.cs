@@ -10,11 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
+    [TestClass]
     public class BaseStocksRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -31,7 +32,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task GetAllStocksAsync_Should_Return_All_Stocks()
         {
             // Arrange
@@ -54,7 +55,7 @@ namespace BankApp.Repository.Tests
             result.Should().Contain(s => s.Name == "Microsoft");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetStockByNameAsync_Should_Return_Stock_When_Found()
         {
             // Arrange
@@ -75,7 +76,7 @@ namespace BankApp.Repository.Tests
             result.AuthorCNP.Should().Be("789");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetStockByNameAsync_Should_Throw_When_NotFound()
         {
             // Arrange
@@ -83,10 +84,10 @@ namespace BankApp.Repository.Tests
             var repo = new BaseStocksRepository(context, _loggerMock.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.GetStockByNameAsync("NonExistent"));
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () => await repo.GetStockByNameAsync("NonExistent"));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetStockByNameAsync_Should_Throw_When_Name_IsNullOrEmpty()
         {
             // Arrange
@@ -94,11 +95,11 @@ namespace BankApp.Repository.Tests
             var repo = new BaseStocksRepository(context, _loggerMock.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.GetStockByNameAsync(null!));
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.GetStockByNameAsync(""));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.GetStockByNameAsync(null!));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.GetStockByNameAsync(""));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddStockAsync_Should_Add_Valid_Stock()
         {
             // Arrange
@@ -125,7 +126,7 @@ namespace BankApp.Repository.Tests
             savedStock.Symbol.Should().Be("GOOGL");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddStockAsync_Should_Throw_When_Stock_IsNull()
         {
             // Arrange
@@ -133,10 +134,10 @@ namespace BankApp.Repository.Tests
             var repo = new BaseStocksRepository(context, _loggerMock.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => repo.AddStockAsync(null!));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await repo.AddStockAsync(null!));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddStockAsync_Should_Throw_When_Stock_Already_Exists()
         {
             // Arrange
@@ -151,10 +152,10 @@ namespace BankApp.Repository.Tests
             var newStock = new BaseStock { Name = "Amazon", Symbol = "AMZN2", AuthorCNP = "456" };
 
             // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(() => repo.AddStockAsync(newStock));
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => await repo.AddStockAsync(newStock));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateStockAsync_Should_Update_Stock_Properties()
         {
             // Arrange
@@ -192,7 +193,7 @@ namespace BankApp.Repository.Tests
             savedStock.AuthorCNP.Should().Be("456");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateStockAsync_Should_Throw_When_Stock_IsNull()
         {
             // Arrange
@@ -200,10 +201,10 @@ namespace BankApp.Repository.Tests
             var repo = new BaseStocksRepository(context, _loggerMock.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => repo.UpdateStockAsync(null!));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await repo.UpdateStockAsync(null!));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateStockAsync_Should_Throw_When_Stock_NotFound()
         {
             // Arrange
@@ -213,10 +214,10 @@ namespace BankApp.Repository.Tests
             var stock = new BaseStock { Name = "NonExistent", Symbol = "NE", AuthorCNP = "123" };
 
             // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => repo.UpdateStockAsync(stock));
+            await Assert.ThrowsExceptionAsync<KeyNotFoundException>(async () => await repo.UpdateStockAsync(stock));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteStockAsync_Should_Return_True_When_Deleted()
         {
             // Arrange
@@ -236,7 +237,7 @@ namespace BankApp.Repository.Tests
             (await context.BaseStocks.AnyAsync(s => s.Name == "ToDelete")).Should().BeFalse();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteStockAsync_Should_Return_False_When_NotFound()
         {
             // Arrange
@@ -250,7 +251,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteStockAsync_Should_Throw_When_Name_IsNullOrEmpty()
         {
             // Arrange
@@ -258,8 +259,8 @@ namespace BankApp.Repository.Tests
             var repo = new BaseStocksRepository(context, _loggerMock.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.DeleteStockAsync(null!));
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.DeleteStockAsync(""));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.DeleteStockAsync(null!));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.DeleteStockAsync(""));
         }
     }
 }
