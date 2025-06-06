@@ -251,6 +251,7 @@ namespace BankAppDesktop
                     services.AddTransient<MainPageViewModel>();
                     services.AddTransient<CurrencyExchangeViewModel>();
                     services.AddTransient<SendMoneyViewModel>();
+                    services.AddTransient<BankAccountDetailsViewModel>();
                     // Pages
                     services.AddTransient<LoansPage>();
                     services.AddTransient<UsersPage>();

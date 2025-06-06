@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BankAppDesktop"
-    xmlns:converters="using:BankAppDesktop.Converters">
+    xmlns:converters="using:BankAppDesktop.Converters" xmlns:converters1="using:BankAppDesktop.Views.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -47,7 +47,23 @@
             <Color x:Key="WindowCaptionBackground">#FFFFFF</Color>
             <Color x:Key="WindowCaptionBackgroundDisabled">#FFFFFF</Color>
             <!-- Converters -->
-            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters1:AmountColorConverter x:Key="AmountColorConverter"/>
+            <converters1:MessageSuggestionConverter x:Key="MessageSuggestionConverter"/>
+            <converters1:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <converters1:ReadStatusToFontWeightConverter x:Key="ReadStatusToFontWeightConverter" />
+            <converters1:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
+            <converters1:BoolToStringConverter x:Key="BoolToStringConverter" />
+            <converters1:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <converters1:BoolToVisibilityConverter x:Key="BoolToInverseVisibilityConverter" />
+            <converters1:StatusToVisibilityConverter x:Key="StatusToApproveVisibilityConverter" />
+            <converters1:StatusToVisibilityConverter x:Key="StatusToRejectVisibilityConverter" />
+            <converters1:DateFormatConverter x:Key="DateFormatConverter" />
+            <converters1:BoolToFavoriteColorConverter x:Key="BoolToFavoriteColorConverter" />
+            <converters1:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
+            <converters1:EmoticonToEmojiConverter x:Key="EmoticonToEmojiConverter" />
+            <converters1:BankAccountDisplayConverter x:Key="BankAccountDisplayConverter"/>
+            <converters1:ListEmptyToVisibilityConverter x:Key="ListEmptyToVisibilityConverter"/>
+            <converters1:ListNonEmptyToVisibilityConverter x:Key="ListNonEmptyToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
