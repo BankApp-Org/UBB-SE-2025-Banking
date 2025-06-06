@@ -9,11 +9,12 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public class LoanService(ILoanRepository loanRepository, IUserRepository userRepository, ICreditScoringService creditScoringService) : ILoanService
+    public class LoanService(ILoanRepository loanRepository, IUserRepository userRepository, ICreditScoringService creditScoringService, IBankAccountService bankAccountService) : ILoanService
     {
         private readonly ILoanRepository loanRepository = loanRepository ?? throw new ArgumentNullException(nameof(loanRepository));
         private readonly IUserRepository userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         private readonly ICreditScoringService creditScoringService = creditScoringService ?? throw new ArgumentNullException(nameof(creditScoringService));
+        private readonly IBankAccountService bankAccountService = bankAccountService ?? throw new ArgumentNullException(nameof(bankAccountService));
 
         public async Task<List<Loan>> GetLoansAsync()
         {
@@ -146,6 +147,7 @@
 
             if (loan.MonthlyPaymentsCompleted >= loan.NumberOfMonths)
             {
+                
                 loan.Status = "completed";
 
                 // Apply additional credit score impact for completing loan
@@ -158,35 +160,54 @@
             await loanRepository.UpdateLoanAsync(loan);
         }
 
-        public async Task PayLoanAsync(int loanId, decimal amount, string sourceAccountId, string destinationAccountId)
+        public async Task PayLoanAsync(int loanId, decimal amount, string userCNP, string iban)
         {
-            Loan loan = await loanRepository.GetLoanByIdAsync(loanId);
-            if (loan == null)
+            try
             {
-                throw new Exception("Loan not found");
+                Loan loan = await loanRepository.GetLoanByIdAsync(loanId);
+                if (loan == null)
+                {
+                    throw new Exception("Loan not found");
+                }
+
+                decimal previousRepaidAmount = loan.RepaidAmount;
+                loan.RepaidAmount += amount;
+
+                bool isOnTime = loan.Status != "overdue";
+
+                // Apply credit score impact for loan payment
+                await ApplyLoanPaymentImpactAsync(loan.UserCnp, loan, amount, isOnTime);
+
+                if (loan.RepaidAmount >= loan.LoanAmount + loan.Penalty)
+                {
+                    var totalToPay = loan.LoanAmount + loan.Penalty;
+                    var user = await userRepository.GetByCnpAsync(loan.UserCnp);
+
+                      if( await bankAccountService.CheckSufficientFunds(user.Id, iban, totalToPay, loan.Currency))
+                        {
+                            var bankAccount = await bankAccountService.FindBankAccount(iban);
+                            bankAccount.Balance -= totalToPay;
+                           await  bankAccountService.UpdateBankAccount(bankAccount);
+                           loan.Status = "completed";
+                           await ApplyLoanCompletionImpactAsync(loan.UserCnp, loan);
+                        }
+                      else
+                    {
+                        throw new Exception("Insufficient Funds! Please select another account.");
+                    }
+                  
+                }
+                else
+                {
+                    loan.Status = "active"; // Still active if not fully repaid
+                }
+
+                await loanRepository.UpdateLoanAsync(loan);
             }
-
-            decimal previousRepaidAmount = loan.RepaidAmount;
-            loan.RepaidAmount += amount;
-
-            bool isOnTime = loan.Status != "overdue";
-
-            // Apply credit score impact for loan payment
-            await ApplyLoanPaymentImpactAsync(loan.UserCnp, loan, amount, isOnTime);
-
-            if (loan.RepaidAmount >= loan.LoanAmount + loan.Penalty)
+            catch (Exception ex)
             {
-                loan.Status = "completed";
-
-                // Apply additional credit score impact for completing loan
-                await ApplyLoanCompletionImpactAsync(loan.UserCnp, loan);
+                throw;
             }
-            else
-            {
-                loan.Status = "active"; // Still active if not fully repaid
-            }
-
-            await loanRepository.UpdateLoanAsync(loan);
         }
 
         // New methods for credit score impact
@@ -228,6 +249,7 @@
             catch (Exception ex)
             {
                 Console.WriteLine($"Error applying loan payment impact: {ex.Message}");
+                throw;
             }
         }
 
@@ -246,6 +268,7 @@
             catch (Exception ex)
             {
                 Console.WriteLine($"Error applying loan completion impact: {ex.Message}");
+                throw;
             }
         }
 

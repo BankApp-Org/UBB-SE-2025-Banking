@@ -3,6 +3,7 @@ using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace BankApi.Controllers
@@ -168,6 +169,21 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpPost("PayLoan")]
+        public async Task<IActionResult> PayLoan([FromBody] PaymentDto dto)
+        {
+           try
+            {
+                  await _loanService.PayLoanAsync(dto.LoanId, dto.Amount, dto.UserCNP, dto.Iban);
+                  return Ok();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                return StatusCode(500, $"Failed to pay loan: {ex.Message}");
+            }
+        }
     }
 
     public class NewLoanDTO
@@ -181,6 +197,9 @@ namespace BankApi.Controllers
     }
     public class PaymentDto
     {
-        public decimal Penalty { get; set; }
+        public int LoanId { get; set; }
+        public decimal Amount { get; set; }
+        public string UserCNP { get; set; }
+        public string Iban { get; set; }
     }
 }
