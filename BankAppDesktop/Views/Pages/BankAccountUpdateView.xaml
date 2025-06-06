@@ -54,8 +54,9 @@
                           Margin="0,0,0,16"/>
 
             <StackPanel x:Name="CancelButton" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="16">
-                <Button Content="Cancel" 
-                        Click="CancelButton_Click"/>
+                <Button Content="Cancel" />
+                <!--
+                        Click="CancelButton_Click"-->
                 
                 <!--<Button x:Name="UpdateButton" Content="Update Account" 
                         Click="UpdateButton_Click" 
