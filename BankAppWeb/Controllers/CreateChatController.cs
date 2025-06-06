@@ -21,8 +21,7 @@ namespace BankAppWeb.Controllers
             _chatService = chatService;
             _userService = userService;
         }
-
-        public async Task<IActionResult> Index(string searchQuery)
+        public async Task<IActionResult> Index(string searchQuery, List<int> selectedUserIds)
         {
             var viewModel = new CreateChatViewModel();
 
@@ -30,7 +29,10 @@ namespace BankAppWeb.Controllers
             var currentUser = await _userService.GetCurrentUserAsync();
             var allFriends = currentUser.Friends?.ToList() ?? [];
 
-            // filter friends based on search query and exclude selected users
+            // set selected user IDs from query parameters
+            viewModel.SelectedUserIds = selectedUserIds ?? [];
+
+            // filter friends based on search query
             viewModel.AvailableUsers = allFriends
                 .Where(f => string.IsNullOrEmpty(searchQuery) ||
                             f.FirstName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
@@ -58,7 +60,6 @@ namespace BankAppWeb.Controllers
             {
                 ModelState.AddModelError("ChatName", "Chat name is required");
             }
-
             if (model.SelectedUserIds == null || !model.SelectedUserIds.Any())
             {
                 ModelState.AddModelError("SelectedUserIds", "Please select at least one user");
@@ -74,7 +75,7 @@ namespace BankAppWeb.Controllers
                     {
                         UserId = f.Id,
                         FirstName = f.FirstName,
-                        IsSelected = model.SelectedUserIds.Contains(f.Id)
+                        IsSelected = model.SelectedUserIds?.Contains(f.Id) == true
                     })
                     .ToList();
 
@@ -84,7 +85,7 @@ namespace BankAppWeb.Controllers
             try
             {
                 // add current user to participants
-                var participants = new List<int>(model.SelectedUserIds);
+                var participants = new List<int>(model.SelectedUserIds ?? []);
                 if (!participants.Contains(currentUser.Id))
                 {
                     participants.Add(currentUser.Id);
@@ -104,9 +105,7 @@ namespace BankAppWeb.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Failed to create chat: {ex.Message}";
-
-                // re-populate AvailableUsers
+                TempData["ErrorMessage"] = $"Failed to create chat: {ex.Message}";                // re-populate AvailableUsers
                 model.AvailableUsers = allFriends
                     .Where(f => string.IsNullOrEmpty(model.SearchQuery) ||
                                 f.FirstName.Contains(model.SearchQuery, StringComparison.OrdinalIgnoreCase))
@@ -114,7 +113,7 @@ namespace BankAppWeb.Controllers
                     {
                         UserId = f.Id,
                         FirstName = f.FirstName,
-                        IsSelected = model.SelectedUserIds.Contains(f.Id)
+                        IsSelected = model.SelectedUserIds?.Contains(f.Id) == true
                     })
                     .ToList();
 

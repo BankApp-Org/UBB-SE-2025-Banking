@@ -53,13 +53,13 @@
         public async Task AddFriend(User friend)
         {
             var user = await this.GetCurrentUserAsync(null);
-            user.Friends.Add(friend);
+            await userRepository.AddFriend(user, friend);
         }
 
         public async Task RemoveFriend(User friend)
         {
             var user = await this.GetCurrentUserAsync(null);
-            user.Friends.Remove(friend);
+            await userRepository.RemoveFriend(user, friend);
         }
 
         public async Task CreateUser(User user)
