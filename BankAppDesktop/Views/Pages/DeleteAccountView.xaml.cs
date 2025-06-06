@@ -75,4 +75,4 @@ namespace BankAppDesktop.Views.Pages
             await dialog.ShowAsync();
         }
     }
-} 
+}

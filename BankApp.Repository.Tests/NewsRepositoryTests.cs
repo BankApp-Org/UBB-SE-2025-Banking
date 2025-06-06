@@ -8,12 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
 
+    [TestClass]
     public class NewsRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -27,7 +28,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task AddNewsArticleAsync_Should_Add_Article_When_Valid()
         {
             // Arrange
@@ -69,7 +70,7 @@ namespace BankApp.Repository.Tests
             inserted.RelatedStocks.Should().ContainSingle(s => s.Name == "TEST");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddNewsArticleAsync_Should_Throw_When_Stock_Not_Found()
         {
             using var context = CreateContext();
@@ -92,7 +93,7 @@ namespace BankApp.Repository.Tests
             .WithMessage("Error while adding news article.");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddNewsArticleAsync_Should_Call_Update_When_Article_Exists()
         {
             using var context = CreateContext();
@@ -143,7 +144,7 @@ namespace BankApp.Repository.Tests
             result.Title.Should().Be("New");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateNewsArticleAsync_Should_Update_Fields()
         {
             using var context = CreateContext();
@@ -176,7 +177,7 @@ namespace BankApp.Repository.Tests
             updated.Content.Should().Be("New");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateNewsArticleAsync_Should_Throw_When_NotFound()
         {
             using var context = CreateContext();
@@ -190,7 +191,7 @@ namespace BankApp.Repository.Tests
                 .WithMessage("Error while updating news article.");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteNewsArticleAsync_Should_Delete_When_Found()
         {
             using var context = CreateContext();
@@ -213,7 +214,7 @@ namespace BankApp.Repository.Tests
             (await context.NewsArticles.AnyAsync()).Should().BeFalse();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task DeleteNewsArticleAsync_Should_Throw_When_NotFound()
         {
             using var context = CreateContext();
@@ -225,7 +226,7 @@ namespace BankApp.Repository.Tests
                 .WithMessage("Error while deleting news article.");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetNewsArticleByIdAsync_Should_Return_Article()
         {
             using var context = CreateContext();
@@ -252,7 +253,7 @@ namespace BankApp.Repository.Tests
             result.ArticleId.Should().Be("a1");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetNewsArticleByIdAsync_Should_Throw_When_NotFound()
         {
             using var context = CreateContext();
@@ -264,7 +265,7 @@ namespace BankApp.Repository.Tests
                 .WithMessage("Error while retrieving news article.");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetAllNewsArticlesAsync_Should_Return_All()
         {
             using var context = CreateContext();
@@ -300,7 +301,7 @@ namespace BankApp.Repository.Tests
             result.Should().HaveCount(2);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task MarkArticleAsReadAsync_Should_Mark_Read()
         {
             using var context = CreateContext();
@@ -328,7 +329,7 @@ namespace BankApp.Repository.Tests
             (await context.NewsArticles.FindAsync("m1"))!.IsRead.Should().BeTrue();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetNewsArticlesByAuthorCNPAsync_Should_Filter()
         {
             using var context = CreateContext();
@@ -367,18 +368,18 @@ namespace BankApp.Repository.Tests
             result.Should().ContainSingle(a => a.ArticleId == "1");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateNewsArticleAsync_Should_Preserve_Inner_Exception()
         {
             using var context = CreateContext();
             var repo = new NewsRepository(context);
             var article = new NewsArticle { ArticleId = "bad" };
 
-            var ex = await Assert.ThrowsAsync<Exception>(() => repo.UpdateNewsArticleAsync(article));
+            var ex = await Assert.ThrowsExceptionAsync<Exception>(() => repo.UpdateNewsArticleAsync(article));
             ex.InnerException.Should().BeOfType<KeyNotFoundException>();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetNewsArticlesByCategoryAsync_Should_Return_Expected_Articles()
         {
             using var context = CreateContext();
@@ -418,7 +419,7 @@ namespace BankApp.Repository.Tests
             result[0].Title.Should().Be("Finance News 1");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetNewsArticlesByStockAsync_Should_Return_Expected_Articles()
         {
             using var context = CreateContext();

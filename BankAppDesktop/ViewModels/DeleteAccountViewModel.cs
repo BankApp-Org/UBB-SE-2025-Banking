@@ -70,4 +70,4 @@ namespace BankAppDesktop.ViewModels
             }
         }
     }
-} 
+}
