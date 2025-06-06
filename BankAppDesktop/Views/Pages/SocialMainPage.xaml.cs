@@ -1,7 +1,9 @@
+using BankAppDesktop.ViewModels;
 using BankAppDesktop.Views.Components;
 using Common.Services;
 using Common.Services.Bank;
 using Common.Services.Social;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -59,11 +61,11 @@ namespace BankAppDesktop.Views.Pages
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
-            // if (this.RightFrame.Content == null || this.RightFrame.Content is not NotificationPage)
-            // {
-            //     var notificationView = new NotificationPage(this.chatService, this.notificationService, this.userService);
-            //     this.RightFrame.Content = notificationView;
-            // }
+            if (this.RightFrame.Content == null || this.RightFrame.Content is not NotificationsPage)
+            {
+                var notificationsPage = App.Services.GetRequiredService<NotificationsPage>();
+                this.RightFrame.Content = notificationsPage;
+            }
         }
     }
 }

@@ -2,12 +2,14 @@ using Common.DTOs;
 using Common.Models.Social;
 using Common.Services;
 using Common.Services.Social;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
@@ -26,6 +28,12 @@ namespace BankApi.Controllers
         {
             try
             {
+                var currentUser = await _userService.GetCurrentUserAsync();
+                if (currentUser == null || currentUser.Id != userId)
+                {
+                    return Unauthorized("You can only view your own notifications.");
+                }
+
                 var notifications = await _notificationService.GetNotificationsForUser(userId);
                 if (notifications == null || !notifications.Any())
                 {
@@ -69,12 +77,17 @@ namespace BankApi.Controllers
             }
         }
 
-        [HttpPost("clear")]
-        public async Task<ActionResult> ClearNotification([FromBody] int notificationId)
+        [HttpPost("clear/{notificationId}")]
+        public async Task<ActionResult> ClearNotification(int notificationId)
         {
             try
             {
                 var user = await _userService.GetCurrentUserAsync();
+                if (user == null)
+                {
+                    return Unauthorized("You must be logged in to clear notifications.");
+                }
+
                 await _notificationService.MarkNotificationAsRead(notificationId, user.Id);
                 return Ok("Notification cleared");
             }
@@ -84,11 +97,17 @@ namespace BankApi.Controllers
             }
         }
 
-        [HttpPost("clear-all")]
-        public async Task<ActionResult> ClearAllNotifications([FromBody] int userId)
+        [HttpPost("clear-all/{userId}")]
+        public async Task<ActionResult> ClearAllNotifications(int userId)
         {
             try
             {
+                var currentUser = await _userService.GetCurrentUserAsync();
+                if (currentUser == null || currentUser.Id != userId)
+                {
+                    return Unauthorized("You can only clear your own notifications.");
+                }
+
                 await _notificationService.MarkAllNotificationsAsRead(userId);
                 return Ok("All notifications cleared");
             }
