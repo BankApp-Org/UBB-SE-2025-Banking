@@ -112,7 +112,7 @@ namespace BankAppWeb.Controllers
         {
             var user = await _userService.GetCurrentUserAsync();
 
-            
+
             if (string.IsNullOrEmpty(model.SelectedBankAccountIban))
             {
                 model.BankAccounts = await _bankAccountService.GetUserBankAccounts(user.Id);

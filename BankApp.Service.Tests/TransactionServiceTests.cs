@@ -2,6 +2,7 @@ using BankApi.Repositories.Trading;
 using BankApi.Services.Trading;
 using Common.Models;
 using Common.Models.Trading;
+using Common.Services.Bank;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -18,11 +19,14 @@ namespace BankApp.Service.Tests
         private Mock<IStockTransactionRepository> _mockRepo;
         private TransactionService _service;
 
+        private Mock<ICreditScoringService> _creditScoringServiceMock;
+
         [TestInitialize]
         public void Init()
         {
             _mockRepo = new Mock<IStockTransactionRepository>();
-            _service = new TransactionService(_mockRepo.Object);
+            _creditScoringServiceMock = new();
+            _service = new TransactionService(_mockRepo.Object, _creditScoringServiceMock.Object);
         }
 
         [TestMethod]

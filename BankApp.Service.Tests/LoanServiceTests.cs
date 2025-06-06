@@ -8,14 +8,17 @@ using Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 
 namespace BankApp.Service.Tests
 {
     [TestClass]
+    [SupportedOSPlatform("windows10.0.26100.0")]
     public class LoanServiceTests
     {
         private Mock<ILoanRepository> _loanRepoMock;
         private Mock<IUserRepository> _userRepoMock;
+        private Mock<CreditScoringService> _crediScoringServiceMock;
         private LoanService _service;
 
         [TestInitialize]
@@ -23,7 +26,8 @@ namespace BankApp.Service.Tests
         {
             _loanRepoMock = new Mock<ILoanRepository>();
             _userRepoMock = new Mock<IUserRepository>();
-            _service = new LoanService(_loanRepoMock.Object, _userRepoMock.Object);
+            _crediScoringServiceMock = new Mock<CreditScoringService>();
+            _service = new LoanService(_loanRepoMock.Object, _userRepoMock.Object, _crediScoringServiceMock.Object);
         }
 
         private User CreateValidUser(string cnp = "CNP", int id = 1)
@@ -88,4 +92,4 @@ namespace BankApp.Service.Tests
             _loanRepoMock.Verify(r => r.AddLoanAsync(It.Is<Loan>(l => l.InterestRate > 0 && l.NumberOfMonths > 0 && l.MonthlyPaymentAmount > 0)), Times.Once);
         }
     }
-} 
+}

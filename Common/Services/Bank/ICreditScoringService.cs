@@ -41,4 +41,4 @@ namespace Common.Services.Bank
         /// </summary>
         Task<int> CalculateComprehensiveCreditScoreAsync(string userCnp);
     }
-} 
+}

@@ -120,22 +120,22 @@ namespace BankAppDesktop.ViewModels
                 {
                     Debug.WriteLine("Creating new notifications collection");
                     var newNotifications = new ObservableCollection<Notification>();
-                    
+
                     Debug.WriteLine("Current collection state:");
                     Debug.WriteLine($"- Old collection count: {_notifications?.Count ?? 0}");
                     Debug.WriteLine($"- New notifications to add: {notifications.Count}");
-                    
+
                     foreach (var notification in notifications)
                     {
                         Debug.WriteLine($"Adding notification: ID={notification.NotificationID}, Content={notification.Content}, UserId={notification.UserId}");
                         newNotifications.Add(notification);
                     }
-                    
+
                     Debug.WriteLine($"Setting Notifications property with {newNotifications.Count} items");
                     Notifications = newNotifications;
                     Debug.WriteLine($"Final notifications count in collection: {Notifications.Count}");
                     Debug.WriteLine($"Collection reference changed: {!ReferenceEquals(_notifications, newNotifications)}");
-                    
+
                     // Force a UI refresh
                     OnPropertyChanged(nameof(Notifications));
                 });

@@ -17,10 +17,10 @@ namespace BankAppDesktop.Views.Pages
     {
         private readonly BankAccountDeleteViewModel viewModel;
 
-        public BankAccountDeleteView(BankAccountDeleteViewModel viewModel)
+        public BankAccountDeleteView(string iban)
         {
-            this.viewModel = viewModel;
-
+            this.viewModel = App.Services.GetRequiredService<BankAccountDeleteViewModel>();
+            viewModel.Initialize(iban);
             this.InitializeComponent();
 
             MainGrid.DataContext = viewModel;

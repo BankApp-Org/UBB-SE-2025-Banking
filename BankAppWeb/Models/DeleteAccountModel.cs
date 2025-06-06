@@ -10,4 +10,4 @@ namespace BankAppWeb.Models
 
         public string ErrorMessage { get; set; } = string.Empty;
     }
-} 
+}

@@ -24,4 +24,4 @@ namespace BankAppDesktop.Converters
             return false;
         }
     }
-} 
+}

@@ -138,7 +138,7 @@ namespace BankApp.Service.Tests
         {
             var stock = new HomepageStock { Id = 1, IsFavorite = false };
             await stockService.AddToFavoritesAsync(stock);
-            Assert.IsTrue(true); 
+            Assert.IsTrue(true);
         }
 
         [TestMethod]
@@ -146,7 +146,7 @@ namespace BankApp.Service.Tests
         {
             var stock = new HomepageStock { Id = 1, IsFavorite = true };
             await stockService.RemoveFromFavoritesAsync(stock);
-            Assert.IsTrue(true); 
+            Assert.IsTrue(true);
         }
     }
 }

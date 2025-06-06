@@ -39,14 +39,14 @@ namespace BankApi.Services.Trading
                     return;
 
                 int impact = await _creditScoringService.CalculateStockTransactionImpactAsync(transaction.AuthorCNP, transaction);
-                
+
                 if (impact != 0)
                 {
                     int currentScore = await _creditScoringService.GetCurrentCreditScoreAsync(transaction.AuthorCNP);
                     int newScore = currentScore + impact;
-                    
+
                     string reason = $"Stock {transaction.Type}: {transaction.StockSymbol} - {Math.Abs(transaction.TotalValue):C}";
-                    
+
                     await _creditScoringService.UpdateCreditScoreAsync(transaction.AuthorCNP, newScore, reason);
                 }
             }

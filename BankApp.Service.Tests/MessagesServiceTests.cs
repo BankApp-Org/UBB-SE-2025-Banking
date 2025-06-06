@@ -65,7 +65,7 @@ namespace BankApp.Service.Tests
                 new Message(2, MessageType.Text, "Test message 2")
             };
             _mockMessagesRepository.Setup(x => x.GetMessagesForUserAsync(userCNP)).ReturnsAsync(expectedMessages);            // Act
-            var result = await _service.GetMessagesForUserAsync(userCNP);           
+            var result = await _service.GetMessagesForUserAsync(userCNP);
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual("Test message 1", result[0].MessageContent);
             Assert.AreEqual(MessageType.Text, result[0].Type);

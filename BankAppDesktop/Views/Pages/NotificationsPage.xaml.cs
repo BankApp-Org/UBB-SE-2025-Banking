@@ -14,7 +14,7 @@ namespace BankAppDesktop.Views.Pages
             InitializeComponent();
             _viewModel = notificationsViewModel;
             DataContext = _viewModel;
-            
+
             Debug.WriteLine($"NotificationsPage initialized with ViewModel: {_viewModel != null}");
             Debug.WriteLine($"NotificationListView DataContext: {NotificationListView.DataContext != null}");
             Debug.WriteLine($"Current notifications count: {_viewModel.Notifications?.Count ?? 0}");

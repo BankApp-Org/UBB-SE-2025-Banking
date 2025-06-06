@@ -74,7 +74,7 @@ namespace BankApi.Services.Bank
             }
         }
 
-        public async Task<BankTransaction?> GetTransactionById(int transactionId)
+        public async Task<BankTransaction> GetTransactionById(int transactionId)
         {
             if (transactionId <= 0)
             {
@@ -191,8 +191,8 @@ namespace BankApi.Services.Bank
             try
             {
                 // Extract user CNP from IBAN (assuming IBAN contains CNP or user identifier)
-                string? senderCnp = ExtractUserCnpFromIban(transaction.SenderIban);
-                string? receiverCnp = ExtractUserCnpFromIban(transaction.ReceiverIban);
+                string senderCnp = ExtractUserCnpFromIban(transaction.SenderIban);
+                string receiverCnp = ExtractUserCnpFromIban(transaction.ReceiverIban);
 
                 // Apply credit score impact for sender
                 if (!string.IsNullOrEmpty(senderCnp))
@@ -202,7 +202,7 @@ namespace BankApi.Services.Bank
                     {
                         int currentScore = await _creditScoringService.GetCurrentCreditScoreAsync(senderCnp);
                         int newScore = currentScore + senderImpact;
-                        await _creditScoringService.UpdateCreditScoreAsync(senderCnp, newScore, 
+                        await _creditScoringService.UpdateCreditScoreAsync(senderCnp, newScore,
                             $"Bank transaction: {transaction.TransactionType} of {transaction.SenderAmount:C}");
                     }
                 }
@@ -228,7 +228,7 @@ namespace BankApi.Services.Bank
                     {
                         int currentScore = await _creditScoringService.GetCurrentCreditScoreAsync(receiverCnp);
                         int newScore = currentScore + receiverImpact;
-                        await _creditScoringService.UpdateCreditScoreAsync(receiverCnp, newScore, 
+                        await _creditScoringService.UpdateCreditScoreAsync(receiverCnp, newScore,
                             $"Received transfer: {transaction.ReceiverAmount:C}");
                     }
                 }
@@ -240,17 +240,17 @@ namespace BankApi.Services.Bank
             }
         }
 
-        private string? ExtractUserCnpFromIban(string? iban)
+        private string ExtractUserCnpFromIban(string iban)
         {
             if (string.IsNullOrEmpty(iban)) return null;
-            
+
             // This is a simplified implementation - in a real system, you'd need to
             // look up the account owner by IBAN in the database
             // For now, assume the IBAN contains or can be mapped to a CNP
-            
+
             // If IBAN is in format "RO49AAAA1B31007593840000" and contains CNP
             // This would need to be implemented based on your actual IBAN structure
-            
+
             // Placeholder implementation - you'll need to implement actual IBAN to CNP mapping
             return iban.Length >= 13 ? iban.Substring(iban.Length - 13) : null;
         }

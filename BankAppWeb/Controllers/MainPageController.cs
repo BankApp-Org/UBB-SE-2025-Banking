@@ -31,7 +31,7 @@ namespace BankAppWeb.Controllers
             //    HttpContext.Session.SetString("current_bank_account_iban", iban);
             //}
 
-            return RedirectToAction("Index", new { SelectedAccountIban = iban});
+            return RedirectToAction("Index", new { SelectedAccountIban = iban });
         }
 
 
@@ -40,7 +40,7 @@ namespace BankAppWeb.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(userId))
             {
                 return NotFound();
             }
@@ -53,7 +53,7 @@ namespace BankAppWeb.Controllers
             if (string.IsNullOrEmpty(SelectedAccountIban) && accounts.Count > 0)
             {
                 TempData["SelectedAccountIban"] = accounts[0].Iban;
-            } 
+            }
             else
             {
                 TempData["SelectedAccountIban"] = SelectedAccountIban;
@@ -114,7 +114,7 @@ namespace BankAppWeb.Controllers
             }
 
             // No route values passed
-            return RedirectToAction("Index","BankAccountDetails", new { iban });
+            return RedirectToAction("Index", "BankAccountDetails", new { iban });
         }
 
 
@@ -142,7 +142,7 @@ namespace BankAppWeb.Controllers
         public IActionResult BankAccountSettings(string iban)
         {
             //var iban = HttpContext.Session.GetString("current_bank_account_iban");
-           
+
             if (string.IsNullOrEmpty(iban))
                 return RedirectToAction("Index");
 
