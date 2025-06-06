@@ -114,7 +114,7 @@ namespace BankAppWeb.Services
                 throw new InvalidOperationException("User is not authenticated");
             }
 
-            var cnpClaim = user.Claims.FirstOrDefault(c => c.Type == "cnp");
+            var cnpClaim = user.Claims.FirstOrDefault(c => c.Type == "CNP");
             return cnpClaim?.Value ?? throw new InvalidOperationException("CNP claim not found in token");
         }
 
