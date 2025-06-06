@@ -2,6 +2,19 @@
     ViewData["Title"] = "Home Page";
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3">
+        <strong>Success!</strong> @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3">
+        <strong>Error!</strong> @TempData["ErrorMessage"]
+    </div>
+}
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
@@ -49,20 +62,6 @@
                         <small class="text-muted">Test the migrated report form</small>
                     </div>
                 </div>
-                
-                @if (TempData["SuccessMessage"] != null)
-                {
-                    <div class="alert alert-success mt-3">
-                        <strong>Success!</strong> @TempData["SuccessMessage"]
-                    </div>
-                }
-                
-                @if (TempData["ErrorMessage"] != null)
-                {
-                    <div class="alert alert-danger mt-3">
-                        <strong>Error!</strong> @TempData["ErrorMessage"]
-                    </div>
-                }
             </div>
         </div>
     </div>

@@ -112,6 +112,19 @@ namespace BankAppDesktop.Views.Pages
         }
 
         /// <summary>
+        /// Handles the delete account button click event.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void DeleteAccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = App.Host.Services.GetRequiredService<DeleteAccountViewModel>();
+            var deleteAccountView = new DeleteAccountView(viewModel);
+            viewModel.OnClose = () => deleteAccountView.Close();
+            deleteAccountView.Activate();
+        }
+
+        /// <summary>
         /// Navigates to the update profile page.
         /// </summary>
         private void GoToUpdatePage()

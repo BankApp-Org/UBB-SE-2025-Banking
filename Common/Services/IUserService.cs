@@ -31,5 +31,7 @@
         Task<int> AddDefaultRoleToAllUsersAsync();
 
         Task<List<SocialUserDto>> GetNonFriendsUsers(string userCNP);
+
+        Task<string> DeleteUser(string password);
     }
 }
