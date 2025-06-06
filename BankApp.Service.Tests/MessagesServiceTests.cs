@@ -27,6 +27,8 @@ namespace BankApp.Service.Tests
         {
             _mockMessagesRepository = new Mock<IMessagesRepository>();
             _mockUserRepository = new Mock<IUserRepository>();
+            _mockChatRepository = new Mock<IChatRepository>();
+            _mockChatReportRepository = new Mock<IChatReportRepository>();
             _service = new MessageService(_mockMessagesRepository.Object, _mockUserRepository.Object, _mockChatRepository.Object, _mockChatReportRepository.Object);
         }
 
