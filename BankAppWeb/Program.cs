@@ -145,6 +145,8 @@ builder.Services.AddTransient<IMessageService, MessagesProxyService>();
 builder.Services.AddTransient<INotificationService, NotificationProxyService>();
 builder.Services.AddTransient<IBankAccountService, BankAccountProxyService>();
 builder.Services.AddTransient<AuthenticationDelegatingHandler>();
+builder.Services.AddTransient<IBankTransactionService, BankTransactionProxyService>();
+
 
 builder.Services.AddHttpClient<IUserService, UserProxyService>(client =>
 {
