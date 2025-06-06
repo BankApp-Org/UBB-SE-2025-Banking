@@ -88,6 +88,8 @@ else
         <p>No favorite stocks found.</p>
     }
 
+            
+
     <!-- All Stocks -->
     <h3>All Stocks</h3>
     <table class="table table-striped">
@@ -137,11 +139,20 @@ else
                                     </button>
                                 }
                             </form>
+                               
                         </div>
                     </td>
                 </tr>
+
+                     
             }
         </tbody>
+            <form method="post" asp-action="SimulateStocks">
+                                    <button type="submit" class="btn btn-danger mb-3">
+                                        <i class="fas fa-cogs"></i> Simulate Stocks
+                                    </button>
+                                </form>
     </table>
 </div>
+        
         }
