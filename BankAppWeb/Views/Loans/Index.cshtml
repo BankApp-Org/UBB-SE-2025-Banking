@@ -50,14 +50,11 @@ else
                     <td>@loan.MonthlyPaymentsCompleted</td>
                     <td>@loan.RepaidAmount</td>
                     <td>
-                        @if(loan.CanPay)
-                        {
-                        <form method="post">
-                            <input type="hidden" name="loanId" value="@loan.Id" />
-                            <input type="hidden" name="penalty" value="@loan.Penalty" />
-                            <button type="submit" class="btn btn-primary">Make Payment</button>
-                        </form>
-                        }
+                               <a class="btn btn-primary"
+                           href="@Url.Action("Pay", "Loans", new { loanId = loan.Id, amount = loan.LoanAmount })">
+                            Make Payment
+                        </a>
+                       
                     </td>
                 </tr>
             }
