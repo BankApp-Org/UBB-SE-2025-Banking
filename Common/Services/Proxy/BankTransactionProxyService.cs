@@ -61,7 +61,7 @@ namespace Common.Services.Proxy
 
         public async Task<bool> CreateTransaction(BankTransaction transaction)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/BankTransaction", transaction, _jsonOptions);
+            var response = await _httpClient.PostAsJsonAsync("api/BankTransaction/AddTransaction", transaction, _jsonOptions);
             return response.IsSuccessStatusCode;
         }
 

@@ -210,9 +210,9 @@ namespace BankAppDesktop.ViewModels
             }
 
             BankAccountDetailsViewModel viewModel = App.Services.GetRequiredService<BankAccountDetailsViewModel>();
-            BankAccountDetailsView bankAccountDetailsView = new BankAccountDetailsView(viewModel);
+            viewModel.CurrentIban = SelectedIban;
 
-            App.MainAppWindow.MainAppFrame.Content = bankAccountDetailsView.Content;
+            App.MainAppWindow.MainAppFrame.Content = new BankAccountDetailsPage(viewModel);
 
             return null;
         }

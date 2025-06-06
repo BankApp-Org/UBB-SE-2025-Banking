@@ -90,9 +90,8 @@ namespace BankAppDesktop.Views.Pages
         {
             var transactionTypeCounts = await TransactionsViewModel.GetTransactionTypeCounts();
 
-            // !! NU ESTE INCA IMPLEMENTAT HISTORY GRAPHICAL REPRESENTATION
-            // TransactionHistoryGraphicalRepresentationView transactionGraphicsWindow = new TransactionHistoryGraphicalRepresentationView(transactionTypeCounts);
-            // transactionGraphicsWindow.Activate();
+            BankTransactionsChartPage bankTransactionsChartPage = new BankTransactionsChartPage(transactionTypeCounts);
+            App.MainAppWindow.MainAppFrame.Content = bankTransactionsChartPage;
         }
     }
 }

@@ -111,8 +111,12 @@ namespace BankApi.Services.Bank
                     transaction.TransactionDatetime = DateTime.UtcNow;
                 }
 
-                await _historyRepository.CreateTransactionAsync(transaction);
+                var sender = await _transactionRepository.GetBankAccountByIBAN(transaction.SenderIban);
+                var receiver = await _transactionRepository.GetBankAccountByIBAN(transaction.ReceiverIban);
 
+                await _historyRepository.CreateTransactionAsync(transaction);
+                await _transactionRepository.UpdateBankAccountBalance(transaction.SenderIban, sender.Balance - transaction.SenderAmount);
+                await _transactionRepository.UpdateBankAccountBalance(transaction.ReceiverIban, receiver.Balance + transaction.ReceiverAmount);
                 // Calculate and apply credit score impact for sender
                 await ApplyCreditScoreImpactAsync(transaction);
 

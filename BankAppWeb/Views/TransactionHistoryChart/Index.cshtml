@@ -1,61 +1,42 @@
-@model BankAppWeb.ViewModels.TransactionHistoryChartViewModel
 @{
-    ViewData["Title"] = "Transaction History Chart";
-    var labels = string.Join(",", Model.TransactionTypeCounts.Select(k => $"'{k.TransactionType.TransactionType}'"));
-    var values = string.Join(",", Model.TransactionTypeCounts.Select(t => t.Count));
+    var chartData = (Dictionary<string, int>)ViewBag.ChartData;
+    var labels = string.Join(",", chartData.Keys.Select(k => $"'{k}'"));
+    var values = string.Join(",", chartData.Values);
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Transaction History Chart</h3>
-                </div>
-                <div class="card-body">
-                    <canvas id="transactionChart"></canvas>
-                </div>
-            </div>
-            <div class="mt-3">
-                <a asp-controller="TransactionHistory" asp-action="Index" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Transaction History
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Pie Chart</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="width: 500px; margin: 50px auto;">
+        <canvas id="myPieChart"></canvas>
+    </div>
+
+    <a class="btn btn-danger" style="width: 200px;margin: auto;" asp-controller="MainPage" asp-action="Index">Back</a>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('transactionChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: [@Html.Raw(labels)],
-                    datasets: [{
-                        label: 'Transaction Types',
-                        data: [@values],
-                        backgroundColor: [
-                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Transaction Type Distribution'
-                        }
-                    }
-                }
-            });
+        const ctx = document.getElementById('myPieChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [@Html.Raw(labels)],
+                datasets: [{
+                    label: 'Count',
+                    data: [@values],
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
         });
     </script>
-} 
+</body>
+</html>

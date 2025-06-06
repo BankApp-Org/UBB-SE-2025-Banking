@@ -108,6 +108,8 @@
     <None Remove="Views\Components\LoginComponent.xaml" />
     <None Remove="Views\Components\UserAuthStatusComponent.xaml" />
     <None Remove="Views\Pages\AddNewMemberPage.xaml" />
+    <None Remove="Views\Pages\BankAccountDetailsPage.xaml" />
+    <None Remove="Views\Pages\BankTransactionsChartPage.xaml" />
 
     <None Remove="Views\Pages\BankTransactionsHistoryPage.xaml" />
 
@@ -129,6 +131,12 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\Pages\BankTransactionsChartPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\BankAccountDetailsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
 	<Page Update="Views\Pages\BankAccountUpdateView.xaml">
 		<Generator>MSBuild:Compile</Generator>
 	</Page>
