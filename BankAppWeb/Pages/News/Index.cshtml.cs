@@ -55,7 +55,7 @@ namespace BankAppWeb.Pages.News
 
         private async Task LoadArticlesAsync()
         {
-            Articles = await _newsService.GetNewsArticlesAsync();
+            Articles = await _newsService.GetUserArticlesAsync(Status.Approved);
             IsEmptyState = Articles.Count == 0;
         }
 
