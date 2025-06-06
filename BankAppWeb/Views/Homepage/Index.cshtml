@@ -147,11 +147,10 @@ else
                      
             }
         </tbody>
-            <form method="post" asp-action="SimulateStocks">
-                                    <button type="submit" class="btn btn-danger mb-3">
-                                        <i class="fas fa-cogs"></i> Simulate Stocks
-                                    </button>
-                                </form>
+               <form asp-controller="Homepage" asp-action="SimulateStocks" method="post">
+                @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-primary">Simulate Stocks Purchases</button>
+    </form>
     </table>
 </div>
         

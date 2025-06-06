@@ -66,10 +66,16 @@ namespace BankAppWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SimulateStocks()
         {
+            if (!_authenticationService.IsUserLoggedIn())
+            {
+                TempData["ErrorMessage"] = "You must be logged in to simulate.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
-                var result = await _stockPageService.SimulateStocksAsync();
-                if (result)
+                bool success = await _stockPageService.SimulateStocksAsync();
+                if (success)
                 {
                     TempData["SuccessMessage"] = "Stock simulation completed successfully!";
                 }
@@ -80,10 +86,12 @@ namespace BankAppWeb.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error during stock simulation: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error during simulation: {ex.Message}";
             }
+
             return RedirectToAction("Index");
         }
+
 
     }
 }
