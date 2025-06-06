@@ -1,0 +1,42 @@
+﻿@model PayLoanModel
+@{
+    ViewBag.Title = "Pay Loan";
+}
+
+<div class="container py-4" style="max-width: 500px; margin: auto;">
+    <h2 class="text-center mb-4">Pay Loan</h2>
+
+    <form asp-action="PayLoan" method="post" novalidate>
+        <!-- Bank Account Selection -->
+      <div class="mb-3">
+    <label for="SelectedBankAccountIban" class="form-label fw-semibold">Bank Account</label>
+    <small class="text-muted d-block mb-1">Choose the account to use for payment</small>
+    <select asp-for="SelectedBankAccountIban" 
+            asp-items="@(new SelectList(Model.BankAccounts, "Iban", "Name"))" 
+            class="form-select" aria-describedby="bankAccountHelp">
+        <option value="">Select Bank Account</option>
+    </select>
+</div>
+
+
+     
+
+        <!-- Payment Details -->
+        <div class="bg-dark text-light p-3 rounded mb-3" style="border:1px solid #445A63;">
+            <h5 class="fw-semibold">Payment Details</h5>
+            <p>Loan Amount: @Model.Amount</p>
+            <hr style="border-color: #445A63;" />
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.PayErrorMessage))
+        {
+                        <div class="alert alert-danger text-center">@Model.PayErrorMessage</div>
+        }
+
+        <button type="submit" name="action" value="pay" class="btn btn-primary w-100 mb-3">Pay Loan</button>
+
+
+       <a href="@Url.Action("Index", "Loans")" class="btn btn-secondary d-block mx-auto px-4">Back</a>
+    </form>
+</div>
+
