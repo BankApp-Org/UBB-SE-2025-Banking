@@ -160,6 +160,8 @@ builder.Services.AddScoped<IProfanityChecker, ProfanityChecker>();
 builder.Services.AddScoped<IBankTransactionService, BankTransactionService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountService>();
+builder.Services.AddScoped<IBankAccountService, BankAccountService>();
+
 builder.Services.AddHttpClient<IProfanityChecker, ProfanityChecker>();
 
 // Add CORS

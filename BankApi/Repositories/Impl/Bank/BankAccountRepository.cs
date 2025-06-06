@@ -30,8 +30,9 @@ namespace BankApi.Repositories.Impl.Bank
 
         public async Task<List<BankAccount>> GetBankAccountsByUserIdAsync(int userId)
         {
+            // CU INCLUDE NU MERGE, IDK 
             return await _context.BankAccounts
-                .Include(b => b.Currency)
+                //.Include(b => b.Currency)
                 .Where(b => b.UserId == userId)
                 .ToListAsync();
         }
