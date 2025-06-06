@@ -34,6 +34,7 @@
                     <NavigationViewItem Content="Create Stock" Tag="CreateStockPage" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="History" Tag="TransactionLogPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="Store" Tag="GemStorePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    <NavigationViewItem Content="Create Bank Account" Tag="BankAccountCreateView" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="Log in" Tag="LoginPage" Visibility="{Binding IsUnauthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="Profile" Tag="ProfilePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="Notifications" Tag="NotificationsPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>

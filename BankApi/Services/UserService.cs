@@ -1,23 +1,32 @@
 ﻿namespace BankApi.Services
 {
     using BankApi.Repositories;
+    using BankApi.Data;
     using Common.DTOs;
     using Common.Models;
     using Common.Services;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using Common.Models.Social;
 
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly UserManager<User> userManager;
+        private readonly ApiDbContext dbContext;
 
-        public UserService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
+        public UserService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor, UserManager<User> userManager, ApiDbContext dbContext)
         {
             this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this.userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public async Task<User> GetUserByCnpAsync(string cnp)
@@ -151,6 +160,50 @@
                 Username = u.UserName,
                 ReportedCount = u.ReportedCount
             });
+        }
+
+        public async Task<string> DeleteUser(string password)
+        {
+            var httpContext = httpContextAccessor.HttpContext;
+            if (httpContext?.User?.Identity?.IsAuthenticated != true)
+            {
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
+            var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in claims.");
+            }
+
+            var user = await userRepository.GetByIdAsync(int.Parse(userId));
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+
+            // Password verification
+            var passwordValid = await userManager.CheckPasswordAsync(user, password);
+            if (!passwordValid)
+            {
+                throw new UnauthorizedAccessException("Incorrect password.");
+            }
+
+            // Delete related ChatReports
+            var chatReports = await dbContext.Set<ChatReport>()
+                .Where(cr => cr.SubmitterCnp == user.CNP)
+                .ToListAsync();
+            dbContext.RemoveRange(chatReports);
+            await dbContext.SaveChangesAsync();
+
+            // Now delete the user
+            var result = await userRepository.DeleteAsync(user.Id);
+            if (!result)
+            {
+                throw new InvalidOperationException("Failed to delete user. You may have related data (bank accounts, transactions, etc.) that must be removed first.");
+            }
+
+            return "User deleted";
         }
     }
 }

@@ -8,7 +8,7 @@ using Common.Models;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class MessageTemplatesViewModel : ViewModelBase
+    public partial class MessageTemplatesViewModel : ViewModelBase
     {
         private readonly IMessageService _messageService;
         private ObservableCollection<Message> _messages;

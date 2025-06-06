@@ -8,6 +8,7 @@ namespace BankAppDesktop
     using Microsoft.UI.Xaml.Controls;
     using System;
     using System.ComponentModel;
+    using BankAppDesktop.Views;
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -133,6 +134,7 @@ namespace BankAppDesktop
                     "ProfilePage" => this.serviceProvider.GetRequiredService<ProfilePage>(),
                     "LoginPage" => this.serviceProvider.GetRequiredService<LoginPage>(),
                     "GemStorePage" => this.serviceProvider.GetRequiredService<GemStorePage>(),
+                    "BankAccountCreateView" => this.serviceProvider.GetRequiredService<BankAccountCreateView>(),
                     "NotificationsPage" => this.serviceProvider.GetRequiredService<NotificationsPage>(),
                     "BankTransactionsHistoryPage" => this.serviceProvider.GetRequiredService<BankTransactionsHistoryPage>(),
                     _ => throw new InvalidOperationException($"Unknown navigation item: {invokedItemTag}")

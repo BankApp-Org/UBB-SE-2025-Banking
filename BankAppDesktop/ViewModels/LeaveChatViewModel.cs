@@ -12,7 +12,7 @@ namespace BankAppDesktop.ViewModels
     using Common.Services.Social;
     using System.ComponentModel;
     using System.Windows.Input;
-    internal class LeaveChatViewModel : INotifyPropertyChanged
+    internal partial class LeaveChatViewModel : INotifyPropertyChanged
     {
         public ICommand LeaveChatCommand { get; set; }
 

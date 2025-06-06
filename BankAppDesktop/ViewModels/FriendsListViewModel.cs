@@ -23,7 +23,7 @@ namespace BankAppDesktop.ViewModels
     using Common.Services;
     using Common.Services.Social;
 
-    public class FriendsListViewModel : INotifyPropertyChanged
+    public partial class FriendsListViewModel : INotifyPropertyChanged
     {
         public List<User> AllFriends { get; set; }
 

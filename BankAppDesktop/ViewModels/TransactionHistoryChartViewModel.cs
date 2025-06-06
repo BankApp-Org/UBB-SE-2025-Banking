@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class TransactionHistoryChartViewModel : INotifyPropertyChanged
+    public partial class TransactionHistoryChartViewModel : INotifyPropertyChanged
     {
         private readonly IBankTransactionService _transactionHistoryService;
         private readonly IAuthenticationService _authenticationService;

@@ -98,12 +98,17 @@ namespace BankApi.Repositories.Impl
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id.ToString());
             if (user == null)
                 return false;
 
-            _context.Users.Remove(user);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                throw new InvalidOperationException($"Failed to delete user: {errors}");
+            }
+            return result.Succeeded;
         }
 
         public async Task<int> AddDefaultRoleToAllUsersAsync()

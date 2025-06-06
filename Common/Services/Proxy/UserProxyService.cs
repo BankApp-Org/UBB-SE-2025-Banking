@@ -7,6 +7,16 @@ using System.Text.Json;
 
 namespace Common.Services.Proxy
 {
+    public class DeleteUserDto
+    {
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class DeleteResponse
+    {
+        public string Message { get; set; } = string.Empty;
+    }
+
     public class UserProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : IProxyService, IUserService
     {
         private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -178,6 +188,15 @@ namespace Common.Services.Proxy
             return JsonSerializer.Deserialize<List<SocialUserDto>>(content, _jsonOptions)
                    ?? throw new InvalidOperationException("Deserialization returned null.");
         }
+
+        public async Task<string> DeleteUser(string password)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/User/delete", new DeleteUserDto { Password = password }, _jsonOptions);
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadFromJsonAsync<DeleteResponse>(_jsonOptions);
+            return result?.Message ?? "Unknown result";
+        }
+
         private class DefaultRoleResponse
         {
             public string Message { get; set; } = string.Empty;

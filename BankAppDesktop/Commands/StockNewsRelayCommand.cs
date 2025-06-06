@@ -9,7 +9,7 @@
     /// <param name="execute">The action to execute when the command is invoked.</param>
     /// <param name="canExecute">A function that determines whether the command can execute.</param>
     /// <exception cref="ArgumentNullException">Thrown when the <paramref name="execute"/> parameter is null.</exception>
-    public class StockNewsRelayCommand(Action execute, Func<bool>? canExecute = null) : ICommand
+    public partial class StockNewsRelayCommand(Action execute, Func<bool>? canExecute = null) : ICommand
     {
         private readonly Action execute = execute ?? throw new ArgumentNullException(nameof(execute));
         private readonly Func<bool>? canExecute = canExecute;

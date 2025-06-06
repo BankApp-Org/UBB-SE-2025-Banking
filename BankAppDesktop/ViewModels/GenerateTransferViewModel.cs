@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class GenerateTransferViewModel : INotifyPropertyChanged
+    public partial class GenerateTransferViewModel : INotifyPropertyChanged
     {
         private string amountText;
         private string description;

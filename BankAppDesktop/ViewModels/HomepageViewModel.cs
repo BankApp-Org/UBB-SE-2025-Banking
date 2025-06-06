@@ -8,7 +8,7 @@
     /// <summary>
     /// ViewModel for the homepage, containing only data for stock display.
     /// </summary>
-    public class HomepageViewModel : ViewModelBase
+    public partial class HomepageViewModel : ViewModelBase
     {
         private ObservableCollection<HomepageStock> filteredStocks = [];
         private ObservableCollection<HomepageStock> filteredFavoriteStocks = [];

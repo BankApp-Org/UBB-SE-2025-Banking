@@ -15,7 +15,7 @@ namespace BankAppDesktop.ViewModels
     using System.Linq;
     using System.Windows.Input;
 
-    public class AddFriendsViewModel : INotifyPropertyChanged
+    public partial class AddFriendsViewModel : INotifyPropertyChanged
     {
         /// <summary>
         /// Occurs when a property value changes.

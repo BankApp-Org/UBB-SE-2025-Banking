@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class ChatListViewModel : INotifyPropertyChanged
+    public partial class ChatListViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 

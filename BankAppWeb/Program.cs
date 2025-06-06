@@ -239,6 +239,7 @@ builder.Services.AddHttpClient<IBankAccountService, BankAccountProxyService>(cli
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+builder.Services.AddScoped<WebAuthenticationService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

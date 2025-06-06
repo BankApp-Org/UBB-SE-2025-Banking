@@ -6,7 +6,7 @@
     /// <summary>
     /// ViewModel responsible for holding alert data for the UI.
     /// </summary>
-    public class AlertViewModel : ViewModelBase
+    public partial class AlertViewModel : ViewModelBase
     {
         private string newAlertName = string.Empty;
         private string newAlertUpperBound = "0";

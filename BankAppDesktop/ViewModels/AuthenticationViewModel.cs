@@ -2,7 +2,7 @@ using Common.Models;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class AuthenticationViewModel : ViewModelBase
+    public partial class AuthenticationViewModel : ViewModelBase
     {
         private UserSession? _currentUser;
         private bool _isLoggedIn;

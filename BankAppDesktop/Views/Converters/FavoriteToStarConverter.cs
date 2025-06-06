@@ -6,7 +6,7 @@
     /// <summary>
     /// Converts a boolean value indicating a favorite status to a star symbol.
     /// </summary>
-    public class FavoriteToStarConverter : IValueConverter
+    public partial class FavoriteToStarConverter : IValueConverter
     {
         /// <summary>
         /// Converts a boolean value to a star symbol.

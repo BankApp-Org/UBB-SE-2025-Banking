@@ -4,7 +4,7 @@
     using Microsoft.UI.Xaml.Data;
     using Microsoft.UI.Xaml.Media;
 
-    public class AmountColorConverter : IValueConverter
+    public partial class AmountColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
