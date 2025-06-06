@@ -17,9 +17,9 @@ namespace BankAppWeb.Controllers
         [HttpGet]
         public IActionResult Delete(string iban)
         {
-           if (string.IsNullOrEmpty(iban))
+            if (string.IsNullOrEmpty(iban))
             {
-                return RedirectToAction("Index","HomePage");
+                return RedirectToAction("Index", "HomePage");
             }
 
             var model = new BankAccountDeleteModel { IBAN = iban };
@@ -41,7 +41,7 @@ namespace BankAppWeb.Controllers
                     TempData["Error"] = "Failed to delete the bank account.";
                 }
             }
-            return RedirectToAction("Index","HomePage");
+            return RedirectToAction("Index", "HomePage");
         }
     }
 }

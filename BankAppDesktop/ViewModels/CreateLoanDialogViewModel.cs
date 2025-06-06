@@ -1,7 +1,5 @@
 using Common.Models.Bank;
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -9,7 +7,7 @@ namespace BankAppDesktop.ViewModels
     /// ViewModel for the create loan dialog containing only UI state properties.
     /// Business logic for loan creation is handled in code-behind.
     /// </summary>
-    public class CreateLoanDialogViewModel : ViewModelBase
+    public partial class CreateLoanDialogViewModel : ViewModelBase
     {
         private decimal amount;
         private DateTimeOffset repaymentDate = DateTime.Now.AddMonths(1);
@@ -18,11 +16,6 @@ namespace BankAppDesktop.ViewModels
         private bool isSubmitting = false;
         private bool isLoading = false;
         private Currency selectedCurrency = Currency.USD;
-
-        /// <summary>
-        /// Event raised when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Event raised when a loan request is submitted.
@@ -154,32 +147,5 @@ namespace BankAppDesktop.ViewModels
         /// <param name="value">The new value.</param>
         /// <param name="propertyName">The name of the property.</param>
         /// <returns>True if the property was set; otherwise, false.</returns>
-        protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (Equals(field, value))
-            {
-                return false;
-            }
-
-            field = value;
-            this.OnPropertyChanged(propertyName);
-
-            // Notify IsValid property change when relevant properties change
-            if (propertyName == nameof(Amount) || propertyName == nameof(RepaymentDate) || propertyName == nameof(IsSubmitting))
-            {
-                this.OnPropertyChanged(nameof(IsValid));
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event for the specified property.
-        /// </summary>
-        /// <param name="propertyName">Name of the property changed.</param>
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

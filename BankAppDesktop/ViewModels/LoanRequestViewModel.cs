@@ -6,7 +6,7 @@
     /// <summary>
     /// ViewModel for loan requests display, containing only data properties.
     /// </summary>
-    public class LoanRequestViewModel : ViewModelBase
+    public partial class LoanRequestViewModel : ViewModelBase
     {
         private ObservableCollection<LoanRequest> loanRequests = [];
         private bool isLoading;

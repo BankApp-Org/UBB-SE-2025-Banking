@@ -22,7 +22,7 @@ namespace BankAppWeb.Models
         /// <summary>
         /// Gets all available report reasons from the enum.
         /// </summary>
-        public List<ReportReason> AvailableReportReasons => 
+        public List<ReportReason> AvailableReportReasons =>
             System.Enum.GetValues<ReportReason>().ToList();
     }
-} 
+}

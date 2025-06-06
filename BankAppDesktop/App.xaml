@@ -58,6 +58,9 @@
             <converters:BoolToFavoriteColorConverter x:Key="BoolToFavoriteColorConverter" />
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
             <converters:EmoticonToEmojiConverter x:Key="EmoticonToEmojiConverter" />
+            <converters:BankAccountDisplayConverter x:Key="BankAccountDisplayConverter"/>
+            <converters:ListEmptyToVisibilityConverter x:Key="ListEmptyToVisibilityConverter"/>
+            <converters:ListNonEmptyToVisibilityConverter x:Key="ListNonEmptyToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -26,7 +26,7 @@
     using Windows.Storage;
     using Windows.Storage.Pickers;
     using WinRT.Interop;
-    public class ChatMessagesViewModel : INotifyPropertyChanged
+    public partial class ChatMessagesViewModel : INotifyPropertyChanged
     {
         private readonly Page page;
 
@@ -198,6 +198,7 @@
             ReportViewModel reportViewModel = new(
                 App.Host.Services.GetService<IMessageService>() ?? throw new InvalidOperationException("MessageService not found"),
                 App.Host.Services.GetService<IAuthenticationService>() ?? throw new InvalidOperationException("AuthenticationService not found"),
+                App.Host.Services.GetService<IUserService>() ?? throw new InvalidOperationException("UserService not found"),
                 this.CurrentChatID,
                 message.Id,
                 message.UserId

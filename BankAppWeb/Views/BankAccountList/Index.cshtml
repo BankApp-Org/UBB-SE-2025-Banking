@@ -1,0 +1,48 @@
+﻿@model List<Common.Models.Bank.BankAccount>
+@{
+	ViewData["Title"] = "Bank Account";
+}
+
+<div class="container mt-5">
+	<!-- Header -->
+	<div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+		<a asp-controller="MainPage" asp-action="Index" class="btn btn-outline-primary">To Main Page</a>
+		<h2 class="text-center flex-grow-1">Bank Accounts</h2>
+	</div>
+
+	<!-- Bank Account List -->
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			@if (Model != null && Model.Any())
+			{
+				<div class="card">
+					<ul class="list-group list-group-flush">
+						@foreach (var account in Model)
+						{
+							<li class="list-group-item d-flex justify-content-between align-items-center">
+								<div>
+									<strong>@account.Name</strong><br />
+									IBAN: @account.Iban
+								</div>
+								<div>
+									<a asp-action="Index" asp-route-iban="@account.Iban" class="btn btn-sm btn-info">View</a> 
+									<a asp-controller="BankAccountUpdate" asp-action="Edit" asp-route-iban="@account.Iban" class="btn btn-sm btn-warning">
+										Bank Account Settings
+									</a>
+								</div>
+							</li>
+						}
+
+
+					</ul>
+				</div>
+			}
+			else
+			{
+				<div class="text-center text-muted mt-4">
+					<h5>No Bank Accounts</h5>
+				</div>
+			}
+		</div>
+	</div>
+</div>

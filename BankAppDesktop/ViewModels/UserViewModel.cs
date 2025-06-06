@@ -6,7 +6,7 @@
     /// <summary>
     /// ViewModel for users, containing only data properties.
     /// </summary>
-    public class UserViewModel : ViewModelBase
+    public partial class UserViewModel : ViewModelBase
     {
         private ObservableCollection<User> users = [];
 

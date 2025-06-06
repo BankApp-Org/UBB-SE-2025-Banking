@@ -33,7 +33,7 @@ namespace BankAppWeb.Pages.News
             Summary = TempData["PreviewSummary"] as string ?? "";
             Content = TempData["PreviewContent"] as string ?? "No content provided.";
             Topic = TempData["PreviewTopic"] as string ?? "General";
-        
+
             // Parse related stocks
             var relatedStocksText = TempData["PreviewRelatedStocks"] as string;
             if (!string.IsNullOrEmpty(relatedStocksText))

@@ -8,7 +8,7 @@ namespace BankAppDesktop.ViewModels
     /// <summary>
     /// ViewModel for tip history display, containing only data properties.
     /// </summary>
-    public class TipHistoryViewModel : ViewModelBase
+    public partial class TipHistoryViewModel : ViewModelBase
     {
         private User? selectedUser;
         private ObservableCollection<Message> messageHistory = [];

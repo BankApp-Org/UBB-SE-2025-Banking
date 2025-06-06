@@ -11,7 +11,7 @@
     using System.Linq;
     using System.Windows.Input;
 
-    public class AddNewMemberViewModel : INotifyPropertyChanged
+    public partial class AddNewMemberViewModel : INotifyPropertyChanged
     {
         private List<User> allUnaddedFriends;
         private IUserService userService;

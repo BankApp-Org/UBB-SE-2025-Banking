@@ -1,0 +1,95 @@
+﻿@model BankAppWeb.Models.MainPageViewModel;
+@{
+    ViewBag.Title = "Loan Shark - Dashboard";
+}
+
+<!-- Menu Dropdown -->
+<div class="dropdown mb-4">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        ☰ Menu
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" asp-action="AccountSettings" asp-controller="MainPage">Account Settings</a></li>
+        <li><a class="dropdown-item" asp-action="Logout" asp-controller="MainPage">Log Out</a></li>
+        <li><a class="dropdown-item" href="#" onclick="window.close();">Exit Loan Shark</a></li>
+        <li><a class="dropdown-item" asp-action="Index" asp-controller="Social">Go To SocialStuff</a></li>
+    </ul>
+</div>
+
+<!-- Welcome Text -->
+<h2 class="text-center mb-4">@Model.WelcomeText</h2>
+<h5 class="text-center mb-4">Current accout: @Model.SelectedAccountIban</h5>
+
+<!-- FlipView Alternative: Dropdown List for Accounts -->
+<div class="text-center mb-4">
+	<div class="d-flex justify-content-center align-items-center mb-2">
+		<form asp-action="SelectBankAccount" method="get" class="d-flex">
+			<select name="iban" class="form-select w-auto" onchange="this.form.submit()">
+                <option value=""> -- Select an account -- </option>
+				@foreach (var account in Model.BankAccounts)
+				{
+					<option value="@account.Iban">@account.Name - @account.Iban</option>
+				}
+			</select>
+			@* <button type="submit" class="btn btn-outline-light ms-2">Select</button> *@
+		</form>
+		<form asp-action="BankAccountDetails" method="post">
+            <input type="hidden" name="iban" value="@Model.SelectedAccountIban" />
+			<button type="submit" class="btn btn-info ms-2">
+				<i class="bi bi-info-circle">i</i>
+			</button>
+		</form>
+	</div>
+
+	<form asp-action="CheckBalance" method="post">
+		<input type="hidden" name="iban" value="@Model.SelectedAccountIban" />
+		<button type="submit" class="btn btn-dark">@Model.BalanceButtonContent</button>
+	</form>
+</div>
+
+
+
+<!-- Action Buttons -->
+<div class="container text-center">
+    <div class="row mb-3">
+        <div class="col">
+            <form asp-action="Transaction" method="post">
+                <button class="btn btn-outline-primary w-100">Transaction</button>
+            </form>
+        </div>
+        <div class="col">
+            <form asp-action="TransactionHistory" method="post">
+                <input type="hidden" name="iban" value="@Model.SelectedAccountIban" />
+
+                <button class="btn btn-outline-primary w-100">Transaction History</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col">
+            <form asp-action="BankAccountSettings" method="post">
+                <input type="hidden" name="iban" value="@Model.SelectedAccountIban" />
+
+                <button class="btn btn-outline-secondary w-100">Bank Account Settings</button>
+            </form>
+        </div>
+        <div class="col">
+            <form asp-action="CreateBankAccount" method="post">
+                <button class="btn btn-outline-secondary w-100">Create Bank Account</button>
+            </form>
+        </div>
+    </div>
+
+    <form asp-action="Loan" method="post" class="mb-3">
+        <button class="btn btn-success">Loan</button>
+    </form>
+</div>
+
+<!-- Display Balance Message -->
+@if (TempData["BalanceMessage"] != null)
+{
+    <div class="alert alert-info text-center mt-4">
+        @TempData["BalanceMessage"]
+    </div>
+}

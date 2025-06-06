@@ -10,7 +10,7 @@ namespace BankAppDesktop.Views.Converters
     using Microsoft.UI.Xaml;
     using Microsoft.UI.Xaml.Data;
 
-    public class CountToVisibilityConverter : IValueConverter
+    public partial class CountToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

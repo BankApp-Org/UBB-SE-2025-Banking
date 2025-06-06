@@ -64,7 +64,7 @@ namespace BankApi.Services.Social
             // Update fields
             existingChat.ChatName = chat.ChatName;
             existingChat.LastUpdated = DateTime.UtcNow;
-            
+
             await _chatRepository.UpdateChatAsync(existingChat);
         }
 
@@ -81,16 +81,16 @@ namespace BankApi.Services.Social
             }
 
             var chat = await _chatRepository.GetChatByIdAsync(chatId);
-            
+
             // Check if user is already in the chat
             if (chat.Users.Any(u => u.Id == user.Id))
             {
                 return false;
             }
-            
+
             chat.Users.Add(user);
             chat.LastUpdated = DateTime.UtcNow;
-            
+
             return await _chatRepository.UpdateChatAsync(chat);
         }
 
@@ -102,17 +102,17 @@ namespace BankApi.Services.Social
             }
 
             var chat = await _chatRepository.GetChatByIdAsync(chatId);
-            
+
             // Check if user is in the chat
             var userToRemove = chat.Users.FirstOrDefault(u => u.Id == user.Id);
             if (userToRemove == null)
             {
                 return false;
             }
-            
+
             chat.Users.Remove(userToRemove);
             chat.LastUpdated = DateTime.UtcNow;
-            
+
             return await _chatRepository.UpdateChatAsync(chat);
         }
     }

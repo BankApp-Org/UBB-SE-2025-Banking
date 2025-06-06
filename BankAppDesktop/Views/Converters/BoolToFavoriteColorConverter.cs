@@ -6,7 +6,7 @@
     using Microsoft.UI.Xaml.Media;
     using Windows.UI;
 
-    internal class BoolToFavoriteColorConverter : IValueConverter
+    internal partial class BoolToFavoriteColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string lang)
         {

@@ -144,4 +144,4 @@ namespace BankAppWeb.ViewModels
             }
         }
     }
-} 
+}

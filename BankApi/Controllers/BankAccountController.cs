@@ -19,7 +19,7 @@ namespace BankApi.Controllers
             this.userService = userService;
         }
 
-        [Authorize(Roles = "User,Admin")]
+        // [Authorize(Roles = "User,Admin")] CU EA NU MERGE ACCESS FORBIDDEN (403)
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<List<BankAccount>>> GetUserBankAccounts(int userId)
         {

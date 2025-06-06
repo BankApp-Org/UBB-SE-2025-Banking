@@ -2,15 +2,14 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using Common.Services;
-using Common.Services.Social;
-using System.Collections.ObjectModel;
-
 namespace BankAppDesktop.ViewModels
 {
     using BankAppDesktop.Commands;
     using Common.Models;
+    using Common.Services;
+    using Common.Services.Social;
     using System;
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Linq;
     using System.Windows.Input;
@@ -35,7 +34,7 @@ namespace BankAppDesktop.ViewModels
     /// <summary>
     /// ViewModel for handling report functionality.
     /// </summary>
-    public class ReportViewModel : IReportViewModel
+    public partial class ReportViewModel : IReportViewModel
     {
         public event Action<string> ShowSuccessDialog = message => { };
         public event Action<string> ShowErrorDialog = message => { };
@@ -43,6 +42,7 @@ namespace BankAppDesktop.ViewModels
 
         private readonly IMessageService messageService;
         private readonly IAuthenticationService authenticationService;
+        private readonly IUserService userService;
         protected readonly int reportedUserId;
         protected readonly int messageId;
         protected readonly int chatId;
@@ -125,10 +125,11 @@ namespace BankAppDesktop.ViewModels
         /// <param name="chatId">The ID of the chat containing the message.</param>
         /// <param name="messageId">The ID of the message being reported.</param>
         /// <param name="reportedUserId">The ID of the reported user.</param>
-        public ReportViewModel(IMessageService messageService, IAuthenticationService authenticationService, int chatId, int messageId, int reportedUserId)
+        public ReportViewModel(IMessageService messageService, IAuthenticationService authenticationService, IUserService userService, int chatId, int messageId, int reportedUserId)
         {
-            this.messageService = messageService;
-            this.authenticationService = authenticationService;
+            this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            this.authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
             this.chatId = chatId;
             this.messageId = messageId;
             this.reportedUserId = reportedUserId;
@@ -161,17 +162,10 @@ namespace BankAppDesktop.ViewModels
                     return;
                 }
 
-                // Get current user CNP
-                var userCnp = this.authenticationService.GetUserCNP();
-
-                // Create a User object for the service call
-                var user = new User
-                {
-                    CNP = userCnp
-                };
+                User currentUser = await this.userService.GetCurrentUserAsync();
 
                 // Submit the report using the message service
-                await this.messageService.ReportMessage(this.chatId, this.messageId, user, this.SelectedReportReason);
+                await this.messageService.ReportMessage(this.chatId, this.messageId, currentUser, this.SelectedReportReason);
 
                 // Show success message and close
                 this.OnShowSuccessDialog("Report submitted successfully.");
@@ -217,7 +211,7 @@ namespace BankAppDesktop.ViewModels
         }
     }
 
-    public class ReportViewModelDemo : IReportViewModel
+    public partial class ReportViewModelDemo : IReportViewModel
     {
         public event Action<string> ShowSuccessDialog = message => { };
         public event Action<string> ShowErrorDialog = message => { };

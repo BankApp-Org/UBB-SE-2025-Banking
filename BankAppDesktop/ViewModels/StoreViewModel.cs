@@ -9,7 +9,7 @@
     /// ViewModel for the store page, managing gem deals and user gem balance UI state.
     /// Contains only data properties and UI state management - business logic handled in code-behind.
     /// </summary>
-    public class StoreViewModel : ViewModelBase
+    public partial class StoreViewModel : ViewModelBase
     {
         private int userGems;
         private ObservableCollection<GemDeal> availableDeals = [];

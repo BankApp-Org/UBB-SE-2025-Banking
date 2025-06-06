@@ -157,5 +157,22 @@ namespace BankApi.Services.Bank
                 throw new Exception($"Error deleting transaction with ID {transactionId}: {ex.Message}", ex);
             }
         }
+
+        public async Task<List<TransactionTypeCountDTO>> GetTransactionTypeCounts(int userId)
+        {
+            try
+            {
+                var counts = await _historyRepository.GetTransactionTypeCountsAsync(userId);
+                return [.. counts.Select(c => new TransactionTypeCountDTO
+                {
+                    TransactionType = c.TransactionType,
+                    Count = c.Count
+                })];
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving transaction type counts for user {userId}: {ex.Message}", ex);
+            }
+        }
     }
 }

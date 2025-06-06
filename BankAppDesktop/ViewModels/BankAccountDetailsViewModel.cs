@@ -13,7 +13,7 @@ namespace BankAppDesktop.ViewModels
     /// <summary>
     /// ViewModel for displaying bank account details
     /// </summary>
-    public class BankAccountDetailsViewModel : INotifyPropertyChanged
+    public partial class BankAccountDetailsViewModel : INotifyPropertyChanged
     {
         /// <summary>
         /// Command for the back button to return to the previous view

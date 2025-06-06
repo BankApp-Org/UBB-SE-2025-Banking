@@ -145,6 +145,8 @@ builder.Services.AddTransient<IMessageService, MessagesProxyService>();
 builder.Services.AddTransient<INotificationService, NotificationProxyService>();
 builder.Services.AddTransient<IBankAccountService, BankAccountProxyService>();
 builder.Services.AddTransient<AuthenticationDelegatingHandler>();
+builder.Services.AddTransient<IBankTransactionService, BankTransactionProxyService>();
+
 
 builder.Services.AddHttpClient<IUserService, UserProxyService>(client =>
 {
@@ -237,6 +239,7 @@ builder.Services.AddHttpClient<IBankAccountService, BankAccountProxyService>(cli
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+builder.Services.AddScoped<WebAuthenticationService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

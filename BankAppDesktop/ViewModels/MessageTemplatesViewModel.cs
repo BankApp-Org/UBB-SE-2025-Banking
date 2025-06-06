@@ -1,13 +1,14 @@
-using BankAppDesktop.Commands;
 using Common.Models.Social;
 using Common.Services.Social;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using BankAppDesktop.Commands;
+using Common.Models;
 
 namespace BankAppDesktop.ViewModels
 {
-    public class MessageTemplatesViewModel : ViewModelBase
+    public partial class MessageTemplatesViewModel : ViewModelBase
     {
         private readonly IMessageService _messageService;
         private ObservableCollection<Message> _messages;
