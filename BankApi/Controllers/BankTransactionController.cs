@@ -106,9 +106,8 @@ namespace BankApi.Controllers
         {
             try
             {
-                throw new NotImplementedException("add a service for CurrencyExchangeRepository to get all exchange rates from the database");
-                //var result = await bankAccountService.GetAllCurrencyExchangeRates(); ///am nevoie de functie care sa ia toate exchange rates din baza de date-> nu exista in service
-                //return Ok(result);
+                var result = await bankAccountService.GetAllExchangeRatesAsync();
+                return Ok(result);
             }
             catch (Exception ex)
             {

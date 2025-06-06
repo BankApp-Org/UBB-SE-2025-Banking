@@ -1,14 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
+using BankAppWeb.Models;
 using Common.Models.Bank;
 using Common.Services.Bank;
-using Common.Services;
-using BankAppWeb.Models;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using Common.Models;
-using Common.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BankAppWeb.Controllers
 {
@@ -22,8 +16,9 @@ namespace BankAppWeb.Controllers
         }
 
 
-        public async Task<IActionResult> Index(int userId)
+        public async Task<IActionResult> Index()
         {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("User not logged in"));
             var accounts = await _bankAccountService.GetUserBankAccounts(userId);
             return this.View(accounts);
         }
@@ -39,13 +34,13 @@ namespace BankAppWeb.Controllers
             if (account == null)
                 return NotFound();
 
-            
-             var model = new BankAccountListModel
-             {
-                 BankAccount = account
-             };
 
-             return RedirectToAction("Edit", new { iban = model.BankAccount.Iban });
+            var model = new BankAccountListModel
+            {
+                BankAccount = account
+            };
+
+            return RedirectToAction("Edit", new { iban = model.BankAccount.Iban });
         }
 
         [HttpGet]
@@ -78,7 +73,22 @@ namespace BankAppWeb.Controllers
                 return View(model);
 
             var account = await _bankAccountService.FindBankAccount(model.Iban);
+            if (account == null)
+                return NotFound();
 
+            // Update account with values from model
+            account.Name = model.Name;
+            account.DailyLimit = model.DailyLimit;
+            account.MaximumPerTransaction = model.MaximumPerTransaction;
+            account.MaximumNrTransactions = model.MaximumNrTransactions;
+
+            // Parse currency if changed
+            if (Enum.TryParse<Currency>(model.Currency, out var currency))
+            {
+                account.Currency = currency;
+            }
+
+            account.Blocked = model.IsBlocked;
 
             await _bankAccountService.UpdateBankAccount(account);
             TempData["SuccessMessage"] = "Account updated successfully.";

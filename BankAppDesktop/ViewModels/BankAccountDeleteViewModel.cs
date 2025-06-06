@@ -1,12 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows.Input;
-using BankAppDesktop.Commands;
+﻿using BankAppDesktop.Commands;
 using Common.Models;
-using Common.Services.Bank;
 using Common.Services;
-using BankAppDesktop.Views.Pages;
-using Microsoft.Extensions.DependencyInjection;
+using Common.Services.Bank;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -16,6 +15,7 @@ namespace BankAppDesktop.ViewModels
     public partial class BankAccountDeleteViewModel : ViewModelBase
     {
         private readonly IBankAccountService _bankAccountService;
+        private readonly IAuthenticationService _authService;
         private string _iban = string.Empty;
         private string _errorMessage = string.Empty;
         private bool _isLoading;
@@ -29,10 +29,11 @@ namespace BankAppDesktop.ViewModels
         public BankAccountDeleteViewModel(IBankAccountService bankAccountService, IAuthenticationService authService)
         {
             _bankAccountService = bankAccountService ?? throw new ArgumentNullException(nameof(bankAccountService));
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _currentUser = authService.GetCurrentUserSession();
             _iban = _currentUser?.CurrentBankAccountIban ?? string.Empty;
             NoCommand = new RelayCommand(_ => OnNoButtonClicked());
-            YesCommand = new RelayCommand(_ => OnYesButtonClicked());
+            YesCommand = new RelayCommand(async _ => await OnYesButtonClickedAsync());
         }
 
         public UserSession? CurrentUser
@@ -59,16 +60,42 @@ namespace BankAppDesktop.ViewModels
             OnClose?.Invoke();
         }
 
-        private void OnYesButtonClicked()
+        private async Task OnYesButtonClickedAsync()
         {
             Debug.WriteLine("Confirm delete");
-            // UNCOMMENT THIS AFTER VERIFY VIEW IS ADDED TO THE PROJECT
-            // var verifyPage = App.Host.Services.GetService<BankAccountVerifyView>();
-            // if (verifyPage != null)
-            // {
-            //    App.MainAppWindow!.MainAppFrame.Content = verifyPage;
-            // }
-            OnClose?.Invoke();
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+
+            try
+            {
+                if (string.IsNullOrEmpty(_iban))
+                {
+                    ErrorMessage = "Invalid account IBAN";
+                    return;
+                }
+
+                // Call service to delete the account
+                bool result = await _bankAccountService.RemoveBankAccount(_iban);
+
+                if (result)
+                {
+                    // Navigate back to account list or main page
+                    OnClose?.Invoke();
+                }
+                else
+                {
+                    ErrorMessage = "Failed to delete account. Please try again.";
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error deleting account: {ex.Message}";
+                Debug.WriteLine($"Error deleting account: {ex}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
     }
 }

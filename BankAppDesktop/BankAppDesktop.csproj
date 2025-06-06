@@ -139,6 +139,9 @@
     <Page Update="Views\Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <None Update="Views\Pages\SendMoneyView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
 	<Page Update="Views\Pages\BankTransactionsHistoryPage.xaml">
 		<Generator>MSBuild:Compile</Generator>
 	</Page>
