@@ -129,6 +129,7 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Views\Pages\BankAccountUpdateView.xaml">
     <Page Update="Views\Pages\CurrencyExchangeTable.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
