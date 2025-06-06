@@ -1,9 +1,11 @@
 ﻿namespace BankAppDesktop.ViewModels
 {
     using Common.Models.Trading;
-    using System.Collections.ObjectModel;    /// <summary>
-                                             /// ViewModel responsible for holding alert data for the UI.
-                                             /// </summary>
+    using System.Collections.ObjectModel;
+
+    /// <summary>
+    /// ViewModel responsible for holding alert data for the UI.
+    /// </summary>
     public class AlertViewModel : ViewModelBase
     {
         private string newAlertName = string.Empty;
@@ -26,9 +28,11 @@
         /// <summary>
         /// Gets or sets the selected stock for this viewmodel.
         /// </summary>
-        public string SelectedStockName { get; set; } = string.Empty;        /// <summary>
-                                                                             /// Gets or sets the user-defined name for the new alert. Bound to a TextBox in the UI.
-                                                                             /// </summary>
+        public string SelectedStockName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the user-defined name for the new alert. Bound to a TextBox in the UI.
+        /// </summary>
         public string NewAlertName
         {
             get => this.newAlertName;

@@ -88,7 +88,12 @@ namespace Common.Services.Proxy
                 throw new Exception("Error creating CSV file", ex);
             }
         }
+        
+        public async Task<List<TransactionTypeCountDTO>> GetTransactionTypeCounts(int userId)
+        {
+            return await _httpClient.GetFromJsonAsync<List<TransactionTypeCountDTO>>($"api/BankTransaction/TransactionTypeCounts?userId={userId}", _jsonOptions) ??
+                throw new InvalidOperationException("Failed to deserialize transaction type counts response.");
+        }
     }
 }
-
 

@@ -21,7 +21,7 @@ namespace BankAppWeb.Controllers
             _authenticationService = authenticationService;
         }
 
-        [AllowAnonymous] 
+        [AllowAnonymous]
         public IActionResult Index(int chatId, int messageId, int reportedUserId)
         {
             var viewModel = new ReportViewModel
@@ -36,7 +36,7 @@ namespace BankAppWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous] 
+        [AllowAnonymous]
         public async Task<IActionResult> Submit(ReportViewModel model)
         {
             try
@@ -49,13 +49,13 @@ namespace BankAppWeb.Controllers
 
                 // Normal demo detection
                 bool isDemoData = model.ChatId == 1 && model.MessageId == 1 && model.ReportedUserId == 1;
-                
+
                 if (isDemoData)
                 {
-                    
+
                     try
                     {
-                        
+
                         if (_authenticationService?.IsUserLoggedIn() == true)
                         {
                             var userCnp = _authenticationService.GetUserCNP();
@@ -63,19 +63,19 @@ namespace BankAppWeb.Controllers
                             await _messageService.ReportMessage(model.ChatId, model.MessageId, user, model.SelectedReportReason);
                         }
                     }
-                    catch {  }
-                    
+                    catch { }
+
                     ViewBag.SuccessMessage = "✅ SUCCESS! Your demo report has been submitted successfully! 🎯";
                     return View("Index", model);
                 }
 
-                
+
                 ViewBag.SuccessMessage = "✅ SUCCESS! Your demo report has been submitted successfully! 🎯";
                 return View("Index", model);
             }
             catch
             {
-                
+
                 ViewBag.SuccessMessage = "✅ SUCCESS! Your demo report has been submitted successfully! 🎯";
                 return View("Index", model);
             }
@@ -88,15 +88,16 @@ namespace BankAppWeb.Controllers
 
         // Demo functionality for presentation
         [HttpPost]
-        [AllowAnonymous]  
+        [AllowAnonymous]
         public async Task<IActionResult> CreateDemo()
         {
             // Redirect to report form with hardcoded demo data
-            return RedirectToAction("Index", new { 
+            return RedirectToAction("Index", new
+            {
                 chatId = 1,         // Hardcoded Chat ID
                 messageId = 1,      // Hardcoded Message ID  
                 reportedUserId = 1  // Hardcoded Reported User ID
             });
         }
     }
-} 
+}

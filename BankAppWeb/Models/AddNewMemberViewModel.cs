@@ -9,7 +9,7 @@ namespace BankAppWeb.Models
         public List<SocialUserDto> UnaddedFriends { get; set; }
         public List<SocialUserDto> NewlyAddedFriends { get; set; }
         public string SearchQuery { get; set; }
-        public int ChatId { get; set; } 
+        public int ChatId { get; set; }
     }
 
     public class FriendDTO

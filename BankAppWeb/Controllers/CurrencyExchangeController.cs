@@ -21,7 +21,7 @@ namespace BankAppWeb.Controllers
                     ToCurrency = rate.ToCurrency.ToString(),
                     ExchangeRate = rate.ExchangeRate,
                 };
-                
+
             }).ToList();
 
             return View(new CurrencyExchangeViewModel

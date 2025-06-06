@@ -1,4 +1,5 @@
 ﻿using Common.Models.Bank;
+using Common.Services.Bank;
 
 namespace BankApi.Repositories.Impl.Bank
 {
@@ -10,5 +11,7 @@ namespace BankApi.Repositories.Impl.Bank
         Task<BankTransaction> GetTransactionByIdAsync(int transactionId);
         Task<List<BankTransaction>> GetTransactionHistoryByIbanAsync(string iban);
         Task UpdateTransactionAsync(BankTransaction transaction);
+
+        Task<List<TransactionTypeCountDTO>> GetTransactionTypeCountsAsync(int userId);
     }
 }

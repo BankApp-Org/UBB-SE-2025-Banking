@@ -1,9 +1,10 @@
-using BankAppDesktop.Commands;
 using Common.Models.Social;
 using Common.Services.Social;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using BankAppDesktop.Commands;
+using Common.Models;
 
 namespace BankAppDesktop.ViewModels
 {

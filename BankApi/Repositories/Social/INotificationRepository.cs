@@ -10,4 +10,4 @@ namespace BankApi.Repositories.Social
         Task<bool> UpdateNotificationAsync(Notification notification);
         Task<bool> DeleteNotificationAsync(int notificationId);
     }
-} 
+}

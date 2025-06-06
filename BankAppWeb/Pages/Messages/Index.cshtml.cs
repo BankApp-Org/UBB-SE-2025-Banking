@@ -48,4 +48,4 @@ namespace BankAppWeb.Pages.Messages
             return RedirectToPage(new { chatId = ViewModel.CurrentChatId });
         }
     }
-} 
+}

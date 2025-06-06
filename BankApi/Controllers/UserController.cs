@@ -135,7 +135,7 @@ namespace BankApi.Controllers
 
         [HttpGet("non-friends")]
         public async Task<ActionResult<List<User>>> GetNonFriends()
-        {             
+        {
             try
             {
                 var userCnp = await this.GetCurrentUserCnp();

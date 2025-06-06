@@ -1,5 +1,7 @@
 ﻿using BankApi.Data;
+using Common.DTOs;
 using Common.Models.Bank;
+using Common.Services.Bank;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Repositories.Impl.Bank
@@ -120,5 +122,26 @@ namespace BankApi.Repositories.Impl.Bank
                 throw new Exception($"Error creating transaction: {ex.Message}", ex);
             }
         }
+
+        public async Task<List<TransactionTypeCountDTO>> GetTransactionTypeCountsAsync(int userId)
+        {
+            try
+            {
+                return await _context.BankTransactions
+                    .Where(t => t.ReceiverAccount.UserId == userId || t.SenderAccount.UserId == userId)
+                    .GroupBy(t => new TransactionTypeDTO() { TransactionType = t.TransactionType, Description = t.TransactionDescription, Id = t.TransactionId })
+                    .Select(g => new TransactionTypeCountDTO
+                    {
+                        TransactionType = g.Key,
+                        Count = g.Count()
+                    })
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving transaction type counts for user {userId}: {ex.Message}", ex);
+            }
+        }
+
     }
 }
