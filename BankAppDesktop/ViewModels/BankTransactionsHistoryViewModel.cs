@@ -17,6 +17,9 @@ namespace BankAppDesktop.ViewModels
     {
         private readonly IBankTransactionService _bankTranscationHistoryService;
         private readonly IAuthenticationService authService;
+
+        public string CurrentIban { get; set; }
+
         public BankTransactionsHistoryViewModel(IBankTransactionService s, IAuthenticationService authService)
         {
             this._bankTranscationHistoryService = s;
@@ -68,7 +71,7 @@ namespace BankAppDesktop.ViewModels
         // CreateCSV() creates a CSV file with the transactions
         public async void CreateCSV()
         {
-            string iban = authService.GetCurrentUserSession()?.CurrentBankAccountIban ?? string.Empty;
+            string iban = CurrentIban;
 
             bool answer = await ((BankTransactionProxyService)_bankTranscationHistoryService).CreateCSV(iban);
         }
@@ -85,7 +88,7 @@ namespace BankAppDesktop.ViewModels
 
         private async Task<List<BankTransaction>> GetAllTransactions(string? filter)
         {
-            string iban = authService.GetCurrentUserSession()?.CurrentBankAccountIban ?? string.Empty;
+            string iban = CurrentIban;
 
             if (string.IsNullOrEmpty(iban))
             {

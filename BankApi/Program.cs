@@ -142,6 +142,7 @@ builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddScoped<IBillSplitReportService, BillSplitReportService>();
 builder.Services.AddScoped<IChatReportService, ChatReportService>();
 builder.Services.AddScoped<ICreditHistoryService, HistoryService>();
+builder.Services.AddScoped<ICreditScoringService, CreditScoringService>();
 builder.Services.AddScoped<IInvestmentsService, InvestmentsService>();
 builder.Services.AddScoped<ILoanRequestService, LoanRequestService>();
 builder.Services.AddScoped<ILoanService, LoanService>();

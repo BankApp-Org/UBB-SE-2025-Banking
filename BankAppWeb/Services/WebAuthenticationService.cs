@@ -115,7 +115,7 @@ namespace BankAppWeb.Services
             }
 
             var cnpClaim = user.Claims.FirstOrDefault(c => c.Type == "CNP");
-            return cnpClaim?.Value ?? throw new InvalidOperationException("CNP claim not found in token");
+            return cnpClaim?.Value; //?? throw new InvalidOperationException("CNP claim not found in token");
         }
 
         public bool IsUserAdmin()

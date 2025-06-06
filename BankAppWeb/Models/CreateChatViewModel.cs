@@ -14,7 +14,7 @@ namespace BankAppWeb.Models
 
         public List<UserForChatViewModel> AvailableUsers { get; set; } = [];
 
-        public string SearchQuery { get; set; }  // search functionality
+        public string? SearchQuery { get; set; } = string.Empty;
     }
 
     public class UserForChatViewModel

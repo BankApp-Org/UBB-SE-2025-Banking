@@ -81,7 +81,7 @@ namespace BankAppDesktop
 
             this.serviceProvider = serviceProvider;
 
-            this.MainFrame.Content = this.serviceProvider.GetRequiredService<HomePage>();
+            this.MainFrame.Content = this.serviceProvider.GetRequiredService<MainPage>();
             this.authenticationService = this.serviceProvider.GetRequiredService<IAuthenticationService>();
             this.authenticationService.UserLoggedIn += this.AuthenticationService_UserLoggedIn;
             this.authenticationService.UserLoggedOut += this.AuthenticationService_UserLoggedOut;
@@ -137,6 +137,7 @@ namespace BankAppDesktop
                     "BankAccountCreateView" => this.serviceProvider.GetRequiredService<BankAccountCreateView>(),
                     "NotificationsPage" => this.serviceProvider.GetRequiredService<NotificationsPage>(),
                     "BankTransactionsHistoryPage" => this.serviceProvider.GetRequiredService<BankTransactionsHistoryPage>(),
+                    "MainPage" => this.serviceProvider.GetRequiredService<MainPage>(),
                     _ => throw new InvalidOperationException($"Unknown navigation item: {invokedItemTag}")
                 };
             }

@@ -36,6 +36,8 @@ namespace BankApi.Repositories.Impl.Social
             {
                 throw new ArgumentNullException(nameof(chat), "Chat cannot be null.");
             }
+            chat.Users.ForEach(u => _context.Users.Attach(u));
+            chat.Messages.ForEach(u => _context.Messages.Attach(u));
             _context.Chats.Add(chat);
             await _context.SaveChangesAsync();
             return chat;
