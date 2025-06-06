@@ -9,12 +9,12 @@ namespace BankApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SocialUserController : ControllerBase
+    public class FriendController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly IChatService _chatService;
 
-        public SocialUserController(IUserService us)
+        public FriendController(IUserService us)
         {
             //IRepository repository = new Repository();
             //INotificationService notificationService = new NotificationService(repository);

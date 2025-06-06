@@ -239,6 +239,10 @@ builder.Services.AddHttpClient<IBankAccountService, BankAccountProxyService>(cli
 {
     client.BaseAddress = new Uri(apiBaseUrl);
 }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+builder.Services.AddHttpClient<IBankTransactionService, BankTransactionProxyService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 builder.Services.AddScoped<WebAuthenticationService>();
 var app = builder.Build();
 
@@ -263,7 +267,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Homepage}/{action=Index}/{id?}");
+    pattern: "{controller=MainPage}/{action=Index}");
 
 app.MapRazorPages();
 

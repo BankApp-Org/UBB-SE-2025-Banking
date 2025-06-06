@@ -17,10 +17,11 @@ namespace Common.Services.Proxy
         public string Message { get; set; } = string.Empty;
     }
 
-    public class UserProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions) : IProxyService, IUserService
+    public class UserProxyService(HttpClient httpClient, IOptions<JsonOptions> jsonOptions, IAuthenticationService authService) : IProxyService, IUserService
     {
         private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         private readonly JsonSerializerOptions _jsonOptions = jsonOptions.Value.SerializerOptions ?? throw new ArgumentNullException(nameof(jsonOptions), "JsonSerializerOptions cannot be null.");
+        private readonly IAuthenticationService _authService = authService ?? throw new ArgumentNullException(nameof(authService));
 
         public async Task CreateUser(User user)
         {
@@ -159,7 +160,8 @@ namespace Common.Services.Proxy
             {
                 throw new ArgumentNullException(nameof(friend), "Friend cannot be null.");
             }
-            var response = await _httpClient.PostAsJsonAsync($"api/User/{friend.CNP}/friends", friend, _jsonOptions);
+            string userCNP = _authService.GetUserCNP();
+            var response = await _httpClient.PostAsJsonAsync($"api/Friend/{userCNP}/friends/{friend.CNP}", friend, _jsonOptions);
             response.EnsureSuccessStatusCode();
         }
 

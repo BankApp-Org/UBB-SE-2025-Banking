@@ -19,8 +19,8 @@ namespace BankApi.Controllers
             _transactionHistoryService = transactionHistoryService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<Collection<BankTransaction>>> GetAllTransactions([FromBody] TransactionFilters filters)
+        [HttpPost]
+        public async Task<ActionResult<List<BankTransaction>>> GetAllTransactions([FromBody] TransactionFilters filters)
         {
             try
             {

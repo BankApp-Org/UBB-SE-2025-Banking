@@ -42,7 +42,8 @@ namespace BankAppWeb.Controllers
                     {
                         Id = u.Id,
                         FirstName = u.FirstName,
-                        PhoneNumber = u.PhoneNumber?.ToString()
+                        PhoneNumber = u.PhoneNumber?.ToString(),
+                        CNP = u.CNP
                     }).ToList()
             };
 
@@ -53,8 +54,8 @@ namespace BankAppWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> AddFriend(string userCNP)
         {
-            var currentUser = await _userService.GetCurrentUserAsync();
-            var user = (await _userService.GetUserByCnpAsync(userCNP));
+            //var currentUser = await _userService.GetCurrentUserAsync();
+            var user = await _userService.GetUserByCnpAsync(userCNP);
             if (user != null)
             {
                 await _userService.AddFriend(user);

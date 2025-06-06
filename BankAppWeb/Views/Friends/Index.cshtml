@@ -89,7 +89,7 @@
                                         <div class="text-muted" style="font-size: 12px;">@user.PhoneNumber</div>
                                     </div>
                                     <form asp-action="AddFriend" asp-controller="Friends" method="post">
-                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <input type="hidden" name="userCNP" value="@user.CNP" />
                                         <button type="submit" class="btn btn-primary btn-sm">+</button>
                                     </form>
                                 </li>

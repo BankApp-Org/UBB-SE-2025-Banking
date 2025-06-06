@@ -11,7 +11,6 @@ using Common.Models.Bank;
 
 namespace BankAppWeb.Controllers
 {
-    [Authorize]
     public class MainPageController : Controller
     {
         private readonly IBankAccountService _mainPageService;
@@ -34,7 +33,7 @@ namespace BankAppWeb.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? SelectedAccountIban)
+        public async Task<IActionResult> Index(string? SelectedAccountIban = null)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

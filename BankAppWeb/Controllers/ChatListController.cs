@@ -20,8 +20,8 @@ namespace BankAppWeb.Controllers
         public async Task<IActionResult> Index(string searchQuery = "")
         {
             var viewModel = new ChatListViewModel { SearchQuery = searchQuery };
-            var user = this._userService.GetCurrentUserAsync();
-            var chats = await this._chatService.GetChatsForUser(user.Id);
+            var user = await this._userService.GetCurrentUserAsync();
+            var chats = user.Chats;
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
