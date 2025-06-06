@@ -2,6 +2,7 @@ namespace BankAppDesktop.Views.Pages
 {
     using BankAppDesktop.ViewModels;
     using Common.Models;
+    using Common.Models.Bank;
     using Common.Models.Trading;
     using Common.Services;
     using Common.Services.Bank;
@@ -86,17 +87,15 @@ namespace BankAppDesktop.Views.Pages
             return _authService.IsUserLoggedIn() ? _authService.GetUserCNP() : null;
         }
 
-        private async void GetUserBankAccountsAsync()
+        private async Task GetUserBankAccountsAsync()
         {
             if (!_authService.IsUserLoggedIn())
             {
                 return;
             }
-            // TODO: Get from serice
             string userCnp = _authService.GetCurrentUserSession().UserId;
 
             _viewModel.UserBankAccounts = await _bankAccountService.GetUserBankAccounts(int.Parse(userCnp));
-            return;
         }
 
         private async void OnBuyClicked(object sender, RoutedEventArgs e)
@@ -107,7 +106,7 @@ namespace BankAppDesktop.Views.Pages
                 return;
             }
 
-            GetUserBankAccountsAsync();
+            await GetUserBankAccountsAsync();
 
             if (sender is Button button && button.CommandParameter is GemDeal selectedDeal)
             {
@@ -121,6 +120,7 @@ namespace BankAppDesktop.Views.Pages
                 {
                     ItemsSource = _viewModel.UserBankAccounts,
                     SelectedIndex = 0,
+                    DisplayMemberPath = "Name",
                 };
 
                 StackPanel dialogContent = new();
@@ -139,7 +139,7 @@ namespace BankAppDesktop.Views.Pages
                 ContentDialogResult result = await confirmDialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    if (bankAccountDropdown.SelectedItem is not string selectedAccount)
+                    if (bankAccountDropdown.SelectedItem is not BankAccount selectedAccount)
                     {
                         this.ShowErrorDialog("No bank account selected.");
                         return;
@@ -153,7 +153,7 @@ namespace BankAppDesktop.Views.Pages
                             ShowErrorDialog("User session error.");
                             return;
                         }
-                        string purchaseResult = await _storeService.BuyGems(selectedDeal, selectedAccount, userCnp);
+                        string purchaseResult = await _storeService.BuyGems(selectedDeal, selectedAccount.Id.ToString(), userCnp);
                         this.ShowSuccessDialog(purchaseResult);
                         _viewModel.UserGems = await _storeService.GetUserGemBalanceAsync(userCnp);
                     }
