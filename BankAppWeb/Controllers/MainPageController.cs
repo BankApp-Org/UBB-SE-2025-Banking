@@ -31,7 +31,7 @@ namespace BankAppWeb.Controllers
             //    HttpContext.Session.SetString("current_bank_account_iban", iban);
             //}
 
-            return RedirectToAction("Index", new { SelectedAccountIban = iban});
+            return RedirectToAction("Index", new { SelectedAccountIban = iban });
         }
 
 
@@ -40,7 +40,7 @@ namespace BankAppWeb.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(userId))
             {
                 return NotFound();
             }
@@ -53,14 +53,14 @@ namespace BankAppWeb.Controllers
             if (string.IsNullOrEmpty(SelectedAccountIban) && accounts.Count > 0)
             {
                 TempData["SelectedAccountIban"] = accounts[0].Iban;
-            } 
+            }
             else
             {
                 TempData["SelectedAccountIban"] = SelectedAccountIban;
             }
 
             string username = User.FindFirstValue("FirstName");
-            
+
             // Get user information including credit score
             var currentUser = await _userService.GetCurrentUserAsync();
             int creditScore = currentUser?.CreditScore ?? 300; // Default to minimum if not found
@@ -74,14 +74,14 @@ namespace BankAppWeb.Controllers
             };
 
             var vm = new MainPageViewModel
-                {
-                    WelcomeText = $"Welcome, {username}!",
-                    BankAccounts = new List<BankAccount>(accounts),
-                    BalanceButtonContent = TempData["BalanceButtonContent"]?.ToString() ?? "Check Balance",
-                    SelectedAccountIban = TempData["SelectedAccountIban"]?.ToString() ?? "INVALID IBAN",
-                    CreditScore = creditScore,
-                    CreditScoreDescription = creditScoreDescription
-                };
+            {
+                WelcomeText = $"Welcome, {username}!",
+                BankAccounts = new List<BankAccount>(accounts),
+                BalanceButtonContent = TempData["BalanceButtonContent"]?.ToString() ?? "Check Balance",
+                SelectedAccountIban = TempData["SelectedAccountIban"]?.ToString() ?? "INVALID IBAN",
+                CreditScore = creditScore,
+                CreditScoreDescription = creditScoreDescription
+            };
 
             return View("Index", vm);
         }
@@ -116,7 +116,7 @@ namespace BankAppWeb.Controllers
             }
 
             // No route values passed
-            return RedirectToAction("Index","BankAccountDetails", new { iban });
+            return RedirectToAction("Index", "BankAccountDetails", new { iban });
         }
 
 
@@ -129,7 +129,7 @@ namespace BankAppWeb.Controllers
 
 
             // DE VAZUT PE VIITOR
-            return RedirectToAction("Index", "BankTransactions"); 
+            return RedirectToAction("Index", "BankTransactions");
         }
 
         [HttpPost]
@@ -139,14 +139,14 @@ namespace BankAppWeb.Controllers
             if (string.IsNullOrEmpty(iban))
                 return RedirectToAction("Index");
 
-            return RedirectToAction("Index", "BankTransactionsHistory", new {IBAN = iban}); 
+            return RedirectToAction("Index", "BankTransactionsHistory", new { IBAN = iban });
         }
 
         [HttpPost]
         public IActionResult BankAccountSettings(string iban)
         {
             //var iban = HttpContext.Session.GetString("current_bank_account_iban");
-           
+
             if (string.IsNullOrEmpty(iban))
                 return RedirectToAction("Index");
 

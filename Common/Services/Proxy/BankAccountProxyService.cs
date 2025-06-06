@@ -18,15 +18,15 @@ namespace Common.Services.Proxy
                 throw new InvalidOperationException("Failed to deserialize bank accounts response.");
         }
 
-        public async Task<BankAccount?> FindBankAccount(string iban)
+        public async Task<BankAccount> FindBankAccount(string iban)
         {
             try
             {
-                return await _httpClient.GetFromJsonAsync<BankAccount>($"api/BankAccount/{iban}", _jsonOptions);
+                return await _httpClient.GetFromJsonAsync<BankAccount>($"api/BankAccount/{iban}", _jsonOptions) ?? throw new Exception("Bank account deserialization failed");
             }
             catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                return null;
+                throw new Exception($"Account with iban: {iban} not found");
             }
         }
 

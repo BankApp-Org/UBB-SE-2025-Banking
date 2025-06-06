@@ -26,7 +26,7 @@ namespace Common.Services.Proxy
             Debug.WriteLine($"Creating notification: {JsonSerializer.Serialize(dto, _jsonOptions)}");
             var response = await _httpClient.PostAsJsonAsync("api/Notification/notification", dto, _jsonOptions);
             Debug.WriteLine($"Create notification response: {response.StatusCode}");
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
@@ -40,14 +40,14 @@ namespace Common.Services.Proxy
             Debug.WriteLine($"Getting notification by ID: {notificationId}");
             var response = await _httpClient.GetAsync($"api/Notification/{notificationId}");
             Debug.WriteLine($"Get notification by ID response: {response.StatusCode}");
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 Debug.WriteLine($"Error response content: {errorContent}");
             }
             response.EnsureSuccessStatusCode();
-            
+
             var notification = await response.Content.ReadFromJsonAsync<Notification>(_jsonOptions);
             Debug.WriteLine($"Received notification: {JsonSerializer.Serialize(notification, _jsonOptions)}");
             return notification ?? throw new InvalidOperationException("Failed to deserialize notification response.");
@@ -57,10 +57,10 @@ namespace Common.Services.Proxy
         {
             Debug.WriteLine($"Getting notifications for user ID: {userId}");
             Debug.WriteLine($"Request URL: {_httpClient.BaseAddress}api/Notification/user/{userId}");
-            
+
             var response = await _httpClient.GetAsync($"api/Notification/user/{userId}");
             Debug.WriteLine($"Get notifications response: {response.StatusCode}");
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
@@ -78,7 +78,7 @@ namespace Common.Services.Proxy
             Debug.WriteLine($"Marking notification {notificationId} as read for user {userId}");
             var response = await _httpClient.PostAsync($"api/Notification/clear/{notificationId}", null);
             Debug.WriteLine($"Mark notification as read response: {response.StatusCode}");
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
@@ -92,7 +92,7 @@ namespace Common.Services.Proxy
             Debug.WriteLine($"Marking all notifications as read for user {userId}");
             var response = await _httpClient.PostAsync($"api/Notification/clear-all/{userId}", null);
             Debug.WriteLine($"Mark all notifications as read response: {response.StatusCode}");
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();

@@ -77,4 +77,4 @@ namespace Common.Services.Proxy
             return JsonSerializer.Deserialize<int>(result, _jsonOptions);
         }
     }
-} 
+}

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Seeders
 {
-    public class CurrencyExchangeSeeder: TableSeeder
+    public class CurrencyExchangeSeeder : TableSeeder
     {
         public CurrencyExchangeSeeder(IConfiguration configuration, IServiceProvider serviceProvider)
             : base(configuration, serviceProvider)

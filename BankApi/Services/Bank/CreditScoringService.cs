@@ -130,10 +130,10 @@ namespace BankApi.Services.Bank
             if (user == null) return 0;
 
             int impact = 0;
-            
+
             // Gem trading algorithm based on risk assessment
             double riskFactor = CalculateGemRiskFactor(gemAmount, transactionValue, user.Income);
-            
+
             if (isBuying)
             {
                 // Buying gems - assess spending behavior
@@ -242,19 +242,19 @@ namespace BankApi.Services.Bank
             if (user == null) return DEFAULT_CREDIT_SCORE;
 
             int baseScore = DEFAULT_CREDIT_SCORE;
-            
+
             // Factor 1: Payment history (35% weight)
             int paymentHistoryScore = await CalculatePaymentHistoryScore(userCnp);
-            
+
             // Factor 2: Credit utilization (30% weight)
             int utilizationScore = await CalculateCreditUtilizationScore(userCnp);
-            
+
             // Factor 3: Length of credit history (15% weight)
             int historyLengthScore = await CalculateCreditHistoryLengthScore(userCnp);
-            
+
             // Factor 4: Types of credit (10% weight)
             int creditMixScore = await CalculateCreditMixScore(userCnp);
-            
+
             // Factor 5: New credit inquiries (10% weight)
             int newCreditScore = await CalculateNewCreditScore(userCnp);
 
@@ -313,7 +313,7 @@ namespace BankApi.Services.Bank
         private async Task<int> GetRecentTransactionCount(string userCnp, TransactionType type, int days)
         {
             var transactions = await _bankTransactionRepository.GetAllTransactionsAsync();
-            return transactions.Count(t => 
+            return transactions.Count(t =>
                 (t.SenderIban?.Contains(userCnp) == true || t.ReceiverIban?.Contains(userCnp) == true) &&
                 t.TransactionType == type &&
                 t.TransactionDatetime >= DateTime.UtcNow.AddDays(-days));
@@ -322,7 +322,7 @@ namespace BankApi.Services.Bank
         private async Task<int> GetTransactionFrequency(string userCnp, int days)
         {
             var transactions = await _bankTransactionRepository.GetAllTransactionsAsync();
-            return transactions.Count(t => 
+            return transactions.Count(t =>
                 (t.SenderIban?.Contains(userCnp) == true || t.ReceiverIban?.Contains(userCnp) == true) &&
                 t.TransactionDatetime >= DateTime.UtcNow.AddDays(-days));
         }
@@ -351,7 +351,7 @@ namespace BankApi.Services.Bank
         private async Task<int> GetRecentStockTransactionCount(string userCnp, int days)
         {
             var transactions = await _stockTransactionRepository.getAllTransactions();
-            return transactions.Count(t => 
+            return transactions.Count(t =>
                 t.AuthorCNP == userCnp &&
                 t.Date >= DateTime.UtcNow.AddDays(-days));
         }
@@ -381,7 +381,7 @@ namespace BankApi.Services.Bank
 
             // Calculate based on balance vs income ratio
             double utilizationRatio = user.Income > 0 ? (double)user.Balance / user.Income : 0;
-            
+
             if (utilizationRatio < 0.1) return 800; // Very low utilization
             if (utilizationRatio < 0.3) return 750; // Good utilization
             if (utilizationRatio < 0.5) return 650; // Moderate utilization
@@ -431,4 +431,4 @@ namespace BankApi.Services.Bank
             };
         }
     }
-} 
+}

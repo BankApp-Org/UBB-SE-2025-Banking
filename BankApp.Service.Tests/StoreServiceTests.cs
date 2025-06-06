@@ -4,6 +4,7 @@ using BankApi.Services.Trading;
 using Common.Exceptions;
 using Common.Models;
 using Common.Models.Trading;
+using Common.Services.Bank;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -19,19 +20,22 @@ namespace BankApp.Service.Tests
         private Mock<IGemStoreRepository> _storeRepoMock;
         private Mock<IUserRepository> _userRepoMock;
 
+        private Mock<ICreditScoringService> _creditScoringServiceMock;
+
         private const string ValidUserCNP = "1234567890123";
         private const string ValidAccountId = "acc-001";
 
         [TestInitialize]
         public void Setup()
         {
-            _storeRepoMock = new Mock<IGemStoreRepository>();
-            _userRepoMock = new Mock<IUserRepository>();
+            _storeRepoMock = new();
+            _userRepoMock = new();
+            _creditScoringServiceMock = new();
         }
 
-        private TestableStoreService CreateService(bool transactionShouldSucceed = true) => new(_storeRepoMock.Object, _userRepoMock.Object, transactionShouldSucceed);
+        private TestableStoreService CreateService(bool transactionShouldSucceed = true) => new(_storeRepoMock.Object, _userRepoMock.Object, _creditScoringServiceMock.Object, transactionShouldSucceed);
 
-        private class TestableStoreService(IGemStoreRepository repo, IUserRepository userRepo, bool transactionResult) : StoreService(repo, userRepo)
+        private class TestableStoreService(IGemStoreRepository repo, IUserRepository userRepo, ICreditScoringService scoringService, bool transactionResult) : StoreService(repo, userRepo, scoringService)
         {
             private readonly bool _transactionResult = transactionResult;
 

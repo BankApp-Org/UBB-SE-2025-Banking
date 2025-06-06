@@ -83,7 +83,7 @@
                 if (loan.MonthlyPaymentsCompleted >= loan.NumberOfMonths)
                 {
                     loan.Status = "completed";
-                    
+
                     // Apply credit score impact for completing loan
                     await ApplyLoanCompletionImpactAsync(user.CNP, loan);
                 }
@@ -102,7 +102,7 @@
                 if (DateTime.Today > loan.RepaymentDate && loan.Status == "active")
                 {
                     loan.Status = "overdue";
-                    
+
                     // Apply negative credit score impact for overdue loan
                     await ApplyLoanOverdueImpactAsync(user.CNP, loan);
                 }
@@ -111,7 +111,7 @@
                     if (loan.MonthlyPaymentsCompleted >= loan.NumberOfMonths)
                     {
                         loan.Status = "completed";
-                        
+
                         // Apply credit score impact for completing overdue loan
                         await ApplyLoanCompletionImpactAsync(user.CNP, loan);
                     }
@@ -138,16 +138,16 @@
             Loan loan = await loanRepository.GetLoanByIdAsync(loanID);
             loan.MonthlyPaymentsCompleted++;
             loan.RepaidAmount += loan.MonthlyPaymentAmount + penalty; // Assuming penalty is part of the repayment
-            
+
             bool isOnTime = penalty == 0; // No penalty means on-time payment
-            
+
             // Apply credit score impact for loan payment
             await ApplyLoanPaymentImpactAsync(loan.UserCnp, loan, loan.MonthlyPaymentAmount + penalty, isOnTime);
-            
+
             if (loan.MonthlyPaymentsCompleted >= loan.NumberOfMonths)
             {
                 loan.Status = "completed";
-                
+
                 // Apply additional credit score impact for completing loan
                 await ApplyLoanCompletionImpactAsync(loan.UserCnp, loan);
             }
@@ -168,16 +168,16 @@
 
             decimal previousRepaidAmount = loan.RepaidAmount;
             loan.RepaidAmount += amount;
-            
+
             bool isOnTime = loan.Status != "overdue";
-            
+
             // Apply credit score impact for loan payment
             await ApplyLoanPaymentImpactAsync(loan.UserCnp, loan, amount, isOnTime);
-            
+
             if (loan.RepaidAmount >= loan.LoanAmount + loan.Penalty)
             {
                 loan.Status = "completed";
-                
+
                 // Apply additional credit score impact for completing loan
                 await ApplyLoanCompletionImpactAsync(loan.UserCnp, loan);
             }
@@ -197,8 +197,8 @@
                 // Taking out a loan has a small negative impact initially
                 int currentScore = await creditScoringService.GetCurrentCreditScoreAsync(userCnp);
                 int newScore = currentScore - 5; // Small penalty for new debt
-                
-                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore, 
+
+                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore,
                     $"New loan application: {loan.LoanAmount:C}");
             }
             catch (Exception ex)
@@ -212,16 +212,16 @@
             try
             {
                 int impact = await creditScoringService.CalculateLoanPaymentImpactAsync(userCnp, loan, paymentAmount, isOnTime);
-                
+
                 if (impact != 0)
                 {
                     int currentScore = await creditScoringService.GetCurrentCreditScoreAsync(userCnp);
                     int newScore = currentScore + impact;
-                    
-                    string reason = isOnTime 
+
+                    string reason = isOnTime
                         ? $"On-time loan payment: {paymentAmount:C}"
                         : $"Late loan payment: {paymentAmount:C}";
-                    
+
                     await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore, reason);
                 }
             }
@@ -239,8 +239,8 @@
                 int currentScore = await creditScoringService.GetCurrentCreditScoreAsync(userCnp);
                 int bonusPoints = loan.Status == "overdue" ? 10 : 20; // Less bonus if it was overdue
                 int newScore = currentScore + bonusPoints;
-                
-                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore, 
+
+                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore,
                     $"Loan completion: {loan.LoanAmount:C}");
             }
             catch (Exception ex)
@@ -257,8 +257,8 @@
                 int currentScore = await creditScoringService.GetCurrentCreditScoreAsync(userCnp);
                 int penalty = -30; // Significant penalty for overdue
                 int newScore = currentScore + penalty;
-                
-                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore, 
+
+                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore,
                     $"Loan overdue: {loan.LoanAmount:C}");
             }
             catch (Exception ex)

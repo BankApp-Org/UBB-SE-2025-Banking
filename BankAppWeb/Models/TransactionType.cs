@@ -8,4 +8,4 @@ namespace BankAppWeb.Models
         public string Category { get; set; }
         public bool IsActive { get; set; }
     }
-} 
+}

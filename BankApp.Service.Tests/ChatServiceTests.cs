@@ -8,10 +8,12 @@ using Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 
 namespace BankApp.Service.Tests
 {
     [TestClass]
+    [SupportedOSPlatform("windows10.0.26100.0")]
     public class ChatServiceTests
     {
         private Mock<IChatRepository> _chatRepoMock;
@@ -175,4 +177,4 @@ namespace BankApp.Service.Tests
             await _service.RemoveUserFromChat(1, null);
         }
     }
-} 
+}

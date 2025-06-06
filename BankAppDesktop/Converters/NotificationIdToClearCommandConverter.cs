@@ -32,4 +32,4 @@ namespace BankAppDesktop.Converters
             throw new NotImplementedException();
         }
     }
-} 
+}

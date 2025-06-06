@@ -78,4 +78,4 @@ namespace BankAppWeb.Controllers
             }
         }
     }
-} 
+}

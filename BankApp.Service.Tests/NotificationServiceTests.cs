@@ -8,10 +8,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Common.Models;
+using System.Runtime.Versioning;
 
 namespace BankApp.Service.Tests
 {
     [TestClass]
+    [SupportedOSPlatform("windows10.0.26100.0")]
     public class NotificationServiceTests
     {
         private Mock<INotificationRepository> _notificationRepoMock;
@@ -100,4 +102,4 @@ namespace BankApp.Service.Tests
             _notificationRepoMock.Verify(r => r.DeleteNotificationAsync(2), Times.Once);
         }
     }
-} 
+}

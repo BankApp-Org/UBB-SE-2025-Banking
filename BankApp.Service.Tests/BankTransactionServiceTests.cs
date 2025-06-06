@@ -9,22 +9,26 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using Common.Models;
+using System.Runtime.Versioning;
 
 namespace BankApp.Service.Tests
 {
     [TestClass]
+    [SupportedOSPlatform("windows10.0.26100.0")]
     public class BankTransactionServiceTests
     {
         private Mock<IBankTransactionRepository> _transactionRepoMock;
         private Mock<IBankTransactionHistoryRepository> _historyRepoMock;
+        private Mock<ICreditScoringService> _creditScoringServiceMock;
         private BankTransactionService _service;
 
         [TestInitialize]
         public void Setup()
         {
-            _transactionRepoMock = new Mock<IBankTransactionRepository>();
-            _historyRepoMock = new Mock<IBankTransactionHistoryRepository>();
-            _service = new BankTransactionService(_transactionRepoMock.Object, _historyRepoMock.Object);
+            _transactionRepoMock = new();
+            _historyRepoMock = new();
+            _creditScoringServiceMock = new();
+            _service = new BankTransactionService(_transactionRepoMock.Object, _historyRepoMock.Object, _creditScoringServiceMock.Object);
         }
 
         private BankAccount CreateValidBankAccount(string iban = "IBAN1", int userId = 1)
@@ -140,4 +144,4 @@ namespace BankApp.Service.Tests
             await _service.UpdateTransaction(null);
         }
     }
-} 
+}

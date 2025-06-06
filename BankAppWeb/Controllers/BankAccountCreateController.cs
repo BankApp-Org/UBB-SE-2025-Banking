@@ -98,4 +98,4 @@ namespace BankAppWeb.Controllers
             return RedirectToAction("Index", "MainPage");
         }
     }
-} 
+}

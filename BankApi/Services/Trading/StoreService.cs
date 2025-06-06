@@ -100,15 +100,15 @@
             try
             {
                 int impact = await _creditScoringService.CalculateGemTransactionImpactAsync(userCnp, isBuying, gemAmount, transactionValue);
-                
+
                 if (impact != 0)
                 {
                     int currentScore = await _creditScoringService.GetCurrentCreditScoreAsync(userCnp);
                     int newScore = currentScore + impact;
-                    
+
                     string action = isBuying ? "Purchased" : "Sold";
                     string reason = $"{action} {gemAmount} gems for {transactionValue:C}";
-                    
+
                     await _creditScoringService.UpdateCreditScoreAsync(userCnp, newScore, reason);
                 }
             }

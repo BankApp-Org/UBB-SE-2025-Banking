@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using Common.Models;
+using System.Runtime.Versioning;
 
 namespace BankApp.Service.Tests
 {
     [TestClass]
+    [SupportedOSPlatform("windows10.0.26100.0")]
     public class BankAccountServiceTests
     {
         private Mock<IBankAccountRepository> _bankAccountRepoMock;
@@ -158,4 +160,4 @@ namespace BankApp.Service.Tests
             await _service.UpdateBankAccount(account);
         }
     }
-} 
+}
