@@ -113,10 +113,13 @@
 
     <None Remove="Views\Pages\BankAccountListView.xaml" />
 
+    <None Remove="Views\Pages\BankTransactionsPage.xaml" />
+
     <None Remove="Views\Pages\CreateChatPage.xaml" />
-    <None Remove="Views\Pages\BankTransactionsWindow.xaml" />
+    <None Remove="Views\Pages\CurrencyExchangeTable.xaml" />
     <None Remove="Views\Pages\GenerateTransferPage.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
+    <None Remove="Views\Pages\MainPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BankApi\BankApi.csproj" />
@@ -127,6 +130,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Views\Pages\BankAccountUpdateView.xaml">
+    <Page Update="Views\Pages\CurrencyExchangeTable.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\BankTransactionsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\Pages\MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Views\Pages\SendMoneyView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
@@ -146,9 +158,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\Components\ChatListComponent.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Pages\BankTransactionsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="Views\Pages\CurrencyExchangeTableView.xaml">
