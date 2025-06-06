@@ -21,9 +21,12 @@ namespace BankAppWeb.Controllers
             _chatService = chatService;
             _userService = userService;
         }
-        public async Task<IActionResult> Index(string searchQuery, List<int> selectedUserIds)
+        public async Task<IActionResult> Index(string searchQuery, List<int> selectedUserIds, string chatName)
         {
-            var viewModel = new CreateChatViewModel();
+            var viewModel = new CreateChatViewModel
+            {
+                ChatName = chatName // Preserve ChatName
+            };
 
             // fetch current user and the corresponding friends
             var currentUser = await _userService.GetCurrentUserAsync();
