@@ -67,7 +67,6 @@ namespace Common.Services.Proxy
                 Amount = amount,
                 UserCNP = userCNP,
                 Iban = iban,
-
             };
             var response = await _httpClient.PostAsJsonAsync($"api/Loan/PayLoan", paymentRequest, _jsonOptions);
             response.EnsureSuccessStatusCode();
