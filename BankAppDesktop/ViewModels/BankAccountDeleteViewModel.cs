@@ -20,18 +20,25 @@ namespace BankAppDesktop.ViewModels
         private string _errorMessage = string.Empty;
         private bool _isLoading;
         private UserSession? _currentUser;
+        private string _ibanToDelete = string.Empty;
 
         public ICommand NoCommand { get; }
         public ICommand YesCommand { get; }
 
         public Action? OnClose { get; set; }
 
+        public string IbanToDelete
+        {
+            get => _ibanToDelete;
+            set => SetProperty(ref _ibanToDelete, value);
+        }
+
         public BankAccountDeleteViewModel(IBankAccountService bankAccountService, IAuthenticationService authService)
         {
             _bankAccountService = bankAccountService ?? throw new ArgumentNullException(nameof(bankAccountService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _currentUser = authService.GetCurrentUserSession();
-            _iban = _currentUser?.CurrentBankAccountIban ?? string.Empty;
+            _iban = _ibanToDelete;
             NoCommand = new RelayCommand(_ => OnNoButtonClicked());
             YesCommand = new RelayCommand(async _ => await OnYesButtonClickedAsync());
         }
@@ -59,23 +66,32 @@ namespace BankAppDesktop.ViewModels
             Debug.WriteLine("Cancel delete");
             OnClose?.Invoke();
         }
+        public void Initialize(string iban)
+        {
+            if (string.IsNullOrWhiteSpace(iban))
+            {
+                throw new ArgumentException("IBAN for deletion cannot be null or empty.", nameof(iban));
+            }
+            IbanToDelete = iban;
+            ErrorMessage = string.Empty; // Clear any previous errors
+            IsLoading = false;           // Reset loading state
+        }
 
         private async Task OnYesButtonClickedAsync()
         {
             Debug.WriteLine("Confirm delete");
             IsLoading = true;
             ErrorMessage = string.Empty;
-
             try
             {
-                if (string.IsNullOrEmpty(_iban))
+                if (string.IsNullOrEmpty(IbanToDelete))
                 {
                     ErrorMessage = "Invalid account IBAN";
                     return;
                 }
 
                 // Call service to delete the account
-                bool result = await _bankAccountService.RemoveBankAccount(_iban);
+                bool result = await _bankAccountService.RemoveBankAccount(IbanToDelete);
 
                 if (result)
                 {
