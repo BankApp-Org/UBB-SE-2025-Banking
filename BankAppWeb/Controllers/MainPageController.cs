@@ -46,7 +46,7 @@ namespace BankAppWeb.Controllers
             var accounts = await _mainPageService.GetUserBankAccounts(Int32.Parse(userId));
 
             //if (HttpContext.Session.GetString("current_bank_account_iban") == null && accounts.Count > 0)
-            //    HttpContext.Session.SetString("current_bank_account_iban", accounts[0].Iban);
+            //    HttpContext.Session.SetString("current_bank_account_iban", accounts[0].ReceiverIban);
 
             if (string.IsNullOrEmpty(SelectedAccountIban) && accounts.Count > 0)
             {

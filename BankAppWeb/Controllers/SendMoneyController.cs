@@ -23,15 +23,14 @@ namespace LoanShark.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Send(SendMoneyViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(model.Iban) || string.IsNullOrWhiteSpace(model.SumOfMoney))
+            if (string.IsNullOrWhiteSpace(model.ReceiverIban) || string.IsNullOrWhiteSpace(model.SumOfMoney))
             {
                 model.ErrorMessage = "IBAN and amount are required.";
                 return View("Index", model);
             }
 
             // Get sender IBAN from session (previously selected)
-            string? senderIban = HttpContext.Session.GetString("current_bank_account_iban");
-            if (string.IsNullOrEmpty(senderIban))
+            if (string.IsNullOrEmpty(model.SenderIban))
             {
                 model.ErrorMessage = "Sender account is not selected.";
                 return View("Index", model);
@@ -46,8 +45,8 @@ namespace LoanShark.MVC.Controllers
 
             BankTransaction transaction = new()
             {
-                SenderIban = senderIban,
-                ReceiverIban = model.Iban,
+                SenderIban = model.SenderIban,
+                ReceiverIban = model.ReceiverIban,
                 SenderAmount = amount,
                 ReceiverAmount = amount,
                 TransactionDescription = model.Details ?? string.Empty,
