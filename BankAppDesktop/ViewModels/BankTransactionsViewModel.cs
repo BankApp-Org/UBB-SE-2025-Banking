@@ -1,5 +1,7 @@
 ﻿using BankAppDesktop.Commands;
+using BankAppDesktop.Views.Pages;
 using Catel.Data;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -31,14 +33,12 @@ namespace BankAppDesktop.ViewModels
 
         private void OpenPayLoanWindow()
         {
-            throw new Exception("Loan View Not Migrated!");
-            // OpenChildWindow(new Views.Windows.LoanView());
+            throw new Exception("Pay loan not implemented!");
         }
 
         private void OpenCurrencyExchangeWindow()
         {
-            throw new Exception("CurrencyExchangeTableView Not Migrated!");
-            // OpenChildWindow(new CurrencyExchangeTableView());
+            App.MainAppWindow.MainAppFrame.Content = new CurrencyExchangeTable();
         }
 
         private void OpenChildWindow(Window childWindow)
