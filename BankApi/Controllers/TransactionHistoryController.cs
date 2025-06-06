@@ -40,25 +40,44 @@ namespace BankApi.Controllers
             {
                 CSVBankTransactionExporter cSVBankTransactionExporter = new CSVBankTransactionExporter();
 
-                TransactionFilters filters = new TransactionFilters
+                if (string.IsNullOrEmpty(iban))
                 {
-                    Type = Common.Models.Bank.TransactionType.LoanPayment,
-                    SenderIban = iban,
-                    StartDate = new DateTime(2000, 1, 1),
-                    EndDate = new DateTime(3000, 1, 1),
-                };
+                    throw new Exception("Empty IBAN");
+                }
 
-                var transactions1 = await _transactionHistoryService.GetTransactions(filters);
+                // Normalize the filter
 
-                filters.SenderIban = string.Empty;
-                filters.ReceiverIban = iban;
+                // Get all matching enum values based on string match
+                var matchingTypes = Enum.GetValues(typeof(Common.Models.Bank.TransactionType))
+                    .Cast<Common.Models.Bank.TransactionType>()
+                    .ToList();
 
-                var transactions2 = await _transactionHistoryService.GetTransactions(filters);
-                transactions1.AddRange(transactions2);
+                List<BankTransaction> results = new List<BankTransaction>();
+
+                foreach (var type in matchingTypes)
+                {
+                    TransactionFilters filters = new TransactionFilters
+                    {
+                        Type = type,
+                        SenderIban = iban,
+                        StartDate = new DateTime(2000, 1, 1),
+                        EndDate = new DateTime(3000, 1, 1),
+                    };
+
+                    var transactions1 = await _transactionHistoryService.GetTransactions(filters);
+
+                    filters.SenderIban = string.Empty;
+                    filters.ReceiverIban = iban;
+
+                    var transactions2 = await _transactionHistoryService.GetTransactions(filters);
+
+                    results.AddRange(transactions1);
+                    results.AddRange(transactions2);
+                }
 
                 string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "transactions.csv");
 
-                cSVBankTransactionExporter.Export(transactions1, filePath);
+                cSVBankTransactionExporter.Export(results, filePath);
 
                 return Ok("CSV file created successfully");
             }

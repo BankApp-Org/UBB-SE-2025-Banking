@@ -13,14 +13,14 @@ namespace BankAppDesktop.Views.Pages
     {
         private BankAccountUpdateViewModel? viewModel;
 
-        public BankAccountUpdateView()
+        public BankAccountUpdateView(string iban)
         {
             try
             {
                 this.InitializeComponent();
 
                 viewModel = App.Services.GetRequiredService<BankAccountUpdateViewModel>();
-
+                viewModel.SetIban(iban);
                 MainGrid.DataContext = viewModel;
             }
             catch (Exception ex)
@@ -108,6 +108,11 @@ namespace BankAppDesktop.Views.Pages
                     _ = errorDialog.ShowAsync();
                 }
             });
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.MainAppWindow.MainAppFrame.Content = new MainPage();
         }
     }
 }
