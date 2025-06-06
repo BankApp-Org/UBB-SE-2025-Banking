@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using Common.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Common.Models;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -22,21 +23,28 @@ namespace BankAppDesktop.ViewModels
         private string? welcomeText;
         private ObservableCollection<BankAccount> userBankAccounts;
         private string balanceButtonContent;
+        private int creditScore;
+        private string creditScoreDescription;
 
         private IBankAccountService bankAccountService;
         private readonly IAuthenticationService authService;
+        private readonly IUserService userService;
 
         public string SelectedIban { get; set; }
 
-        public MainPageViewModel(IBankAccountService bankAccountService, IAuthenticationService authService)
+        public MainPageViewModel(IBankAccountService bankAccountService, IAuthenticationService authService, IUserService userService)
         {
             this.bankAccountService = bankAccountService;
             this.authService = authService;
+            this.userService = userService;
 
             userBankAccounts = new ObservableCollection<BankAccount>();
             this.balanceButtonContent = "Check Balance";
+            this.creditScore = 0;
+            this.creditScoreDescription = "Unknown";
             InitializeWelcomeText();
             LoadUserBankAccounts();
+            LoadUserCreditScore();
         }
 
         public string WelcomeText
@@ -73,6 +81,32 @@ namespace BankAppDesktop.ViewModels
                 if (this.balanceButtonContent != value)
                 {
                     this.balanceButtonContent = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int CreditScore
+        {
+            get => this.creditScore;
+            set
+            {
+                if (this.creditScore != value)
+                {
+                    this.creditScore = value;
+                    UpdateCreditScoreDescription();
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string CreditScoreDescription
+        {
+            get => this.creditScoreDescription;
+            set
+            {
+                if (this.creditScoreDescription != value)
+                {
+                    this.creditScoreDescription = value;
                     OnPropertyChanged();
                 }
             }
@@ -133,6 +167,58 @@ namespace BankAppDesktop.ViewModels
                 // userBankAccounts.Add(new BankAccountMessage("Error", "Could not load bank accounts"));
                 OnPropertyChanged(nameof(UserBankAccounts));
             }
+        }
+
+        public async Task LoadUserCreditScore()
+        {
+            try
+            {
+                string userId = authService.GetCurrentUserSession()?.UserId ?? string.Empty;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    Debug.Print("User ID is null or empty");
+                    return;
+                }
+
+                int idUser = int.Parse(userId);
+                var user = await userService.GetByIdAsync(idUser);
+                if(user != null)
+                {
+                    CreditScore = user.CreditScore;
+                }
+                else
+                {
+                    Debug.Print("Could not load user data for credit score");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print($"Error loading credit score: {ex.Message}");
+            }
+        }
+
+        private void UpdateCreditScoreDescription()
+        {
+            CreditScoreDescription = creditScore switch
+            {
+                >= 750 => "Excellent Credit",
+                >= 700 => "Very Good Credit",
+                >= 650 => "Good Credit",
+                >= 600 => "Fair Credit",
+                _ => "Poor Credit"
+            };
+        }
+
+        public string GetCreditScoreColor()
+        {
+            return creditScore switch
+            {
+                >= 750 => "Success",
+                >= 700 => "Info",
+                >= 650 => "Primary",
+                >= 600 => "Warning",
+                _ => "Danger"
+            };
         }
 
         public async Task CheckBalanceButtonHandler()
@@ -243,6 +329,61 @@ namespace BankAppDesktop.ViewModels
             return null;
         }
 
+        public async Task ViewCreditHistoryButtonHandler()
+        {
+            try
+            {
+                // Get current user data to pass to the AnalysisWindow
+                string userId = authService.GetCurrentUserSession()?.UserId ?? string.Empty;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    var errorDialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Could not retrieve user information. Please log in again.",
+                        CloseButtonText = "OK",
+                        XamlRoot = App.MainAppWindow.Content.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                    return;
+                }
+
+                int idUser = int.Parse(userId);
+                var user = await userService.GetByIdAsync(idUser);
+                if (user == null)
+                {
+                    var errorDialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to retrieve user data.",
+                        CloseButtonText = "OK",
+                        XamlRoot = App.MainAppWindow.Content.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                    return;
+                }
+
+                // Get required services for the AnalysisWindow
+                var activityService = App.Services.GetRequiredService<IActivityService>();
+                var creditHistoryService = App.Services.GetRequiredService<ICreditHistoryService>();
+                // Create and show the AnalysisWindow
+                var analysisWindow = new Views.AnalysisWindow(user, activityService, creditHistoryService);
+                analysisWindow.Activate();
+            }
+            catch (Exception ex)
+            {
+                Debug.Print($"Error opening credit history window: {ex.Message}");
+                var errorDialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Could not open credit history: {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = App.MainAppWindow.Content.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
+        }
+
         public void BankAccountCreateButtonHandler()
         {
             BankAccountCreateView bankAccountCreate = new BankAccountCreateView();
@@ -261,6 +402,10 @@ namespace BankAppDesktop.ViewModels
         public async Task RefreshBankAccounts()
         {
             await LoadUserBankAccounts();
+        }
+        public async Task RefreshCreditScore()
+        {
+            await LoadUserCreditScore();
         }
     }
 }
