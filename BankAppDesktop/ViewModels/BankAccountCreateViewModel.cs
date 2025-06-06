@@ -8,6 +8,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
+using Common.Services.Bank;
+using Common.Models.Bank;
+using BankAppDesktop.Commands;
+using BankAppDesktop.Views.Pages;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -95,6 +99,7 @@ namespace BankAppDesktop.ViewModels
         {
             Debug.WriteLine("Pressed cancel create bank account");
             // WindowManager.ShouldReloadBankAccounts = false; // Uncomment if WindowManager is implemented
+            App.MainAppWindow.MainAppFrame.Content = new MainPage();
             OnClose?.Invoke();
         }
         public void LoadData()

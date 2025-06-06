@@ -9,13 +9,16 @@ namespace BankApi.Services.Bank
     {
         private readonly IBankTransactionRepository _transactionRepository;
         private readonly IBankTransactionHistoryRepository _historyRepository;
+        private readonly ICreditScoringService _creditScoringService;
 
         public BankTransactionService(
             IBankTransactionRepository transactionRepository,
-            IBankTransactionHistoryRepository historyRepository)
+            IBankTransactionHistoryRepository historyRepository,
+            ICreditScoringService creditScoringService)
         {
             _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
             _historyRepository = historyRepository ?? throw new ArgumentNullException(nameof(historyRepository));
+            _creditScoringService = creditScoringService ?? throw new ArgumentNullException(nameof(creditScoringService));
         }
 
         public async Task<List<BankTransaction>> GetTransactions(TransactionFilters filters)
@@ -109,6 +112,10 @@ namespace BankApi.Services.Bank
                 }
 
                 await _historyRepository.CreateTransactionAsync(transaction);
+
+                // Calculate and apply credit score impact for sender
+                await ApplyCreditScoreImpactAsync(transaction);
+
                 return true;
             }
             catch (Exception ex)
@@ -173,6 +180,75 @@ namespace BankApi.Services.Bank
             {
                 throw new Exception($"Error retrieving transaction type counts for user {userId}: {ex.Message}", ex);
             }
+        }
+
+        private async Task ApplyCreditScoreImpactAsync(BankTransaction transaction)
+        {
+            try
+            {
+                // Extract user CNP from IBAN (assuming IBAN contains CNP or user identifier)
+                string? senderCnp = ExtractUserCnpFromIban(transaction.SenderIban);
+                string? receiverCnp = ExtractUserCnpFromIban(transaction.ReceiverIban);
+
+                // Apply credit score impact for sender
+                if (!string.IsNullOrEmpty(senderCnp))
+                {
+                    int senderImpact = await _creditScoringService.CalculateBankTransactionImpactAsync(senderCnp, transaction);
+                    if (senderImpact != 0)
+                    {
+                        int currentScore = await _creditScoringService.GetCurrentCreditScoreAsync(senderCnp);
+                        int newScore = currentScore + senderImpact;
+                        await _creditScoringService.UpdateCreditScoreAsync(senderCnp, newScore, 
+                            $"Bank transaction: {transaction.TransactionType} of {transaction.SenderAmount:C}");
+                    }
+                }
+
+                // Apply credit score impact for receiver (for deposits)
+                if (!string.IsNullOrEmpty(receiverCnp) && transaction.TransactionType == TransactionType.Deposit)
+                {
+                    // Create a receiver transaction for credit calculation
+                    var receiverTransaction = new BankTransaction
+                    {
+                        TransactionType = TransactionType.Deposit,
+                        SenderAmount = transaction.ReceiverAmount,
+                        SenderIban = transaction.ReceiverIban,
+                        ReceiverIban = transaction.SenderIban,
+                        TransactionDatetime = transaction.TransactionDatetime,
+                        SenderCurrency = transaction.ReceiverCurrency,
+                        ReceiverCurrency = transaction.SenderCurrency,
+                        TransactionDescription = "Credit score calculation transaction"
+                    };
+
+                    int receiverImpact = await _creditScoringService.CalculateBankTransactionImpactAsync(receiverCnp, receiverTransaction);
+                    if (receiverImpact != 0)
+                    {
+                        int currentScore = await _creditScoringService.GetCurrentCreditScoreAsync(receiverCnp);
+                        int newScore = currentScore + receiverImpact;
+                        await _creditScoringService.UpdateCreditScoreAsync(receiverCnp, newScore, 
+                            $"Received transfer: {transaction.ReceiverAmount:C}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error but don't fail the transaction
+                Console.WriteLine($"Error applying credit score impact: {ex.Message}");
+            }
+        }
+
+        private string? ExtractUserCnpFromIban(string? iban)
+        {
+            if (string.IsNullOrEmpty(iban)) return null;
+            
+            // This is a simplified implementation - in a real system, you'd need to
+            // look up the account owner by IBAN in the database
+            // For now, assume the IBAN contains or can be mapped to a CNP
+            
+            // If IBAN is in format "RO49AAAA1B31007593840000" and contains CNP
+            // This would need to be implemented based on your actual IBAN structure
+            
+            // Placeholder implementation - you'll need to implement actual IBAN to CNP mapping
+            return iban.Length >= 13 ? iban.Substring(iban.Length - 13) : null;
         }
     }
 }

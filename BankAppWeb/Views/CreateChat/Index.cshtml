@@ -23,7 +23,8 @@
                         <div class="alert alert-danger">
                             @TempData["ErrorMessage"]
                         </div>
-                    }                    <!-- Search Form (separate from create chat form) -->
+                    }
+                    <!-- Search Form (separate from create chat form) -->
                     <div class="mb-3">
                         <label class="form-label">Search Friends</label>
                         <form asp-action="Index" method="get" class="d-inline">
@@ -62,7 +63,8 @@
                             <div class="col-md-6">
                                 <label asp-for="SelectedUserIds" class="form-label">Available Friends</label>
                                 <div class="card">
-                                    <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">                                        @if (Model.AvailableUsers != null && Model.AvailableUsers.Any())
+                                    <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
+                                        @if (Model.AvailableUsers != null && Model.AvailableUsers.Any())
                                         {
                                             foreach (var user in Model.AvailableUsers.Where(u => !u.IsSelected))
                                             {
@@ -90,7 +92,8 @@
                             <div class="col-md-6">
                                 <label class="form-label">Selected Friends</label>
                                 <div class="card">
-                                    <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">                                        @if (Model.SelectedUserIds?.Any() == true)
+                                    <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
+                                        @if (Model.SelectedUserIds?.Any() == true)
                                         {
                                             foreach (var user in Model.AvailableUsers?.Where(u => u.IsSelected) ?? Enumerable.Empty<UserForChatViewModel>())
                                             {
@@ -153,6 +156,12 @@
             var searchQuery = '@Model.SearchQuery';
             if (searchQuery) {
                 currentUrl.searchParams.set('searchQuery', searchQuery);
+            }
+
+            // Preserve chat name
+            var chatName = document.querySelector('input[name="ChatName"]').value;
+            if (chatName) {
+                currentUrl.searchParams.set('chatName', chatName);
             }
             
             // Navigate to the updated URL

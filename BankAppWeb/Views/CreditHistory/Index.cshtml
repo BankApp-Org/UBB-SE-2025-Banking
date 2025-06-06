@@ -1,0 +1,358 @@
+@model BankAppWeb.ViewModels.CreditHistoryViewModel
+@{
+    ViewBag.Title = "Credit Score & History";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-graph-up"></i>
+                        Credit Score & History - @Model.UserName
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <!-- Current Credit Score Display -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card credit-score-card @Model.GetCreditScoreClass()">
+                                <div class="card-body text-center">
+                                    <h2 class="display-4 mb-2">@Model.CurrentCreditScore</h2>
+                                    <h5>@Model.GetCreditScoreDescription()</h5>
+                                    <div class="progress mt-3" style="height: 10px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: @(((double)Model.CurrentCreditScore / 850) * 100)%"
+                                             aria-valuenow="@Model.CurrentCreditScore" 
+                                             aria-valuemin="300" 
+                                             aria-valuemax="850">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">Range: 300 - 850</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Credit Score Ranges</h5>
+                                    <ul class="list-unstyled">
+                                        <li><span class="badge bg-success">750-850</span> Excellent</li>
+                                        <li><span class="badge bg-info">700-749</span> Very Good</li>
+                                        <li><span class="badge bg-primary">650-699</span> Good</li>
+                                        <li><span class="badge bg-warning">600-649</span> Fair</li>
+                                        <li><span class="badge bg-danger">300-599</span> Poor</li>
+                                    </ul>
+                                    <form asp-action="RefreshScore" method="post">
+                                        <button type="submit" class="btn btn-outline-primary">
+                                            <i class="bi bi-arrow-clockwise"></i> Refresh Score
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History Tabs -->
+                    <ul class="nav nav-tabs" id="historyTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="weekly-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#weekly" type="button" role="tab">
+                                Weekly History
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="monthly-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#monthly" type="button" role="tab">
+                                Monthly History
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="yearly-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#yearly" type="button" role="tab">
+                                Yearly History
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3" id="historyTabContent">
+                        <!-- Weekly History -->
+                        <div class="tab-pane fade show active" id="weekly" role="tabpanel">
+                            @if (Model.WeeklyHistory.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Score</th>
+                                                <th>Change</th>
+                                                <th>Trend</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.WeeklyHistory.Count; i++)
+                                            {
+                                                var history = Model.WeeklyHistory[i];
+                                                var previousScore = i > 0 ? Model.WeeklyHistory[i - 1].Score : history.Score;
+                                                var change = history.Score - previousScore;
+                                                
+                                                <tr>
+                                                    <td>@history.Date.ToString("yyyy-MM-dd")</td>
+                                                    <td><strong>@history.Score</strong></td>
+                                                    <td>
+                                                        @if (change > 0)
+                                                        {
+                                                            <span class="text-success">+@change</span>
+                                                        }
+                                                        else if (change < 0)
+                                                        {
+                                                            <span class="text-danger">@change</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">0</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (change > 0)
+                                                        {
+                                                            <i class="bi bi-arrow-up text-success"></i>
+                                                        }
+                                                        else if (change < 0)
+                                                        {
+                                                            <i class="bi bi-arrow-down text-danger"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-dash text-muted"></i>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    No weekly credit history data available.
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Monthly History -->
+                        <div class="tab-pane fade" id="monthly" role="tabpanel">
+                            @if (Model.MonthlyHistory.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Score</th>
+                                                <th>Change</th>
+                                                <th>Trend</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.MonthlyHistory.Count; i++)
+                                            {
+                                                var history = Model.MonthlyHistory[i];
+                                                var previousScore = i > 0 ? Model.MonthlyHistory[i - 1].Score : history.Score;
+                                                var change = history.Score - previousScore;
+                                                
+                                                <tr>
+                                                    <td>@history.Date.ToString("yyyy-MM")</td>
+                                                    <td><strong>@history.Score</strong></td>
+                                                    <td>
+                                                        @if (change > 0)
+                                                        {
+                                                            <span class="text-success">+@change</span>
+                                                        }
+                                                        else if (change < 0)
+                                                        {
+                                                            <span class="text-danger">@change</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">0</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (change > 0)
+                                                        {
+                                                            <i class="bi bi-arrow-up text-success"></i>
+                                                        }
+                                                        else if (change < 0)
+                                                        {
+                                                            <i class="bi bi-arrow-down text-danger"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-dash text-muted"></i>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    No monthly credit history data available.
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Yearly History -->
+                        <div class="tab-pane fade" id="yearly" role="tabpanel">
+                            @if (Model.YearlyHistory.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Year</th>
+                                                <th>Score</th>
+                                                <th>Change</th>
+                                                <th>Trend</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.YearlyHistory.Count; i++)
+                                            {
+                                                var history = Model.YearlyHistory[i];
+                                                var previousScore = i > 0 ? Model.YearlyHistory[i - 1].Score : history.Score;
+                                                var change = history.Score - previousScore;
+                                                
+                                                <tr>
+                                                    <td>@history.Date.ToString("yyyy")</td>
+                                                    <td><strong>@history.Score</strong></td>
+                                                    <td>
+                                                        @if (change > 0)
+                                                        {
+                                                            <span class="text-success">+@change</span>
+                                                        }
+                                                        else if (change < 0)
+                                                        {
+                                                            <span class="text-danger">@change</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">0</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (change > 0)
+                                                        {
+                                                            <i class="bi bi-arrow-up text-success"></i>
+                                                        }
+                                                        else if (change < 0)
+                                                        {
+                                                            <i class="bi bi-arrow-down text-danger"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-dash text-muted"></i>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    No yearly credit history data available.
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Back Button -->
+                    <div class="mt-4">
+                        <a asp-controller="MainPage" asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i>
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i>
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<style>
+    .credit-score-card {
+        border: 2px solid #ddd;
+        border-radius: 10px;
+    }
+    .credit-score-card.excellent {
+        border-color: #28a745;
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    }
+    .credit-score-card.very-good {
+        border-color: #17a2b8;
+        background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    }
+    .credit-score-card.good {
+        border-color: #007bff;
+        background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    }
+    .credit-score-card.fair {
+        border-color: #ffc107;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    }
+    .credit-score-card.poor {
+        border-color: #dc3545;
+        background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
+    }
+    
+    .progress-bar {
+        transition: width 0.6s ease;
+    }
+    
+    .credit-score-card.excellent .progress-bar {
+        background-color: #28a745;
+    }
+    .credit-score-card.very-good .progress-bar {
+        background-color: #17a2b8;
+    }
+    .credit-score-card.good .progress-bar {
+        background-color: #007bff;
+    }
+    .credit-score-card.fair .progress-bar {
+        background-color: #ffc107;
+    }
+    .credit-score-card.poor .progress-bar {
+        background-color: #dc3545;
+    }
+</style> 

@@ -6,6 +6,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Common.Services.Bank;
+using Common.Services;
 using BankAppWeb.Models;
 using Common.Models.Bank;
 
@@ -14,10 +15,12 @@ namespace BankAppWeb.Controllers
     public class MainPageController : Controller
     {
         private readonly IBankAccountService _mainPageService;
+        private readonly IUserService _userService;
 
-        public MainPageController(IBankAccountService mainPageService)
+        public MainPageController(IBankAccountService mainPageService, IUserService userService)
         {
             _mainPageService = mainPageService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -42,7 +45,6 @@ namespace BankAppWeb.Controllers
                 return NotFound();
             }
 
-
             var accounts = await _mainPageService.GetUserBankAccounts(Int32.Parse(userId));
 
             //if (HttpContext.Session.GetString("current_bank_account_iban") == null && accounts.Count > 0)
@@ -57,14 +59,28 @@ namespace BankAppWeb.Controllers
                 TempData["SelectedAccountIban"] = SelectedAccountIban;
             }
 
-
             string username = User.FindFirstValue("FirstName");
+            
+            // Get user information including credit score
+            var currentUser = await _userService.GetCurrentUserAsync();
+            int creditScore = currentUser?.CreditScore ?? 300; // Default to minimum if not found
+            string creditScoreDescription = creditScore switch
+            {
+                >= 750 => "Excellent Credit",
+                >= 700 => "Very Good Credit",
+                >= 650 => "Good Credit",
+                >= 600 => "Fair Credit",
+                _ => "Poor Credit"
+            };
+
             var vm = new MainPageViewModel
                 {
                     WelcomeText = $"Welcome, {username}!",
                     BankAccounts = new List<BankAccount>(accounts),
                     BalanceButtonContent = TempData["BalanceButtonContent"]?.ToString() ?? "Check Balance",
                     SelectedAccountIban = TempData["SelectedAccountIban"]?.ToString() ?? "INVALID IBAN",
+                    CreditScore = creditScore,
+                    CreditScoreDescription = creditScoreDescription
                 };
 
             return View("Index", vm);
