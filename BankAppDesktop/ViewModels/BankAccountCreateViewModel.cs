@@ -51,6 +51,7 @@ namespace BankAppDesktop.ViewModels
             {
                 return customName ?? string.Empty;
             }
+
             set
             {
                 customName = value;

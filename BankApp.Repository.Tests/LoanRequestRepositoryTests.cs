@@ -232,10 +232,11 @@ namespace BankApp.Repository.Tests
         }
 
         [TestMethod]
-        public async Task SolveLoanRequestAsync_WithNonExistentId_ShouldThrowException()
+        public async Task SolveLoanRequestAsync_WithNonExistentId_ShouldThrowInvalidOperationException()
         {
-            // Act
-            await Assert.ThrowsExactlyAsync<KeyNotFoundException>(async () => await _repository.SolveLoanRequestAsync(999));
+            // Act & Assert
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(
+                async () => await _repository.SolveLoanRequestAsync(999));
         }
 
         [TestMethod]

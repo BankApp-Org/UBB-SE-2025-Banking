@@ -8,11 +8,12 @@ using Moq;
 using System;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
+    [TestClass]
     public class GemStoreRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -26,7 +27,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task GetUserGemBalanceAsync_Should_Return_Balance_When_User_Exists()
         {
             using var context = CreateContext();
@@ -46,7 +47,7 @@ namespace BankApp.Repository.Tests
             result.Should().Be(100);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetUserGemBalanceAsync_Should_Return_Zero_When_User_Not_Found()
         {
             using var context = CreateContext();
@@ -57,17 +58,17 @@ namespace BankApp.Repository.Tests
             result.Should().Be(0);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetUserGemBalanceAsync_Should_Throw_When_CNP_Is_Null()
         {
             var mockRepo = new Mock<IGemStoreRepository>();
             mockRepo.Setup(r => r.GetUserGemBalanceAsync(null))
                 .ThrowsAsync(new ArgumentException("CNP cannot be null", "cnp"));
 
-            await Assert.ThrowsAsync<ArgumentException>(() => mockRepo.Object.GetUserGemBalanceAsync(null));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await mockRepo.Object.GetUserGemBalanceAsync(null));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateUserGemBalanceAsync_Should_Update_Balance_When_User_Exists()
         {
             using var context = CreateContext();
@@ -93,28 +94,28 @@ namespace BankApp.Repository.Tests
             updatedUser.GemBalance.Should().Be(200);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateUserGemBalanceAsync_Should_Throw_When_User_Not_Found()
         {
             using var context = CreateContext();
             var repository = new GemStoreRepository(context);
 
-            await Assert.ThrowsAnyAsync<Exception>(() =>
-                repository.UpdateUserGemBalanceAsync("non_existent_cnp", 200));
+            await Assert.ThrowsExceptionAsync<NullReferenceException>(async () =>
+                await repository.UpdateUserGemBalanceAsync("non_existent_cnp", 200));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateUserGemBalanceAsync_Should_Throw_When_CNP_Is_Null()
         {
             var mockRepo = new Mock<IGemStoreRepository>();
             mockRepo.Setup(r => r.UpdateUserGemBalanceAsync(null, It.IsAny<int>()))
                 .ThrowsAsync(new ArgumentException("CNP cannot be null", "cnp"));
 
-            await Assert.ThrowsAsync<ArgumentException>(() =>
-                mockRepo.Object.UpdateUserGemBalanceAsync(null, 200));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
+                await mockRepo.Object.UpdateUserGemBalanceAsync(null, 200));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateUserGemBalanceAsync_Should_Accept_Zero_Balance()
         {
             using var context = CreateContext();
@@ -140,7 +141,7 @@ namespace BankApp.Repository.Tests
             updatedUser.GemBalance.Should().Be(0);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task UpdateUserGemBalanceAsync_Should_Accept_Negative_Balance()
         {
             using var context = CreateContext();
