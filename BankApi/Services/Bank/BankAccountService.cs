@@ -36,7 +36,7 @@ namespace BankApi.Services.Bank
             }
         }
 
-        public async Task<BankAccount?> FindBankAccount(string iban)
+        public async Task<BankAccount> FindBankAccount(string iban)
         {
             if (string.IsNullOrWhiteSpace(iban))
             {
