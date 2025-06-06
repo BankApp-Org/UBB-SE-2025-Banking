@@ -228,15 +228,29 @@ namespace BankApp.Repository.Tests
         [Fact]
         public async Task DeleteAsync_RemovesUser()
         {
-            using var context = GetInMemoryContext();
+            // Arrange
+            var context = GetInMemoryContext();
             var user = CreateTestUser();
             context.Users.Add(user);
             await context.SaveChangesAsync();
 
-            var repo = GetRepository(context, GetMockUserManager(), GetMockRoleManager());
+            var mockUserManager = GetMockUserManager();
+            mockUserManager
+                .Setup(m => m.FindByIdAsync(user.Id.ToString()))
+                .ReturnsAsync(user);
 
+            mockUserManager
+                .Setup(m => m.DeleteAsync(user))
+                .ReturnsAsync(IdentityResult.Success);
+
+            var mockRoleManager = GetMockRoleManager();
+            var logger = Mock.Of<ILogger<UserRepository>>();
+            var repo = new UserRepository(context, logger, mockUserManager.Object, mockRoleManager.Object);
+
+            // Act
             var result = await repo.DeleteAsync(user.Id);
 
+            // Assert
             Assert.True(result);
         }
 
