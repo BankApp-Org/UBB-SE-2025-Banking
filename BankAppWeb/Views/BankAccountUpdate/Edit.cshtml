@@ -1,0 +1,44 @@
+﻿@model BankAppWeb.Models.BankAccountEditModel
+
+@{
+    ViewData["Title"] = "Update Bank Account";
+}
+
+<div class="container mt-5">
+    <h2>Update Bank Account</h2>
+
+    <form asp-action="Edit" asp-controller="BankAccountList" method="post" class="mt-4">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <input type="hidden" asp-for="Iban" />
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="DailyLimit" class="form-label"></label>
+            <input asp-for="DailyLimit" class="form-control" type="number" step="0.01" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MaximumPerTransaction" class="form-label"></label>
+            <input asp-for="MaximumPerTransaction" class="form-control" type="number" step="0.01" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MaximumNrTransactions" class="form-label"></label>
+            <input asp-for="MaximumNrTransactions" class="form-control" type="number" />
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="IsBlocked" class="form-check-input" />
+            <label asp-for="IsBlocked" class="form-check-label"></label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a asp-controller="BankAccountList" asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
