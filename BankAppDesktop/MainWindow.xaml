@@ -44,11 +44,11 @@
                     
                     <!-- Banking Category -->
                     <NavigationViewItem Content="Banking">
-                        <NasvigationViewItem.MenuItems>
+                        <NavigationViewItem.MenuItems>
                             <NavigationViewItem Content="Loans" Tag="Loans" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                             <NavigationViewItem Content="Loan Requests" Tag="LoanRequest" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                             <NavigationViewItem Content="Store" Tag="GemStorePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                        </NasvigationViewItem.MenuItems>
+                        </NavigationViewItem.MenuItems>
                     </NavigationViewItem>
                     
                     <!-- Admin Category -->
