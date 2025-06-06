@@ -331,16 +331,57 @@ namespace BankAppDesktop.ViewModels
 
         public async Task ViewCreditHistoryButtonHandler()
         {
-            // This will be implemented later when we create a CreditHistoryPage
-            // For now, we'll just display a dialog
-            var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+            try
             {
-                Title = "Credit History",
-                Content = "Credit history functionality will be available soon.",
-                CloseButtonText = "OK"
-            };
+                // Get current user data to pass to the AnalysisWindow
+                string userId = authService.GetCurrentUserSession()?.UserId ?? string.Empty;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    var errorDialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Could not retrieve user information. Please log in again.",
+                        CloseButtonText = "OK",
+                        XamlRoot = App.MainAppWindow.Content.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                    return;
+                }
 
-            await dialog.ShowAsync();
+                int idUser = int.Parse(userId);
+                var user = await userService.GetByIdAsync(idUser);
+                if (user == null)
+                {
+                    var errorDialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to retrieve user data.",
+                        CloseButtonText = "OK",
+                        XamlRoot = App.MainAppWindow.Content.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                    return;
+                }
+
+                // Get required services for the AnalysisWindow
+                var activityService = App.Services.GetRequiredService<IActivityService>();
+                var creditHistoryService = App.Services.GetRequiredService<ICreditHistoryService>();
+                // Create and show the AnalysisWindow
+                var analysisWindow = new Views.AnalysisWindow(user, activityService, creditHistoryService);
+                analysisWindow.Activate();
+            }
+            catch (Exception ex)
+            {
+                Debug.Print($"Error opening credit history window: {ex.Message}");
+                var errorDialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Could not open credit history: {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = App.MainAppWindow.Content.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
         }
 
         public void BankAccountCreateButtonHandler()
