@@ -158,6 +158,8 @@ namespace BankAppWeb.Services
             var userName = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value
                 ?? throw new InvalidOperationException("User name not found in token claims");
             var roles = token.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
+            var userCNP = token.Claims.FirstOrDefault(c => c.Type == "CNP")?.Value
+                ?? throw new InvalidOperationException("CNP not found in token claims");
 
             _currentUserSession = new UserSession
             {
@@ -166,7 +168,7 @@ namespace BankAppWeb.Services
                 Token = tokenResponse.Token,
                 Roles = roles,
                 ExpiryTimestamp = token.ValidTo,
-                CNP = GetUserCNP()
+                CNP = userCNP
             };
 
             OnUserLoggedIn(new UserLoggedInEventArgs(userId));
