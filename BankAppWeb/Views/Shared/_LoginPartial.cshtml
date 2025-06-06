@@ -11,6 +11,7 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
             <li><a class="dropdown-item" asp-controller="Account" asp-action="Manage">Manage Account</a></li>
+            <li><a class="dropdown-item text-danger" asp-controller="DeleteAccount" asp-action="Index">Delete Account</a></li>
             <li><hr class="dropdown-divider"></li>
             <li>
                 <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">

@@ -18,6 +18,8 @@
                 
                 <Button Click="UpdateProfileButton_Click"
                         Content="Update Profile" Background="#FF69B4" CornerRadius="10" Foreground="#FFF5EE" Padding="10" />
+                <Button Click="DeleteAccountButton_Click"
+                        Content="Delete Account" Background="#FF0000" CornerRadius="10" Foreground="#FFF5EE" Padding="10" />
                 <Button Click="LogOutButton_Click"
                         Content="Log out" Background="#FF69B4" CornerRadius="10" Foreground="#FFF5EE" Padding="10" />
             </StackPanel>

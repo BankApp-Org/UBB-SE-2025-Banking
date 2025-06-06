@@ -22,6 +22,11 @@ namespace BankApi.Controllers
         public bool IsAdmin { get; set; }
     }
 
+    public class DeleteUserDto
+    {
+        public string Password { get; set; } = string.Empty;
+    }
+
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -280,7 +285,28 @@ namespace BankApi.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpPost("delete")]
+        [Authorize]
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserDto dto)
+        {
+            try
+            {
+                var result = await _userService.DeleteUser(dto.Password);
+                return Ok(new { message = result });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = $"Internal server error: {ex.Message}" });
+            }
+        }
     }
-
-
 }
