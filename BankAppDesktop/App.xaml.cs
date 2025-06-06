@@ -193,6 +193,10 @@ namespace BankAppDesktop
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+                    services.AddHttpClient<IBankTransactionService, BankTransactionProxyService>(client =>
+                    {
+                        client.BaseAddress = new Uri(apiBaseUrl);
+                    }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
                     // Don't add the handler to the authentication service's HttpClient
                     // to avoid circular dependencies
@@ -242,6 +246,7 @@ namespace BankAppDesktop
                     services.AddTransient<LoanRequestViewModel>();
                     services.AddTransient<NotificationsViewModel>();
                     services.AddTransient<BankTransactionsViewModel>();
+                    services.AddTransient<BankTransactionsHistoryViewModel>();
 
                     // Pages
                     services.AddTransient<LoansPage>();
@@ -266,6 +271,7 @@ namespace BankAppDesktop
                     services.AddTransient<LoginPage>();
                     services.AddTransient<NotificationsPage>();
                     services.AddTransient<BankTransactionsWindow>();
+                    services.AddTransient<BankTransactionsHistoryPage>();
                     services.AddTransient<DeleteAccountViewModel>();
                     services.AddTransient<DeleteAccountView>();
 

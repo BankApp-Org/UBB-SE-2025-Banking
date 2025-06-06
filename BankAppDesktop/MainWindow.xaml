@@ -38,7 +38,8 @@
                     <NavigationViewItem Content="Log in" Tag="LoginPage" Visibility="{Binding IsUnauthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="Profile" Tag="ProfilePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     <NavigationViewItem Content="Notifications" Tag="NotificationsPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                </NavigationView.MenuItems>
+                    <NavigationViewItem Content="Bank Transactions History" Tag="BankTransactionsHistoryPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+               </NavigationView.MenuItems>
             </NavigationView>
 
 

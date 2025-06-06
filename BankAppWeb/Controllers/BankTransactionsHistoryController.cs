@@ -27,37 +27,46 @@ namespace BankAppWeb.Controllers
                 return NotFound();
             }
 
-            TransactionFilters filters = new TransactionFilters
+            // Normalize the filter
+            string normalizedFilter = Filter?.ToLowerInvariant() ?? string.Empty;
+
+            // Get all matching enum values based on string match
+            var matchingTypes = Enum.GetValues(typeof(Common.Models.Bank.TransactionType))
+                .Cast<Common.Models.Bank.TransactionType>()
+                .Where(t => t.ToString().ToLowerInvariant().Contains(normalizedFilter) || string.IsNullOrEmpty(normalizedFilter))
+                .ToList();
+
+            // Get all enum values
+            var types = Enum.GetValues(typeof(Common.Models.Bank.TransactionType))
+                .Cast<Common.Models.Bank.TransactionType>()
+                .ToList();
+
+            List<BankTransaction> results = new List<BankTransaction>();
+
+            foreach (var type in types)
             {
-                Type = Common.Models.Bank.TransactionType.LoanPayment,
-                SenderIban = IBAN,
-                StartDate = new DateTime(2000, 1, 1),
-                EndDate = new DateTime(3000, 1, 1),
-            };
+                TransactionFilters filters = new TransactionFilters
+                {
+                    Type = type,
+                    SenderIban = IBAN,
+                    StartDate = new DateTime(2000, 1, 1),
+                    EndDate = new DateTime(3000, 1, 1),
+                };
 
-            var transactions1 = await _transactionsHistoryService.GetTransactions(filters);
+                var transactions1 = await _transactionsHistoryService.GetTransactions(filters);
 
-            filters.SenderIban = string.Empty;
-            filters.ReceiverIban = IBAN;
+                filters.SenderIban = string.Empty;
+                filters.ReceiverIban = IBAN;
 
-            var transactions2 = await _transactionsHistoryService.GetTransactions(filters);
+                var transactions2 = await _transactionsHistoryService.GetTransactions(filters);
+
+                results.AddRange(transactions1);
+                results.AddRange(transactions2);
+            }
 
 
             List<TransactionsHistoryDTO> trans = new List<TransactionsHistoryDTO>();
-            foreach (var transaction in transactions1)
-            {
-                trans.Add(new TransactionsHistoryDTO
-                {
-                    SenderIBAN = transaction.SenderIban,
-                    ReceiverIBAN = transaction.ReceiverIban,
-                    SentAmount = transaction.SenderAmount.ToString(),
-                    ReceivedAmount = transaction.ReceiverAmount.ToString(),
-                    Date = transaction.TransactionDatetime.ToString(),
-                    Type = transaction.TransactionType.ToString(),
-                });
-            }
-
-            foreach (var transaction in transactions2)
+            foreach (var transaction in results)
             {
                 trans.Add(new TransactionsHistoryDTO
                 {
