@@ -26,10 +26,10 @@ namespace BankAppDesktop.Views.Pages
     public sealed partial class BankTransactionsPage : Page
     {
         private readonly BankTransactionsViewModel viewModel;
-        public BankTransactionsPage()
+        public BankTransactionsPage(string iban)
         {
             this.InitializeComponent();
-            viewModel = new BankTransactionsViewModel();
+            viewModel = new BankTransactionsViewModel(iban);
             MainGrid.DataContext = viewModel;
             viewModel.CloseAction = CloseWindow;
         }

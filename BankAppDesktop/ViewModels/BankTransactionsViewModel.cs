@@ -1,10 +1,12 @@
-﻿using BankAppDesktop.Commands;
+﻿using BankApi.Repositories.Impl.Bank;
+using BankAppDesktop.Commands;
 using BankAppDesktop.Views.Pages;
 using Catel.Data;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using Windows.Media.Devices;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -17,8 +19,11 @@ namespace BankAppDesktop.ViewModels
 
         public Action CloseAction { get; set; }
 
-        public BankTransactionsViewModel()
+        public string Iban { get; set; }
+
+        public BankTransactionsViewModel(string iban)
         {
+            this.Iban = iban;
             CloseCommand = new RelayCommand(_ => CloseWindow());
             SendMoneyCommand = new RelayCommand(_ => OpenSendMoneyWindow());
             PayLoanCommand = new RelayCommand(_ => OpenPayLoanWindow());
@@ -27,8 +32,9 @@ namespace BankAppDesktop.ViewModels
 
         private void OpenSendMoneyWindow()
         {
-            throw new Exception("Send Money Not Migrated!");
-            // OpenChildWindow(new SendMoneyView());
+            SendMoneyViewModel sendViewModel = App.Services.GetRequiredService<SendMoneyViewModel>();
+            sendViewModel.SelectedBankAccountIban = Iban;
+            App.MainAppWindow.MainAppFrame.Content = new SendMoneyView(sendViewModel);
         }
 
         private void OpenPayLoanWindow()
@@ -38,7 +44,7 @@ namespace BankAppDesktop.ViewModels
 
         private void OpenCurrencyExchangeWindow()
         {
-            App.MainAppWindow.MainAppFrame.Content = new CurrencyExchangeTable();
+            App.MainAppWindow.MainAppFrame.Content = new CurrencyExchangeTable(Iban);
         }
 
         private void OpenChildWindow(Window childWindow)

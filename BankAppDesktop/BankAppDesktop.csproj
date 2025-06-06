@@ -116,7 +116,6 @@
     <None Remove="Views\Pages\BankTransactionsPage.xaml" />
 
     <None Remove="Views\Pages\CreateChatPage.xaml" />
-    <None Remove="Views\Pages\BankTransactionsWindow.xaml" />
     <None Remove="Views\Pages\CurrencyExchangeTable.xaml" />
     <None Remove="Views\Pages\GenerateTransferPage.xaml" />
     <None Remove="Views\Pages\LoginPage.xaml" />
@@ -158,9 +157,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\Components\ChatListComponent.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\Pages\BankTransactionsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="Views\Pages\CurrencyExchangeTableView.xaml">

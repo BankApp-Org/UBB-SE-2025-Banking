@@ -184,7 +184,7 @@ namespace BankAppDesktop.ViewModels
                 return "Please create a bank account to initiate any type of transaction";
             }
 
-            App.MainAppWindow.MainAppFrame.Content = new BankTransactionsPage();
+            App.MainAppWindow.MainAppFrame.Content = new BankTransactionsPage(SelectedIban);
 
             return null;
         }

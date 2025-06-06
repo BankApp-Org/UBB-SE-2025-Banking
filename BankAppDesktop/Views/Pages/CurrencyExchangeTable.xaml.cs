@@ -27,21 +27,19 @@ namespace BankAppDesktop.Views.Pages
     public sealed partial class CurrencyExchangeTable : Page
     {
         private readonly CurrencyExchangeViewModel viewModel;
-
-        public CurrencyExchangeTable()
+        private string Iban { get; set; }
+        public CurrencyExchangeTable(string iban)
         {
             this.InitializeComponent();
             this.viewModel = App.Services.GetRequiredService<CurrencyExchangeViewModel>();
-
-
             MainGrid.DataContext = viewModel;
-
+            Iban = iban;
             viewModel.CloseAction = CloseWindow;
         }
 
         private void CloseWindow()
         {
-            App.MainAppWindow.MainAppFrame.Content = new BankTransactionsPage();
+            App.MainAppWindow.MainAppFrame.Content = new BankTransactionsPage(Iban);
         }
     }
 }
