@@ -34,44 +34,28 @@ namespace LoanShark.MVC.Controllers
         }
 
         // GET: /ChatMessages/Messages/{chatId}
-        public async Task<IActionResult> Messages(int chatId)
+        public async Task<IActionResult> Index(int chatId)
         {
-            try
+            _logger.LogInformation("Loading messages for chat ID {ChatId}", chatId);
+            var currentUser = await _userService.GetCurrentUserAsync();
+            var currentUserId = currentUser.Id; // Fix for CS0029: Extract the ID from the User object  
+            var chat = currentUser.Chats.First(c => c.Id == chatId);
+            var chatName = chat.ChatName;
+            var participantss = await this._chatService.GetChatById(chatId);
+            var participants = participantss.Users.Select(user => $"{user.FirstName} {user.LastName}").ToList();
+            var messagesHistory = await _chatService.GetChatById(chatId);
+            var messages = messagesHistory.Messages;
+
+            var viewModel = new ChatMessagesViewModel
             {
-                _logger.LogInformation("Loading messages for chat ID {ChatId}", chatId);
-                var currentUser = await _userService.GetCurrentUserAsync();
-                var currentUserId = currentUser.Id; // Fix for CS0029: Extract the ID from the User object  
-                var chat = await _chatService.GetChatById(chatId);
-                var chatName = chat.ChatName;
-                var participantss = await this._chatService.GetChatById(chatId);
-                var participants = participantss.Users.Select(user => $"{user.FirstName} {user.LastName}").ToList();
-                var messagesHistory = await _chatService.GetChatById(chatId);
-                var messages = messagesHistory.Messages;
+                CurrentChatID = chatId,
+                CurrentChatName = chatName,
+                CurrentChatParticipants = participants,
+                ChatMessages = messages,
+                CurrentUserID = currentUserId // Use the extracted ID  
+            };
 
-                foreach (var message in messages)
-                {
-                    var users = await _userService.GetUsers();
-                    User user = users.FirstOrDefault(u => u.Id == message.Sender.Id);
-                    message.Sender.UserName = user?.UserName ?? "Unknown";
-                }
-
-                var viewModel = new ChatMessagesViewModel
-                {
-                    CurrentChatID = chatId,
-                    CurrentChatName = chatName,
-                    CurrentChatParticipants = participants,
-                    ChatMessages = messages,
-                    CurrentUserID = currentUserId // Use the extracted ID  
-                };
-
-                return View(viewModel);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading messages for chat ID {ChatId}", chatId);
-                TempData["Error"] = "Failed to load chat messages. Please try again.";
-                return RedirectToAction("Index", "ChatList");
-            }
+            return View(viewModel);
         }
 
         // Fix for CS1503: Argument 3: cannot convert from 'string' to 'Common.Models.Social.Message'  
@@ -79,34 +63,25 @@ namespace LoanShark.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendMessage(int chatId, string messageContent)
         {
-            try
+            if (string.IsNullOrEmpty(messageContent) || messageContent.Length > 256)
             {
-                if (string.IsNullOrEmpty(messageContent) || messageContent.Length > 256)
-                {
-                    TempData["Error"] = "Message must be between 1 and 256 characters.";
-                    return RedirectToAction("Messages", new { chatId });
-                }
-
-                var currentUser = await _userService.GetCurrentUserAsync();
-
-                // Corrected property name to match the Message class definition  
-                var message = new Message
-                {
-                    MessageContent = messageContent,
-                    UserId = currentUser.Id,
-                    CreatedAt = DateTime.UtcNow
-                };
-
-                await _messageService.SendMessageAsync(chatId, currentUser, message);
-                TempData["Success"] = "Message sent successfully.";
-                return RedirectToAction("Messages", new { chatId });
+                TempData["Error"] = "Message must be between 1 and 256 characters.";
+                return RedirectToAction("Index", new { chatId });
             }
-            catch (Exception ex)
+
+            var currentUser = await _userService.GetCurrentUserAsync();
+
+            // Corrected property name to match the Message class definition  
+            var message = new Message
             {
-                _logger.LogError(ex, "Error sending message to chat ID {ChatId}", chatId);
-                TempData["Error"] = "Failed to send message. Please try again.";
-                return RedirectToAction("Messages", new { chatId });
-            }
+                MessageContent = messageContent,
+                UserId = currentUser.Id,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _messageService.SendMessageAsync(chatId, currentUser, message);
+            TempData["Success"] = "Message sent successfully.";
+            return RedirectToAction("Index", new { chatId });
         }
 
         // Fix for CS1503: Argument 3: cannot convert from 'string' to 'Common.Models.Social.Message'  
@@ -119,7 +94,7 @@ namespace LoanShark.MVC.Controllers
                 if (imageFile == null || imageFile.Length == 0)
                 {
                     TempData["Error"] = "Please select an image to upload.";
-                    return RedirectToAction("Messages", new { chatId });
+                    return RedirectToAction("Index", new { chatId });
                 }
 
                 string imageUrl = await _imgurUploader.UploadImageAndGetUrl(imageFile);
@@ -135,13 +110,13 @@ namespace LoanShark.MVC.Controllers
 
                 await _messageService.SendMessageAsync(chatId, currentUser, message);
                 TempData["Success"] = "Image sent successfully.";
-                return RedirectToAction("Messages", new { chatId });
+                return RedirectToAction("Index", new { chatId });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error sending image to chat ID {ChatId}", chatId);
                 TempData["Error"] = ex.Message; // Use the exception message from ImgurImageUploader  
-                return RedirectToAction("Messages", new { chatId });
+                return RedirectToAction("Index", new { chatId });
             }
         }
 
@@ -158,19 +133,19 @@ namespace LoanShark.MVC.Controllers
                 if (message == null)
                 {
                     TempData["Error"] = "Message not found.";
-                    return RedirectToAction("Messages", new { chatId });
+                    return RedirectToAction("Index", new { chatId });
                 }
 
                 User user = await _userService.GetCurrentUserAsync();
                 await _messageService.DeleteMessageAsync(chatId, messageId, user);
                 TempData["Success"] = "Message deleted successfully.";
-                return RedirectToAction("Messages", new { chatId });
+                return RedirectToAction("Index", new { chatId });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting message {MessageId} in chat ID {ChatId}", messageId, chatId);
                 TempData["Error"] = "Failed to delete message. Please try again.";
-                return RedirectToAction("Messages", new { chatId });
+                return RedirectToAction("Index", new { chatId });
             }
         }
 

@@ -1,4 +1,5 @@
 using BankAppWeb.Services;
+using Common.Helper;
 using Common.Services;
 using Common.Services.Bank;
 using Common.Services.Impl;
@@ -146,7 +147,7 @@ builder.Services.AddTransient<INotificationService, NotificationProxyService>();
 builder.Services.AddTransient<IBankAccountService, BankAccountProxyService>();
 builder.Services.AddTransient<AuthenticationDelegatingHandler>();
 builder.Services.AddTransient<IBankTransactionService, BankTransactionProxyService>();
-
+builder.Services.AddTransient<ImgurImageUploader>();
 
 builder.Services.AddHttpClient<IUserService, UserProxyService>(client =>
 {
