@@ -134,6 +134,7 @@ namespace BankAppDesktop
                     "LoginPage" => this.serviceProvider.GetRequiredService<LoginPage>(),
                     "GemStorePage" => this.serviceProvider.GetRequiredService<GemStorePage>(),
                     "NotificationsPage" => this.serviceProvider.GetRequiredService<NotificationsPage>(),
+                    "BankTransactionsHistoryPage" => this.serviceProvider.GetRequiredService<BankTransactionsHistoryPage>(),
                     _ => throw new InvalidOperationException($"Unknown navigation item: {invokedItemTag}")
                 };
             }

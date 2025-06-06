@@ -193,6 +193,10 @@ namespace BankAppDesktop
                     {
                         client.BaseAddress = new Uri(apiBaseUrl);
                     }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
+                    services.AddHttpClient<IBankTransactionService, BankTransactionProxyService>(client =>
+                    {
+                        client.BaseAddress = new Uri(apiBaseUrl);
+                    }).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
                     // Don't add the handler to the authentication service's HttpClient
                     // to avoid circular dependencies
@@ -242,6 +246,7 @@ namespace BankAppDesktop
                     services.AddTransient<LoanRequestViewModel>();
                     services.AddTransient<NotificationsViewModel>();
                     services.AddTransient<BankTransactionsViewModel>();
+                    services.AddTransient<BankTransactionsHistoryViewModel>();
 
                     // Pages
                     services.AddTransient<LoansPage>();
@@ -266,6 +271,7 @@ namespace BankAppDesktop
                     services.AddTransient<LoginPage>();
                     services.AddTransient<NotificationsPage>();
                     services.AddTransient<BankTransactionsWindow>();
+                    services.AddTransient<BankTransactionsHistoryPage>();
 
                     // FIXME: remove \/\/\/\/
                     services.AddTransient<Func<LoanRequestComponent>>(sp => () => sp.GetRequiredService<LoanRequestComponent>());
@@ -286,6 +292,8 @@ namespace BankAppDesktop
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
+
+        public static IServiceProvider Services => Host.Services;
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
