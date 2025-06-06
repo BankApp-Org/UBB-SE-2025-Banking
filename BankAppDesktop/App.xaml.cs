@@ -251,7 +251,6 @@ namespace BankAppDesktop
                     services.AddTransient<MainPageViewModel>();
                     services.AddTransient<CurrencyExchangeViewModel>();
                     services.AddTransient<SendMoneyViewModel>();
-                    services.AddTransient<BankAccountDetailsViewModel>();
                     // Pages
                     services.AddTransient<LoansPage>();
                     services.AddTransient<UsersPage>();
@@ -278,6 +277,7 @@ namespace BankAppDesktop
                     services.AddTransient<DeleteAccountViewModel>();
                     services.AddTransient<DeleteAccountView>();
                     services.AddTransient<MainPage>();
+                    services.AddTransient<BankAccountDetailsPage>();
 
                     // FIXME: remove \/\/\/\/
                     services.AddTransient<Func<LoanRequestComponent>>(sp => () => sp.GetRequiredService<LoanRequestComponent>());

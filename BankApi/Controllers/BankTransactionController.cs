@@ -34,11 +34,11 @@ namespace BankApi.Controllers
                 {
                     SenderIban = dto.SenderIban,
                     ReceiverIban = dto.ReceiverIban,
-                    SenderAmount = dto.Amount,
+                    SenderAmount = dto.SenderAmount,
                     TransactionDescription = dto.TransactionDescription,
                     ReceiverAmount = receiverAccount.Currency == senderAccount.Currency
-                        ? dto.Amount
-                        : await bankAccountService.ConvertCurrency(dto.Amount, senderAccount.Currency, receiverAccount.Currency),
+                        ? dto.SenderAmount
+                        : await bankAccountService.ConvertCurrency(dto.SenderAmount, senderAccount.Currency, receiverAccount.Currency),
                     SenderCurrency = senderAccount.Currency,
                     ReceiverCurrency = receiverAccount.Currency,
                     TransactionDatetime = DateTime.UtcNow,
@@ -144,7 +144,7 @@ namespace BankApi.Controllers
     {
         public string SenderIban { get; set; }
         public string ReceiverIban { get; set; }
-        public decimal Amount { get; set; }
+        public decimal SenderAmount { get; set; }
         public string TransactionDescription { get; set; }
     }
 

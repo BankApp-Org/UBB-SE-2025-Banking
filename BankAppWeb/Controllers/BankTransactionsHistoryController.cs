@@ -20,8 +20,10 @@ namespace BankAppWeb.Controllers
             _transactionsHistoryService = transactionsHistoryService;
         }
 
-        public async Task<IActionResult> Index(string? Filter, string IBAN)
+        public async Task<IActionResult> Index(BankTransactionsHistoryViewModel viewModel)
         {
+            string IBAN = viewModel.IBAN;
+            string Filter = viewModel.Filter;
             if(string.IsNullOrWhiteSpace(IBAN))
             {
                 return NotFound();
@@ -36,14 +38,9 @@ namespace BankAppWeb.Controllers
                 .Where(t => t.ToString().ToLowerInvariant().Contains(normalizedFilter) || string.IsNullOrEmpty(normalizedFilter))
                 .ToList();
 
-            // Get all enum values
-            var types = Enum.GetValues(typeof(Common.Models.Bank.TransactionType))
-                .Cast<Common.Models.Bank.TransactionType>()
-                .ToList();
-
             List<BankTransaction> results = new List<BankTransaction>();
 
-            foreach (var type in types)
+            foreach (var type in matchingTypes)
             {
                 TransactionFilters filters = new TransactionFilters
                 {
@@ -98,7 +95,7 @@ namespace BankAppWeb.Controllers
 
         public IActionResult Chart(string IBAN)
         {
-            return RedirectToAction("Index", "TransactionsHistoryChart", new { IBAN = IBAN });
+            return RedirectToAction("Index", "TransactionHistoryChart");
         }
     }
 }
