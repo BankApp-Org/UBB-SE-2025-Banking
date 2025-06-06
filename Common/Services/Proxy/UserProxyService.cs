@@ -1,3 +1,4 @@
+using Common.DTOs;
 using Common.Models;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
@@ -15,6 +16,17 @@ namespace Common.Services.Proxy
         {
             var response = await _httpClient.PostAsJsonAsync("api/User", user, _jsonOptions);
             response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<User> GetByIdAsync(int userId)
+        {
+            if (userId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(userId), "User ID must be greater than zero.");
+            }
+            var response = await _httpClient.GetAsync($"api/User/id/{userId}");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<User>(_jsonOptions) ?? throw new InvalidOperationException("Failed to deserialize user.");
         }
 
         public async Task<User> GetCurrentUserAsync(string? userCNP = null) // userCNP is not used by the API endpoint for current user
@@ -65,6 +77,12 @@ namespace Common.Services.Proxy
             return await response.Content.ReadFromJsonAsync<List<User>>(_jsonOptions) ?? [];
         }
 
+        public async Task<List<User>> GetNonFriends(string userCNP)
+        {
+            var response = await _httpClient.GetAsync($"api/User/non-friends");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<List<User>>(_jsonOptions) ?? [];
+        }
         public async Task UpdateIsAdminAsync(bool newIsAdmin, string? userCNP = null)
         {
             if (string.IsNullOrEmpty(userCNP))
@@ -145,6 +163,21 @@ namespace Common.Services.Proxy
             response.EnsureSuccessStatusCode();
         }
 
+        public async Task<List<SocialUserDto>> GetNonFriendsUsers(string userCNP)
+        {
+            if (string.IsNullOrEmpty(userCNP))
+            {
+                throw new ArgumentException("User CNP cannot be null or empty.", nameof(userCNP));
+            }
+            var response = await _httpClient.GetAsync($"api/friend/{userCNP}/nonfriends");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException($"Failed to retrieve non-friends users: {response.ReasonPhrase}");
+            }
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<SocialUserDto>>(content, _jsonOptions)
+                   ?? throw new InvalidOperationException("Deserialization returned null.");
+        }
         private class DefaultRoleResponse
         {
             public string Message { get; set; } = string.Empty;

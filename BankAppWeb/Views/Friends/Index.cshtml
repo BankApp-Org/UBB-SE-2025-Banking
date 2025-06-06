@@ -1,0 +1,219 @@
+﻿@model BankAppWeb.Models.FriendsViewModel
+
+@{
+    ViewData["Title"] = "Friends";
+}
+
+<div class="container" style="padding: 20px;">
+    <div class="row">
+        <!-- Left Column: Friends List -->
+        <div class="col-md-6">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2>Friends</h2>
+                </div>
+            </div>
+
+            <div class="row" style="margin: 10px 0;">
+                <div class="col">
+                    <form id="friendSearchForm" asp-action="Index" asp-controller="Friends" method="get">
+                        <input type="text" class="form-control" name="friendSearchQuery" id="friendSearchQuery" value="@Model.FriendSearchQuery" placeholder="Search friends..." />
+                        <input type="hidden" name="addFriendSearchQuery" value="@Model.AddFriendSearchQuery" />
+                    </form>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" id="friendsListContainer">
+                    @if (Model.NoFriendsVisibility)
+                    {
+                        <p class="text-center" style="margin-top: 20px;">
+                            You have no friends in the friends list. Add a friend to view it here. :)
+                        </p>
+                    }
+                    else
+                    {
+                        <ul class="list-group">
+                            @foreach (var friend in Model.FriendsList)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>@friend.FirstName</strong>
+                                        <div class="text-muted" style="font-size: 12px;">@friend.PhoneNumber</div>
+                                    </div>
+                                    <form asp-action="RemoveFriend" asp-controller="Friends" method="post" class="remove-friend-form">
+                                        <input type="hidden" name="friendId" value="@friend.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                    </form>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Add Friends -->
+        <div class="col-md-6">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2>Add Friends</h2>
+                </div>
+            </div>
+
+            <div class="row" style="margin: 10px 0;">
+                <div class="col">
+                    <form id="addFriendSearchForm" asp-action="Index" asp-controller="Friends" method="get">
+                        <input type="text" class="form-control" name="addFriendSearchQuery" id="addFriendSearchQuery" value="@Model.AddFriendSearchQuery" placeholder="Search users..." />
+                        <input type="hidden" name="friendSearchQuery" value="@Model.FriendSearchQuery" />
+                    </form>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" id="addFriendsList">
+                    @if (Model.NoUsersVisibility)
+                    {
+                        <p class="text-center" style="margin-top: 20px;">
+                            There aren't any users available.
+                        </p>
+                    }
+                    else
+                    {
+                        <ul class="list-group">
+                            @foreach (var user in Model.UsersList)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>@user.FirstName</strong>
+                                        <div class="text-muted" style="font-size: 12px;">@user.PhoneNumber</div>
+                                    </div>
+                                    <form asp-action="AddFriend" asp-controller="Friends" method="post">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <button type="submit" class="btn btn-primary btn-sm">+</button>
+                                    </form>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+    }
+
+    .list-group-item {
+        padding: 10px;
+    }
+
+    .btn-sm {
+        margin-left: 10px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Auto-submit Friends search form
+        document.getElementById('friendSearchQuery').addEventListener('input', function () {
+            const friendSearchQuery = this.value;
+            const addFriendSearchQuery = document.getElementById('addFriendSearchQuery').value;
+            const searchParams = new URLSearchParams({
+                friendSearchQuery: friendSearchQuery,
+                addFriendSearchQuery: addFriendSearchQuery
+            }).toString();
+            fetch(`/Friends/Index?${searchParams}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    document.getElementById('friendsListContainer').innerHTML = doc.querySelector('#friendsListContainer').innerHTML;
+                    document.getElementById('addFriendsList').innerHTML = doc.querySelector('#addFriendsList').innerHTML;
+                    attachFormListeners();
+                })
+                .catch(error => console.error('Error loading Friends:', error));
+        });
+
+        // Auto-submit Add Friends search form
+        document.getElementById('addFriendSearchQuery').addEventListener('input', function () {
+            const addFriendSearchQuery = this.value;
+            const friendSearchQuery = document.getElementById('friendSearchQuery').value;
+            const searchParams = new URLSearchParams({
+                friendSearchQuery: friendSearchQuery,
+                addFriendSearchQuery: addFriendSearchQuery
+            }).toString();
+            fetch(`/Friends/Index?${searchParams}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    document.getElementById('friendsListContainer').innerHTML = doc.querySelector('#friendsListContainer').innerHTML;
+                    document.getElementById('addFriendsList').innerHTML = doc.querySelector('#addFriendsList').innerHTML;
+                    attachFormListeners();
+                })
+                .catch(error => console.error('Error loading Add Friends:', error));
+        });
+
+        // Function to attach event listeners to Add and Remove forms
+        function attachFormListeners() {
+            // Remove Friend form submissions
+            document.querySelectorAll('.remove-friend-form').forEach(form => {
+                form.removeEventListener('submit', handleRemoveFriend); // Prevent duplicate listeners
+                form.addEventListener('submit', handleRemoveFriend);
+            });
+
+            // Add Friend form submissions
+            document.querySelectorAll('form[asp-action="AddFriend"]').forEach(form => {
+                form.removeEventListener('submit', handleAddFriend); // Prevent duplicate listeners
+                form.addEventListener('submit', handleAddFriend);
+            });
+        }
+
+        // Handle RemoveFriend form submissions
+        function handleRemoveFriend(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    document.getElementById('friendsListContainer').innerHTML = doc.querySelector('#friendsListContainer').innerHTML;
+                    document.getElementById('addFriendsList').innerHTML = doc.querySelector('#addFriendsList').innerHTML;
+                    attachFormListeners();
+                })
+                .catch(error => console.error('Error removing friend:', error));
+        }
+
+        // Handle AddFriend form submissions
+        function handleAddFriend(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    document.getElementById('friendsListContainer').innerHTML = doc.querySelector('#friendsListContainer').innerHTML;
+                    document.getElementById('addFriendsList').innerHTML = doc.querySelector('#addFriendsList').innerHTML;
+                    attachFormListeners();
+                })
+                .catch(error => console.error('Error adding friend:', error));
+        }
+
+        // Initial attachment of form listeners
+        attachFormListeners();
+    </script>
+}

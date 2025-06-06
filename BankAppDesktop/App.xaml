@@ -9,6 +9,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary Source="Resources/MessageTemplates.xaml" />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
@@ -56,6 +57,7 @@
             <converters:DateFormatConverter x:Key="DateFormatConverter" />
             <converters:BoolToFavoriteColorConverter x:Key="BoolToFavoriteColorConverter" />
             <converters:BoolToInverseBoolConverter x:Key="BoolToInverseBoolConverter" />
+            <converters:EmoticonToEmojiConverter x:Key="EmoticonToEmojiConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -22,7 +22,7 @@ namespace Common.Models.Social
         }
 
         [JsonConstructor]
-        public TextMessage( int userId, int chatId, string messageContent, string createdAt, MessageType type, List<User> usersReport)
+        public TextMessage(int userId, int chatId, string messageContent, string createdAt, MessageType type, List<User> usersReport)
         {
             UserId = userId;
             ChatId = chatId;

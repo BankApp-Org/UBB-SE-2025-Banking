@@ -10,7 +10,7 @@ namespace BankAppDesktop
     using System.ComponentModel;
 
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainWindow : Window, INotifyPropertyChanged
     {
@@ -133,6 +133,7 @@ namespace BankAppDesktop
                     "ProfilePage" => this.serviceProvider.GetRequiredService<ProfilePage>(),
                     "LoginPage" => this.serviceProvider.GetRequiredService<LoginPage>(),
                     "GemStorePage" => this.serviceProvider.GetRequiredService<GemStorePage>(),
+                    "NotificationsPage" => this.serviceProvider.GetRequiredService<NotificationsPage>(),
                     _ => throw new InvalidOperationException($"Unknown navigation item: {invokedItemTag}")
                 };
             }

@@ -1,6 +1,7 @@
 using BankApi.Repositories;
 using BankApi.Services;
 using Common.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -15,13 +16,15 @@ namespace BankApp.Service.Tests
     public class UserServiceTests
     {
         private Mock<IUserRepository> _mockRepo;
+        private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         private UserService _service;
 
         [TestInitialize]
         public void Init()
         {
             _mockRepo = new Mock<IUserRepository>();
-            _service = new UserService(_mockRepo.Object);
+            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            _service = new UserService(_mockRepo.Object, _mockHttpContextAccessor.Object);
         }
 
         [TestMethod]
@@ -77,7 +80,7 @@ namespace BankApp.Service.Tests
             var existingUser = new User { CNP = "123", UserName = "Old", Image = "old.png", Description = "old", IsHidden = false };
             _mockRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync(existingUser);
             _mockRepo.Setup(r => r.UpdateAsync(It.IsAny<User>())).Returns(Task.FromResult(true));
-        
+
             var updatedUser = new User
             {
                 UserName = "New",
@@ -87,13 +90,13 @@ namespace BankApp.Service.Tests
                 Email = "test@example.com",
                 PhoneNumber = "1234567890"
             };
-        
+
             await _service.UpdateUserAsync(updatedUser, "123");
-        
-            _mockRepo.Verify(r => r.UpdateAsync(It.Is<User>(u => 
-                u.UserName == "New" && 
-                u.Image == "new.png" && 
-                u.Description == "new desc" && 
+
+            _mockRepo.Verify(r => r.UpdateAsync(It.Is<User>(u =>
+                u.UserName == "New" &&
+                u.Image == "new.png" &&
+                u.Description == "new desc" &&
                 u.IsHidden == true)), Times.Once);
         }
 
@@ -113,7 +116,7 @@ namespace BankApp.Service.Tests
                 Description = "new desc",
                 IsHidden = true
             };
-        
+
             _mockRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync((User)null);
             await Assert.ThrowsExactlyAsync<KeyNotFoundException>(async () => await _service.UpdateUserAsync(updatedUser, "123"));
         }

@@ -1,4 +1,4 @@
-﻿using BankApi.Repositories.Impl.Bank;
+using BankApi.Repositories.Impl.Bank;
 using Common.Models.Bank;
 using Common.Services.Bank;
 

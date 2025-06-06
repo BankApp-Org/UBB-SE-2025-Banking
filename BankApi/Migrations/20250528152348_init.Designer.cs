@@ -156,7 +156,7 @@ namespace BankApi.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("TransactionType")
+                    b.Property<string>("TransactionTypes")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
