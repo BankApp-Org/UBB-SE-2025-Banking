@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace BankApp.Service.Tests
 {
     [TestClass]
+    [SupportedOSPlatform("windows10.0.26100.0")]
     public class StockServiceTests
     {
         private Mock<IStockRepository> stockRepoMock;
@@ -137,7 +138,7 @@ namespace BankApp.Service.Tests
         {
             var stock = new HomepageStock { Id = 1, IsFavorite = false };
             await stockService.AddToFavoritesAsync(stock);
-            Assert.IsTrue(true); // Method completes without error
+            Assert.IsTrue(true); 
         }
 
         [TestMethod]
@@ -145,7 +146,7 @@ namespace BankApp.Service.Tests
         {
             var stock = new HomepageStock { Id = 1, IsFavorite = true };
             await stockService.RemoveFromFavoritesAsync(stock);
-            Assert.IsTrue(true); // Method completes without error
+            Assert.IsTrue(true); 
         }
     }
 }

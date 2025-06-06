@@ -92,7 +92,6 @@
                                                   /// Gets or sets the publication date of the article.
                                                   /// </summary>
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime PublishedDate { get; set; }
 
         /// <summary>

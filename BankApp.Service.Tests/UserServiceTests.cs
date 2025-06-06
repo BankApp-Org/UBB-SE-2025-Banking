@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace BankApp.Service.Tests
 {
     [TestClass]
-    // [SupportedOSPlatform("windows10.0.26100.0")]
+    [SupportedOSPlatform("windows10.0.26100.0")]
     public class UserServiceTests
     {
         private Mock<IUserRepository> _mockRepo;
@@ -179,7 +179,6 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task GetCurrentUserAsync_EmptyCnp_ThrowsArgumentException()
         {
-            // Simulate unauthenticated context
             _mockHttpContextAccessor.Setup(a => a.HttpContext).Returns((HttpContext)null);
             await Assert.ThrowsExactlyAsync<UnauthorizedAccessException>(async () => await _service.GetCurrentUserAsync(""));
         }

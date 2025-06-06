@@ -16,11 +16,11 @@ namespace Common.Models.Bank
 
         [Required]
         [ForeignKey("SenderIban")]
-        required public BankAccount SenderAccount { get; set; }
+        public BankAccount SenderAccount { get; set; } = null!;
 
         [Required]
         [ForeignKey("ReceiverIban")]
-        required public BankAccount ReceiverAccount { get; set; }
+        public BankAccount ReceiverAccount { get; set; } = null!;
 
         [Required]
         public DateTime TransactionDatetime { get; set; }
