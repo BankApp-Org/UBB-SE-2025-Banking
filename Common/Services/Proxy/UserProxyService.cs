@@ -171,7 +171,9 @@ namespace Common.Services.Proxy
             {
                 throw new ArgumentNullException(nameof(friend), "Friend cannot be null.");
             }
-            var response = await _httpClient.DeleteAsync($"api/User/{friend.CNP}/friends");
+
+            string userCNP = _authService.GetUserCNP();
+            var response = await _httpClient.DeleteAsync($"api/Friend/{userCNP}/friends/{friend.CNP}");
             response.EnsureSuccessStatusCode();
         }
 
@@ -181,7 +183,7 @@ namespace Common.Services.Proxy
             {
                 throw new ArgumentException("User CNP cannot be null or empty.", nameof(userCNP));
             }
-            var response = await _httpClient.GetAsync($"api/friend/{userCNP}/nonfriends");
+            var response = await _httpClient.GetAsync($"api/Friend/{userCNP}/nonfriends");
             if (!response.IsSuccessStatusCode)
             {
                 throw new HttpRequestException($"Failed to retrieve non-friends users: {response.ReasonPhrase}");
