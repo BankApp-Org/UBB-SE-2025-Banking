@@ -14,6 +14,11 @@
         {
             try
             {
+                if (messageToBeChecked == null || string.IsNullOrWhiteSpace(messageToBeChecked.MessageContent))
+                {
+                    return false;
+                }
+
                 string apiUrl = $"https://www.purgomalum.com/homepageService/containsprofanity?text={Uri.EscapeDataString(messageToBeChecked.MessageContent)}";
                 HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
                 string result = await response.Content.ReadAsStringAsync();

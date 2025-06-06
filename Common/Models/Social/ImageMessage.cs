@@ -18,7 +18,7 @@ namespace Common.Models.Social
             Type = MessageType.Image;
         }
         [JsonConstructor]
-        public ImageMessage( int userId, int chatId, string imageUrl, List<User> usersReport, string createdAt)
+        public ImageMessage(int userId, int chatId, string imageUrl, List<User> usersReport, string createdAt)
         {
             UserId = userId;
             ChatId = chatId;

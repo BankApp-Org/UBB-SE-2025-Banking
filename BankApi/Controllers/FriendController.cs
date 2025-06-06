@@ -163,40 +163,7 @@ namespace BankApi.Controllers
         [HttpGet("{userCNP}/nonfriends")]
         public async Task<ActionResult<List<SocialUserDto>>> GetNonFriendsUsers(string userCNP)
         {
-
-            var user = await _userService.GetUserByCnpAsync(userCNP);
-            var friends = user.Friends;
-            friends.Add(user);
-            var allusers = await _userService.GetUsers();
-            //var dtos = nonFriends.Select(u => new UserViewModel
-            //{
-            //    UserID = u.UserID,
-            //    Username = u.Username,
-            //    FirstName = u.FirstName,
-            //    LastName = u.LastName,
-            //    Email = u.Email?.ToString(),
-            //    PhoneNumber = u.PhoneNumber?.ToString(),
-            //    Cnp = u.Cnp?.ToString(),
-            //    Password = u.HashedPassword.ToString(),
-            //    ReportedCount = u.ReportedCount
-            //}).ToList();
-            //return Ok(dtos);
-
-            var nonFriends = allusers.Except(friends).ToList();
-
-            if (nonFriends.Count == 0)
-                return new List<SocialUserDto>();
-
-            var result = nonFriends.Select(u => new SocialUserDto
-            {
-                UserID = u.Id, // Use the non-friend's UserID
-                Username = u.FirstName,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                Email = u.Email?.ToString(),
-                Cnp = u.CNP?.ToString()
-            }).ToList();
-            return Ok(result);
+            return Ok(await _userService.GetNonFriendsUsers(userCNP));
         }
 
         //[HttpGet("current")]

@@ -53,7 +53,7 @@
             }
         }
 
-        // Ensure the window is fully loaded before accessing Window.Current
+        // Ensure the page is fully loaded before accessing Window.Current
         private void PageActivated(object sender, Microsoft.UI.Xaml.WindowActivatedEventArgs e)
         {
             if (Window.Current != null)
@@ -72,7 +72,7 @@
         private async void OnPageLoaded(object sender, RoutedEventArgs e)
         {
             await this.LoadTransactionsAsync();
-            this.viewModel.FilterCriteriaChanged += (object? o, EventArgs ea) =>
+            this.viewModel.FilterCriteriaChanged += (o, ea) =>
             {
                 if (this.viewModel.IsLoading)
                 {
@@ -147,7 +147,7 @@
                 // Create file save picker
                 var savePicker = new FileSavePicker();
 
-                // Initialize with window handle
+                // Initialize with page handle
                 var window = App.MainAppWindow;
                 if (window != null)
                 {

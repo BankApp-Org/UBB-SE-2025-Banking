@@ -237,12 +237,33 @@ namespace BankApi.Controllers
                     return NotFound($"Chat report with ID {id} not found");
                 }
 
-                throw new NotImplementedException("This method should be altered to send notifications.");
-
-                // Send a message to the user about the punishment
-                if (!string.IsNullOrEmpty(punishmentDto.MessageContent))
+                // Send a notification message to the user about the punishment
+                if (!string.IsNullOrEmpty(punishmentDto.MessageContent) && _notificationService != null)
                 {
-                    // await Task.Run(() => _messagesService.GiveMessageToUserAsync(report.ReportedUserCnp, "Punishment", punishmentDto.MessageContent));
+                    try
+                    {
+                        // Get the user by CNP to obtain the user ID
+                        var reportedUser = await _userRepository.GetByCnpAsync(report.ReportedUserCnp);
+                        if (reportedUser != null)
+                        {
+                            // Create a notification object
+                            var notification = new Notification
+                            {
+                                Content = punishmentDto.MessageContent,
+                                UserId = reportedUser.Id,
+                                User = reportedUser,
+                                Timestamp = DateTime.UtcNow
+                            };
+
+                            // Send notification using the correct method name
+                            await _notificationService.CreateNotification(notification);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the error but continue with punishment
+                        Console.WriteLine($"Failed to send notification: {ex.Message}");
+                    }
                 }
 
                 // Apply the punishment using the existing report

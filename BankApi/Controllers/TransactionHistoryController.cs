@@ -1,7 +1,9 @@
+using BankApi.Repositories.Exporters;
 using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.ObjectModel;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace BankApi.Controllers
 {
@@ -37,7 +39,27 @@ namespace BankApi.Controllers
         {
             try
             {
-                // see Repositories.Exporters
+                CSVBankTransactionExporter cSVBankTransactionExporter = new CSVBankTransactionExporter();
+                
+                TransactionFilters filters = new TransactionFilters
+                {
+                    Type = Common.Models.Bank.TransactionType.LoanPayment,
+                    SenderIban = iban,
+                    StartDate = new DateTime(2000, 1, 1),
+                    EndDate = new DateTime(3000, 1, 1),
+                };
+
+                var transactions1 = await _transactionHistoryService.GetTransactions(filters);
+
+                filters.SenderIban = string.Empty;
+                filters.ReceiverIban = iban;
+
+                var transactions2 = await _transactionHistoryService.GetTransactions(filters);
+                transactions1.AddRange(transactions2);
+
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "transactions.csv");
+
+                cSVBankTransactionExporter.Export(transactions1, filePath);
 
                 return Ok("CSV file created successfully");
             }
