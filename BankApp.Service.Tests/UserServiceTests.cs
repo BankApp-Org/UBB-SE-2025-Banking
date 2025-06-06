@@ -4,11 +4,13 @@ using BankApi.Services;
 using Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BankApp.Service.Tests
@@ -20,8 +22,8 @@ namespace BankApp.Service.Tests
         private Mock<IUserRepository> _mockRepo;
         private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         private Mock<UserManager<User>> _mockUserManager;
-        private Mock<ApiDbContext> _mockDBcontext;
         private UserService _service;
+        private ApiDbContext _dbContext;
 
         [TestInitialize]
         public void Init()
@@ -31,8 +33,24 @@ namespace BankApp.Service.Tests
             _mockUserManager = new Mock<UserManager<User>>(
                 new Mock<IUserStore<User>>().Object,
                 null, null, null, null, null, null, null, null);
-            _mockDBcontext = new Mock<ApiDbContext>();
-            _service = new UserService(_mockRepo.Object, _mockHttpContextAccessor.Object, _mockUserManager.Object, _mockDBcontext.Object);
+            var options = new DbContextOptionsBuilder<ApiDbContext>()
+                .UseInMemoryDatabase(databaseName: "UserServiceTestsDb")
+                .Options;
+            _dbContext = new ApiDbContext(options);
+            _service = new UserService(_mockRepo.Object, _mockHttpContextAccessor.Object, _mockUserManager.Object, _dbContext);
+        }
+
+        private void SetupHttpContextWithUser(string userId)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userId)
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            var principal = new ClaimsPrincipal(identity);
+            var mockContext = new Mock<HttpContext>();
+            mockContext.Setup(c => c.User).Returns(principal);
+            _mockHttpContextAccessor.Setup(a => a.HttpContext).Returns(mockContext.Object);
         }
 
         [TestMethod]
@@ -46,16 +64,18 @@ namespace BankApp.Service.Tests
         }
 
         [TestMethod]
-        public async Task GetUserByCnpAsync_EmptyCnp_ThrowsArgumentException()
+        public async Task GetUserByCnpAsync_EmptyCnp_ReturnsNull()
         {
-            await Assert.ThrowsExactlyAsync<ArgumentException>(async () => await _service.GetUserByCnpAsync(""));
+            var result = await _service.GetUserByCnpAsync("");
+            Assert.IsNull(result);
         }
 
         [TestMethod]
-        public async Task GetUserByCnpAsync_UserNotFound_ThrowsKeyNotFoundException()
+        public async Task GetUserByCnpAsync_UserNotFound_ReturnsNull()
         {
             _mockRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync((User)null);
-            await Assert.ThrowsExactlyAsync<KeyNotFoundException>(async () => await _service.GetUserByCnpAsync("123"));
+            var result = await _service.GetUserByCnpAsync("123");
+            Assert.IsNull(result);
         }
 
         [TestMethod]
@@ -149,8 +169,9 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task GetCurrentUserAsync_HappyCase_ReturnsUser()
         {
-            var user = new User { CNP = "123" };
-            _mockRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync(user);
+            var user = new User { Id = 1, CNP = "123" };
+            SetupHttpContextWithUser("1");
+            _mockRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(user);
             var result = await _service.GetCurrentUserAsync("123");
             Assert.IsNotNull(result);
         }
@@ -158,13 +179,15 @@ namespace BankApp.Service.Tests
         [TestMethod]
         public async Task GetCurrentUserAsync_EmptyCnp_ThrowsArgumentException()
         {
-            await Assert.ThrowsExactlyAsync<ArgumentException>(async () => await _service.GetCurrentUserAsync(""));
+            _mockHttpContextAccessor.Setup(a => a.HttpContext).Returns((HttpContext)null);
+            await Assert.ThrowsExactlyAsync<UnauthorizedAccessException>(async () => await _service.GetCurrentUserAsync(""));
         }
 
         [TestMethod]
         public async Task GetCurrentUserAsync_UserNotFound_ThrowsKeyNotFoundException()
         {
-            _mockRepo.Setup(r => r.GetByCnpAsync("123")).ReturnsAsync((User)null);
+            SetupHttpContextWithUser("1");
+            _mockRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((User)null);
             await Assert.ThrowsExactlyAsync<KeyNotFoundException>(async () => await _service.GetCurrentUserAsync("123"));
         }
 

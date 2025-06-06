@@ -204,6 +204,13 @@ namespace BankApi.Controllers
             return Ok(chat.Users.Select(u => u.FirstName).ToList());
         }
 
+        [HttpGet("{chatId}")]
+        public async Task<ActionResult<Chat>> GetChatByIdAsync(int chatId)
+        {
+            var chat = await chatService.GetChatById(chatId);
+            return Ok(chat);
+        }
+
         [HttpGet("{chatId}/participants")]
         public async Task<ActionResult<List<User>>> GetParticipants(int chatId)
         {

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Diagnostics;
 
 namespace Common.Services.Proxy
 {
@@ -22,31 +23,81 @@ namespace Common.Services.Proxy
                 UserReceiver = notification.User
             };
 
+            Debug.WriteLine($"Creating notification: {JsonSerializer.Serialize(dto, _jsonOptions)}");
             var response = await _httpClient.PostAsJsonAsync("api/Notification/notification", dto, _jsonOptions);
+            Debug.WriteLine($"Create notification response: {response.StatusCode}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error response content: {errorContent}");
+            }
             response.EnsureSuccessStatusCode();
         }
 
         public async Task<Notification> GetNotificationById(int notificationId)
         {
-            return await _httpClient.GetFromJsonAsync<Notification>($"api/Notification/{notificationId}", _jsonOptions) ??
-                throw new InvalidOperationException("Failed to deserialize notification response.");
+            Debug.WriteLine($"Getting notification by ID: {notificationId}");
+            var response = await _httpClient.GetAsync($"api/Notification/{notificationId}");
+            Debug.WriteLine($"Get notification by ID response: {response.StatusCode}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error response content: {errorContent}");
+            }
+            response.EnsureSuccessStatusCode();
+
+            var notification = await response.Content.ReadFromJsonAsync<Notification>(_jsonOptions);
+            Debug.WriteLine($"Received notification: {JsonSerializer.Serialize(notification, _jsonOptions)}");
+            return notification ?? throw new InvalidOperationException("Failed to deserialize notification response.");
         }
 
         public async Task<List<Notification>> GetNotificationsForUser(int userId)
         {
-            return await _httpClient.GetFromJsonAsync<List<Notification>>($"api/Notification/user/{userId}", _jsonOptions) ??
-                [];
-        }
+            Debug.WriteLine($"Getting notifications for user ID: {userId}");
+            Debug.WriteLine($"Request URL: {_httpClient.BaseAddress}api/Notification/user/{userId}");
 
-        public async Task MarkAllNotificationsAsRead(int userId)
-        {
-            var response = await _httpClient.PostAsJsonAsync("api/Notification/clear-all", userId, _jsonOptions);
-            response.EnsureSuccessStatusCode();
+            var response = await _httpClient.GetAsync($"api/Notification/user/{userId}");
+            Debug.WriteLine($"Get notifications response: {response.StatusCode}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error response content: {errorContent}");
+                response.EnsureSuccessStatusCode(); // This will throw with the full error details
+            }
+
+            var notifications = await response.Content.ReadFromJsonAsync<List<Notification>>(_jsonOptions);
+            Debug.WriteLine($"Received notifications: {JsonSerializer.Serialize(notifications, _jsonOptions)}");
+            return notifications ?? [];
         }
 
         public async Task MarkNotificationAsRead(int notificationId, int userId)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Notification/clear", notificationId, _jsonOptions);
+            Debug.WriteLine($"Marking notification {notificationId} as read for user {userId}");
+            var response = await _httpClient.PostAsync($"api/Notification/clear/{notificationId}", null);
+            Debug.WriteLine($"Mark notification as read response: {response.StatusCode}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error response content: {errorContent}");
+            }
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task MarkAllNotificationsAsRead(int userId)
+        {
+            Debug.WriteLine($"Marking all notifications as read for user {userId}");
+            var response = await _httpClient.PostAsync($"api/Notification/clear-all/{userId}", null);
+            Debug.WriteLine($"Mark all notifications as read response: {response.StatusCode}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error response content: {errorContent}");
+            }
             response.EnsureSuccessStatusCode();
         }
     }

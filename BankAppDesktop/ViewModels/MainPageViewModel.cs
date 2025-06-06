@@ -196,9 +196,7 @@ namespace BankAppDesktop.ViewModels
                 return "Transaction history is not available, please create a bank account first";
             }
 
-            // DE ADAUGAT IBAN
-            throw new Exception("DE ADAUGAT IBAN");
-            BankTransactionsHistoryPage transactionHistoryView = new BankTransactionsHistoryPage();
+            BankTransactionsHistoryPage transactionHistoryView = new BankTransactionsHistoryPage(SelectedIban);
             App.MainAppWindow.MainAppFrame.Content = transactionHistoryView;
 
             return null;
@@ -226,9 +224,8 @@ namespace BankAppDesktop.ViewModels
                 return "Please create a bank account to update settings";
             }
 
-            // NU ESTE FACUT INCA
-            // BankAccountUpdateView bankAccountUpdateView = new BankAccountUpdateView();
-            // bankAccountUpdateView.Activate();
+            App.MainAppWindow.MainAppFrame.Content = new BankAccountUpdateView(SelectedIban);
+
             return null;
         }
 

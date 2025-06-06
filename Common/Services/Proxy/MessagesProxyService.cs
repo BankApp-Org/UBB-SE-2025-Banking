@@ -15,7 +15,7 @@ namespace Common.Services.Proxy
 
         public async Task<Message> SendMessageAsync(int chatId, User sender, Message message)
         {
-            var response = await _httpClient.PostAsJsonAsync($"api/Messages/{chatId}", message, _jsonOptions);
+            var response = await _httpClient.PostAsJsonAsync($"api/Message/text", message, _jsonOptions);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Message>(_jsonOptions) ??
                 throw new InvalidOperationException("Failed to deserialize send message response.");

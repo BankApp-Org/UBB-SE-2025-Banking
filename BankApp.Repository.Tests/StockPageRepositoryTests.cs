@@ -8,11 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
+    [TestClass]
     public class StockPageRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _options;
@@ -26,7 +27,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_options);
 
-        [Fact]
+        [TestMethod]
         public async Task AddOrUpdateUserStockAsync_Should_Add_New_Stock()
         {
             using var context = CreateContext();
@@ -50,7 +51,7 @@ namespace BankApp.Repository.Tests
             result!.Quantity.Should().Be(10);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddOrUpdateUserStockAsync_Should_Update_Existing_Stock()
         {
             using var context = CreateContext();
@@ -76,7 +77,7 @@ namespace BankApp.Repository.Tests
             result.Quantity.Should().Be(20);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task AddStockValueAsync_Should_Add_Price_Record()
         {
             using var context = CreateContext();
@@ -89,7 +90,7 @@ namespace BankApp.Repository.Tests
             value!.Price.Should().Be(420m);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetStockAsync_Should_Return_Stock()
         {
             using var context = CreateContext();
@@ -109,7 +110,7 @@ namespace BankApp.Repository.Tests
             result.Name.Should().Be("NFLX");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetStockAsync_Should_Throw_When_Not_Found()
         {
             using var context = CreateContext();
@@ -120,7 +121,7 @@ namespace BankApp.Repository.Tests
             await act.Should().ThrowAsync<Exception>().WithMessage("Stock not found.");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetUserStockAsync_Should_Return_Existing()
         {
             using var context = CreateContext();
@@ -136,7 +137,7 @@ namespace BankApp.Repository.Tests
             result.Quantity.Should().Be(12);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetUserStockAsync_Should_Create_New_When_Not_Found()
         {
             using var context = CreateContext();
@@ -149,7 +150,7 @@ namespace BankApp.Repository.Tests
             result.StockName.Should().Be("MSFT");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetStockHistoryAsync_Should_Return_All_Prices()
         {
             using var context = CreateContext();
@@ -168,7 +169,7 @@ namespace BankApp.Repository.Tests
             history.Should().HaveCount(2).And.Contain([100, 200]);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetOwnedStocksAsync_Should_Return_Quantity()
         {
             using var context = CreateContext();
@@ -181,7 +182,7 @@ namespace BankApp.Repository.Tests
             quantity.Should().Be(7);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetOwnedStocksAsync_Should_Return_Zero_When_NotFound()
         {
             using var context = CreateContext();
@@ -192,7 +193,7 @@ namespace BankApp.Repository.Tests
             quantity.Should().Be(0);
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetFavoriteAsync_Should_Return_True_If_Exists()
         {
             using var context = CreateContext();
@@ -205,7 +206,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeTrue();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetFavoriteAsync_Should_Return_False_If_Not_Exists()
         {
             using var context = CreateContext();
@@ -216,7 +217,7 @@ namespace BankApp.Repository.Tests
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task ToggleFavoriteAsync_Should_Add_When_True()
         {
             using var context = CreateContext();
@@ -227,7 +228,7 @@ namespace BankApp.Repository.Tests
             (await context.FavoriteStocks.AnyAsync(f => f.UserCNP == "u1" && f.StockName == "BABA")).Should().BeTrue();
         }
 
-        [Fact]
+        [TestMethod]
         public async Task ToggleFavoriteAsync_Should_Remove_When_False()
         {
             using var context = CreateContext();

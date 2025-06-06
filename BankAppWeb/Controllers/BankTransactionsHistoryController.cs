@@ -22,7 +22,7 @@ namespace BankAppWeb.Controllers
 
         public async Task<IActionResult> Index(string? Filter, string IBAN)
         {
-            if(string.IsNullOrWhiteSpace(IBAN))
+            if (string.IsNullOrWhiteSpace(IBAN))
             {
                 return NotFound();
             }
@@ -89,7 +89,7 @@ namespace BankAppWeb.Controllers
 
         public async Task<IActionResult> ExportToCsv(string IBAN)
         {
-            bool answer = await ((BankTransactionProxyService) _transactionsHistoryService).CreateCSV(IBAN);
+            bool answer = await ((BankTransactionProxyService)_transactionsHistoryService).CreateCSV(IBAN);
 
             TempData["AlertMessage"] = "Exported to CSV on desktop!";
 

@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
     [SupportedOSPlatform("windows10.0.26100.0")]
 
+    [TestClass]
     public class TipsRepositoryTests
     {
         private readonly DbContextOptions<ApiDbContext> _dbOptions;
@@ -25,7 +26,7 @@ namespace BankApp.Repository.Tests
 
         private ApiDbContext CreateContext() => new(_dbOptions);
 
-        [Fact]
+        [TestMethod]
         public async Task GetTipsForUserAsync_Should_Return_Tips()
         {
             using var context = CreateContext();
@@ -45,17 +46,17 @@ namespace BankApp.Repository.Tests
             result.Should().ContainSingle(t => t.TipText == "Save more");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GetTipsForUserAsync_Should_Throw_When_UserCnp_NullOrEmpty()
         {
             using var context = CreateContext();
             var repo = new TipsRepository(context);
 
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.GetTipsForUserAsync(null!));
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.GetTipsForUserAsync(""));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.GetTipsForUserAsync(null!));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.GetTipsForUserAsync(""));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GiveTipToUserAsync_Should_Return_GivenTip()
         {
             using var context = CreateContext();
@@ -75,7 +76,7 @@ namespace BankApp.Repository.Tests
             result.User.CNP.Should().Be("123");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GiveTipToUserAsync_Should_Throw_When_No_Tip_Found()
         {
             using var context = CreateContext();
@@ -91,7 +92,7 @@ namespace BankApp.Repository.Tests
                 .WithMessage("No tip found for bracket*");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GiveTipToUserAsync_Should_Throw_When_User_Not_Found()
         {
             using var context = CreateContext();
@@ -107,17 +108,17 @@ namespace BankApp.Repository.Tests
                 .WithMessage("User with CNP*not found*");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GiveTipToUserAsync_Should_Throw_When_Bracket_NullOrEmpty()
         {
             using var context = CreateContext();
             var repo = new TipsRepository(context);
 
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.GiveTipToUserAsync("123", null!));
-            await Assert.ThrowsAsync<ArgumentException>(() => repo.GiveTipToUserAsync("123", ""));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.GiveTipToUserAsync("123", null!));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await repo.GiveTipToUserAsync("123", ""));
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GiveLowBracketTipAsync_Should_Call_GiveTipToUserAsync()
         {
             using var context = CreateContext();
@@ -135,7 +136,7 @@ namespace BankApp.Repository.Tests
             result.Tip.CreditScoreBracket.Should().Be("0-600");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GiveMediumBracketTipAsync_Should_Call_GiveTipToUserAsync()
         {
             using var context = CreateContext();
@@ -153,7 +154,7 @@ namespace BankApp.Repository.Tests
             result.Tip.CreditScoreBracket.Should().Be("600-700");
         }
 
-        [Fact]
+        [TestMethod]
         public async Task GiveHighBracketTipAsync_Should_Call_GiveTipToUserAsync()
         {
             using var context = CreateContext();

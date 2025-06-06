@@ -9,10 +9,11 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public class LoanService(ILoanRepository loanRepository, IUserRepository userRepository) : ILoanService
+    public class LoanService(ILoanRepository loanRepository, IUserRepository userRepository, ICreditScoringService creditScoringService) : ILoanService
     {
         private readonly ILoanRepository loanRepository = loanRepository ?? throw new ArgumentNullException(nameof(loanRepository));
         private readonly IUserRepository userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        private readonly ICreditScoringService creditScoringService = creditScoringService ?? throw new ArgumentNullException(nameof(creditScoringService));
 
         public async Task<List<Loan>> GetLoansAsync()
         {
@@ -67,6 +68,9 @@
             loanToProcess.MonthlyPaymentAmount = monthlyPaymentAmount;
 
             await loanRepository.AddLoanAsync(loanToProcess);
+
+            // Apply credit score impact for taking out a loan
+            await ApplyLoanApplicationImpactAsync(user.CNP, loanToProcess);
         }
 
         public async Task CheckLoansAsync()
@@ -79,10 +83,9 @@
                 if (loan.MonthlyPaymentsCompleted >= loan.NumberOfMonths)
                 {
                     loan.Status = "completed";
-                    int newUserCreditScore = ILoanService.ComputeNewCreditScore(user, loan);
 
-                    user.CreditScore = newUserCreditScore;
-                    await userRepository.UpdateAsync(user);
+                    // Apply credit score impact for completing loan
+                    await ApplyLoanCompletionImpactAsync(user.CNP, loan);
                 }
 
                 if (numberOfMonthsPassed > loan.MonthlyPaymentsCompleted)
@@ -99,22 +102,18 @@
                 if (DateTime.Today > loan.RepaymentDate && loan.Status == "active")
                 {
                     loan.Status = "overdue";
-                    int newUserCreditScore = ILoanService.ComputeNewCreditScore(user, loan);
 
-                    user.CreditScore = newUserCreditScore;
-                    await userRepository.UpdateAsync(user);
-                    await UpdateHistoryForUserAsync(loan.UserCnp, newUserCreditScore);
+                    // Apply negative credit score impact for overdue loan
+                    await ApplyLoanOverdueImpactAsync(user.CNP, loan);
                 }
                 else if (loan.Status == "overdue")
                 {
                     if (loan.MonthlyPaymentsCompleted >= loan.NumberOfMonths)
                     {
                         loan.Status = "completed";
-                        int newUserCreditScore = ILoanService.ComputeNewCreditScore(user, loan);
 
-                        user.CreditScore = newUserCreditScore;
-                        await userRepository.UpdateAsync(user);
-                        await UpdateHistoryForUserAsync(loan.UserCnp, newUserCreditScore);
+                        // Apply credit score impact for completing overdue loan
+                        await ApplyLoanCompletionImpactAsync(user.CNP, loan);
                     }
                 }
 
@@ -139,15 +138,18 @@
             Loan loan = await loanRepository.GetLoanByIdAsync(loanID);
             loan.MonthlyPaymentsCompleted++;
             loan.RepaidAmount += loan.MonthlyPaymentAmount + penalty; // Assuming penalty is part of the repayment
+
+            bool isOnTime = penalty == 0; // No penalty means on-time payment
+
+            // Apply credit score impact for loan payment
+            await ApplyLoanPaymentImpactAsync(loan.UserCnp, loan, loan.MonthlyPaymentAmount + penalty, isOnTime);
+
             if (loan.MonthlyPaymentsCompleted >= loan.NumberOfMonths)
             {
                 loan.Status = "completed";
-                User user = await userRepository.GetByCnpAsync(loan.UserCnp) ?? throw new Exception("User not found");
-                int newUserCreditScore = ILoanService.ComputeNewCreditScore(user, loan);
 
-                user.CreditScore = newUserCreditScore;
-                await userRepository.UpdateAsync(user);
-                await UpdateHistoryForUserAsync(loan.UserCnp, newUserCreditScore);
+                // Apply additional credit score impact for completing loan
+                await ApplyLoanCompletionImpactAsync(loan.UserCnp, loan);
             }
             else if (loan.Status == "overdue" && loan.MonthlyPaymentsCompleted < loan.NumberOfMonths)
             {
@@ -164,16 +166,20 @@
                 throw new Exception("Loan not found");
             }
 
+            decimal previousRepaidAmount = loan.RepaidAmount;
             loan.RepaidAmount += amount;
+
+            bool isOnTime = loan.Status != "overdue";
+
+            // Apply credit score impact for loan payment
+            await ApplyLoanPaymentImpactAsync(loan.UserCnp, loan, amount, isOnTime);
+
             if (loan.RepaidAmount >= loan.LoanAmount + loan.Penalty)
             {
                 loan.Status = "completed";
-                User user = await userRepository.GetByCnpAsync(loan.UserCnp) ?? throw new Exception("User not found");
-                int newUserCreditScore = ILoanService.ComputeNewCreditScore(user, loan);
 
-                user.CreditScore = newUserCreditScore;
-                await userRepository.UpdateAsync(user);
-                await UpdateHistoryForUserAsync(loan.UserCnp, newUserCreditScore);
+                // Apply additional credit score impact for completing loan
+                await ApplyLoanCompletionImpactAsync(loan.UserCnp, loan);
             }
             else
             {
@@ -181,6 +187,84 @@
             }
 
             await loanRepository.UpdateLoanAsync(loan);
+        }
+
+        // New methods for credit score impact
+        private async Task ApplyLoanApplicationImpactAsync(string userCnp, Loan loan)
+        {
+            try
+            {
+                // Taking out a loan has a small negative impact initially
+                int currentScore = await creditScoringService.GetCurrentCreditScoreAsync(userCnp);
+                int newScore = currentScore - 5; // Small penalty for new debt
+
+                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore,
+                    $"New loan application: {loan.LoanAmount:C}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error applying loan application impact: {ex.Message}");
+            }
+        }
+
+        private async Task ApplyLoanPaymentImpactAsync(string userCnp, Loan loan, decimal paymentAmount, bool isOnTime)
+        {
+            try
+            {
+                int impact = await creditScoringService.CalculateLoanPaymentImpactAsync(userCnp, loan, paymentAmount, isOnTime);
+
+                if (impact != 0)
+                {
+                    int currentScore = await creditScoringService.GetCurrentCreditScoreAsync(userCnp);
+                    int newScore = currentScore + impact;
+
+                    string reason = isOnTime
+                        ? $"On-time loan payment: {paymentAmount:C}"
+                        : $"Late loan payment: {paymentAmount:C}";
+
+                    await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore, reason);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error applying loan payment impact: {ex.Message}");
+            }
+        }
+
+        private async Task ApplyLoanCompletionImpactAsync(string userCnp, Loan loan)
+        {
+            try
+            {
+                // Completing a loan has a positive impact
+                int currentScore = await creditScoringService.GetCurrentCreditScoreAsync(userCnp);
+                int bonusPoints = loan.Status == "overdue" ? 10 : 20; // Less bonus if it was overdue
+                int newScore = currentScore + bonusPoints;
+
+                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore,
+                    $"Loan completion: {loan.LoanAmount:C}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error applying loan completion impact: {ex.Message}");
+            }
+        }
+
+        private async Task ApplyLoanOverdueImpactAsync(string userCnp, Loan loan)
+        {
+            try
+            {
+                // Overdue loans have significant negative impact
+                int currentScore = await creditScoringService.GetCurrentCreditScoreAsync(userCnp);
+                int penalty = -30; // Significant penalty for overdue
+                int newScore = currentScore + penalty;
+
+                await creditScoringService.UpdateCreditScoreAsync(userCnp, newScore,
+                    $"Loan overdue: {loan.LoanAmount:C}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error applying loan overdue impact: {ex.Message}");
+            }
         }
     }
 }

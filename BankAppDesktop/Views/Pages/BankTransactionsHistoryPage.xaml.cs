@@ -30,9 +30,10 @@ namespace BankAppDesktop.Views.Pages
         private bool isSortedAscending = true;
         private IBankTransactionService transactionHistoryService;
 
-        public BankTransactionsHistoryPage()
+        public BankTransactionsHistoryPage(string iban)
         {
             this.TransactionsViewModel = App.Services.GetRequiredService<BankTransactionsHistoryViewModel>();
+            this.TransactionsViewModel.CurrentIban = iban;
             this.transactionHistoryService = App.Services.GetRequiredService<IBankTransactionService>();
             this.InitializeComponent();
             InitializeDataAsync();

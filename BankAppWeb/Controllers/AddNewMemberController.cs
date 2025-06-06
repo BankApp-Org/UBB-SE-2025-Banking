@@ -13,8 +13,8 @@ namespace BankAppWeb.Controllers
 
         public AddNewMemberController(IUserService userService, IChatService chatService)
         {
-            userService = userService;
-            chatService = chatService;
+            this.userService = userService;
+            this.chatService = chatService;
         }
 
         public async Task<IActionResult> Index(string? searchQuery, int chatId, List<SocialUserDto> newlyAddedFriends = null)
@@ -133,7 +133,7 @@ namespace BankAppWeb.Controllers
             {
                 newlyAddedFriends.Clear();
                 TempData["AlertMessage"] = "New members added to chat successfully!";
-                return RedirectToAction("Messages", "ChatMessages", new { chatId });
+                return RedirectToAction("Index", "ChatMessages", new { chatId });
             }
             catch (Exception ex)
             {

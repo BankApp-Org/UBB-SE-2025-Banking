@@ -23,7 +23,7 @@ namespace BankAppDesktop.ViewModels
         private readonly IAuthenticationService authSerivce;
         private UserSession currentUser;
         private BankAccount? bankAccount;
-
+        public string CurrentIban { get; set; }
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private string accountIBAN = string.Empty;
@@ -122,14 +122,20 @@ namespace BankAppDesktop.ViewModels
                 bankAccountService = s;
                 authSerivce = a;
                 // Note: Async initialization will be done by calling InitializeAsync()
-                _ = InitializeAsync();
                 currentUser = authSerivce.GetCurrentUserSession();
+                _ = InitializeAsync();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error in BankAccountUpdateViewModel constructor: {ex.Message}");
                 throw;
             }
+        }
+
+        public void SetIban(string iban)
+        {
+            CurrentIban = iban;
+            _ = InitializeAsync();
         }
 
         public async Task InitializeAsync()
@@ -154,8 +160,8 @@ namespace BankAppDesktop.ViewModels
 
             try
             {
-                string iban = currentUser.CurrentBankAccountIban ?? string.Empty;
-                bankAccount = await bankAccountService.FindBankAccount(iban);
+                // string iban = currentUser.CurrentBankAccountIban ?? string.Empty;
+                bankAccount = await bankAccountService.FindBankAccount(CurrentIban);
                 if (bankAccount != null)
                 {
                     AccountIBAN = bankAccount.Iban ?? string.Empty;

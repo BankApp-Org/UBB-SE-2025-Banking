@@ -98,7 +98,7 @@ namespace BankAppWeb.Controllers
                 var chat = new Chat
                 {
                     ChatName = model.ChatName,
-                    Users = allFriends.Where(f => participants.Contains(f.Id)).ToList(),
+                    Users = [.. allFriends.Where(f => participants.Contains(f.Id)), currentUser],
                     Messages = []
                 };
                 await _chatService.CreateChat(chat);
@@ -108,7 +108,8 @@ namespace BankAppWeb.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Failed to create chat: {ex.Message}";                // re-populate AvailableUsers
+                TempData["ErrorMessage"] = $"Failed to create chat: {ex.Message}";
+                // re-populate AvailableUsers
                 model.AvailableUsers = allFriends
                     .Where(f => string.IsNullOrEmpty(model.SearchQuery) ||
                                 f.FirstName.Contains(model.SearchQuery, StringComparison.OrdinalIgnoreCase))

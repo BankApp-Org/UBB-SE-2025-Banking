@@ -16,7 +16,7 @@
                     <Button Style="{StaticResource AccentButtonStyle}" Content="Export to CSV" Click="ExportToCSV_Click" Margin="5"/>
                     <!--<ToggleButton x:Name="SortAscendingButton" Content="Date Ascending" Click="SortAscending_Click" Margin="5"/>
                 <ToggleButton x:Name="SortDescendingButton" Content="Date Descending" Click="SortDescending_Click" Margin="5"/>-->
-                    <Button Style="{StaticResource AccentButtonStyle}" Content="View Graphics" Click="ViewGraphics_Click" Margin="5"/>
+                    <!--<Button Style="{StaticResource AccentButtonStyle}" Content="View Graphics" Click="ViewGraphics_Click" Margin="5"/>-->
                     <TextBox x:Name="TransactionTypeTextBox" PlaceholderText="Filter by type" Margin="10" Width="200" TextChanged="TransactionTypeTextBox_TextChanged"/>
                 </StackPanel>
                 <ListBox x:Name="TransactionList" MinWidth="200" ItemsSource="{x:Bind CurrentList}" SelectionChanged="TransactionList_SelectionChanged"/>
