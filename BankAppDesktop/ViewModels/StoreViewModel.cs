@@ -1,5 +1,6 @@
 ﻿namespace BankAppDesktop.ViewModels
 {
+    using Common.Models.Bank;
     using Common.Models.Trading;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -72,7 +73,7 @@
         /// <summary>
         /// Gets a list of the user's linked bank accounts for UI binding.
         /// </summary>
-        public static List<string> UserBankAccounts => ["Account 1", "Account 2", "Account 3"];
+        public List<BankAccount> UserBankAccounts;
 
         /// <summary>
         /// Sets the property and raises the PropertyChanged event if the value has changed.
