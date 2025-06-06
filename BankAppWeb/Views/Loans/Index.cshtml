@@ -50,10 +50,13 @@ else
                     <td>@loan.MonthlyPaymentsCompleted</td>
                     <td>@loan.RepaidAmount</td>
                     <td>
+                        @if(loan.CanPay)
+                        {
                                <a class="btn btn-primary"
                            href="@Url.Action("Pay", "Loans", new { loanId = loan.Id, amount = loan.LoanAmount })">
                             Make Payment
                         </a>
+                        }
                        
                     </td>
                 </tr>

@@ -48,7 +48,7 @@ namespace Common.Services.Proxy
 
         public async Task IncrementMonthlyPaymentsCompletedAsync(int loanID, decimal penalty)
         {
-            var payment = new PaymentDto { Penalty = penalty };
+            var payment = new PaymentInfo { Penalty = penalty };
             var response = await _httpClient.PostAsJsonAsync($"api/Loan/{loanID}/increment-payment", payment, _jsonOptions);
             response.EnsureSuccessStatusCode();
         }
@@ -61,18 +61,27 @@ namespace Common.Services.Proxy
 
         public async Task PayLoanAsync(int loanId, decimal amount, string userCNP, string iban)
         {
-            var paymentRequest = new
+            var paymentRequest = new PaymentDto
             {
+                LoanId = loanId,
                 Amount = amount,
-                Iban = iban
+                UserCNP = userCNP,
+                Iban = iban,
             };
-            var response = await _httpClient.PostAsJsonAsync($"api/Loan/{loanId}/pay", paymentRequest, _jsonOptions);
+            var response = await _httpClient.PostAsJsonAsync($"api/Loan/PayLoan", paymentRequest, _jsonOptions);
             response.EnsureSuccessStatusCode();
         }
     }
 
-    public class PaymentDto
+    public class PaymentInfo
     {
         public decimal Penalty { get; set; }
+    }
+    public class PaymentDto
+    {
+        public int LoanId { get; set; }
+        public decimal Amount { get; set; }
+        public string UserCNP { get; set; }
+        public string Iban { get; set; }
     }
 }
