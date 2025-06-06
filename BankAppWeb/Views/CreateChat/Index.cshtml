@@ -23,8 +23,24 @@
                         <div class="alert alert-danger">
                             @TempData["ErrorMessage"]
                         </div>
-                    }
+                    }                    <!-- Search Form (separate from create chat form) -->
+                    <div class="mb-3">
+                        <label class="form-label">Search Friends</label>
+                        <form asp-action="Index" method="get" class="d-inline">
+                            <!-- Preserve selected user IDs as hidden fields -->
+                            @if (Model.SelectedUserIds != null)
+                            {
+                                @for (int i = 0; i < Model.SelectedUserIds.Count; i++)
+                                {
+                                    <input type="hidden" name="selectedUserIds[@i]" value="@Model.SelectedUserIds[i]" />
+                                }
+                            }
+                            <input name="searchQuery" class="form-control" placeholder="Search..."
+                                   value="@Model.SearchQuery" oninput="this.form.submit()" />
+                        </form>
+                    </div>
 
+                    <!-- Create Chat Form -->
                     <form asp-action="Create" method="post">
                         <div class="mb-3">
                             <label asp-for="ChatName" class="form-label">Chat Name</label>
@@ -32,28 +48,30 @@
                             <span asp-validation-for="ChatName" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Search Friends</label>
-                            <input asp-for="SearchQuery" class="form-control" placeholder="Search..."
-                                   oninput="this.form.submit()" />
-                        </div>
+                        <!-- Hidden fields to preserve search query and selected users -->
+                        <input type="hidden" asp-for="SearchQuery" />
+                        @if (Model.SelectedUserIds != null)
+                        {
+                            @for (int i = 0; i < Model.SelectedUserIds.Count; i++)
+                            {
+                                <input type="hidden" asp-for="SelectedUserIds[i]" />
+                            }
+                        }
 
                         <div class="row">
                             <div class="col-md-6">
                                 <label asp-for="SelectedUserIds" class="form-label">Available Friends</label>
                                 <div class="card">
-                                    <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
-                                        @if (Model.AvailableUsers != null && Model.AvailableUsers.Any())
+                                    <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">                                        @if (Model.AvailableUsers != null && Model.AvailableUsers.Any())
                                         {
                                             foreach (var user in Model.AvailableUsers.Where(u => !u.IsSelected))
                                             {
                                                 <div class="form-check mb-2">
                                                     <input class="form-check-input" type="checkbox"
                                                            id="user_@user.UserId"
-                                                           name="SelectedUserIds"
                                                            value="@user.UserId"
                                                     @(user.IsSelected ? "checked" : "")
-                                                           onchange="this.form.submit()" />
+                                                           onchange="toggleUserSelection(@user.UserId, this.checked)" />
                                                     <label class="form-check-label" for="user_@user.UserId">
                                                         @user.FirstName
                                                     </label>
@@ -72,10 +90,9 @@
                             <div class="col-md-6">
                                 <label class="form-label">Selected Friends</label>
                                 <div class="card">
-                                    <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
-                                        @if (Model.SelectedUserIds.Any())
+                                    <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">                                        @if (Model.SelectedUserIds?.Any() == true)
                                         {
-                                            foreach (var user in Model.AvailableUsers.Where(u => u.IsSelected))
+                                            foreach (var user in Model.AvailableUsers?.Where(u => u.IsSelected) ?? Enumerable.Empty<UserForChatViewModel>())
                                             {
                                                 <div class="mb-2">
                                                     <span>@user.FirstName</span>
@@ -108,4 +125,38 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        function toggleUserSelection(userId, isChecked) {
+            var currentUrl = new URL(window.location.href);
+            var selectedUserIds = currentUrl.searchParams.getAll('selectedUserIds');
+            
+            if (isChecked) {
+                // Add user ID if not already in the list
+                if (!selectedUserIds.includes(userId.toString())) {
+                    selectedUserIds.push(userId.toString());
+                }
+            } else {
+                // Remove user ID from the list
+                selectedUserIds = selectedUserIds.filter(id => id !== userId.toString());
+            }
+            
+            // Remove all existing selectedUserIds parameters
+            currentUrl.searchParams.delete('selectedUserIds');
+            
+            // Add all selected user IDs
+            selectedUserIds.forEach(id => {
+                currentUrl.searchParams.append('selectedUserIds', id);
+            });
+            
+            // Preserve search query
+            var searchQuery = '@Model.SearchQuery';
+            if (searchQuery) {
+                currentUrl.searchParams.set('searchQuery', searchQuery);
+            }
+            
+            // Navigate to the updated URL
+            window.location.href = currentUrl.toString();
+        }
+    </script>
 }

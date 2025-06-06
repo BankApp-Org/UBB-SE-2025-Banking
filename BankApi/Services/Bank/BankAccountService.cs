@@ -36,14 +36,26 @@ namespace BankApi.Services.Bank
             }
         }
 
-        public async Task<BankAccount> FindBankAccount(string iban)
+        public async Task<BankAccount?> FindBankAccount(string iban)
         {
             if (string.IsNullOrWhiteSpace(iban))
             {
                 throw new ArgumentException("IBAN cannot be null or empty.", nameof(iban));
             }
 
-            return await _bankAccountRepository.GetBankAccountBalanceByIbanAsync(iban);
+            try
+            {
+                return await _bankAccountRepository.GetBankAccountBalanceByIbanAsync(iban);
+            }
+            catch (Exception ex) when (ex.Message.Contains("not found"))
+            {
+                // Return null when the account is not found instead of throwing an exception
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error finding bank account with IBAN {iban}", ex);
+            }
         }
 
         public async Task<bool> CreateBankAccount(BankAccount bankAccount)
@@ -189,7 +201,12 @@ namespace BankApi.Services.Bank
             {
                 return await _currencyExchangeRepository.GetExchangeRateAsync(fromCurrency, toCurrency);
             }
-            catch (Exception ex) when (!(ex.Message.Contains("Exchange rate not found")))
+            catch (Exception ex) when (ex.Message.Contains("not found"))
+            {
+                // Forward "not found" exceptions to callers
+                throw;
+            }
+            catch (Exception ex)
             {
                 throw new Exception($"Error retrieving exchange rate from {fromCurrency} to {toCurrency}", ex);
             }

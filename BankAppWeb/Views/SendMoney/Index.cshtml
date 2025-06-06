@@ -1,0 +1,37 @@
+﻿@model BankAppWeb.ViewModels.SendMoneyViewModel
+
+@{
+	ViewBag.Title = "Send Money";
+}
+
+<div class="container mt-5" style="max-width: 400px;">
+	<h2 class="text-center mb-4">Send Money</h2>
+
+	<form asp-action="Send" method="post">
+		<div class="mb-3">
+			<label class="form-label">Receiver's IBAN</label>
+			<input asp-for="ReceiverIban" class="form-control" placeholder="Enter IBAN" />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Sum of Money</label>
+			<input asp-for="SumOfMoney" class="form-control" placeholder="Enter amount" />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Details</label>
+			<input asp-for="Details" class="form-control" placeholder="Payment details" />
+		</div>
+
+		@if (Model.IsErrorVisible)
+		{
+			<div class="text-danger">@Model.ErrorMessage</div>
+		}
+
+		<button type="submit" class="btn btn-success w-100 mt-3">Send Money</button>
+	</form>
+
+	<form asp-action="Close" method="post" class="mt-2">
+		<button type="submit" class="btn btn-secondary w-100">Close</button>
+	</form>
+</div>

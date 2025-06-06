@@ -1,4 +1,3 @@
-using Azure;
 using Common.Models.Bank;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Http.Json;
@@ -82,7 +81,7 @@ namespace Common.Services.Proxy
         {
             try
             {
-                var response = await _httpClient.PostAsync($"api/api/TransactionHistory/CreateCSV/{IBAN}", null);
+                var response = await _httpClient.PostAsync($"api/TransactionHistory/CreateCSV/{IBAN}", null);
                 response.EnsureSuccessStatusCode();
                 return true;
             }
@@ -91,7 +90,7 @@ namespace Common.Services.Proxy
                 throw new Exception("Error creating CSV file", ex);
             }
         }
-        
+
         public async Task<List<TransactionTypeCountDTO>> GetTransactionTypeCounts(int userId)
         {
             return await _httpClient.GetFromJsonAsync<List<TransactionTypeCountDTO>>($"api/BankTransaction/TransactionTypeCounts?userId={userId}", _jsonOptions) ??
