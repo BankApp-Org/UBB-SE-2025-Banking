@@ -44,6 +44,55 @@ namespace BankAppDesktop.Views.Pages
             centeredTextField.Text = this.ViewModel.WelcomeText;
         }
 
+        // Helper methods for credit score styling
+        public Brush GetCreditScoreBorderBrush(int score)
+        {
+            return score switch
+            {
+                >= 750 => new SolidColorBrush(Microsoft.UI.Colors.Green),
+                >= 700 => new SolidColorBrush(Microsoft.UI.Colors.DodgerBlue),
+                >= 650 => new SolidColorBrush(Microsoft.UI.Colors.Blue),
+                >= 600 => new SolidColorBrush(Microsoft.UI.Colors.Orange),
+                _ => new SolidColorBrush(Microsoft.UI.Colors.Red),
+            };
+        }
+
+        public Brush GetCreditScoreTextBrush(int score)
+        {
+            return score switch
+            {
+                >= 750 => new SolidColorBrush(Microsoft.UI.Colors.Green),
+                >= 700 => new SolidColorBrush(Microsoft.UI.Colors.DodgerBlue),
+                >= 650 => new SolidColorBrush(Microsoft.UI.Colors.Blue),
+                >= 600 => new SolidColorBrush(Microsoft.UI.Colors.Orange),
+                _ => new SolidColorBrush(Microsoft.UI.Colors.Red),
+            };
+        }
+
+        public Brush GetCreditScoreBackgroundBrush(int score)
+        {
+            return score switch
+            {
+                >= 750 => new SolidColorBrush(Microsoft.UI.Colors.Green),
+                >= 700 => new SolidColorBrush(Microsoft.UI.Colors.DodgerBlue),
+                >= 650 => new SolidColorBrush(Microsoft.UI.Colors.Blue),
+                >= 600 => new SolidColorBrush(Microsoft.UI.Colors.Orange),
+                _ => new SolidColorBrush(Microsoft.UI.Colors.Red),
+            };
+        }
+
+        public Brush GetCreditScoreProgressBrush(int score)
+        {
+            return score switch
+            {
+                >= 750 => new SolidColorBrush(Microsoft.UI.Colors.Green),
+                >= 700 => new SolidColorBrush(Microsoft.UI.Colors.DodgerBlue),
+                >= 650 => new SolidColorBrush(Microsoft.UI.Colors.Blue),
+                >= 600 => new SolidColorBrush(Microsoft.UI.Colors.Orange),
+                _ => new SolidColorBrush(Microsoft.UI.Colors.Red),
+            };
+        }
+
         public async void CheckBalanceButtonHandler(object sender, RoutedEventArgs e)
         {
             await this.ViewModel.CheckBalanceButtonHandler();
@@ -56,6 +105,11 @@ namespace BankAppDesktop.Views.Pages
             {
                 await this.ShowDialog(errorMessage);
             }
+        }
+
+        private async void CreditHistoryButtonHandler(object sender, RoutedEventArgs e)
+        {
+            await this.ViewModel.ViewCreditHistoryButtonHandler();
         }
 
         private async void TransactionButtonHandler(object sender, RoutedEventArgs e)

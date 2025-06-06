@@ -10,16 +10,95 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <TextBlock x:Name="centeredTextField"
-             Width="Auto"
-             TextWrapping="Wrap"
-             TextTrimming="CharacterEllipsis"
-             VerticalAlignment="Top"
-             HorizontalAlignment="Center"
-             Margin="0,50,0,20"
-             FontSize="24"
-             Text="{x:Bind ViewModel.WelcomeText, Mode=OneWay}"/>
-        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel>
+            <!-- Welcome Text -->
+            <TextBlock x:Name="centeredTextField"
+                Width="Auto"
+                TextWrapping="Wrap"
+                TextTrimming="CharacterEllipsis"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Center"
+                Margin="0,30,0,10"
+                FontSize="24"
+                Text="{x:Bind ViewModel.WelcomeText, Mode=OneWay}"/>
+
+            <!-- Credit Score Card -->
+            <Border Margin="20,10,20,20" 
+                    CornerRadius="8" 
+                    BorderThickness="2"
+                    MaxWidth="600"
+                    BorderBrush="{x:Bind GetCreditScoreBorderBrush(ViewModel.CreditScore), Mode=OneWay}">
+                <Grid Padding="15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Side - Score and Description -->
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE73E;" 
+                                      Foreground="{x:Bind GetCreditScoreTextBrush(ViewModel.CreditScore), Mode=OneWay}" 
+                                      Margin="0,0,5,0"/>
+                            <TextBlock Text="Credit Score:" 
+                                       Foreground="{x:Bind GetCreditScoreTextBrush(ViewModel.CreditScore), Mode=OneWay}"
+                                       FontSize="16" 
+                                       FontWeight="SemiBold"/>
+                        </StackPanel>
+                        <TextBlock Text="{x:Bind ViewModel.CreditScore, Mode=OneWay}" 
+                                   Foreground="{x:Bind GetCreditScoreTextBrush(ViewModel.CreditScore), Mode=OneWay}"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   Margin="0,5,0,8"/>
+                        <Border Background="{x:Bind GetCreditScoreBackgroundBrush(ViewModel.CreditScore), Mode=OneWay}"
+                                CornerRadius="4"
+                                Padding="8,4"
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="{x:Bind ViewModel.CreditScoreDescription, Mode=OneWay}"
+                                       Foreground="White"
+                                       FontSize="12"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Right Side - Progress Bar and History Link -->
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                        <ProgressBar Value="{x:Bind ViewModel.CreditScore, Mode=OneWay}"
+                                     Minimum="300"
+                                     Maximum="850"
+                                     Height="12"
+                                     Foreground="{x:Bind GetCreditScoreProgressBrush(ViewModel.CreditScore), Mode=OneWay}"
+                                     Margin="0,10,0,5"/>
+                        <Grid>
+                            <TextBlock Text="Range: 300 - 850"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       FontSize="12"
+                                       HorizontalAlignment="Left"/>
+                            <TextBlock Text="{x:Bind ViewModel.CreditScore.ToString(), Mode=OneWay}"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       FontSize="12"
+                                       HorizontalAlignment="Right"/>
+                        </Grid>
+                        
+                        <Button Click="CreditHistoryButtonHandler"
+                                Margin="0,15,0,0"
+                                HorizontalAlignment="Left"
+                                BorderBrush="{x:Bind GetCreditScoreBorderBrush(ViewModel.CreditScore), Mode=OneWay}"
+                                Background="Transparent"
+                                Foreground="{x:Bind GetCreditScoreTextBrush(ViewModel.CreditScore), Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE823;" Margin="0,0,5,0"/>
+                                <TextBlock Text="View History"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,120,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -56,9 +135,7 @@
                 <Button x:Name="accountDetailsButton"
                     Margin="20,0,0,0"
                     Click="BankAccountDetailsViewButtonHandler">
-                    <Button.Content>
-                        <FontIcon Glyph="&#xE946;" FontSize="20"/>
-                    </Button.Content>
+                    <FontIcon Glyph="&#xE946;" FontSize="20"/>
                 </Button>
             </StackPanel>
 
