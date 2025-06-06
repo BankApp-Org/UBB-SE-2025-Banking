@@ -57,10 +57,10 @@
                 <Button Content="Cancel" 
                         Click="CancelButton_Click"/>
                 
-                <Button x:Name="UpdateButton" Content="Update Account" 
+                <!--<Button x:Name="UpdateButton" Content="Update Account" 
                         Click="UpdateButton_Click" 
                         Background="{ThemeResource SystemAccentColor}"
-                        Foreground="White"/>
+                        Foreground="White"/>-->
                 <Button x:Name="DeleteButton" Content="Delete Account" 
                         Click="DeleteButton_Click" 
                         Background="{ThemeResource SystemAccentColor}"
