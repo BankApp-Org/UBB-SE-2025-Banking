@@ -3,6 +3,7 @@
 @inject IAuthenticationService AuthenticationService
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,114 +19,113 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="MainPage" asp-action="Index">BankAppWeb</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="MainPage" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="MainPage"
+                                asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Homepage" asp-action="Index">Stocks</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="SocialMainPage" asp-action="Index">Socials</a>
-                        </li>
+
+                        <!-- Trading Category -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownNews" role="button" 
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                News
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownTrading"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Trading
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownNews">
-                                <li><a class="dropdown-item" asp-page="/News/Index">Browse News</a></li>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownTrading">
                                 @if (AuthenticationService.IsUserLoggedIn())
                                 {
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Homepage"
+                                            asp-action="Index">Stocks</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="TransactionLog"
+                                            asp-action="Index">Stock Transaction History</a></li>
+                                }
+                                @if (AuthenticationService.IsUserAdmin())
+                                {
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="CreateStock"
+                                            asp-action="Index">Create Stock</a></li>
+                                    <li><a class="dropdown-item" href="#">Investments</a></li>
+                                }
+                            </ul>
+                        </li>
+
+                        <!-- Social Category -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownSocial"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Social
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownSocial">
+                                @if (AuthenticationService.IsUserAdmin())
+                                {
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Chat" asp-action="Reports">Chat
+                                            Reports</a></li>
+                                }
+                                @if (AuthenticationService.IsUserLoggedIn())
+                                {
+                                    <li><a class="dropdown-item" href="#">BillSplit Reports</a></li>
+                                }
+                                <li><a class="dropdown-item" asp-page="/News/Index">News</a></li>
+                                @if (AuthenticationService.IsUserLoggedIn())
+                                {
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                     <li><a class="dropdown-item" asp-page="/News/Create">Create Article</a></li>
                                     @if (AuthenticationService.IsUserAdmin())
                                     {
-                                        <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" asp-page="/News/Admin">Manage Articles</a></li>
                                     }
                                 }
                             </ul>
                         </li>
-                        @if (AuthenticationService.IsUserLoggedIn())
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Alerts" asp-action="Index">Alerts</a>
-                            </li>
-                            @* <li class="nav-item"> *@
-                            @*     <a class="nav-link text-dark position-relative" asp-area="" asp-controller="Notifications" asp-action="Index"> *@
-                            @*         Notifications *@
-                            @*     </a> *@
-                            @* </li> *@
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Analysis/Index">Analysis</a>
-                            </li>
-                            @* <li class="nav-item"> *@
-                            @*     <a class="nav-link text-dark" asp-page="/Tips/Index">Tips</a> *@
-                            @* </li> *@
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="TransactionLog" asp-action="Index">Transaction Log</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="GemStore" asp-action="Index">Gem store</a>
-                            </li>
-                            @* <li class="nav-item"> *@
-                            @*     <a class="nav-link text-dark" asp-area="" asp-controller="BankAccountCreate" asp-action="Index">Create Bank Account</a> *@
-                            @* </li> *@
-                            @if (AuthenticationService.IsUserAdmin())
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="CreateStock" asp-action="Index">Create Stock</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Chat" asp-action="Reports">Chat reports</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownLoans" role="button"
-                                       data-bs-toggle="dropdown" aria-expanded="false">
-                                        Loans
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownLoans">
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Loans" asp-action="Index">Browse Loans</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="LoanRequest" asp-action="Index">Loan Requests</a></li>
-                                    </ul>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Loans" asp-action="Index">Loans</a>
-                                </li>
 
-                                <!-- Temporar -->
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="BankTransactions" asp-action="Index">Transactions Menu</a>
-                                </li>
-                            }
-                        }
-                        @* <li class="nav-item"> *@
-                        @*     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
-                        @* </li> *@
-                        <li class="nav-item">
-                            <form asp-controller="Report" asp-action="CreateDemo" method="post" style="display: inline;">
-                                <button type="submit" class="btn btn-warning nav-link text-dark" style="border: none; background: none;">
-                                    Demo Report
-                                </button>
-                            </form>
+                        <!-- Banking Category -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownBanking"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Banking
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownBanking">
+                                @if (AuthenticationService.IsUserLoggedIn())
+                                {
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Loans"
+                                            asp-action="Index">Loans</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="GemStore"
+                                            asp-action="Index">Store</a></li>
+                                }
+                                @if (AuthenticationService.IsUserAdmin())
+                                {
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="LoanRequest"
+                                            asp-action="Index">Loan Requests</a></li>
+                                }
+                            </ul>
                         </li>
+
+                        <!-- Admin Category -->
+                        @if (AuthenticationService.IsUserAdmin())
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdownAdmin"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Admin
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Users"
+                                            asp-action="Index">Users</a></li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -149,4 +149,6 @@
     <script src="~/js/message-templates.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
+

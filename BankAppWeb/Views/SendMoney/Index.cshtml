@@ -23,6 +23,7 @@
 			<input asp-for="Details" class="form-control" placeholder="Payment details" />
 		</div>
 
+			<input asp-for="SenderIban" value="@Model.SenderIban" hidden />
 		@if (Model.IsErrorVisible)
 		{
 			<div class="text-danger">@Model.ErrorMessage</div>

@@ -13,6 +13,7 @@
                     <div>
                         @if (Model.IsAuthenticated) // Should always be true here
                         {
+                            <a class="dropdown-item text-danger" asp-controller="DeleteAccount" asp-action="Index">Delete Account</a>
                             <a class="btn btn-light me-2" asp-action="EditProfile" asp-controller="Account">Edit Profile</a>
                             <a class="btn btn-outline-light me-2" asp-action="ChangePassword" asp-controller="Account">Change Password</a>
                             <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Log out</a>

@@ -4,7 +4,7 @@
     {
         public List<TransactionsHistoryDTO>? Transactions { get; set; }
 
-        public string? Filter { get; set; }
+        public string Filter { get; set; }
 
         public string IBAN { get; set; }
     }

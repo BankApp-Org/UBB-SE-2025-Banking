@@ -29,6 +29,7 @@ namespace BankAppDesktop.ViewModels
         /// The bank account whose details are being displayed
         /// </summary>
         private BankAccount? bankAccount;
+        private string? currentIban;
 
         public BankAccount? BankAccount
         {
@@ -37,6 +38,16 @@ namespace BankAppDesktop.ViewModels
             {
                 bankAccount = value;
                 OnPropertyChanged(nameof(BankAccount));
+            }
+        }
+
+        public string? CurrentIban
+        {
+            get => currentIban;
+            set
+            {
+                currentIban = value;
+                OnPropertyChanged(nameof(CurrentIban));
             }
         }
 
@@ -71,7 +82,7 @@ namespace BankAppDesktop.ViewModels
 
         private async Task LoadBankAccountAsync(IAuthenticationService authService)
         {
-            this.BankAccount = await service.FindBankAccount(authService.GetCurrentUserSession().CurrentBankAccountIban ?? string.Empty);
+            this.BankAccount = await service.FindBankAccount(CurrentIban);
         }
 
         /// <summary>

@@ -20,11 +20,19 @@ namespace BankAppWeb.Controllers
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("User not logged in"));
             List<TransactionTypeCountDTO> transactionTypesCount = await _transactionHistoryService.GetTransactionTypeCounts(userId);
 
-            TransactionHistoryChartViewModel viewModel = new()
+            Dictionary<string, int> answers = new Dictionary<string, int>();
+
+            foreach (var transactionType in transactionTypesCount)
             {
-                TransactionTypeCounts = transactionTypesCount
-            };
-            return View(viewModel);
+                if (answers.ContainsKey(transactionType.TransactionType.TransactionType.ToString()))
+                    answers[transactionType.TransactionType.TransactionType.ToString()] += 1;
+                else 
+                    answers.Add(transactionType.TransactionType.TransactionType.ToString(), 1);
+            }
+
+            ViewBag.ChartData = answers;
+
+            return View();
         }
     }
 }

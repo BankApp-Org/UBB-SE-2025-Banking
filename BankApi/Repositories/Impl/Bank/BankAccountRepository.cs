@@ -66,7 +66,18 @@ namespace BankApi.Repositories.Impl.Bank
             {
                 throw new ArgumentException("IBAN cannot be null or empty.", nameof(bankAccount.Iban));
             }
-            _context.BankAccounts.Update(bankAccount);
+            var existingBankAccount = await _context.BankAccounts
+                                            .FirstOrDefaultAsync(ba => ba.Iban == bankAccount.Iban);
+
+            existingBankAccount.Name = bankAccount.Name;
+            existingBankAccount.Balance = bankAccount.Balance;
+            existingBankAccount.Blocked = bankAccount.Blocked;
+            existingBankAccount.DailyLimit = bankAccount.DailyLimit;
+            existingBankAccount.MaximumPerTransaction = bankAccount.MaximumPerTransaction;
+            existingBankAccount.MaximumNrTransactions = bankAccount.MaximumNrTransactions;
+            existingBankAccount.Currency = bankAccount.Currency;
+                
+
             return await _context.SaveChangesAsync() > 0;
         }
 

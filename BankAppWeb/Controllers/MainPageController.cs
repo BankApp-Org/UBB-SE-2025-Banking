@@ -58,9 +58,7 @@ namespace BankAppWeb.Controllers
             {
                 TempData["SelectedAccountIban"] = SelectedAccountIban;
             }
-
-            string username = User.FindFirstValue("FirstName");
-
+            
             // Get user information including credit score
             var currentUser = await _userService.GetCurrentUserAsync();
             int creditScore = currentUser?.CreditScore ?? 300; // Default to minimum if not found
@@ -74,14 +72,14 @@ namespace BankAppWeb.Controllers
             };
 
             var vm = new MainPageViewModel
-            {
-                WelcomeText = $"Welcome, {username}!",
-                BankAccounts = new List<BankAccount>(accounts),
-                BalanceButtonContent = TempData["BalanceButtonContent"]?.ToString() ?? "Check Balance",
-                SelectedAccountIban = TempData["SelectedAccountIban"]?.ToString() ?? "INVALID IBAN",
-                CreditScore = creditScore,
-                CreditScoreDescription = creditScoreDescription
-            };
+                {
+                    WelcomeText = $"Welcome, {currentUser.FirstName}!",
+                    BankAccounts = new List<BankAccount>(accounts),
+                    BalanceButtonContent = TempData["BalanceButtonContent"]?.ToString() ?? "Check Balance",
+                    SelectedAccountIban = TempData["SelectedAccountIban"]?.ToString() ?? "INVALID IBAN",
+                    CreditScore = creditScore,
+                    CreditScoreDescription = creditScoreDescription
+                };
 
             return View("Index", vm);
         }
@@ -123,13 +121,11 @@ namespace BankAppWeb.Controllers
         [HttpPost]
         public IActionResult Transaction(string iban)
         {
-            //var iban = HttpContext.Session.GetString("current_bank_account_iban");
             if (string.IsNullOrEmpty(iban))
                 return RedirectToAction("Index");
 
 
-            // DE VAZUT PE VIITOR
-            return RedirectToAction("Index", "BankTransactions");
+            return RedirectToAction("Index", "BankTransactions", new { IBAN = iban}); 
         }
 
         [HttpPost]
@@ -139,7 +135,7 @@ namespace BankAppWeb.Controllers
             if (string.IsNullOrEmpty(iban))
                 return RedirectToAction("Index");
 
-            return RedirectToAction("Index", "BankTransactionsHistory", new { IBAN = iban });
+            return RedirectToAction("Index", "BankTransactionsHistory", new {Filter = "", IBAN = iban}); 
         }
 
         [HttpPost]

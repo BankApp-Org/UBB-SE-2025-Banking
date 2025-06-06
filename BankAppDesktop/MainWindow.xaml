@@ -22,28 +22,73 @@
             <NavigationView PaneDisplayMode="Top" SelectionChanged="NavigationView_SelectionChanged" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" Grid.Column="0" Grid.Row="0">
                <NavigationView.MenuItems>
                     <NavigationViewItem Content="Home" Tag="MainPage"/>
-                    <NavigationViewItem Content="Users" Tag="UsersList" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Chat reports" Tag="ChatReports" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Loan requests" Tag="LoanRequest" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>                    <NavigationViewItem Content="Loans" Tag="Loans" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="BillSplit reports" Tag="BillSplitReports" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Investments" Tag="Investments" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Alerts" Tag="AlertsPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Analysis" Tag="AnalysisPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Tips" Tag="TipsPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="News" Tag="NewsListPage"/>
-                    <NavigationViewItem Content="Create Stock" Tag="CreateStockPage" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="History" Tag="TransactionLogPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Store" Tag="GemStorePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <!--<NavigationViewItem Content="Create Bank Account" Tag="BankAccountCreateView" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>-->
-                    <NavigationViewItem Content="Log in" Tag="LoginPage" Visibility="{Binding IsUnauthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Profile" Tag="ProfilePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <NavigationViewItem Content="Notifications" Tag="NotificationsPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    <!--<NavigationViewItem Content="Bank Transactions History" Tag="BankTransactionsHistoryPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>-->
-                    <NavigationViewItem Content="Stocks" Tag="HomePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    
+                    <!-- Trading Category -->
+                    <NavigationViewItem Content="Trading">
+                        <NavigationViewItem.MenuItems>
+                            <NavigationViewItem Content="Stocks" Tag="HomePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <NavigationViewItem Content="Create Stock" Tag="CreateStockPage" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <NavigationViewItem Content="Investments" Tag="Investments" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <NavigationViewItem Content="Stock Transaction History" Tag="TransactionLogPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                        </NavigationViewItem.MenuItems>
+                    </NavigationViewItem>
+                    
+                    <!-- Social Category -->
+                    <NavigationViewItem Content="Social">
+                        <NavigationViewItem.MenuItems>
+                            <NavigationViewItem Content="Chat Reports" Tag="ChatReports" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <NavigationViewItem Content="BillSplit Reports" Tag="BillSplitReports" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <NavigationViewItem Content="News" Tag="NewsListPage"/>
+                        </NavigationViewItem.MenuItems>
+                    </NavigationViewItem>
+                    
+                    <!-- Banking Category -->
+                    <NavigationViewItem Content="Banking">
+                        <NavigationViewItem.MenuItems>
+                            <NavigationViewItem Content="Loans" Tag="Loans" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <NavigationViewItem Content="Loan Requests" Tag="LoanRequest" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <NavigationViewItem Content="Store" Tag="GemStorePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                        </NavigationViewItem.MenuItems>
+                    </NavigationViewItem>
+                    
+                    <!-- Admin Category -->
+                    <NavigationViewItem Content="Admin" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+                        <NavigationViewItem.MenuItems>
+                            <NavigationViewItem Content="Users" Tag="UsersList" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                        </NavigationViewItem.MenuItems>
+                    </NavigationViewItem>
                </NavigationView.MenuItems>
+               
+               <!-- Right-aligned User menu with flyout menu -->
+               <NavigationView.PaneFooter>
+                   <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                       <TextBlock Text="{Binding UserName}" 
+                                 Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
+                                 VerticalAlignment="Center" 
+                                 Margin="0,0,10,0"/>
+                       
+                       <!-- User dropdown button with flyout menu -->
+                       <Button Content="Account" Padding="10,5" Background="Transparent" BorderThickness="0">
+                           <Button.Flyout>
+                               <MenuFlyout Placement="Bottom">
+                                   <MenuFlyoutItem Text="Profile" Click="UserMenuItem_Click" Tag="ProfilePage" 
+                                                  Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                                   <MenuFlyoutItem Text="Notifications" Click="UserMenuItem_Click" Tag="NotificationsPage"
+                                                  Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                                   <MenuFlyoutItem Text="Alerts" Click="UserMenuItem_Click" Tag="AlertsPage"
+                                                  Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                                   <MenuFlyoutItem Text="Analysis" Click="UserMenuItem_Click" Tag="AnalysisPage"
+                                                  Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                                   <MenuFlyoutItem Text="Tips" Click="UserMenuItem_Click" Tag="TipsPage"
+                                                  Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                                   <MenuFlyoutItem Text="Log in" Click="UserMenuItem_Click" Tag="LoginPage"
+                                                  Visibility="{Binding IsUnauthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                               </MenuFlyout>
+                           </Button.Flyout>
+                       </Button>
+                   </StackPanel>
+               </NavigationView.PaneFooter>
             </NavigationView>
-
-
 
             <!-- Frame for navigation -->
             <Frame Name="MainFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" Grid.Row="1"/>

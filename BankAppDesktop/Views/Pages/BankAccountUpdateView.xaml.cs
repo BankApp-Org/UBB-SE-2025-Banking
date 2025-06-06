@@ -1,6 +1,7 @@
 namespace BankAppDesktop.Views.Pages
 {
     using BankAppDesktop.ViewModels;
+    using Catel.MVVM;
     using Common.Models.Trading;
     using Common.Services.Trading;
     using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ namespace BankAppDesktop.Views.Pages
     public sealed partial class BankAccountUpdateView : Page
     {
         private BankAccountUpdateViewModel? viewModel;
+        private string selectedIban = string.Empty;
 
         public BankAccountUpdateView(string iban)
         {
@@ -21,13 +23,24 @@ namespace BankAppDesktop.Views.Pages
 
                 viewModel = App.Services.GetRequiredService<BankAccountUpdateViewModel>();
                 viewModel.SetIban(iban);
+                selectedIban = iban;
                 MainGrid.DataContext = viewModel;
+                this.Loaded += Page_Loaded;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error initializing BankAccountUpdateView: {ex.Message}");
                 ShowErrorDialog("Initialization Error", $"Failed to initialize the bank account update view: {ex.Message}");
             }
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            // It's good practice to unsubscribe from the event so it doesn't fire again
+            this.Loaded -= Page_Loaded;
+
+            // 5. THIS IS THE CALL: Tell the ViewModel to start loading the data.
+            await viewModel.LoadAccountDetailsAsync();
         }
 
         // handles the Update Button Click
@@ -47,6 +60,7 @@ namespace BankAppDesktop.Views.Pages
                 {
                     await ShowDialog("Success", "Bank account updated successfully.", "OK");
                     viewModel.OnUpdateSuccess?.Invoke();
+                    App.MainAppWindow.MainAppFrame.Content = new MainPage();
                 }
                 else
                 {
@@ -63,7 +77,8 @@ namespace BankAppDesktop.Views.Pages
         {
             try
             {
-                viewModel.DeleteBankAccount();
+                viewModel.DeleteBankAccount(selectedIban);
+                App.MainAppWindow.MainAppFrame.Content = new MainPage();
             }
             catch (Exception ex)
             {

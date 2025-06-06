@@ -15,9 +15,12 @@ namespace LoanShark.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string IBAN)
         {
-            return View(new SendMoneyViewModel());
+            return View(new SendMoneyViewModel
+            {
+                SenderIban = IBAN,
+            });
         }
 
         [HttpPost]
@@ -29,7 +32,6 @@ namespace LoanShark.MVC.Controllers
                 return View("Index", model);
             }
 
-            // Get sender IBAN from session (previously selected)
             if (string.IsNullOrEmpty(model.SenderIban))
             {
                 model.ErrorMessage = "Sender account is not selected.";
