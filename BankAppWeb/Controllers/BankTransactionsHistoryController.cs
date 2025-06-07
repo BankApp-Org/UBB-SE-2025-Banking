@@ -84,13 +84,15 @@ namespace BankAppWeb.Controllers
             });
         }
 
+        [HttpGet]
         public async Task<IActionResult> ExportToCsv(string IBAN)
         {
-            bool answer = await ((BankTransactionProxyService)_transactionsHistoryService).CreateCSV(IBAN);
+            // Obține CSV ca string
+            string csvContent = await ((BankTransactionProxyService)_transactionsHistoryService)
+                .GenerateCsvStringAsync(IBAN);
 
-            TempData["AlertMessage"] = "Exported to CSV on desktop!";
-
-            return RedirectToAction("Index", "BankTransactionsHistory", new { IBAN = IBAN });
+            var bytes = System.Text.Encoding.UTF8.GetBytes(csvContent);
+            return File(bytes, "text/csv", "transactions.csv");
         }
 
         public IActionResult Chart(string IBAN)
