@@ -116,9 +116,33 @@ namespace BankApp.Service.Tests
         public async Task CreateTransaction_ValidTransaction_ReturnsTrue()
         {
             var transaction = CreateValidBankTransaction(1);
-            _historyRepoMock.Setup(r => r.CreateTransactionAsync(transaction)).Returns(Task.CompletedTask);
+            var senderAccount = transaction.SenderAccount;
+            var receiverAccount = transaction.ReceiverAccount;
+
+            _transactionRepoMock
+                .Setup(r => r.GetBankAccountByIBAN(transaction.SenderIban))
+                .ReturnsAsync(senderAccount);
+
+            _transactionRepoMock
+                .Setup(r => r.GetBankAccountByIBAN(transaction.ReceiverIban))
+                .ReturnsAsync(receiverAccount);
+
+            _transactionRepoMock
+               .Setup(r => r.UpdateBankAccountBalance(transaction.SenderIban, It.IsAny<decimal>()))
+               .ReturnsAsync(true); 
+
+            _transactionRepoMock
+                .Setup(r => r.UpdateBankAccountBalance(transaction.ReceiverIban, It.IsAny<decimal>()))
+                .ReturnsAsync(true); 
+
+
+            _historyRepoMock
+                .Setup(r => r.CreateTransactionAsync(transaction))
+                .Returns(Task.CompletedTask);
+
             var result = await _service.CreateTransaction(transaction);
             Assert.IsTrue(result);
+
         }
 
         [TestMethod]

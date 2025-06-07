@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Runtime.Versioning;
 using BankApi.Repositories.Impl.Bank;
 using Common.Services.Bank;
+using BankApi.Repositories.Trading;
 
 namespace BankApp.Service.Tests
 {
@@ -20,8 +21,11 @@ namespace BankApp.Service.Tests
     {
         private Mock<ILoanRepository> _loanRepoMock;
         private Mock<IUserRepository> _userRepoMock;
-        private Mock<CreditScoringService> _crediScoringServiceMock;
+        private Mock<ICreditHistoryService> _creditHistoryServiceMock;
+        private Mock<ICreditScoringService> _crediScoringServiceMock;
+        private Mock<IBankTransactionRepository> _bankTransactionRepoMock;
         private Mock<IBankAccountService> _bankAccountServiceMock;
+        private Mock<IStockTransactionRepository> _stockTransactionRepoMock;
         private LoanService _service;
 
         [TestInitialize]
@@ -29,8 +33,12 @@ namespace BankApp.Service.Tests
         {
             _loanRepoMock = new Mock<ILoanRepository>();
             _userRepoMock = new Mock<IUserRepository>();
-            _crediScoringServiceMock = new Mock<CreditScoringService>();
+            _bankTransactionRepoMock = new Mock<IBankTransactionRepository>();
+            _stockTransactionRepoMock = new Mock<IStockTransactionRepository>();
             _bankAccountServiceMock = new Mock<IBankAccountService>();
+            _creditHistoryServiceMock = new Mock<ICreditHistoryService>();
+
+            _crediScoringServiceMock = new Mock<ICreditScoringService>();
             _service = new LoanService(_loanRepoMock.Object, _userRepoMock.Object, _crediScoringServiceMock.Object, _bankAccountServiceMock.Object);
         }
 
