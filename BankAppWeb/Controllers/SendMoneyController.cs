@@ -60,16 +60,16 @@ namespace LoanShark.MVC.Controllers
 
             bool result = await transactionService.CreateTransaction(transaction);
 
-            TempData["ResultMessage"] = result;
-            return RedirectToAction("Result");
-        }
-
-
-        [HttpGet]
-        public IActionResult Result()
-        {
-            ViewBag.Message = TempData["ResultMessage"];
-            return View();
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Transaction completed successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Transaction failed. Please try again.";
+            }
+            
+            return RedirectToAction("Index", "MainPage", new { SelectedAccountIban = model.SenderIban });
         }
 
         [HttpPost]
