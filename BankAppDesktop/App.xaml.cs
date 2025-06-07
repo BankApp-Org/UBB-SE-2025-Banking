@@ -71,6 +71,7 @@ namespace BankAppDesktop
                         options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
                         options.SerializerOptions.WriteIndented = true;
                         options.SerializerOptions.PropertyNameCaseInsensitive = true;
+                        options.SerializerOptions.IncludeFields = true;
                     });
 
                     services.AddSingleton<IConfiguration>(config);

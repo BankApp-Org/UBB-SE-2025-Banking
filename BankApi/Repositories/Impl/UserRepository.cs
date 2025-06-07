@@ -27,9 +27,21 @@ namespace BankApi.Repositories.Impl
 
         public async Task<List<User>> GetAllAsync() => await _context.Users.ToListAsync();
 
-        public async Task<User> GetByIdAsync(int id) => await _context.Users.Include(u => u.Friends).Include(u => u.Chats).ThenInclude(c => c.Messages).ThenInclude(m => m.Sender).Include(u => u.OwnedStocks).FirstAsync(u => u.Id == id);
+        public async Task<User> GetByIdAsync(int id) => await _context.Users
+            .Include(u => u.Friends)
+            .Include(u => u.Chats)
+                .ThenInclude(c => c.Messages)
+                    .ThenInclude(m => m.Sender)
+            .Include(u => u.OwnedStocks)
+            .FirstAsync(u => u.Id == id);
 
-        public async Task<User> GetByCnpAsync(string cnp) => await _context.Users.Include(u => u.Friends).FirstOrDefaultAsync(u => u.CNP == cnp);
+        public async Task<User> GetByCnpAsync(string cnp) => await _context.Users
+        .Include(u => u.Friends)
+            .Include(u => u.Chats)
+                .ThenInclude(c => c.Messages)
+                    .ThenInclude(m => m.Sender)
+            .Include(u => u.OwnedStocks)
+            .FirstOrDefaultAsync(u => u.CNP == cnp);
 
         public async Task<User> GetByUsernameAsync(string username) => await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
 

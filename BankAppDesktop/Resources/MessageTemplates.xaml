@@ -113,7 +113,7 @@
                             Padding="5"
                             CornerRadius="10"
                             Margin="5">
-                        <Image Source="{Binding ImageURL}"
+                        <Image Source="{Binding ImageUrl}"
                                 MaxWidth="200"
                                 Stretch="UniformToFill"/>
                     </Border>

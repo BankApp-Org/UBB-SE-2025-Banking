@@ -32,9 +32,13 @@ namespace BankApi.Data
         public DbSet<FavoriteStock> FavoriteStocks { get; set; } = null!;
         public DbSet<NewsArticle> NewsArticles { get; set; } = null!;
         public DbSet<BankAccount> BankAccounts { get; set; } = null!;
-        public DbSet<BankTransaction> BankTransactions { get; set; } = null!;
-        public DbSet<CurrencyExchange> CurrencyExchanges { get; set; } = null!;
+        public DbSet<BankTransaction> BankTransactions { get; set; } = null!; public DbSet<CurrencyExchange> CurrencyExchanges { get; set; } = null!;
         public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<TextMessage> TextMessages { get; set; } = null!;
+        public DbSet<ImageMessage> ImageMessages { get; set; } = null!;
+        public DbSet<TransferMessage> TransferMessages { get; set; } = null!;
+        public DbSet<RequestMessage> RequestMessages { get; set; } = null!;
+        public DbSet<BillSplitMessage> BillSplitMessages { get; set; } = null!;
         public DbSet<Notification> Notifications { get; set; } = null!;
         public DbSet<Chat> Chats { get; set; } = null!; protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -198,6 +202,17 @@ namespace BankApi.Data
                     .HasForeignKey(t => t.SenderIban)
                     .HasPrincipalKey(ba => ba.Iban)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Message polymorphic inheritance configuration
+            modelBuilder.Entity<Message>(entity =>
+            {
+                entity.HasDiscriminator<string>("Type")
+                    .HasValue<TextMessage>("Text")
+                    .HasValue<ImageMessage>("Image")
+                    .HasValue<TransferMessage>("Transfer")
+                    .HasValue<RequestMessage>("Request")
+                    .HasValue<BillSplitMessage>("BillSplit");
             });
         }
     }

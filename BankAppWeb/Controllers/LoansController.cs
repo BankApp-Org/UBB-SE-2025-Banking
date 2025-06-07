@@ -1,14 +1,10 @@
-using System.Diagnostics;
 using BankAppWeb.Models;
 using BankAppWeb.Views.Loans;
-using Common.Models;
 using Common.Models.Bank;
 using Common.Services;
 using Common.Services.Bank;
 using Microsoft.AspNetCore.Authorization; // Required for Authorize attribute
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BankAppWeb.Controllers
 {
@@ -18,11 +14,13 @@ namespace BankAppWeb.Controllers
         private readonly ILoanService _loanService;
         private readonly IUserService _userService;
         private readonly IBankAccountService _bankAccountService;
+        private readonly IAuthenticationService _authenticationService;
 
-        public LoansController(ILoanService loanService, IUserService userService, IBankAccountService bankAccountService) // Inject IUserService
+        public LoansController(ILoanService loanService, IUserService userService, IBankAccountService bankAccountService, IAuthenticationService authenticationService)
         {
             _loanService = loanService;
             _userService = userService;
+            _authenticationService = authenticationService;
             _bankAccountService = bankAccountService;
         }
 
@@ -61,7 +59,7 @@ namespace BankAppWeb.Controllers
 
         public IActionResult Create()
         {
-            var model = new CreateModel(_loanService);
+            var model = new CreateModel(_loanService, _authenticationService, _bankAccountService);
             return View(model);
         }
 
@@ -69,7 +67,7 @@ namespace BankAppWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateModel.InputModel input)
         {
-            var model = new CreateModel(_loanService);
+            var model = new CreateModel(_loanService, _authenticationService, _bankAccountService);
             if (ModelState.IsValid)
             {
                 var user = await _userService.GetCurrentUserAsync();
@@ -80,18 +78,22 @@ namespace BankAppWeb.Controllers
                 }
                 string userCnp = user.CNP;
 
+                BankAccount bankAccount = await _bankAccountService.FindBankAccount(input.SelectedBankAccountIban);
+
                 var loan = new Loan
                 {
                     UserCnp = userCnp,
                     LoanAmount = input.Amount,
                     ApplicationDate = DateTime.UtcNow, // Use UtcNow for consistency
                     RepaymentDate = input.RepaymentDate,
-                    Currency = input.Currency,
+                    Currency = bankAccount.Currency,
+                    DisbursementAccountIban = bankAccount.Iban,
                     Status = "Pending",
                 };
 
                 var request = new LoanRequest
                 {
+                    AccountIban = input.SelectedBankAccountIban,
                     UserCnp = userCnp,
                     Status = "Pending",
                     Loan = loan // Assign the created Loan object

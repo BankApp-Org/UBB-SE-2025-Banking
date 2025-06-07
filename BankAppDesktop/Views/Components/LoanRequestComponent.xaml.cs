@@ -9,6 +9,7 @@ namespace BankAppDesktop.Views.Components
     public sealed partial class LoanRequestComponent : Page
     {
         private readonly ILoanRequestService loanRequestService;
+        private readonly IBankAccountService bankAccountService;
         private readonly ILoanService loanServices;
 
         public event EventHandler? LoanRequestSolved;
@@ -29,8 +30,11 @@ namespace BankAppDesktop.Views.Components
 
         public Currency Currency { get; set; } = Currency.USD;
 
-        public LoanRequestComponent(ILoanRequestService loanRequestService, ILoanService loanService)
+        public string AccountIban { get; set; } = string.Empty;
+
+        public LoanRequestComponent(ILoanRequestService loanRequestService, ILoanService loanService, IBankAccountService bankAccountService)
         {
+            this.bankAccountService = bankAccountService ?? throw new ArgumentNullException(nameof(bankAccountService));
             this.loanRequestService = loanRequestService;
             this.loanServices = loanService;
             this.InitializeComponent();
@@ -54,6 +58,8 @@ namespace BankAppDesktop.Views.Components
                 throw new Exception("Requesting user CNP cannot be null or empty.");
             }
 
+            BankAccount bankAccount = await this.bankAccountService.FindBankAccount(AccountIban);
+
             // Create a Loan object with the necessary properties
             var loan = new Loan
             {
@@ -61,6 +67,7 @@ namespace BankAppDesktop.Views.Components
                 LoanAmount = this.RequestedAmount,
                 ApplicationDate = this.ApplicationDate,
                 RepaymentDate = this.RepaymentDate,
+                DisbursementAccountIban = this.AccountIban,
                 Status = this.State,
                 Currency = this.Currency,
                 // Initialize other required properties with default values
@@ -78,6 +85,7 @@ namespace BankAppDesktop.Views.Components
                 Id = this.RequestID,
                 UserCnp = this.RequestingUserCNP,
                 Status = this.State,
+                AccountIban = this.AccountIban,
                 Loan = loan
             };
 
