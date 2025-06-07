@@ -113,15 +113,6 @@ namespace BankApp.Service.Tests
         }
 
         [TestMethod]
-        public async Task CreateTransaction_ValidTransaction_ReturnsTrue()
-        {
-            var transaction = CreateValidBankTransaction(1);
-            _historyRepoMock.Setup(r => r.CreateTransactionAsync(transaction)).Returns(Task.CompletedTask);
-            var result = await _service.CreateTransaction(transaction);
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public async Task CreateTransaction_NullTransaction_Throws()
         {

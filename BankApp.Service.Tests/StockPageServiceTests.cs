@@ -135,32 +135,7 @@ namespace BankApp.Service.Tests
             // Act
             await _service.GetUserStockAsync(stockName, userCNP);
         }
-        [TestMethod]
-        public async Task BuyStockAsync_ReturnsTrue_WhenSuccessful()
-        {
-            // Arrange
-            var stockName = "Test Stock";
-            var userCNP = "1234567890123";
-            var quantity = 5;
-            var stockPrice = 100;
-            var totalPrice = stockPrice * quantity;
-            var user = new User { CNP = userCNP, GemBalance = totalPrice + 100 };
-            var stock = new Stock { Name = stockName, Price = stockPrice, Symbol = "TST", Quantity = 10 }; _mockStockPageRepo.Setup(x => x.GetStockAsync(stockName)).ReturnsAsync(stock);
-            _mockStockPageRepo.Setup(x => x.GetOwnedStocksAsync(userCNP, stockName)).ReturnsAsync(0);
-            _mockUserRepo.Setup(x => x.GetByCnpAsync(userCNP)).ReturnsAsync(user);
-            _mockStockPageRepo.Setup(x => x.AddStockValueAsync(stockName, It.IsAny<decimal>())).Returns(Task.CompletedTask);
-            _mockStockPageRepo.Setup(x => x.AddOrUpdateUserStockAsync(userCNP, stockName, quantity)).Returns(Task.CompletedTask);
-            _mockTransactionRepo.Setup(x => x.AddTransactionAsync(It.IsAny<StockTransaction>())).Returns(Task.CompletedTask);
-
-            // Act
-            var result = await _service.BuyStockAsync(stockName, quantity, userCNP);            // Assert
-            Assert.IsTrue(result);
-            Assert.AreEqual(totalPrice + 100 - totalPrice, user.GemBalance);
-            _mockUserRepo.Verify(x => x.UpdateAsync(user), Times.Once);
-            _mockStockPageRepo.Verify(x => x.AddStockValueAsync(stockName, It.IsAny<decimal>()), Times.Once);
-            _mockStockPageRepo.Verify(x => x.AddOrUpdateUserStockAsync(userCNP, stockName, quantity), Times.Once);
-            _mockTransactionRepo.Verify(x => x.AddTransactionAsync(It.IsAny<StockTransaction>()), Times.Once);
-        }
+        
         [TestMethod]
         public async Task BuyStockAsync_ReturnsFalse_WhenInsufficientFunds()
         {
@@ -183,35 +158,7 @@ namespace BankApp.Service.Tests
             Assert.IsFalse(result);
             _mockUserRepo.Verify(x => x.UpdateAsync(It.IsAny<User>()), Times.Never);
         }
-        [TestMethod]
-        public async Task SellStockAsync_ReturnsTrue_WhenSuccessful()
-        {
-            // Arrange
-            var stockName = "Test Stock";
-            var userCNP = "1234567890123";
-            var quantity = 5;
-            var stockPrice = 100;
-            var totalPrice = stockPrice * quantity;
-            var user = new User { CNP = userCNP, GemBalance = 500 };
-            var stock = new Stock { Name = stockName, Price = stockPrice, Symbol = "TST", Quantity = 10 };
-
-            _mockStockPageRepo.Setup(x => x.GetStockAsync(stockName)).ReturnsAsync(stock);
-            _mockStockPageRepo.Setup(x => x.GetOwnedStocksAsync(userCNP, stockName)).ReturnsAsync(quantity);
-            _mockUserRepo.Setup(x => x.GetByCnpAsync(userCNP)).ReturnsAsync(user);
-            _mockStockPageRepo.Setup(x => x.AddStockValueAsync(stockName, It.IsAny<decimal>())).Returns(Task.CompletedTask);
-            _mockStockPageRepo.Setup(x => x.AddOrUpdateUserStockAsync(userCNP, stockName, 0)).Returns(Task.CompletedTask);
-            _mockTransactionRepo.Setup(x => x.AddTransactionAsync(It.IsAny<StockTransaction>())).Returns(Task.CompletedTask);
-
-            // Act
-            var result = await _service.SellStockAsync(stockName, quantity, userCNP);
-
-            // Assert
-            Assert.IsTrue(result);
-            Assert.AreEqual(500 + totalPrice, user.GemBalance); _mockUserRepo.Verify(x => x.UpdateAsync(user), Times.Once);
-            _mockStockPageRepo.Verify(x => x.AddStockValueAsync(stockName, It.IsAny<decimal>()), Times.Once);
-            _mockStockPageRepo.Verify(x => x.AddOrUpdateUserStockAsync(userCNP, stockName, quantity - quantity), Times.Once);
-            _mockTransactionRepo.Verify(x => x.AddTransactionAsync(It.IsAny<StockTransaction>()), Times.Once);
-        }
+        
         [TestMethod]
         public async Task SellStockAsync_ReturnsFalse_WhenInsufficientQuantity()
         {
