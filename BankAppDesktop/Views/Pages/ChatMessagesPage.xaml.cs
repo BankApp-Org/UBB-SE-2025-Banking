@@ -84,9 +84,9 @@ namespace BankAppDesktop.Views.Pages
                 // Reset all buttons
                 TextTypeButton.IsChecked = false;
                 ImageTypeButton.IsChecked = false;
-                TransferTypeButton.IsChecked = false;
-                RequestTypeButton.IsChecked = false;
-                BillSplitTypeButton.IsChecked = false;
+                // TransferTypeButton.IsChecked = false;
+                // RequestTypeButton.IsChecked = false;
+                // BillSplitTypeButton.IsChecked = false;
 
                 // Set active button
                 button.IsChecked = true;
@@ -234,9 +234,9 @@ namespace BankAppDesktop.Views.Pages
 
             TextTypeButton.Background = TextTypeButton.IsChecked == true ? selectedBrush : defaultBrush;
             ImageTypeButton.Background = ImageTypeButton.IsChecked == true ? selectedBrush : defaultBrush;
-            TransferTypeButton.Background = TransferTypeButton.IsChecked == true ? selectedBrush : defaultBrush;
-            RequestTypeButton.Background = RequestTypeButton.IsChecked == true ? selectedBrush : defaultBrush;
-            BillSplitTypeButton.Background = BillSplitTypeButton.IsChecked == true ? selectedBrush : defaultBrush;
+            // TransferTypeButton.Background = TransferTypeButton.IsChecked == true ? selectedBrush : defaultBrush;
+            // RequestTypeButton.Background = RequestTypeButton.IsChecked == true ? selectedBrush : defaultBrush;
+            // BillSplitTypeButton.Background = BillSplitTypeButton.IsChecked == true ? selectedBrush : defaultBrush;
         }
     }
 }

@@ -59,16 +59,13 @@
 }
 
 .input-group label {
-    color: #ccc;
     font-weight: 500;
     margin-bottom: 8px;
     display: block;
 }
 
 .form-control {
-    background: #2d2d2d;
     border: 1px solid #555;
-    color: #fff;
     border-radius: 8px;
     padding: 12px 15px;
     transition: all 0.3s ease;
@@ -76,8 +73,6 @@
 }
 
 .form-control:focus {
-    background: #333;
-    color: #fff;
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
     outline: none;

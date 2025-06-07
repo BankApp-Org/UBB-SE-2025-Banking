@@ -1,11 +1,12 @@
 ﻿namespace BankApi.Services.Trading
 {
     using BankApi.Repositories;
+    using BankApi.Repositories.Impl.Bank;
     using BankApi.Repositories.Trading;
     using Common.Exceptions;
     using Common.Models.Trading;
-    using Common.Services.Trading;
     using Common.Services.Bank;
+    using Common.Services.Trading;
     using System;
     using System.Threading.Tasks;
 
@@ -14,12 +15,15 @@
         private readonly IGemStoreRepository _repository;
         private readonly IUserRepository _userRepository;
         private readonly ICreditScoringService _creditScoringService;
-
-        public StoreService(IGemStoreRepository repository, IUserRepository userRepository, ICreditScoringService creditScoringService)
+        private readonly IBankAccountService _bankAccountService;
+        private readonly IBankTransactionRepository _bankTransactionRepo;
+        public StoreService(IGemStoreRepository repository, IUserRepository userRepository, ICreditScoringService creditScoringService, IBankAccountService bankAccountService, IBankTransactionRepository bankTransactionRepo)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _creditScoringService = creditScoringService ?? throw new ArgumentNullException(nameof(creditScoringService));
+            _bankAccountService = bankAccountService ?? throw new ArgumentNullException(nameof(bankAccountService));
+            _bankTransactionRepo = bankTransactionRepo ?? throw new ArgumentNullException(nameof(bankTransactionRepo));
         }
 
         /// <summary>
@@ -87,9 +91,16 @@
         /// <summary>
         /// Protected virtual method so unit tests can override transaction behavior.
         /// </summary>
-        protected virtual Task<bool> ProcessBankTransaction(string accountId, double amount)
+        protected async Task<bool> ProcessBankTransaction(string accountId, double amount)
         {
-            return Task.FromResult(true);
+            return true;
+            //var receiver = await _bankTransactionRepo.GetBankAccountByIBAN(accountId);
+
+            //await _bankTransactionRepo.CreateTransactionAsync(accountId);
+            //await _transactionRepository.UpdateBankAccountBalance(transaction.SenderIban, sender.Balance - transaction.SenderAmount);
+            //await _transactionRepository.UpdateBankAccountBalance(transaction.ReceiverIban, receiver.Balance + transaction.ReceiverAmount);
+            //// Calculate and apply credit score impact for sender
+            //await ApplyCreditScoreImpactAsync(transaction);
         }
 
         /// <summary>

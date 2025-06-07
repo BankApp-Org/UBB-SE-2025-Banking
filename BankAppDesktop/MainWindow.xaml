@@ -28,7 +28,7 @@
                         <NavigationViewItem.MenuItems>
                             <NavigationViewItem Content="Stocks" Tag="HomePage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                             <NavigationViewItem Content="Create Stock" Tag="CreateStockPage" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                            <NavigationViewItem Content="Investments" Tag="Investments" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <!--<NavigationViewItem Content="Investments" Tag="Investments" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>-->
                             <NavigationViewItem Content="Stock Transaction History" Tag="TransactionLogPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                         </NavigationViewItem.MenuItems>
                     </NavigationViewItem>
@@ -36,9 +36,9 @@
                     <!-- Social Category -->
                     <NavigationViewItem Content="Social">
                         <NavigationViewItem.MenuItems>
-                            <NavigationViewItem Content="SocialPageREMOVEME" Tag="SocialPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                            <NavigationViewItem Content="Chat Reports" Tag="ChatReports" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                            <NavigationViewItem Content="BillSplit Reports" Tag="BillSplitReports" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <NavigationViewItem Content="Chats" Tag="SocialPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                            <!--<NavigationViewItem Content="Chat Reports" Tag="ChatReports" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>-->
+                            <!--<NavigationViewItem Content="BillSplit Reports" Tag="BillSplitReports" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>-->
                             <NavigationViewItem Content="News" Tag="NewsListPage"/>
                         </NavigationViewItem.MenuItems>
                     </NavigationViewItem>

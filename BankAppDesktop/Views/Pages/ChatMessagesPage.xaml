@@ -130,7 +130,7 @@
                             Foreground="White"
                                   Click="MessageTypeButton_Click"
                             Tag="Image"/>
-                    <ToggleButton x:Name="TransferTypeButton"
+                    <!--<ToggleButton x:Name="TransferTypeButton"
                             Content="Transfer"
                                   Width="80"
                             Height="35"
@@ -156,7 +156,7 @@
                                   Background="#555"
                             Foreground="White"
                                   Click="MessageTypeButton_Click"
-                            Tag="BillSplit"/>
+                            Tag="BillSplit"/>-->
                 </StackPanel>
 
                 <!-- Dynamic Input Section -->

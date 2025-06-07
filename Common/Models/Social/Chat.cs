@@ -23,5 +23,10 @@ namespace Common.Models.Social
 
         [Required]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
+
+        public override string ToString()
+        {
+            return ChatName;
+        }
     }
 }
