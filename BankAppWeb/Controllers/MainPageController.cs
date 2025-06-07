@@ -9,6 +9,7 @@ using Common.Services.Bank;
 using Common.Services;
 using BankAppWeb.Models;
 using Common.Models.Bank;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace BankAppWeb.Controllers
 {
@@ -16,11 +17,13 @@ namespace BankAppWeb.Controllers
     {
         private readonly IBankAccountService _mainPageService;
         private readonly IUserService _userService;
+        private readonly IAuthenticationService _authService;
 
-        public MainPageController(IBankAccountService mainPageService, IUserService userService)
+        public MainPageController(IBankAccountService mainPageService, IUserService userService, IAuthenticationService authService)
         {
             _mainPageService = mainPageService;
             _userService = userService;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -42,7 +45,7 @@ namespace BankAppWeb.Controllers
 
             if (string.IsNullOrEmpty(userId))
             {
-                return NotFound();
+                return RedirectToAction("Login", "Account");
             }
 
             var accounts = await _mainPageService.GetUserBankAccounts(Int32.Parse(userId));
@@ -71,7 +74,7 @@ namespace BankAppWeb.Controllers
                 _ => "Poor Credit"
             };
 
-            var vm = new MainPageViewModel
+            var vm = new MainPageViewModel(authService:_authService)
                 {
                     WelcomeText = $"Welcome, {currentUser.FirstName}!",
                     BankAccounts = new List<BankAccount>(accounts),
