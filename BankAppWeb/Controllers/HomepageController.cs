@@ -62,35 +62,7 @@ namespace BankAppWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SimulateStocks()
-        {
-            if (!_authenticationService.IsUserLoggedIn())
-            {
-                TempData["ErrorMessage"] = "You must be logged in to simulate.";
-                return RedirectToAction("Index");
-            }
-
-            try
-            {
-                bool success = await _stockPageService.SimulateStocksAsync();
-                if (success)
-                {
-                    TempData["SuccessMessage"] = "Stock simulation completed successfully!";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Stock simulation failed.";
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Error during simulation: {ex.Message}";
-            }
-
-            return RedirectToAction("Index");
-        }
+        
 
 
     }
