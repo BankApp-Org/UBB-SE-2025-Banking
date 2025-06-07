@@ -44,8 +44,8 @@ namespace BankAppWeb.Pages.Analysis
         {
             try
             {
-                CurrentUser = await _userService.GetCurrentUserAsync();
-                if (CurrentUser == null)
+                var currentUser = await _userService.GetCurrentUserAsync();
+                if (currentUser == null)
                 {
                     ErrorMessage = "Unable to identify user. Please log in again.";
                     return Page();
@@ -62,11 +62,14 @@ namespace BankAppWeb.Pages.Analysis
                     {
                         Value = u.CNP,
                         Text = $"{u.UserName} - {u.FirstName} {u.LastName}",
-                        Selected = u.CNP == (userCnp ?? CurrentUser.CNP)
+                        Selected = u.CNP == (userCnp ?? currentUser.CNP)
                     })];
 
                     // Set the selected user CNP
-                    SelectedUserCnp = userCnp ?? CurrentUser.CNP;
+                    SelectedUserCnp = userCnp ?? currentUser.CNP;
+
+                    // Get the selected user's information
+                    CurrentUser = users.FirstOrDefault(u => u.CNP == SelectedUserCnp) ?? currentUser;
 
                     // Get activities for selected user
                     Activities = await _activityService.GetActivityForUser(SelectedUserCnp);
@@ -74,7 +77,8 @@ namespace BankAppWeb.Pages.Analysis
                 else
                 {
                     // Regular user - only get their own activities
-                    SelectedUserCnp = CurrentUser.CNP;
+                    SelectedUserCnp = currentUser.CNP;
+                    CurrentUser = currentUser;
                     Activities = await _activityService.GetActivityForUser(CurrentUser.CNP);
                 }
 

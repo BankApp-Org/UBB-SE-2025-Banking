@@ -4,49 +4,52 @@
 	ViewData["Title"] = "Create Bank Account";
 }
 
-<h2>Create Bank Account</h2>
-
-<div class="container">
-	<div class="header">
-		<a href="@Url.Action("Index", "Homepage")" class="back-button">&#x2190;</a>
-		<h1>Create Bank Account</h1>
+<div class="container mt-4">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h2>Create Bank Account</h2>
+		<a href="@Url.Action("Index", "Homepage")" class="btn btn-outline-secondary">
+			&#x2190; Back
+		</a>
 	</div>
 
 	@if (TempData["SuccessMessage"] != null)
 	{
-		<div class="notification">
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
 			@TempData["SuccessMessage"]
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 		</div>
 	}
 
-	<form asp-action="Index" method="post" class="form-container">
-		<div class="form-group">
-			<label>Select currency:</label>
-			<div class="currency-list">
+	<form asp-action="Index" method="post" class="needs-validation" novalidate>
+		<div class="mb-3">
+			<label class="form-label">Select currency:</label>
+			<div class="d-flex flex-wrap gap-3">
 				@for (int i = 0; i < Model.AvailableCurrencies.Count; i++)
 				{
-					<label class="currency-item">
-						<input type="radio"
+					<div class="form-check me-3">
+						<input class="form-check-input"
+						       type="radio"
 						       name="SelectedCurrencyIndex"
 						       value="@i"
 						       @(Model.AvailableCurrencies[i].IsChecked ? "checked" : "") />
-						<span>@Model.AvailableCurrencies[i].Name</span>
+						<label class="form-check-label">
+							@Model.AvailableCurrencies[i].Name
+						</label>
 
 						<input type="hidden" asp-for="AvailableCurrencies[(i)].Name" />
 						<input type="hidden" asp-for="AvailableCurrencies[(i)].IsChecked" />
-
-					</label>
+					</div>
 				}
 			</div>
 			<span asp-validation-for="SelectedCurrency" class="text-danger"></span>
 		</div>
 
-		<div class="form-group">
-			<label for="CustomName">Custom Name</label>
+		<div class="mb-3">
+			<label asp-for="CustomName" class="form-label">Custom Name</label>
 			<input asp-for="CustomName" class="form-control" placeholder="Custom Name" />
 			<span asp-validation-for="CustomName" class="text-danger"></span>
 		</div>
 
-		<button type="submit" class="btn-confirm">Confirm creation</button>
+		<button type="submit" class="btn btn-primary">Confirm creation</button>
 	</form>
-</div> 
+</div>

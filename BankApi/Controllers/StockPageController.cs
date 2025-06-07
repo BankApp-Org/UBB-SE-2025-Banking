@@ -86,7 +86,9 @@ namespace BankApi.Controllers
             {
                 var userCnp = await GetCurrentUserCnp();
                 var result = await _stockPageService.BuyStockAsync(dto.StockName, dto.Quantity, userCnp);
+                var simulated = await _stockPageService.SimulateStocksAsync();
                 return Ok(result);
+
             }
             catch (UnauthorizedAccessException)
             {
@@ -100,6 +102,7 @@ namespace BankApi.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+
         }
 
         [HttpPost("sell")]

@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Common.Models.Social
+﻿namespace Common.Models.Social
 {
     public class TextMessage : Message
     {
@@ -19,18 +17,6 @@ namespace Common.Models.Social
             CreatedAt = createdAt;
             Type = MessageType.Text.ToString();
             MessageType = MessageType.Text;
-            UsersReport = usersReport ?? [];
-        }
-
-        [JsonConstructor]
-        public TextMessage(int userId, int chatId, string messageContent, string createdAt, MessageType type, List<User> usersReport)
-        {
-            UserId = userId;
-            ChatId = chatId;
-            MessageContent = messageContent;
-            CreatedAt = DateTime.Parse(createdAt);
-            MessageType = type;
-            Type = type.ToString();
             UsersReport = usersReport ?? [];
         }
 

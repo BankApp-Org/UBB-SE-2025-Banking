@@ -52,7 +52,7 @@ namespace BankApp.Service.Tests
         }
         private LoanRequest CreateValidLoanRequest()
         {
-            return new LoanRequest { UserCnp = "CNP", Loan = CreateValidLoan(), Status = "pending" };
+            return new LoanRequest { UserCnp = "CNP", Loan = CreateValidLoan(), Status = "pending", AccountIban = "RO12BANK12345678901234567" };
         }
 
         [TestMethod]
@@ -88,7 +88,7 @@ namespace BankApp.Service.Tests
         [ExpectedException(typeof(ArgumentException))]
         public async Task AddLoanAsync_LoanMissing_Throws()
         {
-            var loanRequest = new LoanRequest { UserCnp = "CNP", Loan = null!, Status = "pending" };
+            var loanRequest = new LoanRequest { UserCnp = "CNP", Loan = null!, Status = "pending", AccountIban = "RO12BANK12345678901234567" };
             _userRepoMock.Setup(r => r.GetByCnpAsync(loanRequest.UserCnp)).ReturnsAsync(CreateValidUser());
             await _service.AddLoanAsync(loanRequest);
         }

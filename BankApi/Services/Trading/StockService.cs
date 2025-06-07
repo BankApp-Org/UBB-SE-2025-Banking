@@ -84,6 +84,7 @@
             };
         }
 
+
         public async Task AddToFavoritesAsync(HomepageStock stock)
         {
             // This method is deprecated - favorites are now managed through StockPageService
@@ -97,5 +98,7 @@
             // Left empty for interface compatibility
             await Task.CompletedTask;
         }
+
+
     }
 }

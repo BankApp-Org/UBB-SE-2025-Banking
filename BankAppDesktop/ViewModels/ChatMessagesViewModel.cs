@@ -514,10 +514,6 @@
         // Helper method to add a message to the chat
         private async void AddMessageToChat(Message message)
         {
-            if (message is ImageMessage)
-            {
-                Console.WriteLine($"Image message found with URL: {((ImageMessage)message).ImageUrl}");
-            }
             this.ChatMessages.Add(message);
         }
 

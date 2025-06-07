@@ -81,12 +81,6 @@
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="obj\x64\Debug\net9.0-windows10.0.26100.0\win-x64\*.cs">
-        <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-
   <!-- Publish Properties -->
   <PropertyGroup>
     <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>

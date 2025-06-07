@@ -69,9 +69,11 @@ namespace BankApi.Controllers
                     Loan = new Loan
                     {
                         LoanAmount = dto.LoanAmount,
+                        DisbursementAccountIban = dto.Iban,
                         ApplicationDate = DateTime.UtcNow,
                         RepaymentDate = DateTime.UtcNow.AddMonths(12) // Default to 12 months repayment period
                     },
+                    AccountIban = dto.Iban,
                     Status = "Pending",
                 };
 
