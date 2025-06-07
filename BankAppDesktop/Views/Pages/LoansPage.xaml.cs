@@ -9,17 +9,21 @@ namespace BankAppDesktop.Views.Pages
     using System;
     using System.Threading.Tasks;
     using Common.Services.Bank;
+    using Common.Services;
 
     public sealed partial class LoansPage : Page
     {
         private readonly LoansViewModel viewModel;
         private readonly ILoanService loanService;
+        private readonly IAuthenticationService authService;
+
         private TextBlock? noLoansMessage;
         private ContentDialog? contentDialog;
         private CreateLoanDialog? createLoanComponent;
 
         public LoansPage(LoansViewModel viewModel)
         {
+            this.authService = App.Services.GetRequiredService<IAuthenticationService>();
             this.viewModel = viewModel;
             this.InitializeComponent();
             this.DataContext = viewModel;
@@ -31,6 +35,7 @@ namespace BankAppDesktop.Views.Pages
             this.noLoansMessage = this.FindName("NoLoansMessage") as TextBlock;
 
             this.Loaded += LoansPage_Loaded;
+            this.authService = authService;
         }
 
         private async void LoansPage_Loaded(object sender, RoutedEventArgs e)
@@ -44,7 +49,9 @@ namespace BankAppDesktop.Views.Pages
             {
                 this.viewModel.IsLoading = true;
 
-                var loans = await this.loanService.GetUserLoansAsync(string.Empty); // Current user's loans
+                // string userCNP = authService.GetCurrentUserSession()?.CNP ?? string.Empty;
+                string userCNP = "1234567890123";
+                var loans = await this.loanService.GetUserLoansAsync(userCNP); // Current user's loans
                 this.viewModel.Loans.Clear();
 
                 foreach (var loan in loans)

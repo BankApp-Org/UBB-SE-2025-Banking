@@ -295,10 +295,7 @@ namespace BankAppDesktop.ViewModels
                 return "Please create a bank account to view details";
             }
 
-            BankAccountDetailsViewModel viewModel = App.Services.GetRequiredService<BankAccountDetailsViewModel>();
-            viewModel.CurrentIban = SelectedIban;
-
-            App.MainAppWindow.MainAppFrame.Content = new BankAccountDetailsPage(viewModel);
+            App.MainAppWindow.MainAppFrame.Content = new BankAccountDetailsPage(SelectedIban);
 
             return null;
         }
