@@ -51,6 +51,17 @@ namespace Common.Services.Proxy
         {
             var response = await _httpClient.PostAsJsonAsync("api/StockPage/favorite/toggle", new { stockName, state }, _jsonOptions);
             response.EnsureSuccessStatusCode();
+
         }
+
+        public async Task<bool> SimulateStocksAsync()
+        {
+            var response = await _httpClient.PostAsync("api/StockPage/simulate", null);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<bool>(_jsonOptions);
+
+
+        }
+
     }
 }
