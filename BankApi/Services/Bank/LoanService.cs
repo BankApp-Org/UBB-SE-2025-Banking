@@ -7,6 +7,7 @@
     using Common.Services.Bank;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     public class LoanService(ILoanRepository loanRepository, IUserRepository userRepository, ICreditScoringService creditScoringService, IBankAccountService bankAccountService) : ILoanService
@@ -25,7 +26,6 @@
         {
             return await loanRepository.GetUserLoansAsync(userCNP);
         }
-
         public async Task AddLoanAsync(LoanRequest loanRequest)
         {
             User user = await userRepository.GetByCnpAsync(loanRequest.UserCnp) ?? throw new Exception("User not found");
@@ -35,6 +35,29 @@
             {
                 // This case should ideally not happen if the controller always sets loanRequest.Loan
                 throw new ArgumentException("Loan details are missing in the loan request.", nameof(loanRequest));
+            }            // Validate disbursement account if provided
+            if (!string.IsNullOrEmpty(loanToProcess.DisbursementAccountIban))
+            {
+                var userBankAccounts = await bankAccountService.GetUserBankAccounts(user.Id);
+                var disbursementAccount = userBankAccounts.FirstOrDefault(acc => acc.Iban == loanToProcess.DisbursementAccountIban);
+
+                if (disbursementAccount == null)
+                {
+                    throw new ArgumentException("Invalid disbursement account. The specified account does not belong to the user.", nameof(loanRequest));
+                }
+
+                // Validate account is not blocked and can receive funds
+                if (disbursementAccount.Blocked)
+                {
+                    throw new ArgumentException("Cannot disburse loan to blocked account. Please select an active account.", nameof(loanRequest));
+                }
+
+                // Check if account supports the loan currency (if currency conversion is needed)
+                if (disbursementAccount.Currency != loanToProcess.Currency)
+                {
+                    // For now, we'll allow cross-currency but might want to add conversion logic later
+                    // This is where you could add currency conversion handling
+                }
             }
 
             // Calculate interest rate
@@ -147,7 +170,7 @@
 
             if (loan.MonthlyPaymentsCompleted >= loan.NumberOfMonths)
             {
-                
+
                 loan.Status = "completed";
 
                 // Apply additional credit score impact for completing loan
@@ -183,19 +206,19 @@
                     var totalToPay = loan.LoanAmount + loan.Penalty;
                     var user = await userRepository.GetByCnpAsync(loan.UserCnp);
 
-                      if( await bankAccountService.CheckSufficientFunds(user.Id, iban, totalToPay, loan.Currency))
-                        {
-                            var bankAccount = await bankAccountService.FindBankAccount(iban);
-                            bankAccount.Balance -= totalToPay;
-                           await  bankAccountService.UpdateBankAccount(bankAccount);
-                           loan.Status = "completed";
-                           await ApplyLoanCompletionImpactAsync(loan.UserCnp, loan);
-                        }
-                      else
+                    if (await bankAccountService.CheckSufficientFunds(user.Id, iban, totalToPay, loan.Currency))
+                    {
+                        var bankAccount = await bankAccountService.FindBankAccount(iban);
+                        bankAccount.Balance -= totalToPay;
+                        await bankAccountService.UpdateBankAccount(bankAccount);
+                        loan.Status = "completed";
+                        await ApplyLoanCompletionImpactAsync(loan.UserCnp, loan);
+                    }
+                    else
                     {
                         throw new Exception("Insufficient Funds! Please select another account.");
                     }
-                  
+
                 }
                 else
                 {
@@ -204,7 +227,7 @@
 
                 await loanRepository.UpdateLoanAsync(loan);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

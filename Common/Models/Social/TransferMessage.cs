@@ -1,6 +1,5 @@
 ﻿using Common.Models.Bank;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace Common.Models.Social
 {
@@ -26,20 +25,6 @@ namespace Common.Models.Social
             ListOfReceivers = receivers ?? [];
         }
 
-        [JsonConstructor]
-        public TransferMessage(int userId, int chatId, string status, decimal amount, string description, Currency currency, string createdAt, List<User> listOfReceivers)
-        {
-            UserId = userId;
-            ChatId = chatId;
-            Status = status;
-            Amount = amount;
-            Description = description;
-            Currency = currency;
-            CreatedAt = DateTime.Parse(createdAt);
-            Type = MessageType.Transfer.ToString();
-            MessageType = MessageType.Transfer;
-            ListOfReceivers = listOfReceivers ?? [];
-        }
 
         public string Status { get; set; } = string.Empty;
 

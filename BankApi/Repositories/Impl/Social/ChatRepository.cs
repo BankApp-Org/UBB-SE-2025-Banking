@@ -17,6 +17,7 @@ namespace BankApi.Repositories.Impl.Social
         {
             return await _context.Chats
                 .Include(c => c.Messages)
+                .ThenInclude(m => m.Sender)
                 .Include(c => c.Users)
                 .FirstOrDefaultAsync(c => c.Id == chatId)
                 ?? throw new KeyNotFoundException($"Chat with ID {chatId} not found.");

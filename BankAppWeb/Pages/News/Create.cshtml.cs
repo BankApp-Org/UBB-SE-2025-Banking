@@ -44,6 +44,8 @@ namespace BankAppWeb.Pages.News
         public List<SelectListItem> TopicOptions { get; private set; } = [];
         public bool IsLoading { get; private set; }
         public string ErrorMessage { get; private set; } = string.Empty;
+
+        public string SuccessMessage { get; set; } = string.Empty;
         public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
 
         public async Task OnGetAsync()

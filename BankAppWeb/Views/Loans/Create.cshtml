@@ -4,33 +4,49 @@
     ViewData["Title"] = "Create Loan Request";
 }
 
-<h2>Submit a Loan Request</h2>
+<div class="container py-4" style="max-width: 600px; margin: auto;">
+    <h2 class="text-center mb-4">Submit a Loan Request</h2>
 
-@if (!string.IsNullOrEmpty(Model.SuccessMessage))
-{
-    <div class="alert alert-success">@Model.SuccessMessage</div>
-}
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
 
-@if (!string.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <div class="alert alert-danger">@Model.ErrorMessage</div>
-}
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
 
-<form method="post">
-    <div class="form-group">
-        <label asp-for="Input.Amount" class="control-label"></label>
-        <input asp-for="Input.Amount" class="form-control" />
-        <span asp-validation-for="Input.Amount" class="text-danger"></span>
-    </div>
+    <form method="post">
+        <div class="form-group mb-3">
+            <label asp-for="Input.SelectedBankAccountIban" class="form-label fw-semibold">Disbursement Account</label>
+            <small class="text-muted d-block mb-1">Choose the account to receive the loan funds</small>
+            <select asp-for="Input.SelectedBankAccountIban"
+                    asp-items="@(new SelectList(Model.BankAccounts, "Iban", "Name"))"
+                    class="form-select">
+                <option value="">Select Bank Account</option>
+            </select>
+            <span asp-validation-for="Input.SelectedBankAccountIban" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Input.RepaymentDate" class="control-label"></label>
-        <input asp-for="Input.RepaymentDate" type="date" class="form-control" />
-        <span asp-validation-for="Input.RepaymentDate" class="text-danger"></span>
-    </div>
+        <div class="form-group mb-3">
+            <label asp-for="Input.Amount" class="form-label fw-semibold">Loan Amount</label>
+            <div class="input-group">
+                <input asp-for="Input.Amount" class="form-control" placeholder="Enter amount between 100 and 100,000" />
+            </div>
+            <span asp-validation-for="Input.Amount" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn btn-primary mt-2">Submit Request</button>
-</form>
+        <div class="form-group mb-3">
+            <label asp-for="Input.RepaymentDate" class="form-label fw-semibold">Repayment Date</label>
+            <input asp-for="Input.RepaymentDate" type="date" class="form-control" />
+            <span asp-validation-for="Input.RepaymentDate" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mb-3">Submit Loan Request</button>
+        <a href="@Url.Action("Index", "Loans")" class="btn btn-secondary d-block mx-auto px-4">Cancel</a>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

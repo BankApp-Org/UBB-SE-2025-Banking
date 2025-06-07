@@ -91,6 +91,15 @@ namespace Common.Services.Proxy
             }
         }
 
+        public async Task<string> GenerateCsvStringAsync(string iban)
+        {
+            var response = await _httpClient.GetAsync($"api/TransactionHistory/ExportCsvString/{iban}");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+
         public async Task<List<TransactionTypeCountDTO>> GetTransactionTypeCounts(int userId)
         {
             return await _httpClient.GetFromJsonAsync<List<TransactionTypeCountDTO>>($"api/BankTransaction/TransactionTypeCounts?userId={userId}", _jsonOptions) ??

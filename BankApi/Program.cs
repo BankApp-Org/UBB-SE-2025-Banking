@@ -35,6 +35,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         options.JsonSerializerOptions.WriteIndented = true;
+        options.JsonSerializerOptions.IncludeFields = true;
     });
 
 // Configure DbContext

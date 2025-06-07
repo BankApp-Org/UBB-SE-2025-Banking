@@ -10,6 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Navigation;
+using Windows.Storage.Pickers;
+using Windows.Storage;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -69,14 +72,30 @@ namespace BankAppDesktop.ViewModels
         }
 
         // CreateCSV() creates a CSV file with the transactions
-        public async void CreateCSV()
+        public async Task<bool> CreateCSVAsync()
         {
             string iban = CurrentIban;
 
-            bool answer = await ((BankTransactionProxyService)_bankTranscationHistoryService).CreateCSV(iban);
-        }
+            var csvContent = await ((BankTransactionProxyService)_bankTranscationHistoryService).GenerateCsvStringAsync(iban);
+            var savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
+            savePicker.FileTypeChoices.Add("CSV File", new List<string>() { ".csv" });
+            savePicker.SuggestedFileName = "transactions";
 
-        // GetTransactionTypeCounts() returns a dictionary with the transaction type counts
+            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainAppWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(savePicker, hWnd);
+
+            StorageFile file = await savePicker.PickSaveFileAsync();
+            if (file != null)
+            {
+                await FileIO.WriteTextAsync(file, csvContent);
+                return true;
+            }
+
+            return false;
+        }
         public async Task<Dictionary<string, int>> GetTransactionTypeCounts()
         {
             List<BankTransaction> transactions = await this.GetAllTransactions(null);

@@ -50,7 +50,8 @@ namespace BankApp.Service.Tests
                 Id = id,
                 UserCnp = cnp,
                 Status = "Pending",
-                Loan = loan
+                Loan = loan,
+                AccountIban = $"RO12BANK{id}234567890123456"
             };
 
             // Establish the circular reference
@@ -226,8 +227,8 @@ namespace BankApp.Service.Tests
                 UserCnp = "456"
             };
 
-            var request1 = new LoanRequest { Id = 1, UserCnp = "123", Status = "Pending", Loan = loan1 };
-            var request2 = new LoanRequest { Id = 2, UserCnp = "456", Status = "Pending", Loan = loan2 };
+            var request1 = new LoanRequest { Id = 1, UserCnp = "123", Status = "Pending", Loan = loan1, AccountIban = "RO12BANK12345678901234567" };
+            var request2 = new LoanRequest { Id = 2, UserCnp = "456", Status = "Pending", Loan = loan2, AccountIban = "RO12BANK98765432109876543" };
 
             // Complete the circular reference
             loan1.LoanRequest = request1;

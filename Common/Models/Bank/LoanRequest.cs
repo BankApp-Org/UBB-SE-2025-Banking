@@ -21,5 +21,9 @@ namespace Common.Models.Bank
         [MaxLength(100)]
         public required string Status { get; set; }
 
+        [Required]
+        [MaxLength(100)]
+        public required string AccountIban { get; set; }
+
     }
 }

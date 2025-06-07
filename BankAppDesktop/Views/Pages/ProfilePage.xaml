@@ -8,23 +8,23 @@
     mc:Ignorable="d">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Padding="50" Spacing="30" Background="#FFF5EE" BorderBrush="#FF69B4" BorderThickness="3">
+        <StackPanel Padding="50" Spacing="30" BorderThickness="3">
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="150" Background="#FFF5EE" Padding="20">
-                <TextBlock  FontSize="24" FontWeight="Bold" Foreground="#FF69B4">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="150"  Padding="20">
+                <TextBlock  FontSize="24" FontWeight="Bold" >
                     <Run Text="Profile Page:" />
                     <Run Text="{Binding UserName}" FontWeight="Bold" />
                 </TextBlock>
                 
                 <Button Click="UpdateProfileButton_Click"
-                        Content="Update Profile" Background="#FF69B4" CornerRadius="10" Foreground="#FFF5EE" Padding="10" />
+                        Content="Update Profile"  CornerRadius="10"  Padding="10" />
                 <Button Click="DeleteAccountButton_Click"
-                        Content="Delete Account" Background="#FF0000" CornerRadius="10" Foreground="#FFF5EE" Padding="10" />
+                        Content="Delete Account"  CornerRadius="10" Padding="10" />
                 <Button Click="LogOutButton_Click"
-                        Content="Log out" Background="#FF69B4" CornerRadius="10" Foreground="#FFF5EE" Padding="10" />
+                        Content="Log out" CornerRadius="10"  Padding="10" />
             </StackPanel>
 
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="4" BorderBrush="#770737" Spacing="2" Padding="20" Background="#FFB6C1" CornerRadius="10">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="4" BorderBrush="#770737" Spacing="2" Padding="20" CornerRadius="10">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="5">
                     <Image Source="{Binding ImageSource}" Width="200" Height="200" Stretch="Fill"/>
                 </StackPanel>
@@ -34,7 +34,7 @@
                 </StackPanel>
             </StackPanel>
 
-            <StackPanel BorderThickness="4" BorderBrush="#770737" Spacing="20" Padding="20" Background="#FFB6C1" CornerRadius="10">
+            <StackPanel BorderThickness="4" BorderBrush="#770737" Spacing="20" Padding="20" CornerRadius="10">
                 <TextBlock FontSize="20" FontWeight="Bold" Foreground="#770737" />
                 <ListView SelectionMode="Single" BorderThickness="1" BorderBrush="#770737" CornerRadius="10" IsItemClickEnabled="True"
                           ItemsSource="{Binding UserStocks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -47,12 +47,12 @@
                     </ListView.ItemTemplate>
                 </ListView>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
-                    <Button Content="Enter" CornerRadius="10" Click="GoToStockButton" Padding="5" Background="#FF69B4" Foreground="#FFF5EE" />
+                    <Button Content="Enter" CornerRadius="10" Click="GoToStockButton" Padding="5" />
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
-                <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#FF69B4"/>
+                <TextBlock FontSize="18" FontWeight="SemiBold"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

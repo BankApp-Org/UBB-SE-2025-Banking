@@ -47,7 +47,8 @@ namespace BankAppDesktop.Views.Components
                 {
                     LoanAmount = (decimal)ViewModel.Amount,
                     RepaymentDate = ViewModel.RepaymentDate.DateTime,
-                    Currency = ViewModel.SelectedCurrency,
+                    Currency = ViewModel.SelectedDisbursementAccount.Currency,
+                    DisbursementAccountIban = ViewModel.SelectedDisbursementAccount.Iban,
                     ApplicationDate = DateTime.Now, // Set application date to now
                     InterestRate = 0, // Placeholder or calculate based on rules
                     Status = "Pending", // Initial status for the loan itself
@@ -60,6 +61,7 @@ namespace BankAppDesktop.Views.Components
 
                 var loanRequest = new LoanRequest
                 {
+                    AccountIban = ViewModel.SelectedDisbursementAccount.Iban,
                     UserCnp = currentUserCnp,
                     Loan = loan,
                     Status = "Pending" // Status of the request, could be e.g., LoanStatus.Pending.ToString() if an enum

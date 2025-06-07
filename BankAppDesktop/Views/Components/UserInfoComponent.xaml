@@ -39,7 +39,7 @@
                             </Style>
                         </Button.Style>
                     </Button>
-                    <Button Content="Tip History" Click="OnTipHistoryClick"
+                    <!--<Button Content="Tip History" Click="OnTipHistoryClick"
                         Padding="20,10"
                         Background="#539BF5"
                         FontWeight="Bold"
@@ -51,7 +51,7 @@
                                 <Setter Property="CornerRadius" Value="8"/>
                             </Style>
                         </Button.Style>
-                    </Button>
+                    </Button>-->
                 </StackPanel>
             </Grid>
         </StackPanel>
