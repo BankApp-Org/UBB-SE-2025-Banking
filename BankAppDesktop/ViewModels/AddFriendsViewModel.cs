@@ -32,8 +32,6 @@ namespace BankAppDesktop.ViewModels
 
         public IUserService UserService { get; set; }
 
-        public ICommand AddFriendCommand { get; set; }
-
         public string SearchQuery
         {
             get => this.searchQuery;
@@ -63,9 +61,8 @@ namespace BankAppDesktop.ViewModels
         {
             this.AllUsers.Clear();
             var currentUser = await this.UserService.GetCurrentUserAsync();
-            var allUsers = await UserService.GetUsers();
             var allFriends = currentUser.Friends.ToList();
-            this.AllUsers = allUsers.Where(u => !allFriends.Any(f => f.CNP == u.CNP)).ToList();
+            this.AllUsers = await this.UserService.GetNonFriends(currentUser.CNP);
             this.UsersList.Clear();
 
             foreach (var friend in this.AllUsers)
@@ -79,7 +76,7 @@ namespace BankAppDesktop.ViewModels
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private async void AddFriend(object user)
+        public async void AddFriend(object user)
         {
             var friend = user as User;
             this.UserService.AddFriend(friend);
@@ -90,9 +87,9 @@ namespace BankAppDesktop.ViewModels
         private async void LoadUsers()
         {
             var currentUser = await this.UserService.GetCurrentUserAsync();
-            var allUsers = await UserService.GetUsers();
             var allFriends = currentUser.Friends.ToList();
-            this.AllUsers = allUsers.Where(u => !allFriends.Any(f => f.CNP == u.CNP)).ToList();
+            var currentCnp = currentUser.CNP;
+            this.AllUsers = await this.UserService.GetNonFriends(currentCnp);
             this.FilterUsers();
         }
 

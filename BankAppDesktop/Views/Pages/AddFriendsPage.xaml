@@ -41,15 +41,15 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" Orientation="Vertical">
-                            <TextBlock Text="{Binding Username}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding FirstName}" FontWeight="SemiBold"/>
                             <TextBlock Text="{Binding PhoneNumber}" Opacity="0.7" FontSize="12"/>
                         </StackPanel>
 
                         <Button Grid.Column="1" 
-                        Content="+"
-                        Command="{Binding DataContext.AddFriendCommand, ElementName=UsersListBox}"
-                        CommandParameter="{Binding}"
-                        Margin="10,0,0,0"/>
+                                Content="+"
+                                Click="AddFriendButton_Click"
+                                Tag="{Binding}"
+                                Margin="10,0,0,0"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

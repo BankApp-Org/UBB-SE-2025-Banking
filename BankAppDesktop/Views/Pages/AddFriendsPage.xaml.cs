@@ -1,4 +1,5 @@
 using BankAppDesktop.ViewModels;
+using Common.Models;
 using Common.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -37,6 +38,17 @@ namespace BankAppDesktop.Views.Pages
             this.addFriendsViewModel = new AddFriendsViewModel(friendsListViewModel, userService);
 
             this.DataContext = this.addFriendsViewModel;
+        }
+
+        private void AddFriendButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag is User user)
+            {
+                if (this.DataContext is AddFriendsViewModel viewModel)
+                {
+                    this.addFriendsViewModel.AddFriend(user);
+                }
+            }
         }
     }
 }
