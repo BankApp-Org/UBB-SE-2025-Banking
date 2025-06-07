@@ -61,7 +61,7 @@
         </StackPanel>
 
         <!-- Simulate Loan Payment Button -->
-        <Button Content="Simulate One Monthly Payment" Click="OnSolveClick"
+        <Button Content="Pay loan" Click="OnSolveClick"
              Padding="0, 0"
              FontSize="16"
              Height="50"

@@ -72,7 +72,7 @@ namespace BankApi.Controllers
         }
 
         [HttpGet("user/{userCnp}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<ActionResult<List<Loan>>> GetLoansByUser(string userCnp)
         {
             try
@@ -173,10 +173,10 @@ namespace BankApi.Controllers
         [HttpPost("PayLoan")]
         public async Task<IActionResult> PayLoan([FromBody] PaymentDto dto)
         {
-           try
+            try
             {
-                  await _loanService.PayLoanAsync(dto.LoanId, dto.Amount, dto.UserCNP, dto.Iban);
-                  return Ok();
+                await _loanService.PayLoanAsync(dto.LoanId, dto.Amount, dto.UserCNP, dto.Iban);
+                return Ok();
             }
             catch (Exception ex)
             {

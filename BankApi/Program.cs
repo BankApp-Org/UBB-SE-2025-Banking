@@ -238,7 +238,7 @@ if (app.Environment.IsDevelopment())
     Console.WriteLine($"Added default User role to {updatedUsers} users");
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseRouting(); // Ensure UseRouting is called before UseAuthentication and UseAuthorization
 
