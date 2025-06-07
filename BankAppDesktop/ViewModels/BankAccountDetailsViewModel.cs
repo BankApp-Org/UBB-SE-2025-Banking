@@ -8,6 +8,8 @@ using Common.Services.Bank;
 using BankAppDesktop.Commands;
 using Common.Services;
 using Common.Models;
+using BankAppDesktop.Views.Pages;
+using System.Runtime.CompilerServices;
 namespace BankAppDesktop.ViewModels
 {
     /// <summary>
@@ -15,95 +17,213 @@ namespace BankAppDesktop.ViewModels
     /// </summary>
     public partial class BankAccountDetailsViewModel : INotifyPropertyChanged
     {
-        /// <summary>
-        /// Command for the back button to return to the previous view
-        /// </summary>
-        public ICommand ButtonCommand { get; }
+        private readonly IBankAccountService bankAccountService;
+        private readonly IAuthenticationService authSerivce;
+        private UserSession currentUser;
+        private BankAccount? bankAccount;
+        public string CurrentIban { get; set; }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        /// <summary>
-        /// Action to be invoked when the view should be closed
-        /// </summary>
+        private string accountIBAN = string.Empty;
+        public string AccountIBAN
+        {
+            get => accountIBAN;
+            set
+            {
+                if (accountIBAN != value)
+                {
+                    accountIBAN = value ?? string.Empty;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string accountName = string.Empty;
+        public string AccountName
+        {
+            get => accountName;
+            set
+            {
+                if (accountName != value)
+                {
+                    accountName = value ?? string.Empty;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        // left those two as double because the NumberBox expects a double to display the value
+        private double dailyLimit = 1000.0;
+        public double DailyLimit
+        {
+            get => dailyLimit;
+            set
+            {
+                if (dailyLimit != value)
+                {
+                    dailyLimit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double maximumPerTransaction = 200.0;
+        public double MaximumPerTransaction
+        {
+            get => maximumPerTransaction;
+            set
+            {
+                if (maximumPerTransaction != value)
+                {
+                    maximumPerTransaction = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string currency = string.Empty;
+        public string Currency
+        {
+            get => currency;
+            set
+            {
+                if (currency != value)
+                {
+                    currency = value ?? string.Empty;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private int maximumNrTransactions = 10;
+        public int MaximumNrTransactions
+        {
+            get => maximumNrTransactions;
+            set
+            {
+                if (maximumNrTransactions != value)
+                {
+                    maximumNrTransactions = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool isBlocked = false;
+        public bool IsBlocked
+        {
+            get => isBlocked;
+            set
+            {
+                if (isBlocked != value)
+                {
+                    isBlocked = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Action? OnUpdateSuccess { get; set; }
         public Action? OnClose { get; set; }
 
-        /// <summary>
-        /// The bank account whose details are being displayed
-        /// </summary>
-        private BankAccount? bankAccount;
-        private string? currentIban;
-
-        public BankAccount? BankAccount
+        #region UI State Properties
+        private bool _isLoading;
+        public bool IsLoading
         {
-            get => bankAccount;
+            get => _isLoading;
             set
             {
-                bankAccount = value;
-                OnPropertyChanged(nameof(BankAccount));
-            }
-        }
-
-        public string? CurrentIban
-        {
-            get => currentIban;
-            set
-            {
-                currentIban = value;
-                OnPropertyChanged(nameof(CurrentIban));
-            }
-        }
-
-        public string BankAccountStatus
-        {
-            get
-            {
-                if (BankAccount?.Blocked == true)
+                if (_isLoading != value)
                 {
-                    return "Blocked";
+                    _isLoading = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string? _errorMessage;
+        public string? ErrorMessage
+        {
+            get => _errorMessage;
+            set
+            {
+                if (_errorMessage != value)
+                {
+                    _errorMessage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        #endregion
+
+        // initializes the view model and loads the bank account for which the settings are to be updated
+        public BankAccountDetailsViewModel(IBankAccountService s, IAuthenticationService a)
+        {
+            try
+            {
+                bankAccountService = s;
+                authSerivce = a;
+                currentUser = authSerivce.GetCurrentUserSession();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in BankAccountUpdateViewModel constructor: {ex.Message}");
+                throw;
+            }
+        }
+
+        public void SetIban(string iban)
+        {
+            CurrentIban = iban;
+        }
+
+        // loads the bank account with the given iban from the database
+        public async Task LoadAccountDetailsAsync()
+        {
+            if (string.IsNullOrEmpty(CurrentIban))
+            {
+                ErrorMessage = "IBAN was not provided.";
+                return;
+            }
+
+            IsLoading = true;
+            ErrorMessage = null;
+
+            try
+            {
+                // Fetch the original account details from the service
+                bankAccount = await bankAccountService.FindBankAccount(CurrentIban);
+
+                if (bankAccount != null)
+                {
+                    // Copy the loaded data into the ViewModel properties that are bound to the UI.
+                    // This happens only ONCE after a successful load.
+                    AccountIBAN = bankAccount.Iban;
+                    AccountName = bankAccount.Name;
+                    Currency = bankAccount.Currency.ToString();
+                    DailyLimit = Convert.ToDouble(bankAccount.DailyLimit);
+                    MaximumPerTransaction = Convert.ToDouble(bankAccount.MaximumPerTransaction);
+                    MaximumNrTransactions = bankAccount.MaximumNrTransactions;
+                    IsBlocked = bankAccount.Blocked;
                 }
                 else
                 {
-                    return "Active";
+                    ErrorMessage = $"Bank account not found for IBAN: {CurrentIban}";
                 }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading bank account: {ex.Message}");
+                ErrorMessage = "Failed to load account details.";
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
-
-        private IBankAccountService service;
-
-        /// <summary>
-        /// Initializes a new instance of the BankAccountDetailsViewModel class
-        /// </summary>
-        /// <param name="IBAN">The IBAN of the bank account to display</param>
-        public BankAccountDetailsViewModel(IBankAccountService s, IAuthenticationService authService)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            service = s;
-            ButtonCommand = new RelayCommand(_ => OnBackButtonClicked());
-            // Start loading data but don't await it
-            _ = LoadBankAccountAsync(authService);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private async Task LoadBankAccountAsync(IAuthenticationService authService)
-        {
-            this.BankAccount = await service.FindBankAccount(CurrentIban);
-        }
-
-        /// <summary>
-        /// Handler for the back button click
-        /// Closes the current view and returns to the previous view
-        /// </summary>
-        public void OnBackButtonClicked()
-        {
-            Debug.WriteLine("Back button clicked in bank account details page");
-            OnClose?.Invoke();
-        }
-
-        /// <summary>
-        /// Event that is raised when a property value changes
-        /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        /// <summary>
-        /// Raises the PropertyChanged event
-        /// </summary>
-        /// <param name="propertyName">The name of the property that changed</param>
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
