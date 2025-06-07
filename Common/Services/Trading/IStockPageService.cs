@@ -19,5 +19,6 @@
         Task ToggleFavoriteAsync(string stockName, bool state, string? userCNP = null);
 
         Task<List<decimal>> GetStockHistoryAsync(string stockName);
+        Task<bool> SimulateStocksAsync();
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Common.Models.Bank;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 namespace Common.Models.Social
 {
@@ -23,19 +22,7 @@ namespace Common.Models.Social
             Type = MessageType.Request.ToString();
             MessageType = MessageType.Request;
         }
-        [JsonConstructor]
-        public RequestMessage(int userId, int chatId, string status, decimal amount, string description, Currency currency, string createdAt)
-        {
-            UserId = userId;
-            ChatId = chatId;
-            Status = status;
-            Amount = amount;
-            Description = description;
-            Currency = currency;
-            CreatedAt = DateTime.Parse(createdAt);
-            Type = MessageType.Request.ToString();
-            MessageType = MessageType.Request;
-        }
+
         public string Status { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(18,2)")]

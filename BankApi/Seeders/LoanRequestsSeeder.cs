@@ -23,6 +23,7 @@ namespace BankApi.Seeders
             {
                 UserCnp = "1234567890123",
                 Status = "Pending",
+                AccountIban = "RO42BANKEUR010000001",
                 Loan = new Loan
                 {
                     UserCnp = "1234567890123",
@@ -31,6 +32,7 @@ namespace BankApi.Seeders
                     ApplicationDate = new DateTime(2025, 4, 1),
                     RepaymentDate = new DateTime(2025, 10, 1),
                     DeadlineDate = new DateTime(2025, 10, 1),
+                    DisbursementAccountIban = "RO42BANKEUR010000001",
                     InterestRate = 5.0m,
                     NumberOfMonths = 6,
                     MonthlyPaymentAmount = 856.07m,
@@ -49,10 +51,12 @@ namespace BankApi.Seeders
             {
                 UserCnp = "9876543210987",
                 Status = "Approved",
+                AccountIban = "RO42BANKRON010000003",
                 Loan = new Loan
                 {
                     UserCnp = "9876543210987",
                     Currency = defaultCurrency,
+                    DisbursementAccountIban = "RO42BANKRON010000003",
                     LoanAmount = 12000.50m,
                     ApplicationDate = new DateTime(2025, 3, 15),
                     RepaymentDate = new DateTime(2025, 9, 15),
@@ -75,9 +79,11 @@ namespace BankApi.Seeders
             {
                 UserCnp = "2345678901234",
                 Status = "Rejected",
+                AccountIban = "RO42BANKRON010000005",
                 Loan = new Loan
                 {
                     UserCnp = "2345678901234",
+                    DisbursementAccountIban = "RO42BANKRON010000005",
                     Currency = defaultCurrency,
                     LoanAmount = 3500.75m,
                     ApplicationDate = new DateTime(2025, 2, 20),
@@ -101,6 +107,7 @@ namespace BankApi.Seeders
             {
                 UserCnp = "3456789012345",
                 Status = "Pending",
+                AccountIban = "RO42BANKEUR010000007",
                 Loan = new Loan
                 {
                     UserCnp = "3456789012345",
@@ -109,6 +116,7 @@ namespace BankApi.Seeders
                     ApplicationDate = new DateTime(2025, 1, 10),
                     RepaymentDate = new DateTime(2025, 7, 10),
                     DeadlineDate = new DateTime(2025, 7, 10),
+                    DisbursementAccountIban = "RO42BANKEUR010000007",
                     InterestRate = 5.25m,
                     NumberOfMonths = 6,
                     MonthlyPaymentAmount = 1354.86m,
@@ -127,8 +135,10 @@ namespace BankApi.Seeders
             {
                 UserCnp = "4567890123456",
                 Status = "Approved",
+                AccountIban = "RO42BANKRON010000009",
                 Loan = new Loan
                 {
+                    DisbursementAccountIban = "RO42BANKRON010000009",
                     UserCnp = "4567890123456",
                     Currency = defaultCurrency,
                     LoanAmount = 15000.25m,

@@ -20,6 +20,10 @@
         [Required]
         public Currency Currency { get; set; } = Currency.USD;
 
+        // Add disbursement account field
+        [MaxLength(50)]
+        public string? DisbursementAccountIban { get; set; }
+
         [Required]
         public DateTime ApplicationDate { get; set; }
 

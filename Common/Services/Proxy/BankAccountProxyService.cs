@@ -47,7 +47,7 @@ namespace Common.Services.Proxy
             {
                 UserId = bankAccount.UserId,
                 CustomName = bankAccount.Name,
-                Currency = bankAccount.Currency
+                Currency = bankAccount.Currency.ToString(),
             };
 
             var response = await _httpClient.PostAsJsonAsync("api/BankAccount", request, _jsonOptions);
@@ -128,7 +128,7 @@ namespace Common.Services.Proxy
     {
         public int UserId { get; set; }
         public string? CustomName { get; set; }
-        public Currency Currency { get; set; }
+        public string Currency { get; set; }
     }
 
     public class CurrencyConversionResult

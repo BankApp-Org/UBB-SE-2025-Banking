@@ -52,6 +52,7 @@ namespace BankApp.Repository.Tests
                 Id = 1,
                 UserCnp = "123",
                 Status = "Pending",
+                AccountIban = "RO12BANK12345678901234567",
                 Loan = new Loan
                 {
                     LoanAmount = 1000,
@@ -73,6 +74,7 @@ namespace BankApp.Repository.Tests
                 Id = 2,
                 UserCnp = "456",
                 Status = "Solved",
+                AccountIban = "RO12BANK98765432109876543",
                 Loan = new Loan
                 {
                     LoanAmount = 2000,
@@ -115,6 +117,7 @@ namespace BankApp.Repository.Tests
                 Id = 1,
                 UserCnp = "123",
                 Status = "Pending",
+                AccountIban = "RO12BANK12345678901234567",
                 Loan = new Loan
                 {
                     LoanAmount = 1000,
@@ -136,6 +139,7 @@ namespace BankApp.Repository.Tests
                 Id = 2,
                 UserCnp = "456",
                 Status = "Solved",
+                AccountIban = "RO12BANK98765432109876543",
                 Loan = new Loan
                 {
                     LoanAmount = 2000,
@@ -157,6 +161,7 @@ namespace BankApp.Repository.Tests
                 Id = 3,
                 UserCnp = "789",
                 Status = "Solved",
+                AccountIban = "RO12BANK45678901234567890",
                 Loan = new Loan
                 {
                     LoanAmount = 3000,
@@ -197,6 +202,7 @@ namespace BankApp.Repository.Tests
                 Id = 1,
                 UserCnp = "123",
                 Status = "Pending",
+                AccountIban = "RO12BANK12345678901234567",
                 Loan = new Loan
                 {
                     LoanAmount = 1000,
@@ -248,6 +254,7 @@ namespace BankApp.Repository.Tests
                 Id = 1,
                 UserCnp = "123",
                 Status = "Pending",
+                AccountIban = "RO12BANK12345678901234567",
                 Loan = new Loan
                 {
                     LoanAmount = 1000,
