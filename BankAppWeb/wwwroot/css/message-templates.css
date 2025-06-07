@@ -47,6 +47,7 @@
 
 .message-input-fields {
     background: #1a1a1a;
+    color: #fff;
     border-radius: 10px;
     padding: 20px;
     margin-top: 15px;
@@ -76,6 +77,7 @@
 
 .form-control:focus {
     background: #333;
+    color: #fff;
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
     outline: none;

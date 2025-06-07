@@ -25,7 +25,7 @@
     <div class="messages-container">
         @foreach (var message in Model.ViewModel.Messages)
         {
-            var isSender = message.Sender.Id == Model.ViewModel.CurrentUserId;
+            var isSender = message.Sender.Id == Model.ViewModel.CurrentUserID;
             var messageType = message.Type.ToString().ToLower();
             var content = message.MessageContent;
             string? imageUrl = null;
