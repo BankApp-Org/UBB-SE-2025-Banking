@@ -193,6 +193,7 @@ namespace BankAppDesktop
                 "NotificationsPage" => this.serviceProvider.GetRequiredService<NotificationsPage>(),
                 "BankTransactionsHistoryPage" => this.serviceProvider.GetRequiredService<BankTransactionsHistoryPage>(),
                 "MainPage" => this.serviceProvider.GetRequiredService<MainPage>(),
+                "SocialPage" => this.serviceProvider.GetRequiredService<SocialMainPage>(),
                 _ => throw new InvalidOperationException($"Unknown navigation item: {pageTag}")
             };
         }

@@ -1,7 +1,6 @@
 using Common.Models.Social;
-using Common.Services.Social;
 using Common.Services;
-using Microsoft.AspNetCore.Mvc;
+using Common.Services.Social;
 using System.ComponentModel.DataAnnotations;
 
 namespace BankAppWeb.ViewModels
@@ -127,7 +126,7 @@ namespace BankAppWeb.ViewModels
                 }
 
                 var message = Messages.FirstOrDefault(m => m.Id == messageId);
-                if (message == null || message.Type != MessageType.Request)
+                if (message == null || message.MessageType != MessageType.Request)
                 {
                     ErrorMessage = "Invalid request message";
                     return;

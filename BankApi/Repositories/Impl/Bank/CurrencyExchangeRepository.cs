@@ -29,10 +29,6 @@ namespace BankApi.Repositories.Impl.Bank
             {
                 throw new ArgumentNullException(nameof(exchangeRate), "Exchange rate cannot be null.");
             }
-            if (exchangeRate.FromCurrency == null || exchangeRate.ToCurrency == null)
-            {
-                throw new ArgumentException("From and To currencies must be specified.", nameof(exchangeRate));
-            }
             _context.CurrencyExchanges.Add(exchangeRate);
             await _context.SaveChangesAsync();
         }

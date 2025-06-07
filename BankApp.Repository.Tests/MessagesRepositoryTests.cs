@@ -61,7 +61,8 @@ namespace BankApp.Repository.Tests
                 MessageContent = tip1.TipText,
                 Chat = chat,
                 ChatId = chat.Id,
-                Type = MessageType.Text,
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text,
                 CreatedAt = DateTime.UtcNow
             };
 

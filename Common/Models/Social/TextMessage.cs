@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Common.Models.Social
 {
@@ -7,7 +6,8 @@ namespace Common.Models.Social
     {
         public TextMessage()
         {
-            Type = MessageType.Text;
+            Type = MessageType.Text.ToString();
+            MessageType = MessageType.Text;
             UsersReport = [];
         }
 
@@ -17,7 +17,8 @@ namespace Common.Models.Social
             ChatId = chatId;
             MessageContent = messageContent;
             CreatedAt = createdAt;
-            Type = MessageType.Text;
+            Type = MessageType.Text.ToString();
+            MessageType = MessageType.Text;
             UsersReport = usersReport ?? [];
         }
 
@@ -28,7 +29,8 @@ namespace Common.Models.Social
             ChatId = chatId;
             MessageContent = messageContent;
             CreatedAt = DateTime.Parse(createdAt);
-            Type = type;
+            MessageType = type;
+            Type = type.ToString();
             UsersReport = usersReport ?? [];
         }
 

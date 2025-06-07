@@ -1,4 +1,5 @@
 ﻿using Common.Models;
+using Common.Models.Bank;
 
 namespace Common.DTOs
 {
@@ -6,37 +7,36 @@ namespace Common.DTOs
     {
         public int ChatID { get; set; }
 
-        public List<User> Users { get; set; }
+        public required List<User> Users { get; set; }
 
-        public string ChatName { get; set; }
+        public required string ChatName { get; set; }
     }
     public class RequestMoneyDto
     {
-        public float Amount { get; set; }
+        public decimal Amount { get; set; }
 
-        public string Currency { get; set; }
+        public Currency Currency { get; set; }
 
         public int ChatID { get; set; }
 
-        public string Description { get; set; }
+        public required string Description { get; set; }
     }
-
     public class SendMoneyDto
     {
-        public float Amount { get; set; }
+        public decimal Amount { get; set; }
 
-        public string Currency { get; set; }
+        public Currency Currency { get; set; }
 
-        public string Description { get; set; }
+        public required string Description { get; set; }
 
         public int ChatID { get; set; }
     }
 
     public class AcceptRequestDto
     {
-        public float Amount { get; set; }
+        public decimal Amount { get; set; }
 
-        public string Currency { get; set; }
+        public Currency Currency { get; set; }
 
         public int AccepterID { get; set; }
 
@@ -47,8 +47,8 @@ namespace Common.DTOs
 
     public class CreateChatDto
     {
-        public List<User> Participants { get; set; }
+        public required List<User> Participants { get; set; }
 
-        public string ChatName { get; set; }
+        public required string ChatName { get; set; }
     }
 }

@@ -54,13 +54,6 @@ namespace Common.Services.Proxy
             return await _httpClient.GetFromJsonAsync<int>($"api/Chat/{chatID}/participants/count", _jsonOptions);
         }
 
-        public async Task<List<Chat>> GetChatsForUser(int userId)
-        {
-            // Note: This endpoint might need to be implemented in the API
-            return await _httpClient.GetFromJsonAsync<List<Chat>>($"api/Chat/user/{userId}", _jsonOptions) ??
-                [];
-        }
-
         public async Task<bool> RemoveUserFromChat(int chatId, User user)
         {
             if (user == null || string.IsNullOrEmpty(user.CNP))

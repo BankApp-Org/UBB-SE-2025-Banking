@@ -1,10 +1,13 @@
 using BankAppWeb.Models;
+using Common.DTOs;
 using Common.Models;
+using Common.Models.Bank;
 using Common.Models.Social;
 using Common.Services;
 using Common.Services.Impl;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace LoanShark.MVC.Controllers
 {
@@ -16,6 +19,8 @@ namespace LoanShark.MVC.Controllers
         private readonly IChatReportService _reportService;
         private readonly ImgurImageUploader _imgurUploader;
         private readonly ILogger<ChatMessagesController> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
         public ChatMessagesController(
             IChatService chatService,
@@ -23,7 +28,9 @@ namespace LoanShark.MVC.Controllers
             IMessageService messageService,
             IChatReportService reportService,
             ImgurImageUploader imgurUploader,
-            ILogger<ChatMessagesController> logger)
+            ILogger<ChatMessagesController> logger,
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration)
         {
             _chatService = chatService;
             _userService = userService;
@@ -31,6 +38,8 @@ namespace LoanShark.MVC.Controllers
             _reportService = reportService;
             _imgurUploader = imgurUploader;
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         // GET: /ChatMessages/Messages/{chatId}
@@ -289,11 +298,153 @@ namespace LoanShark.MVC.Controllers
         //        return RedirectToAction("Messages", new { chatId });
         //    }
         //    catch (Exception ex)
-        //    {
+        //    {        }        // New unified message endpoint        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendUnifiedMessage([FromBody] UnifiedMessageRequest request)
+        {
+            try
+            {
+                if (request == null)
+                {
+                    return BadRequest(new { message = "Message data is required." });
+                }
+
+                var currentUser = await _userService.GetCurrentUserAsync();
+
+                // Create appropriate DTO based on message type
+                MessageDto messageDto = request.MessageType.ToLower() switch
+                {
+                    "text" => new TextMessageDto
+                    {
+                        Content = request.Content ?? string.Empty,
+                        SenderID = currentUser.Id,
+                        ChatID = request.ChatId
+                    },
+                    "transfer" => new TransferMessageDto
+                    {
+                        Amount = request.Amount ?? 0,
+                        Currency = ParseCurrency(request.Currency ?? "USD"),
+                        Description = request.Description ?? string.Empty,
+                        Status = "Pending",
+                        SenderID = currentUser.Id,
+                        ChatID = request.ChatId
+                    },
+                    "request" => new RequestMessageDto
+                    {
+                        Amount = request.Amount ?? 0,
+                        Currency = ParseCurrency(request.Currency ?? "USD"),
+                        Description = request.Description ?? string.Empty,
+                        Status = "Pending",
+                        SenderID = currentUser.Id,
+                        ChatID = request.ChatId
+                    },
+                    "bill-split" => new BillSplitMessageDto
+                    {
+                        TotalAmount = request.TotalAmount ?? 0,
+                        Currency = ParseCurrency(request.Currency ?? "USD"),
+                        Description = request.Description ?? string.Empty,
+                        Status = "Pending",
+                        SenderID = currentUser.Id,
+                        ChatID = request.ChatId
+                    },
+                    _ => throw new ArgumentException($"Unsupported message type: {request.MessageType}")
+                };
+
+                // Use the configured HTTP client with authentication
+                using var httpClient = _httpClientFactory.CreateClient("BankApi");
+
+                // Configure JsonSerializer with polymorphic type support
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    WriteIndented = false
+                };
+
+                var json = JsonSerializer.Serialize<MessageDto>(messageDto, jsonOptions);
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PostAsync($"api/Chat/{request.ChatId}/messages", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Message sent successfully." });
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("API call failed. Status: {StatusCode}, Content: {Content}",
+                        response.StatusCode, errorContent);
+                    return BadRequest(new { message = $"Failed to send message: {response.ReasonPhrase}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending unified message to chat ID {ChatId}", request?.ChatId);
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        // Helper method to parse currency string to enum
+        private Currency ParseCurrency(string currencyString)
+        {
+            if (string.IsNullOrEmpty(currencyString))
+                return Currency.USD; // Default currency
+
+            return currencyString.ToUpper() switch
+            {
+                "USD" => Currency.USD,
+                "EUR" => Currency.EUR,
+                "RON" => Currency.RON,
+                "GBP" => Currency.GBP,
+                "JPY" => Currency.JPY,
+                _ => Currency.USD // Default fallback
+            };
+        }
+
+        // Action method to get messages partial view for AJAX updates
+        [HttpGet]
+        public async Task<IActionResult> Messages(int chatId)
+        {
+            try
+            {
+                var currentUser = await _userService.GetCurrentUserAsync();
+                var messagesHistory = await _chatService.GetChatById(chatId);
+                var messages = messagesHistory.Messages;
+
+                var viewModel = new ChatMessagesViewModel
+                {
+                    CurrentChatID = chatId,
+                    ChatMessages = messages,
+                    CurrentUserID = currentUser.Id
+                };
+
+                return PartialView("_MessagesPartial", viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading messages for chat ID {ChatId}", chatId);
+                return PartialView("_MessagesPartial", new ChatMessagesViewModel());
+            }
+        }
+
         //        _logger.LogError(ex, "Error sending transfer in chat ID {ChatId}", chatId);
         //        TempData["Error"] = "Failed to send transfer. Please try again.";
         //        return RedirectToAction("Messages", new { chatId });
         //    }
         //}
+    }
+
+    // Request model for unified message submission
+    public class UnifiedMessageRequest
+    {
+        public int ChatId { get; set; }
+        public string MessageType { get; set; } = string.Empty;
+        public string? Content { get; set; }
+        public decimal? Amount { get; set; }
+        public decimal? TotalAmount { get; set; }
+        public string? Currency { get; set; }
+        public string? Description { get; set; }
+        public List<string>? Recipients { get; set; }
+        public List<string>? Participants { get; set; }
     }
 }

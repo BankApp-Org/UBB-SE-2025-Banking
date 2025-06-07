@@ -6,7 +6,8 @@ namespace Common.Models.Social
     {
         public ImageMessage()
         {
-            Type = MessageType.Image;
+            Type = MessageType.Image.ToString();
+            MessageType = MessageType.Image;
         }
         public ImageMessage(int userId, int chatId, string imageUrl, List<User> usersReport, DateTime createdAt)
         {
@@ -15,7 +16,8 @@ namespace Common.Models.Social
             ImageUrl = imageUrl;
             UsersReport = usersReport ?? [];
             CreatedAt = createdAt;
-            Type = MessageType.Image;
+            Type = MessageType.Image.ToString();
+            MessageType = MessageType.Image;
         }
         [JsonConstructor]
         public ImageMessage(int userId, int chatId, string imageUrl, List<User> usersReport, string createdAt)
@@ -25,7 +27,8 @@ namespace Common.Models.Social
             ImageUrl = imageUrl;
             UsersReport = usersReport ?? [];
             CreatedAt = DateTime.Parse(createdAt);
-            Type = MessageType.Image;
+            Type = MessageType.Image.ToString();
+            MessageType = MessageType.Image;
         }
         public string ImageUrl { get; set; } = string.Empty;
         public List<User> UsersReport { get; set; } = [];

@@ -68,9 +68,9 @@ namespace BankApp.Service.Tests
             var result = await _service.GetMessagesForUserAsync(userCNP);
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual("Test message 1", result[0].MessageContent);
-            Assert.AreEqual(MessageType.Text, result[0].Type);
+            Assert.AreEqual(MessageType.Text.ToString(), result[0].Type);
             Assert.AreEqual("Test message 2", result[1].MessageContent);
-            Assert.AreEqual(MessageType.Text, result[1].Type);
+            Assert.AreEqual(MessageType.Text.ToString(), result[1].Type);
             _mockMessagesRepository.Verify(x => x.GetMessagesForUserAsync(userCNP), Times.Once);
         }
 
@@ -101,7 +101,7 @@ namespace BankApp.Service.Tests
             }
             catch (Exception ex)
             {
-                Assert.Fail("Expected exception to be handled, but it was thrown");
+                Assert.Fail("Expected exception to be handled, but it was thrown", ex);
             }
 
             _mockMessagesRepository.Verify(x => x.GiveUserRandomMessageAsync(userCNP), Times.Once);
@@ -113,11 +113,11 @@ namespace BankApp.Service.Tests
             var message2 = new Message(1, MessageType.Text, "Content1");
 
             Assert.AreEqual(0, message1.Id);
-            Assert.AreEqual(MessageType.Text, message1.Type);
+            Assert.AreEqual(MessageType.Text.ToString(), message1.Type);
             Assert.AreEqual(string.Empty, message1.MessageContent);
 
             Assert.AreEqual(1, message2.Id);
-            Assert.AreEqual(MessageType.Text, message2.Type);
+            Assert.AreEqual(MessageType.Text.ToString(), message2.Type);
             Assert.AreEqual("Content1", message2.MessageContent);
         }
 

@@ -7,12 +7,12 @@ using Common.Models.Social;
 using Common.Services.Social;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BankApp.Repository.Tests
 {
@@ -61,7 +61,8 @@ namespace BankApp.Repository.Tests
                 UserId = 1,
                 Sender = user2,
                 MessageContent = "Test message 1",
-                Type = MessageType.Text
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text
             };
 
             var message2 = new Message
@@ -72,7 +73,8 @@ namespace BankApp.Repository.Tests
                 UserId = 1,
                 Sender = user2,
                 MessageContent = "Test message 2",
-                Type = MessageType.Text
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text
             };
 
             chat.Messages.Add(message1);
@@ -148,7 +150,8 @@ namespace BankApp.Repository.Tests
                 UserId = 1,
                 Sender = user2,
                 MessageContent = "Test message",
-                Type = MessageType.Text
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text
             };
 
             chat.Messages.Add(message);
@@ -218,7 +221,8 @@ namespace BankApp.Repository.Tests
                 UserId = 1,
                 Sender = user2,
                 MessageContent = "Test message",
-                Type = MessageType.Text
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text
             };
 
             chat.Messages.Add(message);
@@ -267,7 +271,8 @@ namespace BankApp.Repository.Tests
                 UserId = 1,
                 Sender = user2,
                 MessageContent = "Test message",
-                Type = MessageType.Text
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text
             };
 
             chat.Messages.Add(message);
@@ -320,7 +325,8 @@ namespace BankApp.Repository.Tests
                 UserId = 1,
                 Sender = user2,
                 MessageContent = "Test message",
-                Type = MessageType.Text
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text
             };
 
             chat.Messages.Add(message);

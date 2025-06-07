@@ -1,6 +1,9 @@
 using BankApi.Repositories;
 using BankApi.Repositories.Impl.Social;
+using Common.DTOs;
+using Common.Models;
 using Common.Models.Social;
+using Common.Services;
 using Common.Services.Social;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +19,18 @@ namespace BankApi.Controllers
         private readonly IMessageService _messagesService;
         private readonly IUserRepository _userRepository;
         private readonly MessagesRepository _messagesRepository;
+        private readonly IUserService _userService;
 
         public MessagesController(
             IMessageService messagesService,
             IUserRepository userRepository,
-            MessagesRepository messagesRepository)
+            MessagesRepository messagesRepository,
+            IUserService userService)
         {
             _messagesService = messagesService ?? throw new ArgumentNullException(nameof(messagesService));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _messagesRepository = messagesRepository ?? throw new ArgumentNullException(nameof(messagesRepository));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         private async Task<string> GetCurrentUserCnp()
@@ -106,6 +112,36 @@ namespace BankApi.Controllers
             try
             {
                 var messages = await _messagesRepository.GetAllMessagesAsync();
+                return Ok(messages);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{messageId}")]
+        [Authorize]
+        public async Task<ActionResult<Message>> GetMessageById(int messageId)
+        {
+            try
+            {
+                var message = await _messagesService.GetMessageByIdAsync(messageId);
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{chatId}")]
+        [Authorize]
+        public async Task<ActionResult<List<Message>>> GetMessagesByChatId(int chatId, [FromQuery] int page = 0, [FromQuery] int pageSize = 20)
+        {
+            try
+            {
+                var messages = await _messagesService.GetMessagesAsync(chatId, page, pageSize);
                 return Ok(messages);
             }
             catch (Exception ex)

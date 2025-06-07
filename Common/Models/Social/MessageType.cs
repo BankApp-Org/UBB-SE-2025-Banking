@@ -6,5 +6,6 @@
         Image = 2,
         Request = 3,
         Transfer = 4,
+        BillSplit = 5,
     }
 }

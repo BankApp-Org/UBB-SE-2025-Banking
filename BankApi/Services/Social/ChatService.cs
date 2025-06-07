@@ -2,10 +2,6 @@
 using Common.Models;
 using Common.Models.Social;
 using Common.Services.Social;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BankApi.Services.Social
 {
@@ -22,11 +18,6 @@ namespace BankApi.Services.Social
         {
             var chat = await _chatRepository.GetChatByIdAsync(chatID);
             return chat.Users?.Count ?? 0;
-        }
-
-        public async Task<List<Chat>> GetChatsForUser(int userId)
-        {
-            return await _chatRepository.GetChatsByUserIdAsync(userId);
         }
 
         public async Task<Chat> GetChatById(int chatId)

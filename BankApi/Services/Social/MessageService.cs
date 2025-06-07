@@ -51,7 +51,9 @@
 
                 var message = new Message
                 {
-                    Type = messageType,
+                    Type = messageType.ToString(),
+                    MessageType = messageType,
+                    Sender = user,
                     MessageContent = messageText
                 };
                 await messagesRepository.AddMessageForUserAsync(userCNP, message);

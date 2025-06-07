@@ -1,10 +1,9 @@
+using BankAppDesktop.Commands;
 using Common.Models.Social;
 using Common.Services.Social;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using BankAppDesktop.Commands;
-using Common.Models;
 
 namespace BankAppDesktop.ViewModels
 {
@@ -131,7 +130,7 @@ namespace BankAppDesktop.ViewModels
 
         private async void ExecuteAcceptRequest(Message message)
         {
-            if (message == null || message.Type != MessageType.Request)
+            if (message == null || message.MessageType != MessageType.Request)
             {
                 return;
             }

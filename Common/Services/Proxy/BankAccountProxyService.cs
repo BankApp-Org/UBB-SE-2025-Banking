@@ -14,8 +14,19 @@ namespace Common.Services.Proxy
 
         public async Task<List<BankAccount>> GetUserBankAccounts(int userId)
         {
-            return await _httpClient.GetFromJsonAsync<List<BankAccount>>($"api/BankAccount/user/{userId}", _jsonOptions) ??
-                throw new InvalidOperationException("Failed to deserialize bank accounts response.");
+            // Get the raw response first
+            using var response = await _httpClient.GetAsync($"api/BankAccount/user/{userId}");
+            response.EnsureSuccessStatusCode();
+
+            // Read response content as string to log it
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            // Log the response content (use your preferred logging mechanism)
+            Console.WriteLine($"API Response: {responseContent}"); // Replace with proper logging
+
+            // Then deserialize
+            var accounts = await response.Content.ReadFromJsonAsync<List<BankAccount>>(_jsonOptions);
+            return accounts ?? throw new InvalidOperationException("Failed to deserialize bank accounts response.");
         }
 
         public async Task<BankAccount> FindBankAccount(string iban)
@@ -36,7 +47,7 @@ namespace Common.Services.Proxy
             {
                 UserId = bankAccount.UserId,
                 CustomName = bankAccount.Name,
-                Currency = bankAccount.Currency.ToString()
+                Currency = bankAccount.Currency
             };
 
             var response = await _httpClient.PostAsJsonAsync("api/BankAccount", request, _jsonOptions);
@@ -97,7 +108,7 @@ namespace Common.Services.Proxy
                 UserId = userId,
                 Iban = accountIBAN,
                 Amount = amount,
-                Currency = currency.ToString()
+                Currency = currency
             };
 
             var response = await _httpClient.PostAsJsonAsync("api/BankAccount/check-funds", request, _jsonOptions);
@@ -117,7 +128,7 @@ namespace Common.Services.Proxy
     {
         public int UserId { get; set; }
         public string? CustomName { get; set; }
-        public string? Currency { get; set; }
+        public Currency Currency { get; set; }
     }
 
     public class CurrencyConversionResult
@@ -130,6 +141,6 @@ namespace Common.Services.Proxy
         public int UserId { get; set; }
         public string Iban { get; set; } = string.Empty;
         public decimal Amount { get; set; }
-        public string Currency { get; set; } = string.Empty;
+        public Currency Currency { get; set; }
     }
 }

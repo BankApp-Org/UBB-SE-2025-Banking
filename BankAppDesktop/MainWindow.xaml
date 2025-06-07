@@ -36,6 +36,7 @@
                     <!-- Social Category -->
                     <NavigationViewItem Content="Social">
                         <NavigationViewItem.MenuItems>
+                            <NavigationViewItem Content="SocialPageREMOVEME" Tag="SocialPage" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                             <NavigationViewItem Content="Chat Reports" Tag="ChatReports" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                             <NavigationViewItem Content="BillSplit Reports" Tag="BillSplitReports" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                             <NavigationViewItem Content="News" Tag="NewsListPage"/>

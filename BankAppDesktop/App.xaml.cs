@@ -59,6 +59,7 @@ namespace BankAppDesktop
                     var config = configBuilder.Build();
                     string apiBaseUrl = App.Configuration.GetValue<string>("ApiBase")
                         ?? throw new InvalidOperationException("API base URL is not configured");
+                    config["ImgurClientId"] = App.Configuration.GetValue<string>("ImgurClientId");
 
                     services.AddHttpClient("ApiClient", client =>
                     {
@@ -103,10 +104,11 @@ namespace BankAppDesktop
                     services.AddScoped<IMessageService, MessagesProxyService>();
                     services.AddScoped<ITipsService, TipsProxyService>();
                     services.AddScoped<IProfanityChecker, ProfanityChecker>();
-                    services.AddTransient<IChatService, ChatProxyService>();
-                    services.AddTransient<IMessageService, MessagesProxyService>();
-                    services.AddTransient<INotificationService, NotificationProxyService>();
-                    services.AddTransient<IBankAccountService, BankAccountProxyService>();
+                    services.AddScoped<IChatService, ChatProxyService>();
+                    services.AddScoped<IMessageService, MessagesProxyService>();
+                    services.AddScoped<INotificationService, NotificationProxyService>();
+                    services.AddScoped<IBankAccountService, BankAccountProxyService>();
+                    services.AddScoped<ImgurImageUploader>();
 
                     // Configure HttpClients with the AuthenticationDelegatingHandler
                     services.AddHttpClient<IStockService, StockProxyService>(client =>
@@ -283,7 +285,7 @@ namespace BankAppDesktop
                     services.AddTransient<DeleteAccountView>();
                     services.AddTransient<MainPage>();
                     services.AddTransient<BankAccountDetailsPage>();
-
+                    services.AddTransient<SocialMainPage>();
                     // FIXME: remove \/\/\/\/
                     services.AddTransient<Func<LoanRequestComponent>>(sp => () => sp.GetRequiredService<LoanRequestComponent>());
                     services.AddTransient<Func<ChatReportComponent>>(sp => () => sp.GetRequiredService<ChatReportComponent>());

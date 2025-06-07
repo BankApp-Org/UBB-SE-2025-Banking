@@ -17,14 +17,13 @@ namespace BankApi.JSONConverters
             }
 
             var messageType = Enum.Parse<MessageType>(typeProp.GetString());
-            var text = root.GetRawText();
-
-            return messageType switch
+            var text = root.GetRawText(); return messageType switch
             {
                 MessageType.Text => JsonSerializer.Deserialize<TextMessage>(root.GetRawText(), options),
                 MessageType.Image => JsonSerializer.Deserialize<ImageMessage>(root.GetRawText(), options),
                 MessageType.Request => JsonSerializer.Deserialize<RequestMessage>(root.GetRawText(), options),
                 MessageType.Transfer => JsonSerializer.Deserialize<TransferMessage>(root.GetRawText(), options),
+                MessageType.BillSplit => JsonSerializer.Deserialize<BillSplitMessage>(root.GetRawText(), options),
                 _ => throw new JsonException($"Unknown MessageType: {messageType}")
             };
         }

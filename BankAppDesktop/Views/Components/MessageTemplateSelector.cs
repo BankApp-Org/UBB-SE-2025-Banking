@@ -20,7 +20,6 @@ namespace BankAppDesktop.Views.Components
         public DataTemplate ImageMessageTemplateLeft { get; set; }
 
         public DataTemplate ImageMessageTemplateRight { get; set; }
-
         public DataTemplate TransferMessageTemplateLeft { get; set; }
 
         public DataTemplate TransferMessageTemplateRight { get; set; }
@@ -28,6 +27,10 @@ namespace BankAppDesktop.Views.Components
         public DataTemplate RequestMessageTemplateLeft { get; set; }
 
         public DataTemplate RequestMessageTemplateRight { get; set; }
+
+        public DataTemplate BillSplitMessageTemplateLeft { get; set; }
+
+        public DataTemplate BillSplitMessageTemplateRight { get; set; }
 
         public MessageTemplateSelector(IAuthenticationService authenticationService)
         {
@@ -41,6 +44,8 @@ namespace BankAppDesktop.Views.Components
             TransferMessageTemplateRight = new DataTemplate();
             RequestMessageTemplateLeft = new DataTemplate();
             RequestMessageTemplateRight = new DataTemplate();
+            BillSplitMessageTemplateLeft = new DataTemplate();
+            BillSplitMessageTemplateRight = new DataTemplate();
         }
 
         public MessageTemplateSelector()
@@ -54,6 +59,8 @@ namespace BankAppDesktop.Views.Components
             TransferMessageTemplateRight = null!;
             RequestMessageTemplateLeft = null!;
             RequestMessageTemplateRight = null!;
+            BillSplitMessageTemplateLeft = null!;
+            BillSplitMessageTemplateRight = null!;
         }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
@@ -67,12 +74,14 @@ namespace BankAppDesktop.Views.Components
 
                     case ImageMessage _:
                         return message.Sender.CNP == authenticationService.GetUserCNP() ? ImageMessageTemplateRight : ImageMessageTemplateLeft;
-
                     case TransferMessage _:
                         return message.Sender.CNP == authenticationService.GetUserCNP() ? TransferMessageTemplateRight : TransferMessageTemplateLeft;
 
                     case RequestMessage _:
                         return message.Sender.CNP == authenticationService.GetUserCNP() ? RequestMessageTemplateRight : RequestMessageTemplateLeft;
+
+                    case BillSplitMessage _:
+                        return message.Sender.CNP == authenticationService.GetUserCNP() ? BillSplitMessageTemplateRight : BillSplitMessageTemplateLeft;
                 }
             }
 

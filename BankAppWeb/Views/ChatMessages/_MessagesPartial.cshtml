@@ -1,0 +1,75 @@
+@using Common.Models.Social
+@model BankAppWeb.Models.ChatMessagesViewModel
+
+<div id="messagesContainer" class="border p-3" style="min-height: 400px; max-height: 400px; overflow-y: auto; background-color: #000; color: #fff;">
+    @foreach (var message in Model.ChatMessages)
+    {
+        <div class="message mb-2 @(message.UserId == Model.CurrentUserID ? "text-end" : "text-start")">
+            <strong>@message.Sender.UserName</strong> <small>@message.CreatedAt.ToString("g")</small>
+            @switch (message)
+            {
+                case TextMessage text:
+                    <div class="message-bubble text @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                        <div class="message-content">@text.MessageContent</div>
+                        <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                    </div>
+                    break;
+
+                case ImageMessage image:
+                    <div class="message-bubble image @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                        <div><i class="fas fa-image"></i> Image</div>
+                        <img src="@image.ImageUrl" alt="Shared image" class="message-image" />
+                        <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                    </div>
+                    break;
+
+                case TransferMessage transfer:
+                    <div class="message-bubble transfer @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                        <div><i class="fas fa-exchange-alt"></i> Money Transfer</div>
+                        <div class="message-amount">@transfer.Amount @transfer.Currency</div>
+                        <div class="message-description">@transfer.Description</div>
+                        <div>To: @string.Join(", ", transfer.ListOfReceivers)</div>
+                        <span class="message-status status-@transfer.Status.ToLower()">@transfer.Status</span>
+                        <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                    </div>
+                    break;
+
+                case RequestMessage request:
+                    <div class="message-bubble request @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                        <div><i class="fas fa-hand-holding-usd"></i> Money Request</div>
+                        <div class="message-amount">@request.Amount @request.Currency</div>
+                        <div class="message-description">@request.Description</div>
+                        <span class="message-status status-@request.Status.ToLower()">@request.Status</span>
+                        <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                    </div>
+                    break;
+
+                case BillSplitMessage billSplit:
+                    <div class="message-bubble bill-split @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                        <div><i class="fas fa-receipt"></i> Bill Split</div>
+                        <div class="message-amount">@billSplit.TotalAmount @billSplit.Currency</div>
+                        <div class="message-description">@billSplit.Description</div>
+                        <div>Split between @billSplit.Participants.Count participants</div>
+                        <span class="message-status status-@billSplit.Status.ToLower()">@billSplit.Status</span>
+                        <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                    </div>
+                    break;
+            }
+            <div>
+                <form asp-controller="ChatMessages" asp-action="DeleteMessage" method="post" class="d-inline">
+                    <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                    <input type="hidden" name="messageId" value="@message.Id" />
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+                @if (message is TextMessage || message is ImageMessage)
+                {
+                    <form asp-controller="ChatMessages" asp-action="ReportMessage" method="get" class="d-inline">
+                        <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                        <input type="hidden" name="messageId" value="@message.Id" />
+                        <button type="submit" class="btn btn-sm btn-warning">Report</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+</div>

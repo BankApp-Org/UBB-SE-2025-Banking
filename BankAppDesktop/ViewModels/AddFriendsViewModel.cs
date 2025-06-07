@@ -63,7 +63,7 @@ namespace BankAppDesktop.ViewModels
         {
             this.AllUsers.Clear();
             var currentUser = await this.UserService.GetCurrentUserAsync();
-            var allUsers = await (UserService.GetUsers());
+            var allUsers = await UserService.GetUsers();
             var allFriends = currentUser.Friends.ToList();
             this.AllUsers = allUsers.Where(u => !allFriends.Any(f => f.CNP == u.CNP)).ToList();
             this.UsersList.Clear();
@@ -90,7 +90,7 @@ namespace BankAppDesktop.ViewModels
         private async void LoadUsers()
         {
             var currentUser = await this.UserService.GetCurrentUserAsync();
-            var allUsers = await (UserService.GetUsers());
+            var allUsers = await UserService.GetUsers();
             var allFriends = currentUser.Friends.ToList();
             this.AllUsers = allUsers.Where(u => !allFriends.Any(f => f.CNP == u.CNP)).ToList();
             this.FilterUsers();

@@ -1,8 +1,7 @@
 ﻿using BankApi.Data;
 using Common.Models.Social;
-using Common.Models;
-using Microsoft.EntityFrameworkCore;
 using Common.Services.Social; // Required for AnyAsync
+using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Seeders
 {
@@ -65,7 +64,8 @@ namespace BankApi.Seeders
                     var message = new Message
                     {
                         MessageContent = data.MessageContent,
-                        Type = MessageType.Text,
+                        Type = MessageType.Text.ToString(),
+                        MessageType = MessageType.Text,
                         UserId = reportedUser.Id,
                         Sender = reportedUser,
                         ChatId = defaultChat.Id,

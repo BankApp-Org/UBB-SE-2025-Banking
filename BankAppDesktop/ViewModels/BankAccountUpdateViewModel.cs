@@ -295,7 +295,6 @@ namespace BankAppDesktop.ViewModels
                 BankAccountDeleteView deleteBankAccountView = new BankAccountDeleteView(iban);
                 deleteBankAccountView.Activate();
                 OnClose?.Invoke();
-
             }
             catch (Exception ex)
             {

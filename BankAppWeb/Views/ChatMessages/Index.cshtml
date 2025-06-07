@@ -5,6 +5,9 @@
     ViewData["Title"] = "Chat Messages";
 }
 
+<link href="~/css/message-templates.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
 <div class="container">
     <!-- Chat Header -->
     <div class="row bg-dark text-white p-3 mb-3">
@@ -25,20 +28,47 @@
                 @foreach (var message in Model.ChatMessages)
                 {
                     <div class="message mb-2 @(message.UserId == Model.CurrentUserID ? "text-end" : "text-start")">
-                        <strong>@message.Sender.UserName</strong> <small>@message.CreatedAt.ToString("g")</small>
-                        @switch (message)
+                        <strong>@message.Sender.UserName</strong> <small>@message.CreatedAt.ToString("g")</small>                        @switch (message)
                         {
                             case TextMessage text:
-                                <p>@text.MessageContent</p>
+                                <div class="message-bubble @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                                    <div>@text.MessageContent</div>
+                                    <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                                </div>
                                 break;
                             case ImageMessage image:
-                                <img src="@image.ImageUrl" alt="Image" style="max-width: 200px;" />
+                                <div class="message-bubble @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                                    <img src="@image.ImageUrl" alt="Image" style="max-width: 200px; border-radius: 8px;" />
+                                    <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                                </div>
                                 break;
                             case TransferMessage transfer:
-                                <p>Transfer: @transfer.Amount @transfer.Currency (@transfer.Status) - @transfer.Description</p>
+                                <div class="message-bubble transfer @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                                    <div><i class="fas fa-exchange-alt"></i> Transfer</div>
+                                    <div class="message-amount">@transfer.Amount @transfer.Currency</div>
+                                    <div class="message-description">@transfer.Description</div>
+                                    <span class="message-status status-@transfer.Status.ToLower()">@transfer.Status</span>
+                                    <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                                </div>
                                 break;
                             case RequestMessage request:
-                                <p>Request: @request.Amount @request.Currency (@request.Status) - @request.Description</p>
+                                <div class="message-bubble request @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                                    <div><i class="fas fa-hand-holding-usd"></i> Money Request</div>
+                                    <div class="message-amount">@request.Amount @request.Currency</div>
+                                    <div class="message-description">@request.Description</div>
+                                    <span class="message-status status-@request.Status.ToLower()">@request.Status</span>
+                                    <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                                </div>
+                                break;
+                            case BillSplitMessage billSplit:
+                                <div class="message-bubble bill-split @(message.UserId == Model.CurrentUserID ? "sent" : "received")">
+                                    <div><i class="fas fa-receipt"></i> Bill Split</div>
+                                    <div class="message-amount">@billSplit.TotalAmount @billSplit.Currency</div>
+                                    <div class="message-description">@billSplit.Description</div>
+                                    <div>Split between @billSplit.Participants.Count participants</div>
+                                    <span class="message-status status-@billSplit.Status.ToLower()">@billSplit.Status</span>
+                                    <div class="message-meta">@message.CreatedAt.ToString("HH:mm")</div>
+                                </div>
                                 break;
                         }
                         <div>
@@ -60,24 +90,163 @@
                 }
             </div>
         </div>
-    </div>
+    </div>    <!-- Unified Message Input -->
+    <div class="unified-message-container">
+        <div class="message-type-selector">
+            <button type="button" class="message-type-btn active" data-type="text">
+                <i class="fas fa-comment"></i> Text
+            </button>
+            <button type="button" class="message-type-btn" data-type="image">
+                <i class="fas fa-image"></i> Image
+            </button>
+            <button type="button" class="message-type-btn" data-type="transfer">
+                <i class="fas fa-exchange-alt"></i> Transfer
+            </button>
+            <button type="button" class="message-type-btn" data-type="request">
+                <i class="fas fa-hand-holding-usd"></i> Request
+            </button>
+            <button type="button" class="message-type-btn" data-type="billsplit">
+                <i class="fas fa-receipt"></i> Bill Split
+            </button>
+        </div>
 
-    <!-- Message Input -->
-    <div class="row mt-3">
-        <form asp-controller="ChatMessages" asp-action="SendMessage" method="post" class="input-group">
-            <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
-            <div class="input-group">
-                <input type="text" class="form-control" asp-for="MessageContent" placeholder="Type a message..." maxlength="256" />
-                <span class="input-group-text">@Model.RemainingCharacterCount</span>
-                <button type="submit" class="btn btn-primary">Send</button>
+        <div class="message-input-fields">
+            <!-- Text Message Input -->
+            <div id="text-input" class="input-type-container">
+                <form asp-controller="ChatMessages" asp-action="SendMessage" method="post">
+                    <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                    <div class="input-group">
+                        <label for="messageContent">Message</label>
+                        <textarea class="form-control" name="messageContent" placeholder="Type your message..." maxlength="256" rows="3"></textarea>
+                        <div class="character-count">256 characters remaining</div>
+                    </div>
+                    <button type="submit" class="send-message-btn">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
             </div>
-        </form>
-        <form asp-controller="ChatMessages" asp-action="SendImage" method="post" enctype="multipart/form-data" class="input-group mt-2">
-            <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
-            <input type="file" name="imageFile" accept=".jpg,.jpeg,.png" class="form-control" />
-            <button type="submit" class="btn btn-primary">+</button>
-        </form>
-        <a asp-controller="GenerateTransfer" asp-action="Index" asp-route-chatId="@Model.CurrentChatID" class="btn btn-primary mt-2">Send Transfer</a>
+
+            <!-- Image Upload Input -->
+            <div id="image-input" class="input-type-container hidden">
+                <form asp-controller="ChatMessages" asp-action="SendImage" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                    <div class="input-group">
+                        <label>Upload Image</label>
+                        <div class="file-upload-area" onclick="document.getElementById('imageFile').click()">
+                            <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                            <div class="file-upload-text">Click to select an image or drag and drop</div>
+                        </div>
+                        <input type="file" id="imageFile" name="imageFile" accept=".jpg,.jpeg,.png,.gif" style="display: none;" />
+                    </div>
+                    <button type="submit" class="send-message-btn">
+                        <i class="fas fa-image"></i> Send Image
+                    </button>
+                </form>
+            </div>
+
+            <!-- Transfer Input -->
+            <div id="transfer-input" class="input-type-container hidden">
+                <form class="unified-message-form" data-type="transfer">
+                    <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                    <div class="currency-amount-row">
+                        <div class="input-group">
+                            <label for="transferAmount">Amount</label>
+                            <input type="number" class="form-control" name="amount" placeholder="0.00" step="0.01" min="0" required />
+                        </div>
+                        <div class="input-group currency-select">
+                            <label for="transferCurrency">Currency</label>
+                            <select class="form-control" name="currency" required>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="RON">RON</option>
+                                <option value="GBP">GBP</option>
+                                <option value="JPY">JPY</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="transferDescription">Description</label>
+                        <input type="text" class="form-control" name="description" placeholder="What's this transfer for?" required />
+                    </div>
+                    <button type="submit" class="send-message-btn">
+                        <i class="fas fa-exchange-alt"></i> Send Transfer
+                    </button>
+                </form>
+            </div>
+
+            <!-- Request Input -->
+            <div id="request-input" class="input-type-container hidden">
+                <form class="unified-message-form" data-type="request">
+                    <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                    <div class="currency-amount-row">
+                        <div class="input-group">
+                            <label for="requestAmount">Amount</label>
+                            <input type="number" class="form-control" name="amount" placeholder="0.00" step="0.01" min="0" required />
+                        </div>
+                        <div class="input-group currency-select">
+                            <label for="requestCurrency">Currency</label>
+                            <select class="form-control" name="currency" required>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="RON">RON</option>
+                                <option value="GBP">GBP</option>
+                                <option value="JPY">JPY</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="requestDescription">Description</label>
+                        <input type="text" class="form-control" name="description" placeholder="What are you requesting money for?" required />
+                    </div>
+                    <button type="submit" class="send-message-btn">
+                        <i class="fas fa-hand-holding-usd"></i> Request Money
+                    </button>
+                </form>
+            </div>
+
+            <!-- Bill Split Input -->
+            <div id="billsplit-input" class="input-type-container hidden">
+                <form class="unified-message-form" data-type="billsplit">
+                    <input type="hidden" name="chatId" value="@Model.CurrentChatID" />
+                    <div class="currency-amount-row">
+                        <div class="input-group">
+                            <label for="billAmount">Total Amount</label>
+                            <input type="number" class="form-control" name="totalAmount" placeholder="0.00" step="0.01" min="0" required />
+                        </div>
+                        <div class="input-group currency-select">
+                            <label for="billCurrency">Currency</label>
+                            <select class="form-control" name="currency" required>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="RON">RON</option>
+                                <option value="GBP">GBP</option>
+                                <option value="JPY">JPY</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="billDescription">Description</label>
+                        <input type="text" class="form-control" name="description" placeholder="What bill are you splitting?" required />
+                    </div>
+                    <div class="input-group">
+                        <label>Participants</label>
+                        <div class="participants-container">
+                            <div id="participants-list">
+                                @foreach (var participant in Model.CurrentChatParticipants)
+                                {
+                                    <span class="participant-chip" data-user-id="@participant">
+                                        @participant <span class="remove-btn" onclick="removeParticipant(this)">&times;</span>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="send-message-btn">
+                        <i class="fas fa-receipt"></i> Split Bill
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -89,8 +258,210 @@
             var messagesContainer = $("#messagesContainer");
             messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
 
-            // Poll for new messages every 2 seconds
-            setInterval(function () {
+            // Message type switching functionality
+            $('.message-type-btn').click(function () {
+                // Remove active class from all buttons
+                $('.message-type-btn').removeClass('active');
+                // Add active class to clicked button
+                $(this).addClass('active');
+
+                // Hide all input containers
+                $('.input-type-container').addClass('hidden');
+                
+                // Show the selected input container
+                var messageType = $(this).data('type');
+                $('#' + messageType + '-input').removeClass('hidden');
+            });
+
+            // Character counter for text messages
+            $('#text-input textarea[name="messageContent"]').on('input', function() {
+                var remaining = 256 - $(this).val().length;
+                $(this).siblings('.character-count').text(remaining + ' characters remaining');
+            });
+
+            // Dynamic participant management for bill splitting
+            function addParticipant() {
+                var participantInput = $('#participant-input');
+                var participantValue = participantInput.val().trim();
+                
+                if (participantValue && !$(`[data-user-id="${participantValue}"]`).length) {
+                    var chip = $(`
+                        <span class="participant-chip" data-user-id="${participantValue}">
+                            ${participantValue} <span class="remove-btn" onclick="removeParticipant(this)">&times;</span>
+                        </span>
+                    `);
+                    $('#participants-list').append(chip);
+                    participantInput.val('');
+                    updateParticipantsInput();
+                }
+            }
+
+            $('#add-participant-btn').click(addParticipant);
+            $('#participant-input').keypress(function(e) {
+                if (e.which === 13) { // Enter key
+                    e.preventDefault();
+                    addParticipant();
+                }
+            });
+
+            window.removeParticipant = function(element) {
+                $(element).parent().remove();
+                updateParticipantsInput();
+            };
+
+            function updateParticipantsInput() {
+                var participants = [];
+                $('.participant-chip').each(function() {
+                    participants.push($(this).data('user-id'));
+                });
+                $('#hidden-participants').val(participants.join(','));
+            }
+
+            // Form submission handling for unified messages
+            $('.input-type-container form').submit(function(e) {
+                e.preventDefault();
+                
+                var form = $(this);
+                var messageType = form.closest('.input-type-container').attr('id').replace('-input', '');
+                var chatId = @Model.CurrentChatID;
+                
+                // Prepare message data based on type
+                var messageData = {
+                    chatId: chatId,
+                    messageType: messageType
+                };
+
+                // Collect data based on message type
+                switch(messageType) {
+                    case 'text':
+                        messageData.content = form.find('textarea[name="messageContent"]').val();
+                        if (!messageData.content || messageData.content.length > 256) {
+                            alert('Message must be between 1 and 256 characters.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'image':
+                        var fileInput = form.find('input[type="file"]')[0];
+                        if (!fileInput.files.length) {
+                            alert('Please select an image to upload.');
+                            return;
+                        }
+                        // Handle file upload separately
+                        handleImageUpload(form, chatId);
+                        return;
+                        
+                    case 'transfer':
+                        messageData.amount = parseFloat(form.find('input[name="amount"]').val());
+                        messageData.currency = form.find('select[name="currency"]').val();
+                        messageData.description = form.find('input[name="description"]').val();
+                        messageData.recipients = form.find('input[name="recipients"]').val().split(',').filter(r => r.trim());
+                        
+                        if (!messageData.amount || messageData.amount <= 0) {
+                            alert('Please enter a valid amount.');
+                            return;
+                        }
+                        if (!messageData.description) {
+                            alert('Please enter a description.');
+                            return;
+                        }
+                        if (!messageData.recipients.length) {
+                            alert('Please select at least one recipient.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'request':
+                        messageData.amount = parseFloat(form.find('input[name="amount"]').val());
+                        messageData.currency = form.find('select[name="currency"]').val();
+                        messageData.description = form.find('input[name="description"]').val();
+                        
+                        if (!messageData.amount || messageData.amount <= 0) {
+                            alert('Please enter a valid amount.');
+                            return;
+                        }
+                        if (!messageData.description) {
+                            alert('Please enter a description.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'bill-split':
+                        messageData.totalAmount = parseFloat(form.find('input[name="totalAmount"]').val());
+                        messageData.currency = form.find('select[name="currency"]').val();
+                        messageData.description = form.find('input[name="description"]').val();
+                        messageData.participants = $('#hidden-participants').val().split(',').filter(p => p.trim());
+                        
+                        if (!messageData.totalAmount || messageData.totalAmount <= 0) {
+                            alert('Please enter a valid total amount.');
+                            return;
+                        }
+                        if (!messageData.description) {
+                            alert('Please enter a description.');
+                            return;
+                        }
+                        if (!messageData.participants.length) {
+                            alert('Please add at least one participant.');
+                            return;
+                        }
+                        break;
+                }
+
+                // Send unified message
+                sendUnifiedMessage(messageData, form);
+            });
+
+            function handleImageUpload(form, chatId) {
+                var formData = new FormData(form[0]);
+                
+                $.ajax({
+                    url: '/ChatMessages/SendImage',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Clear form and reload messages
+                        form[0].reset();
+                        refreshMessages();
+                        showSuccessMessage('Image sent successfully!');
+                    },
+                    error: function(xhr) {
+                        var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                            ? xhr.responseJSON.message 
+                            : 'Failed to send image. Please try again.';
+                        showErrorMessage(errorMessage);
+                    }
+                });
+            }
+
+            function sendUnifiedMessage(messageData, form) {
+                $.ajax({
+                    url: '/ChatMessages/SendUnifiedMessage',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(messageData),
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        // Clear form and reload messages
+                        form[0].reset();
+                        $('.participant-chip').remove();
+                        updateParticipantsInput();
+                        refreshMessages();
+                        showSuccessMessage('Message sent successfully!');
+                    },
+                    error: function(xhr) {
+                        var errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                            ? xhr.responseJSON.message 
+                            : 'Failed to send message. Please try again.';
+                        showErrorMessage(errorMessage);
+                    }
+                });
+            }
+
+            function refreshMessages() {
                 $.ajax({
                     url: "/ChatMessages/Messages?chatId=@Model.CurrentChatID",
                     success: function (data) {
@@ -98,7 +469,44 @@
                         messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
                     }
                 });
-            }, 2000);
+            }
+
+            function showSuccessMessage(message) {
+                // Create and show success notification
+                var notification = $(`
+                    <div class="alert alert-success alert-dismissible fade show position-fixed" 
+                         style="top: 20px; right: 20px; z-index: 1050;">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `);
+                $('body').append(notification);
+                setTimeout(function() {
+                    notification.fadeOut(function() {
+                        $(this).remove();
+                    });
+                }, 3000);
+            }
+
+            function showErrorMessage(message) {
+                // Create and show error notification
+                var notification = $(`
+                    <div class="alert alert-danger alert-dismissible fade show position-fixed" 
+                         style="top: 20px; right: 20px; z-index: 1050;">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `);
+                $('body').append(notification);
+                setTimeout(function() {
+                    notification.fadeOut(function() {
+                        $(this).remove();
+                    });
+                }, 5000);
+            }
+
+            // Poll for new messages every 3 seconds
+            setInterval(refreshMessages, 3000);
         });
     </script>
 }

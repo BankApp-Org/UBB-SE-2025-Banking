@@ -7,8 +7,6 @@ namespace Common.Services.Social
     {
         Task<int> GetNumberOfParticipants(int chatID);
 
-        Task<List<Chat>> GetChatsForUser(int userId);
-
         Task<Chat> GetChatById(int chatId);
 
         Task<bool> CreateChat(Chat chat);

@@ -2,7 +2,6 @@
 {
     using BankApi.Data;
     using BankApi.Repositories.Social;
-    using Common.Models;
     using Common.Models.Social;
     using Microsoft.EntityFrameworkCore;
     using System;
@@ -75,7 +74,8 @@
                 UserId = user.Id,
                 Sender = user,
                 MessageContent = randomTip.TipText,
-                Type = MessageType.Text,
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -109,7 +109,8 @@
                 UserId = user.Id,
                 Sender = user,
                 MessageContent = randomTip.TipText,
-                Type = MessageType.Text,
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text,
                 CreatedAt = DateTime.UtcNow
             };
 

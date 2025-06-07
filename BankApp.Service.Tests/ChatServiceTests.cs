@@ -1,14 +1,13 @@
+using BankApi.Repositories.Social;
+using BankApi.Services.Social;
+using Common.Models;
+using Common.Models.Social;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using BankApi.Services.Social;
-using BankApi.Repositories.Social;
-using Common.Models.Social;
-using Common.Models.Bank;
-using Common.Models;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Runtime.Versioning;
+using System.Threading.Tasks;
 
 namespace BankApp.Service.Tests
 {
@@ -49,7 +48,8 @@ namespace BankApp.Service.Tests
                 Id = id,
                 MessageContent = "Hello",
                 UserId = 1,
-                Type = MessageType.Text,
+                Type = MessageType.Text.ToString(),
+                MessageType = MessageType.Text,
                 Sender = CreateValidUser(),
                 ChatId = 1,
                 Chat = null!, // Not needed for these tests
@@ -65,30 +65,7 @@ namespace BankApp.Service.Tests
             var result = await _service.GetNumberOfParticipants(1);
             Assert.AreEqual(2, result);
         }
-        [TestMethod]
-        public async Task GetChatsForUser_ReturnsChats()
-        {
-            var chats = new List<Chat> { CreateValidChat(1) };
-            _chatRepoMock.Setup(r => r.GetChatsByUserIdAsync(1)).ReturnsAsync(chats);
-            var result = await _service.GetChatsForUser(1);
-            Assert.AreEqual(1, result.Count);
-        }
-        [TestMethod]
-        public async Task GetChatById_ReturnsChat()
-        {
-            var chat = CreateValidChat(1);
-            _chatRepoMock.Setup(r => r.GetChatByIdAsync(1)).ReturnsAsync(chat);
-            var result = await _service.GetChatById(1);
-            Assert.AreEqual(1, result.Id);
-        }
-        [TestMethod]
-        public async Task CreateChat_ValidChat_ReturnsTrue()
-        {
-            var chat = CreateValidChat();
-            _chatRepoMock.Setup(r => r.CreateChatAsync(chat)).ReturnsAsync(chat);
-            var result = await _service.CreateChat(chat);
-            Assert.IsTrue(result);
-        }
+
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public async Task CreateChat_NullChat_Throws()

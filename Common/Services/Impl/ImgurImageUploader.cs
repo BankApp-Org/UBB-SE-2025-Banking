@@ -12,7 +12,7 @@ namespace Common.Services.Impl
 
         public ImgurImageUploader(IConfiguration configuration, HttpClient httpClient)
         {
-            _clientId = configuration["Imgur:ClientId"]
+            _clientId = configuration["ImgurClientId"]
                 ?? throw new ArgumentNullException(nameof(configuration), "Imgur:ClientId configuration is missing.");
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }

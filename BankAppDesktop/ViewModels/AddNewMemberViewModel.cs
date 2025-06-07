@@ -10,14 +10,13 @@
     using System.ComponentModel;
     using System.Linq;
     using System.Windows.Input;
-
     public partial class AddNewMemberViewModel : INotifyPropertyChanged
     {
-        private List<User> allUnaddedFriends;
+        private List<User> allUnaddedFriends = [];
         private IUserService userService;
         private IChatService chatService;
-        private Page lastChat;
-        private string searchQuery;
+        private Page? lastChat;
+        private string searchQuery = string.Empty;
         private int chatID;
         private ChatMessagesViewModel chatMessagesViewModel;
 
@@ -32,20 +31,20 @@
 
         public ObservableCollection<User> NewlyAddedFriends { get; set; }
 
-        public string ChatName { get; set; }
+        public string ChatName { get; set; } = string.Empty;
 
-        public ICommand AddToSelectedCommand { get; set; }
+        public ICommand AddToSelectedCommand { get; set; } = null!;
 
-        public ICommand RemoveFromSelectedCommand { get; set; }
+        public ICommand RemoveFromSelectedCommand { get; set; } = null!;
 
-        public ICommand AddUsersToChatCommand { get; set; }
+        public ICommand AddUsersToChatCommand { get; set; } = null!;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public AddNewMemberViewModel(ChatMessagesViewModel chatMessagesViewModel, Page lastChat, int chatID, IChatService chat, IUserService user)
+        public AddNewMemberViewModel(ChatMessagesViewModel chatMessagesViewModel, Page? lastChat, int chatID, IChatService chat, IUserService user)
         {
             this.chatMessagesViewModel = chatMessagesViewModel;
             this.chatID = chatID;

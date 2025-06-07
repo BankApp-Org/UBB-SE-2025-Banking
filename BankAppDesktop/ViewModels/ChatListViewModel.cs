@@ -1,15 +1,11 @@
 ﻿using BankAppDesktop.Views.Converters;
-using Common.Models;
 using Common.Models.Social;
 using Common.Services;
 using Common.Services.Social;
-using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BankAppDesktop.ViewModels
@@ -61,7 +57,7 @@ namespace BankAppDesktop.ViewModels
         {
             this.ChatList.Clear();
             var currentUser = await this.UserService.GetCurrentUserAsync();
-            this.CurrentUserChats = await this.ChatService.GetChatsForUser(currentUser.Id);
+            this.CurrentUserChats = currentUser.Chats;
             foreach (var chat in this.CurrentUserChats)
             {
                 this.ChatList.Add(chat);

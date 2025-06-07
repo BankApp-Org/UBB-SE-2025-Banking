@@ -1,5 +1,4 @@
 using BankAppWeb.Services;
-using Common.Helper;
 using Common.Services;
 using Common.Services.Bank;
 using Common.Services.Impl;
@@ -9,6 +8,7 @@ using Common.Services.Trading;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 // Add for logging
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
