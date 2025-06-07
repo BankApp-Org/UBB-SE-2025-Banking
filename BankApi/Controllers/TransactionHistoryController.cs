@@ -34,58 +34,76 @@ namespace BankApi.Controllers
         }
 
         [HttpPost("CreateCSV/{iban}")]
+        [HttpGet]
         public async Task<IActionResult> CreateCSV(string iban)
         {
-            try
+            if (string.IsNullOrEmpty(iban))
+                return BadRequest("IBAN is required.");
+
+            var matchingTypes = Enum.GetValues(typeof(Common.Models.Bank.TransactionType))
+                .Cast<Common.Models.Bank.TransactionType>()
+                .ToList();
+
+            List<BankTransaction> results = new List<BankTransaction>();
+
+            foreach (var type in matchingTypes)
             {
-                CSVBankTransactionExporter cSVBankTransactionExporter = new CSVBankTransactionExporter();
-
-                if (string.IsNullOrEmpty(iban))
+                var filters = new TransactionFilters
                 {
-                    throw new Exception("Empty IBAN");
-                }
+                    Type = type,
+                    SenderIban = iban,
+                    StartDate = new DateTime(2000, 1, 1),
+                    EndDate = new DateTime(3000, 1, 1),
+                };
 
-                // Normalize the filter
+                results.AddRange(await _transactionHistoryService.GetTransactions(filters));
 
-                // Get all matching enum values based on string match
-                var matchingTypes = Enum.GetValues(typeof(Common.Models.Bank.TransactionType))
-                    .Cast<Common.Models.Bank.TransactionType>()
-                    .ToList();
+                filters.SenderIban = string.Empty;
+                filters.ReceiverIban = iban;
 
-                List<BankTransaction> results = new List<BankTransaction>();
-
-                foreach (var type in matchingTypes)
-                {
-                    TransactionFilters filters = new TransactionFilters
-                    {
-                        Type = type,
-                        SenderIban = iban,
-                        StartDate = new DateTime(2000, 1, 1),
-                        EndDate = new DateTime(3000, 1, 1),
-                    };
-
-                    var transactions1 = await _transactionHistoryService.GetTransactions(filters);
-
-                    filters.SenderIban = string.Empty;
-                    filters.ReceiverIban = iban;
-
-                    var transactions2 = await _transactionHistoryService.GetTransactions(filters);
-
-                    results.AddRange(transactions1);
-                    results.AddRange(transactions2);
-                }
-
-                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "transactions.csv");
-
-                cSVBankTransactionExporter.Export(results, filePath);
-
-                return Ok("CSV file created successfully");
+                results.AddRange(await _transactionHistoryService.GetTransactions(filters));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error creating CSV file: {ex.Message}");
-            }
+
+            var exporter = new CSVBankTransactionExporter();
+            string csvContent = exporter.ExportToString(results); 
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(csvContent);
+            return File(bytes, "text/csv", "transactions.csv");
         }
+
+        [HttpGet("ExportCsvString/{iban}")]
+        public async Task<IActionResult> ExportCsvString(string iban)
+        {
+            var matchingTypes = Enum.GetValues(typeof(TransactionType))
+                .Cast<TransactionType>()
+                .ToList();
+
+            List<BankTransaction> results = new();
+
+            foreach (var type in matchingTypes)
+            {
+                var filters = new TransactionFilters
+                {
+                    Type = type,
+                    SenderIban = iban,
+                    StartDate = new DateTime(2000, 1, 1),
+                    EndDate = new DateTime(3000, 1, 1),
+                };
+
+                results.AddRange(await _transactionHistoryService.GetTransactions(filters));
+
+                filters.SenderIban = string.Empty;
+                filters.ReceiverIban = iban;
+
+                results.AddRange(await _transactionHistoryService.GetTransactions(filters));
+            }
+
+            var exporter = new CSVBankTransactionExporter();
+            string csvContent = exporter.ExportToString(results); 
+
+            return Ok(csvContent);
+        }
+
 
         [HttpGet("GetTransactionTypeCounts/{iban}")]
         public async Task<ActionResult<Dictionary<TransactionType, int>>> GetTransactionTypeCounts(string iban)

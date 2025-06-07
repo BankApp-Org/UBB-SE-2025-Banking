@@ -33,13 +33,13 @@ namespace BankAppDesktop.Views.Pages
             TransactionList.ItemsSource = CurrentList;
         }
 
-        private void ExportToCSV_Click(object sender, RoutedEventArgs e)
+        private async void ExportToCSV_Click(object sender, RoutedEventArgs e)
         {
-            TransactionsViewModel.CreateCSV();
+            await TransactionsViewModel.CreateCSVAsync();
             ContentDialog dialog = new ContentDialog
             {
                 Title = "Export Complete",
-                Content = "Transactions exported to CSV on Desktop.",
+                Content = "Transactions exported to CSV.",
                 CloseButtonText = "Ok",
                 XamlRoot = this.Content.XamlRoot
             };

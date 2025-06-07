@@ -26,5 +26,28 @@
                     );
             }
         }
+        public string ExportToString(List<BankTransaction> transactions)
+        {
+            using var sw = new StringWriter();
+            sw.WriteLine(
+                "TransactionType,SenderIban,ReceiverIban,ReceiverAmount,ReceiverCurrency,SenderAmount,SenderCurrency,TransactionDatetime,TransactionDescription");
+
+            foreach (var transaction in transactions)
+            {
+                sw.WriteLine(
+                    $"{transaction.TransactionType}," +
+                    $"{transaction.SenderIban}," +
+                    $"{transaction.ReceiverIban}," +
+                    $"{transaction.ReceiverAmount}," +
+                    $"{transaction.ReceiverCurrency}," +
+                    $"{transaction.SenderAmount}," +
+                    $"{transaction.SenderCurrency}," +
+                    $"{transaction.TransactionDatetime:yyyy-MM-dd HH:mm:ss}," +
+                    $"{transaction.TransactionDescription}");
+            }
+
+            return sw.ToString();
+        }
+
     }
 }
