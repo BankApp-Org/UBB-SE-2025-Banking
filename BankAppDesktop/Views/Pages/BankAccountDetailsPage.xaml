@@ -39,35 +39,35 @@
             <!-- First Column, First Row -->
             <StackPanel Grid.Row="0" Grid.Column="0" Margin="10">
                 <TextBlock Text="IBAN:"/>
-                <TextBox Text="{Binding BankAccount.Iban, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="IBAN" IsReadOnly="True" IsHitTestVisible="False"/>
+                <TextBox Text="{Binding AccountIBAN}" PlaceholderText="IBAN" IsReadOnly="True" IsHitTestVisible="False"/>
             </StackPanel>
 
             <!-- First Column, Second Row -->
             <StackPanel Grid.Row="0" Grid.Column="1" Margin="10">
                 <TextBlock Text="Daily Limit:"/>
-                <TextBox Text="{Binding BankAccount.DailyLimit}" PlaceholderText="Daily Limit" IsReadOnly="True" IsHitTestVisible="False"/>
+                <TextBox Text="{Binding DailyLimit}" PlaceholderText="Daily Limit" IsReadOnly="True" IsHitTestVisible="False"/>
             </StackPanel>
 
             <StackPanel Grid.Row="1" Grid.Column="1" Margin="10">
                 <TextBlock Text="Maximum Amount Per Transaction:"/>
-                <TextBox Text="{Binding BankAccount.MaximumPerTransaction}" PlaceholderText="Daily Limit" IsReadOnly="True" IsHitTestVisible="False"/>
+                <TextBox Text="{Binding MaximumPerTransaction}" PlaceholderText="Daily Limit" IsReadOnly="True" IsHitTestVisible="False"/>
             </StackPanel>
 
             <!-- Second Column, First Row -->
             <StackPanel Grid.Row="1" Grid.Column="0" Margin="10">
                 <TextBlock Text="Currency:"/>
-                <TextBox Text="{Binding BankAccount.Currency}" PlaceholderText="Currency" IsReadOnly="True" IsHitTestVisible="False"/>
+                <TextBox Text="{Binding Currency}" PlaceholderText="Currency" IsReadOnly="True" IsHitTestVisible="False"/>
             </StackPanel>
 
             <StackPanel Grid.Row="2" Grid.Column="2" Margin="10">
                 <TextBlock Text="Maximum Number of Transactions Per Day:"/>
-                <TextBox Text="{Binding BankAccount.MaximumNrTransactions}" PlaceholderText="Maximum Nr Transactions" IsReadOnly="True" IsHitTestVisible="False"/>
+                <TextBox Text="{Binding MaximumNrTransactions}" PlaceholderText="Maximum Nr Transactions" IsReadOnly="True" IsHitTestVisible="False"/>
             </StackPanel>
 
             <!-- Second Column, Second Row -->
             <StackPanel Grid.Row="2" Grid.Column="0" Margin="10">
                 <TextBlock Text="Custom name:"/>
-                <TextBox Text="{Binding BankAccount.Name}" PlaceholderText="Custom Name" IsReadOnly="True" IsHitTestVisible="False"/>
+                <TextBox Text="{Binding AccountName}" PlaceholderText="Custom Name" IsReadOnly="True" IsHitTestVisible="False"/>
             </StackPanel>
 
             <!-- Second Column, Third Row (left empty to match structure) -->
@@ -84,6 +84,6 @@
             </Grid>
         </Grid>
 
-        <Button Grid.Row="2" Command="{Binding ButtonCommand}" Content="Back" Width="100" BorderBrush="AliceBlue" Margin="0,0,0,30" HorizontalAlignment="Center"/>
+        <Button Grid.Row="2" Click="CancelButton_Click" Content="Back" Width="100" BorderBrush="AliceBlue" Margin="0,0,0,30" HorizontalAlignment="Center"/>
     </Grid>
 </Page>

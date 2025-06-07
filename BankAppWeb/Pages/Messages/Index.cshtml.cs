@@ -13,6 +13,7 @@ namespace BankAppWeb.Pages.Messages
         private readonly IMessageService _messageService;
         private readonly IUserService _userService;
 
+
         public IndexModel(IMessageService messageService, IUserService userService)
         {
             _messageService = messageService;

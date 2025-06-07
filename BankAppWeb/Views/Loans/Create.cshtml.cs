@@ -5,7 +5,6 @@ using Common.Services.Bank;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
@@ -18,19 +17,12 @@ namespace BankAppWeb.Views.Loans
         private readonly IAuthenticationService _authenticationService;
         private readonly IBankAccountService _bankAccountService;
 
-        public CreateModel(ILoanService loanService, IAuthenticationService authenticationService, IBankAccountService bankAccountService)
+        public CreateModel(ILoanService loanService, IAuthenticationService authenticationService, IBankAccountService bankAccountService, List<BankAccount> bankAccounts)
         {
             _loanService = loanService ?? throw new ArgumentNullException(nameof(loanService));
             _authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
             _bankAccountService = bankAccountService ?? throw new ArgumentNullException(nameof(bankAccountService));
-            _ = LoadBankAccountsAsync();
-        }
-
-        private async Task LoadBankAccountsAsync()
-        {
-            int userId = int.Parse(_authenticationService.GetCurrentUserSession()?.UserId ?? "0");
-            BankAccounts = [];
-            (await _bankAccountService.GetUserBankAccounts(userId)).ForEach(BankAccounts.Add);
+            BankAccounts = bankAccounts;
         }
 
         [BindProperty]
@@ -50,7 +42,7 @@ namespace BankAppWeb.Views.Loans
             public string SelectedBankAccountIban { get; set; } = string.Empty;
         }
 
-        public ObservableCollection<BankAccount> BankAccounts { get; set; } = [];
+        public List<BankAccount> BankAccounts { get; set; } = [];
 
         public async Task<IActionResult> OnPostAsync()
         {

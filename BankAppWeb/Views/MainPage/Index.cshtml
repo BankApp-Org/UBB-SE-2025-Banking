@@ -1,4 +1,4 @@
-﻿@model BankAppWeb.Models.MainPageViewModel;
+@model BankAppWeb.Models.MainPageViewModel;
 @{
     ViewBag.Title = "Loan Shark - Dashboard";
 }
@@ -114,14 +114,15 @@ else
                             <div class="progress mb-2" style="height: 20px;">
                                 <div class="progress-bar bg-@Model.GetCreditScoreColor()"
                                      role="progressbar"
-                                     style="width: @(((double)Model.CreditScore / 850) * 100)%"
+                                     style="width: @((int)(((double)Model.CreditScore / 850) * 100))%"
                                      aria-valuenow="@Model.CreditScore"
                                      aria-valuemin="300"
                                      aria-valuemax="850">
                                     @Model.CreditScore
                                 </div>
                             </div>
-                            <small class="text-muted">Range: 300 - 850</small>
+    
+                        <small class="text-muted">Range: 300 - 850</small>
                             <br>
                             <a asp-controller="CreditHistory" asp-action="Index" class="btn btn-outline-@Model.GetCreditScoreColor() btn-sm mt-2">
                                 <i class="bi bi-clock-history"></i> View History
