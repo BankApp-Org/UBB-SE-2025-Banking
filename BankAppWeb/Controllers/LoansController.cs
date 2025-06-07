@@ -57,9 +57,13 @@ namespace BankAppWeb.Controllers
         //    return RedirectToAction("Index");
         //}
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var model = new CreateModel(_loanService, _authenticationService, _bankAccountService);
+            int userId = int.Parse(_authenticationService.GetCurrentUserSession()?.UserId ?? "0");
+
+            var bankAccounts = await _bankAccountService.GetUserBankAccounts(userId);
+
+            var model = new CreateModel(_loanService, _authenticationService, _bankAccountService, bankAccounts);
             return View(model);
         }
 
@@ -67,7 +71,9 @@ namespace BankAppWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateModel.InputModel input)
         {
-            var model = new CreateModel(_loanService, _authenticationService, _bankAccountService);
+            int userId = int.Parse(_authenticationService.GetCurrentUserSession()?.UserId ?? "0");
+            var bankAccounts = await _bankAccountService.GetUserBankAccounts(userId);
+            var model = new CreateModel(_loanService, _authenticationService, _bankAccountService, bankAccounts);
             if (ModelState.IsValid)
             {
                 var user = await _userService.GetCurrentUserAsync();

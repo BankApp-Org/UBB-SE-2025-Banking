@@ -55,6 +55,10 @@ namespace BankApi.Repositories.Impl.Bank
                 request.Loan.Status = "Approved";
                 await _context.SaveChangesAsync();
 
+                BankAccount account = await _context.BankAccounts.FirstAsync(a => a.Iban == request.AccountIban);
+                account.Balance += request.Loan.AmountToPay;
+                await _context.SaveChangesAsync();
+
                 _logger.LogInformation("Loan request {LoanRequestId} marked as solved", loanRequestId);
             }
             catch (Exception ex)
